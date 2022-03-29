@@ -22,4 +22,4 @@ jobs:
           meteor-release: '2.6.1'
       - run: meteor npm install
       - name: Meteor Deploy
-        run: DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com METEOR_SESSION_FILE=$HOME/secrets/token.json meteor deploy --settings $HOME/secrets/settings.json garden-planner.meteorapp.com
+        run: DEPLOY_HOSTNAME=us-east-1.galaxy-deploy.meteor.com METEOR_SESSION_FILE=$HOME/secrets/token.json meteor deploy --free --settings $HOME/secrets/settings.json garden-planner.meteorapp.com
