@@ -1,31 +1,22 @@
+import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
-import { LinksCollection } from '/imports/api/links';
-
-function insertLink(title: string, url: string) {
-  LinksCollection.insert({ title, url, createdAt: new Date() });
-}
+import '../imports/api/Containers';
+import '../imports/api/Plants';
 
 Meteor.startup(() => {
-  // If the Links collection is empty, add some data.
-  if (LinksCollection.find().count() === 0) {
-    insertLink(
-      'Do the Tutorial',
-      'https://www.meteor.com/tutorials/react/creating-an-app'
-    );
+  process.env.MAIL_URL = Meteor.settings.MAIL_URL;
 
-    insertLink(
-      'Follow the Guide',
-      'http://guide.meteor.com'
-    );
+  Accounts.emailTemplates.sendLoginToken.subject = function () {
+    return 'Garden Planner Login Link';
+  };
 
-    insertLink(
-      'Read the Docs',
-      'https://docs.meteor.com'
-    );
-
-    insertLink(
-      'Discussions',
-      'https://forums.meteor.com'
-    );
-  }
+  Accounts.emailTemplates.sendLoginToken.html = function (
+    user,
+    _,
+    { sequence }
+  ) {
+    return `Login by clicking <a href="${Meteor.absoluteUrl()}login?username=${
+      user.username
+    }&token=${sequence}">here</a>`;
+  };
 });

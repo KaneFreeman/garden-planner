@@ -1,11 +1,26 @@
 import React from 'react';
-import { Hello } from './Hello';
-import { Info } from './Info';
+import { BrowserRouter } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import { Main } from './Main';
 
-export const App = () => (
-  <div>
-    <h1>Welcome to Meteor!</h1>
-    <Hello />
-    <Info />
-  </div>
-);
+export const App = () => {
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: 'dark',
+        },
+      }),
+    []
+  );
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Main />
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+};

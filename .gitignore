@@ -1,1 +1,4 @@
 node_modules/
+.eslintcache
+settings.json
+token.json

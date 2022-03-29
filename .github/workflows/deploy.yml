@@ -1,0 +1,24 @@
+name: Deploy
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  setup_meteor:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Decrypt large secret
+        run: ./.github/scripts/decrypt.sh
+        env:
+          PASS: ${{ secrets.PASS }}
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup Meteor
+        uses: meteorengineer/setup-meteor@v1
+        with:
+          meteor-release: '2.6.1'
+      - run: meteor npm install
+      - name: Meteor Deploy
+        run: METEOR_SESSION_FILE=$HOME/secrets/token.json meteor deploy www.yourwebsite.com --settings $HOME/secrets/settings.json
