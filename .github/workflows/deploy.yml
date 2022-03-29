@@ -22,4 +22,4 @@ jobs:
           meteor-release: '2.6.1'
       - run: meteor npm install
       - name: Meteor Deploy
-        run: METEOR_SESSION_FILE=$HOME/secrets/token.json meteor deploy www.yourwebsite.com --settings $HOME/secrets/settings.json
+        run: METEOR_SESSION_FILE=$HOME/secrets/token.json meteor deploy garden-planner.meteorapp.com --settings $HOME/secrets/settings.json
