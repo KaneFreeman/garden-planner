@@ -1,20 +1,21 @@
 name: Deploy
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
+  workflow_dispatch:
 jobs:
   setup_meteor:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Decrypt large secret
         run: ./.github/scripts/decrypt.sh
         env:
           PASS: ${{ secrets.PASS }}
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Setup Meteor
         uses: meteorengineer/setup-meteor@v1
         with:
