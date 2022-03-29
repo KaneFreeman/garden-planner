@@ -1,9 +1,10 @@
 name: Deploy
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
+  workflow_dispatch:
 jobs:
   setup_meteor:
     runs-on: ubuntu-16.04
