@@ -15,7 +15,7 @@ function isValidContainer(container: Partial<Container> | undefined): container 
   return container?.name !== undefined && container?.rows !== undefined && container?.columns !== undefined;
 }
 
-export const ContainerModal = ({ id, open, onClose }: ContainerModalProperties) => {
+const ContainerModal = ({ id, open, onClose }: ContainerModalProperties) => {
   const container = useTracker(() => {
     if (!id) {
       return undefined;
@@ -29,19 +29,22 @@ export const ContainerModal = ({ id, open, onClose }: ContainerModalProperties) 
     setEditData(container);
   }, [container]);
 
-  const onSave = useCallback(() => {
-    console.log(editData, container);
-    if (container?._id != undefined) {
-      ContainersCollection.update(container._id, { $set: editData });
-      onClose();
-      return;
-    }
+  const onSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (container?._id !== undefined) {
+        ContainersCollection.update(container._id, { $set: editData });
+        onClose();
+        return;
+      }
 
-    if (isValidContainer(editData)) {
-      ContainersCollection.insert(editData);
-      onClose();
-    }
-  }, [editData, container]);
+      if (isValidContainer(editData)) {
+        ContainersCollection.insert(editData);
+        onClose();
+      }
+    },
+    [container?._id, editData, onClose]
+  );
 
   const title = useMemo(() => `${container?._id === undefined ? 'Add' : 'Edit'} Container`, [container]);
   const action = useMemo(() => (container?._id === undefined ? 'Create' : 'Save'), [container]);
@@ -57,8 +60,8 @@ export const ContainerModal = ({ id, open, onClose }: ContainerModalProperties) 
   );
 
   return (
-    <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <form name="container-modal-form" onSubmit={onSubmit} noValidate>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <TextField autoFocus label="Name" value={editData?.name} onChange={(name) => update({ name })} required />
@@ -74,11 +77,13 @@ export const ContainerModal = ({ id, open, onClose }: ContainerModalProperties) 
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={onSave} variant="contained">
+          <Button type="submit" variant="contained">
             {action}
           </Button>
         </DialogActions>
-      </Dialog>
-    </>
+      </form>
+    </Dialog>
   );
 };
+
+export default ContainerModal;

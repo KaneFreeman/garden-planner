@@ -58,6 +58,7 @@ const TextField = (props: TextFieldProps) => {
       onChange={handleOnChange}
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...otherProps}
     />
   );

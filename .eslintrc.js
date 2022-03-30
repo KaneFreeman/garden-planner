@@ -25,7 +25,10 @@ module.exports = {
     '@typescript-eslint/comma-dangle': 'off',
     'linebreak-style': ['error', 'unix'],
     'prettier/prettier': 'off',
-    'func-names': 'off'
+    'func-names': 'off',
+    'react/function-component-definition': 'off',
+    'no-underscore-dangle': 'off',
+    'react/require-default-props': 'off'
   },
   env: {
     browser: true

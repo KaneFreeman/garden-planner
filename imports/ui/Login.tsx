@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { Box } from '@mui/material';
 import { Accounts } from 'meteor/accounts-base';
 
-export const Login = () => {
+const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const username = searchParams.get('username');
@@ -22,12 +22,12 @@ export const Login = () => {
           username: Meteor.settings.public.masterAccount,
           email: Meteor.settings.public.masterAccount,
           profile: {
-            name: Meteor.settings.public.masterName,
-          },
-        },
+            name: Meteor.settings.public.masterName
+          }
+        }
       });
     }
-  }, [username, token]);
+  }, [username, token, navigate]);
 
   return (
     <Box
@@ -36,7 +36,7 @@ export const Login = () => {
         alignItems: 'center',
         width: '100%',
         height: '100%',
-        display: 'flex',
+        display: 'flex'
       }}
     >
       {username !== null && token !== null
@@ -45,3 +45,5 @@ export const Login = () => {
     </Box>
   );
 };
+
+export default Login;

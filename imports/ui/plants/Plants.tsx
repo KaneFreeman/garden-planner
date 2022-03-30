@@ -1,17 +1,39 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import { useTracker } from 'meteor/react-meteor-data';
-import { Plant, PlantsCollection } from '../../api/Plants';
+import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
+import GrassIcon from '@mui/icons-material/Grass';
+import { PlantsCollection } from '../../api/Plants';
 
-export const Plants = () => {
-  const plants = useTracker(() => PlantsCollection.find().fetch());
+const Plants = () => {
+  const navigate = useNavigate();
 
-  const makeLink = (plant: Plant) => {
-    return <li key={plant._id}>{plant.name}</li>;
-  };
+  const plants = useTracker(() =>
+    PlantsCollection.find()
+      .fetch()
+      .sort((a, b) => a.name.localeCompare(b.name))
+  );
 
   return (
-    <div>
-      <ul>{plants.map(makeLink)}</ul>
-    </div>
+    <Box sx={{ width: '100%', maxWidth: 800 }}>
+      <nav aria-label="main plants">
+        <List>
+          {plants.map((plant) => (
+            <ListItem key={`plant-${plant._id}`} disablePadding>
+              <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <GrassIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={plant.name} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </nav>
+    </Box>
   );
 };
+
+export default Plants;

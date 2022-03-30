@@ -1,85 +1,81 @@
 import React, { useCallback } from 'react';
-import { Box, Button, IconButton, Popover, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { ContainerModal } from './containers/ContainerModal';
+import { useLocation, useNavigate } from 'react-router';
+import {
+  AppBar,
+  Box,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography
+} from '@mui/material';
+import InboxIcon from '@mui/icons-material/Inbox';
+import GrassIcon from '@mui/icons-material/Grass';
+import MenuIcon from '@mui/icons-material/Menu';
+import './Actions.css';
 
-export const Header = () => {
-  const [modalOpen, setModalOpen] = React.useState<'container' | 'plant' | null>(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+const Header = () => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const toggleDrawer = useCallback(
+    (newDrawerOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
 
-  const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
-  const openContainerModal = useCallback(() => {
-    setModalOpen('container');
-    setAnchorEl(null);
-  }, []);
-
-  const openPlantModal = useCallback(() => {
-    setModalOpen('plant');
-    setAnchorEl(null);
-  }, []);
-
-  const closeModals = useCallback(() => {
-    setModalOpen(null);
-  }, []);
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'add-popover' : undefined;
+      setDrawerOpen(newDrawerOpen);
+    },
+    []
+  );
 
   return (
-    <>
-      <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-        <Typography variant="h4">Garden Planner</Typography>
-        <IconButton aria-label="delete" onClick={handleClick}>
-          <AddIcon />
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton onClick={toggleDrawer(true)}>
+          <MenuIcon />
         </IconButton>
-      </Box>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-      >
-        <Typography
-          component="div"
-          sx={{
-            p: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end'
-          }}
-        >
-          <Button variant="text" sx={{ p: 1, cursor: 'pointer', width: '100%' }} onClick={openContainerModal}>
-            Add Container
-          </Button>
-          <Button
-            variant="text"
-            sx={{
-              p: 1,
-              cursor: 'pointer',
-              width: '100%'
-            }}
-            onClick={openPlantModal}
-          >
-            Add Plant
-          </Button>
+        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+          <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+            <List disablePadding>
+              <ListItem
+                button
+                key="Containers"
+                selected={pathname === '/' || pathname.startsWith('/container')}
+                onClick={() => navigate('/')}
+              >
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Containers" />
+              </ListItem>
+              <ListItem
+                button
+                key="Plants"
+                selected={pathname === '/plants' || pathname.startsWith('/plant')}
+                onClick={() => navigate('/plants')}
+              >
+                <ListItemIcon>
+                  <GrassIcon />
+                </ListItemIcon>
+                <ListItemText primary="Plants" />
+              </ListItem>
+            </List>
+          </Box>
+        </Drawer>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Garden Planner
         </Typography>
-      </Popover>
-      <ContainerModal open={modalOpen === 'container'} onClose={closeModals} />
-    </>
+      </Toolbar>
+    </AppBar>
   );
 };
+
+export default Header;
