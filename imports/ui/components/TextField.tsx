@@ -18,10 +18,11 @@ interface TextFieldProps {
   multiline?: boolean;
   rows?: number;
   autoFocus?: boolean;
+  variant?: 'outlined' | 'filled' | 'standard';
 }
 
 const TextField = (props: TextFieldProps) => {
-  const { onChange, error, ...otherProps } = props;
+  const { onChange, error, variant = 'standard', ...otherProps } = props;
   const id = useMemo(() => otherProps.label?.toLowerCase().replace(' ', '_'), [otherProps.label]);
 
   const [isEmpty, setIsEmpty] = useState(
@@ -54,7 +55,7 @@ const TextField = (props: TextFieldProps) => {
     <MuiTextField
       id={id}
       margin="dense"
-      variant="standard"
+      variant={variant}
       onChange={handleOnChange}
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}

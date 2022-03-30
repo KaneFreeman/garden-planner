@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
 import { IconButton, styled } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
+import { Picture } from '../../../api/Common';
 
 const Input = styled('input')({
   display: 'none'
 });
 
 interface PictureUploadProps {
-  onChange(dataUrl: string): void;
+  onChange(picture: Omit<Picture, 'id'>): void;
 }
 
 const PictureUpload = ({ onChange }: PictureUploadProps) => {
@@ -20,7 +21,10 @@ const PictureUpload = ({ onChange }: PictureUploadProps) => {
         'load',
         function () {
           if (typeof reader.result === 'string') {
-            onChange(reader.result);
+            onChange({
+              date: new Date(),
+              dataUrl: reader.result
+            });
           }
         },
         false

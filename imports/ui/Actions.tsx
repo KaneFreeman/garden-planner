@@ -36,11 +36,12 @@ const Actions = () => {
           actions: 'speedDial-actions'
         }}
         ariaLabel="Add menu"
-        sx={{ position: 'absolute', bottom: 16, right: 8 }}
+        sx={{ position: 'fixed', top: 8, right: 8, zIndex: 1101 }}
         icon={<SpeedDialIcon />}
         FabProps={{ size: 'small', onClick: handleOpen }}
         onClose={handleClose}
         open={open}
+        direction="down"
       >
         <SpeedDialAction
           key="Add plant"

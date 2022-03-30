@@ -23,6 +23,7 @@ interface NumberTextFieldProps {
   step?: number;
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
+  variant?: 'outlined' | 'filled' | 'standard';
 }
 
 const NumberTextField = ({
@@ -39,7 +40,8 @@ const NumberTextField = ({
   max,
   step,
   startAdornment,
-  endAdornment
+  endAdornment,
+  variant = 'standard'
 }: NumberTextFieldProps) => {
   const id = useMemo(() => label.toLowerCase().replace(' ', '_'), [label]);
 
@@ -88,7 +90,7 @@ const NumberTextField = ({
       id={id}
       label={label}
       margin="dense"
-      variant="standard"
+      variant={variant}
       type="number"
       value={internalValue}
       onChange={(event) => {

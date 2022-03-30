@@ -1,0 +1,8 @@
+.picture-full-view {
+  margin: 0;
+}
+
+.picture-full-view .picture-full-view-paper {
+  margin: 0;
+  max-height: 100%;
+}
