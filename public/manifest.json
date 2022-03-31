@@ -1,15 +1,36 @@
 {
   "short_name": "Garden Planner",
-  "name": "Plan and track your garden with ease",
+  "name": "Garden Planner",
   "icons": [
     {
       "src": "favicon.png",
       "sizes": "32x32",
       "type": "image/png"
+    },
+    {
+      "src": "favicon64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon_maskable.png",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#1f1f1f"
 }
