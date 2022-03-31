@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useTracker } from 'meteor/react-meteor-data';
-import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
-import GrassIcon from '@mui/icons-material/Grass';
+import { Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
 import { PlantsCollection } from '../../api/Plants';
+import PlantAvatar from './PlantAvatar';
 
 const Plants = () => {
   const navigate = useNavigate();
@@ -22,9 +22,7 @@ const Plants = () => {
             <ListItem key={`plant-${plant._id}`} disablePadding>
               <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
                 <ListItemAvatar>
-                  <Avatar>
-                    <GrassIcon />
-                  </Avatar>
+                  <PlantAvatar plant={plant} />
                 </ListItemAvatar>
                 <ListItemText primary={plant.name} />
               </ListItemButton>

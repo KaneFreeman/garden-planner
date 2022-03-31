@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   Box,
@@ -12,19 +13,20 @@ import {
   Typography
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Comment, Slot } from '../../api/Containers';
-import ReplaceAll from '../utility/markup.util';
-import PictureView from './pictures/PictureView';
+import { Picture } from '../../../api/Common';
+import { Comment } from '../../../api/Containers';
+import ReplaceAll from '../../utility/markup.util';
+import PictureView from '../pictures/PictureView';
 
 interface CommentProps {
-  slot: Slot;
-  slotTitle: string;
+  pictures?: Picture[];
+  alt: string;
   comment: Comment;
   index: number;
   onDelete: (index: number) => void;
 }
 
-const CommentView = ({ slot, slotTitle, comment, index, onDelete }: CommentProps) => {
+const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) => {
   const [deleting, setDeleting] = useState(false);
 
   const handleOnDelete = useCallback(() => setDeleting(true), []);
@@ -37,26 +39,24 @@ const CommentView = ({ slot, slotTitle, comment, index, onDelete }: CommentProps
   const text = useMemo(() => {
     let formattedText: React.ReactNode[] = [comment.text];
 
-    slot.pictures?.forEach((picture) => {
+    pictures?.forEach((picture, pictureIndex) => {
       formattedText = ReplaceAll(
         formattedText,
         new RegExp(`\\[[iI][mM][gG][ ]*${picture.id}\\]`),
-        <PictureView picture={picture.dataUrl} alt={slotTitle} />
+        <PictureView key={`comment-picture-${pictureIndex}`} picture={picture.dataUrl} alt={alt} />
       );
     });
 
     formattedText = ReplaceAll(formattedText, /\n/g, <br />);
 
-    return formattedText.map((node) => {
+    return formattedText.map((node, nodeIndex) => {
       if (typeof node !== 'string') {
         return node;
       }
 
-      return <Box>{node}</Box>;
+      return <Box key={`comment-text-${nodeIndex}`}>{node}</Box>;
     });
-  }, [comment.text, slot.pictures, slotTitle]);
-
-  console.log(text);
+  }, [comment.text, pictures, alt]);
 
   return (
     <>

@@ -2,17 +2,19 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Dialog, Typography } from '@mui/material';
 import { Picture } from '../../../api/Common';
+import { Comment } from '../../../api/Containers';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
 import './PicturesView.css';
 
 interface PicturesViewProps {
   pictures?: Picture[];
+  comments?: Comment[];
   alt: string;
   onChange: (pictures: Picture[]) => void;
 }
 
-const PicturesView = ({ pictures, alt, onChange }: PicturesViewProps) => {
+const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) => {
   const [fullViewImage, setFullViewImage] = useState<string | null>(null);
 
   const addPicture = useCallback(
@@ -38,10 +40,24 @@ const PicturesView = ({ pictures, alt, onChange }: PicturesViewProps) => {
   const removePicture = useCallback(
     (pictureIndex: number) => {
       const newPictures = [...(pictures ?? [])];
-      newPictures.splice(pictureIndex, 1);
+      const picture = newPictures[pictureIndex];
+
+      let imageInUse = false;
+      comments?.forEach((comment) => {
+        if (new RegExp(`\\[[iI][mM][gG][ ]*${picture.id}\\]`).test(comment.text)) {
+          imageInUse = true;
+        }
+      });
+
+      if (imageInUse) {
+        picture.deleted = true;
+      } else {
+        newPictures.splice(pictureIndex, 1);
+      }
+
       onChange(newPictures);
     },
-    [pictures, onChange]
+    [pictures, comments, onChange]
   );
 
   const onFullViewImageClose = useCallback(() => {
@@ -50,21 +66,27 @@ const PicturesView = ({ pictures, alt, onChange }: PicturesViewProps) => {
 
   return (
     <>
-      <Typography variant="subtitle1" component="div" sx={{ flexGrow: 1, mt: 2 }}>
+      <Typography variant="subtitle1" component="div" sx={{ flexGrow: 1, mt: 2 }} color="GrayText">
         Pictures
-        <PictureUpload onChange={addPicture} />
+        <PictureUpload id="pictures-view-upload" onChange={addPicture} />
       </Typography>
       <Box sx={{ display: 'inline-grid', gridTemplateColumns: `repeat(3, minmax(0, 1fr))` }}>
-        {pictures?.map((picture, pictureIndex) => (
-          <PictureView
-            key={`picture-${picture.id}`}
-            picture={picture.dataUrl}
-            alt={alt}
-            onDelete={() => removePicture(pictureIndex)}
-            size="small"
-            onClick={() => setFullViewImage(picture.dataUrl)}
-          />
-        ))}
+        {pictures?.map((picture, pictureIndex) => {
+          if (picture.deleted) {
+            return null;
+          }
+
+          return (
+            <PictureView
+              key={`picture-${picture.id}`}
+              picture={picture.dataUrl}
+              alt={alt}
+              onDelete={() => removePicture(pictureIndex)}
+              size="small"
+              onClick={() => setFullViewImage(picture.dataUrl)}
+            />
+          );
+        })}
       </Box>
       {fullViewImage ? (
         <Dialog
@@ -79,7 +101,7 @@ const PicturesView = ({ pictures, alt, onChange }: PicturesViewProps) => {
             key="picture-full-view"
             picture={fullViewImage}
             alt={alt}
-            size="original"
+            size="full"
             onClick={onFullViewImageClose}
           />
         </Dialog>

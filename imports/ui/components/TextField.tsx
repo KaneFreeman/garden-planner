@@ -22,7 +22,7 @@ interface TextFieldProps {
 }
 
 const TextField = (props: TextFieldProps) => {
-  const { onChange, error, variant = 'standard', ...otherProps } = props;
+  const { onChange, error, variant = 'standard', autoFocus, ...otherProps } = props;
   const id = useMemo(() => otherProps.label?.toLowerCase().replace(' ', '_'), [otherProps.label]);
 
   const [isEmpty, setIsEmpty] = useState(
@@ -59,6 +59,7 @@ const TextField = (props: TextFieldProps) => {
       onChange={handleOnChange}
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}
+      autoFocus={autoFocus}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...otherProps}
     />

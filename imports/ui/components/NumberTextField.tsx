@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
 import {
   TextField as MuiTextField,
   InputBaseComponentProps,
@@ -9,7 +9,8 @@ import {
 } from '@mui/material';
 
 interface NumberTextFieldProps {
-  label: string;
+  id?: string;
+  label?: string;
   value: number | undefined;
   onChange?: (value: number) => void;
   required?: boolean;
@@ -24,9 +25,12 @@ interface NumberTextFieldProps {
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
   variant?: 'outlined' | 'filled' | 'standard';
+  autoFocus?: boolean;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
 }
 
 const NumberTextField = ({
+  id,
   label,
   value,
   onChange,
@@ -41,9 +45,21 @@ const NumberTextField = ({
   step,
   startAdornment,
   endAdornment,
-  variant = 'standard'
+  variant = 'standard',
+  autoFocus = false,
+  onKeyDown
 }: NumberTextFieldProps) => {
-  const id = useMemo(() => label.toLowerCase().replace(' ', '_'), [label]);
+  const finalId = useMemo(() => {
+    if (id !== 'undefined') {
+      return id;
+    }
+
+    if (label !== undefined) {
+      return label.toLowerCase().replace(' ', '_');
+    }
+
+    return undefined;
+  }, [id, label]);
 
   const [internalValue, setInternalValue] = useState<string>('');
   const [dirty, setDirty] = useState(false);
@@ -87,7 +103,7 @@ const NumberTextField = ({
 
   return (
     <MuiTextField
-      id={id}
+      id={finalId}
       label={label}
       margin="dense"
       variant={variant}
@@ -126,6 +142,8 @@ const NumberTextField = ({
       disabled={disabled}
       helperText={helperText}
       sx={sx}
+      autoFocus={autoFocus}
+      onKeyDown={onKeyDown}
     />
   );
 };

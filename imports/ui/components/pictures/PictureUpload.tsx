@@ -8,10 +8,11 @@ const Input = styled('input')({
 });
 
 interface PictureUploadProps {
+  id: string;
   onChange(picture: Omit<Picture, 'id'>): void;
 }
 
-const PictureUpload = ({ onChange }: PictureUploadProps) => {
+const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
   const onChangeHandler = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -25,6 +26,8 @@ const PictureUpload = ({ onChange }: PictureUploadProps) => {
               date: new Date(),
               dataUrl: reader.result
             });
+            // eslint-disable-next-line no-param-reassign
+            event.target.value = "";
           }
         },
         false
@@ -39,8 +42,15 @@ const PictureUpload = ({ onChange }: PictureUploadProps) => {
 
   return (
     // eslint-disable-next-line jsx-a11y/label-has-associated-control
-    <label htmlFor="icon-button-file">
-      <Input accept="image/*" id="icon-button-file" type="file" capture="environment" onChange={onChangeHandler} />
+    <label htmlFor={id}>
+      <Input
+        accept="image/*"
+        id={id}
+        type="file"
+        capture="environment"
+        onChange={onChangeHandler}
+        onClick={(event) => event.stopPropagation()}
+      />
       <IconButton color="primary" aria-label="upload picture" component="span">
         <PhotoCamera />
       </IconButton>

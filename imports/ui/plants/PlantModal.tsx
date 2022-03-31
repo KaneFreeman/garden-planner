@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { useTracker } from 'meteor/react-meteor-data';
+import { Picture } from '../../api/Common';
 import { Plant, PlantsCollection } from '../../api/Plants';
 import TextField from '../components/TextField';
+import PictureUpload from '../components/pictures/PictureUpload';
+import PictureView from '../components/pictures/PictureView';
 
 interface PlantModalProperties {
   id?: string | undefined;
@@ -10,7 +13,7 @@ interface PlantModalProperties {
   onClose: () => void;
 }
 
-function isValidPlant(plant: Partial<Plant> | undefined): plant is Plant {
+function isValidPlant(plant: Partial<Plant> | null): plant is Plant {
   return plant?.name !== undefined;
 }
 
@@ -22,24 +25,23 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
     return PlantsCollection.findOne(id);
   }, [id]);
 
-  const [editData, setEditData] = useState<Partial<Plant>>();
+  const [editData, setEditData] = useState<Partial<Plant> | null>(null);
 
   useEffect(() => {
-    setEditData(plant);
+    setEditData(plant ?? null);
   }, [plant]);
 
-  const onSave = useCallback(() => {
-    if (plant?._id !== undefined) {
-      PlantsCollection.update(plant._id, { $set: editData });
-      onClose();
-      return;
-    }
+  const handleOnClose = useCallback(() => {
+    setEditData(null);
+    onClose();
+  }, [onClose]);
 
+  const onSave = useCallback(() => {
     if (isValidPlant(editData)) {
       PlantsCollection.insert(editData as Plant);
-      onClose();
+      handleOnClose();
     }
-  }, [editData, plant, onClose]);
+  }, [editData, handleOnClose]);
 
   const onSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -62,16 +64,57 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
     [editData]
   );
 
+  const addPicture = useCallback(
+    (picture: Omit<Picture, 'id'>) => {
+      const oldPictures = editData?.pictures ?? [];
+      update({
+        pictures: [
+          ...oldPictures,
+          {
+            ...picture,
+            id: oldPictures.reduce((lastId, oldPicture) => {
+              if (oldPicture.id >= lastId) {
+                return oldPicture.id + 1;
+              }
+
+              return lastId;
+            }, 0)
+          }
+        ]
+      });
+    },
+    [editData?.pictures, update]
+  );
+
+  const removePicture = useCallback(
+    (pictureIndex: number) => {
+      const newPictures = [...(editData?.pictures ?? [])];
+      newPictures.splice(pictureIndex, 1);
+      update({ pictures: newPictures });
+    },
+    [editData?.pictures, update]
+  );
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleOnClose} maxWidth="sm" fullWidth>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <form name="plant-modal-form" onSubmit={onSubmit} noValidate>
           <TextField autoFocus label="Name" value={editData?.name} onChange={(name) => update({ name })} required />
+          <PictureUpload id="new-plant-picture" onChange={addPicture} />
+          {editData?.pictures?.map((picture, pictureIndex) => (
+            <PictureView
+              key={`picture-${picture.id}`}
+              picture={picture.dataUrl}
+              alt={editData?.name ?? 'New plant'}
+              onDelete={() => removePicture(pictureIndex)}
+              size="small"
+            />
+          ))}
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleOnClose}>Cancel</Button>
         <Button onClick={onSave} variant="contained">
           {action}
         </Button>

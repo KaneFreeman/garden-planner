@@ -1,9 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { Comment } from '../../api/Containers';
-import { isNotEmpty } from '../utility/string.util';
-import TextField from './TextField';
+import { Comment } from '../../../api/Containers';
+import { isNotEmpty } from '../../utility/string.util';
+import TextField from '../TextField';
 
 interface CommentBoxProps {
   open: boolean;
@@ -24,7 +24,7 @@ const CommentBox = ({ open, comment, onComment, onClose }: CommentBoxProps) => {
   }, [internalComment, onClose, onComment]);
 
   return open ? (
-    <Box sx={{ pl: 1, pr: 1, width: '100%', boxSizing: 'border-box' }}>
+    <Box sx={{ width: '100%', boxSizing: 'border-box' }}>
       <TextField
         label="Add comment"
         multiline

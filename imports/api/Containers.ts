@@ -6,8 +6,16 @@ export interface Comment {
   text: string;
 }
 
+export const NOT_PLANTED = 'Not Planted';
+export const PLANTED = 'Planted';
+export type Status = typeof NOT_PLANTED | typeof PLANTED;
+export const STATUSES: Status[] = [NOT_PLANTED, PLANTED];
+
 export interface Slot {
   plant?: string;
+  status?: Status;
+  plantedCount?: number;
+  plantedDate?: Date;
   comments?: Comment[];
   pictures?: Picture[];
 }

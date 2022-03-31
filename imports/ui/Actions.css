@@ -1,3 +1,12 @@
 .actions .speedDial-root .speedDial-actions {
   margin-bottom: -40px;
 }
+
+.actions .speedDialAction-staticTooltipLabel {
+  white-space: nowrap;
+  background-color: #383838;
+}
+
+.actions .speedDialAction-fab {
+  background-color: #383838;
+}

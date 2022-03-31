@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Box, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
+import { Backdrop, Box, SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
 import GrassIcon from '@mui/icons-material/Grass';
 import ContainerModal from './containers/ContainerModal';
@@ -30,13 +30,14 @@ const Actions = () => {
 
   return (
     <Box className="actions">
+      <Backdrop open={open} sx={{ zIndex: 1101 }} />
       <SpeedDial
         classes={{
           root: 'speedDial-root',
           actions: 'speedDial-actions'
         }}
         ariaLabel="Add menu"
-        sx={{ position: 'fixed', top: 8, right: 8, zIndex: 1101 }}
+        sx={{ position: 'fixed', top: 8, right: 8, zIndex: 1102 }}
         icon={<SpeedDialIcon />}
         FabProps={{ size: 'small', onClick: handleOpen }}
         onClose={handleClose}
@@ -47,13 +48,23 @@ const Actions = () => {
           key="Add plant"
           icon={<GrassIcon />}
           tooltipTitle="Add plant"
+          tooltipOpen
           FabProps={{ onClick: openPlantModal }}
+          classes={{
+            fab: 'speedDialAction-fab',
+            staticTooltipLabel: 'speedDialAction-staticTooltipLabel'
+          }}
         />
         <SpeedDialAction
           key="Add container"
           icon={<InboxIcon />}
           tooltipTitle="Add container"
+          tooltipOpen
           FabProps={{ onClick: openContainerModal }}
+          classes={{
+            fab: 'speedDialAction-fab',
+            staticTooltipLabel: 'speedDialAction-staticTooltipLabel'
+          }}
         />
       </SpeedDial>
       <ContainerModal open={modalOpen === 'container'} onClose={closeModals} />
