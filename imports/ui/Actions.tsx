@@ -30,14 +30,14 @@ const Actions = () => {
 
   return (
     <Box className="actions">
-      <Backdrop open={open} sx={{ zIndex: 1101 }} />
+      <Backdrop open={open} sx={{ position: 'fixed', zIndex: 1101 }} />
       <SpeedDial
         classes={{
           root: 'speedDial-root',
           actions: 'speedDial-actions'
         }}
         ariaLabel="Add menu"
-        sx={{ position: 'fixed', top: 8, right: 8, zIndex: 1102 }}
+        sx={{ position: 'relative', width: 40, height: 40, zIndex: 1102 }}
         icon={<SpeedDialIcon />}
         FabProps={{ size: 'small', onClick: handleOpen }}
         onClose={handleClose}

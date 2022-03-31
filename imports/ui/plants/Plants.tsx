@@ -15,7 +15,7 @@ const Plants = () => {
   );
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 800 }}>
+    <Box sx={{ width: '100%' }}>
       <nav aria-label="main plants">
         <List>
           {plants.map((plant) => (

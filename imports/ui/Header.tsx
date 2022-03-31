@@ -16,6 +16,7 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import GrassIcon from '@mui/icons-material/Grass';
 import MenuIcon from '@mui/icons-material/Menu';
 import './Actions.css';
+import Actions from './Actions';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -70,9 +71,10 @@ const Header = () => {
             </List>
           </Box>
         </Drawer>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
           Garden Planner
         </Typography>
+        <Actions />
       </Toolbar>
     </AppBar>
   );

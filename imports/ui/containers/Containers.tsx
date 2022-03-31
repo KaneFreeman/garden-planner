@@ -15,7 +15,7 @@ const Containers = () => {
   );
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 800 }}>
+    <Box sx={{ width: '100%' }}>
       <nav aria-label="main containers">
         <List>
           {containers.map((container) => (

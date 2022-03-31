@@ -12,8 +12,6 @@ const PlantView = () => {
 
   const plant = useTracker(() => PlantsCollection.findOne(id), [id]);
 
-  console.log('plant', plant);
-
   const updatePictures = useCallback(
     (pictures: Picture[]) => {
       if (id && plant) {
@@ -36,7 +34,7 @@ const PlantView = () => {
   }
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, width: '100%' }}>
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         {plant.name}
       </Typography>

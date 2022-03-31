@@ -5,10 +5,8 @@ import { Box } from '@mui/material';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Meteor } from 'meteor/meteor';
-import useScreenOrientation from '../hooks/useOrientation';
 import Login from './Login';
 import Header from './Header';
-import Actions from './Actions';
 import Plants from './plants/Plants';
 import PlantView from './plants/PlantView';
 import Containers from './containers/Containers';
@@ -17,7 +15,6 @@ import ContainerSlotView from './containers/ContainerSlotView';
 
 const Main = () => {
   const navigate = useNavigate();
-  const orientation = useScreenOrientation();
   const { pathname, search } = useLocation();
 
   useEffect(() => {
@@ -31,14 +28,12 @@ const Main = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Header />
-      <Actions />
       <Box sx={{ display: 'flex', width: '100%', boxSizing: 'border-box', justifyContent: 'center' }}>
         <Box
           sx={{
             display: 'flex',
             width: '100%',
             boxSizing: 'border-box',
-            maxWidth: orientation.startsWith('landscape') ? 'unset' : 800,
             justifyContent: 'center'
           }}
         >
