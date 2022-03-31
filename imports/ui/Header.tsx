@@ -39,7 +39,7 @@ const Header = () => {
   return (
     <AppBar position="sticky" sx={{ top: -1 }}>
       <Toolbar>
-        <IconButton onClick={toggleDrawer(true)}>
+        <IconButton aria-label="menu" onClick={toggleDrawer(true)}>
           <MenuIcon />
         </IconButton>
         <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>

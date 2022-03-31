@@ -7,5 +7,6 @@ import App from '../imports/ui/App';
 Meteor.startup(() => {
   const container = document.getElementById('react-target');
   const root = ReactDOMClient.createRoot(container as Element);
+  document.getElementsByTagName('html')[0].lang = 'en';
   root.render(<App />);
 });
