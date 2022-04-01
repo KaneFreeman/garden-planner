@@ -59,6 +59,30 @@ export const TOMATOE = 'Tomatoe';
 export const TURNIP = 'Turnip';
 export const WATERMELON = 'Watermelon';
 
+export const BASIL = 'Basil';
+export const BORAGE = 'Borage';
+export const CAT_GRASS = 'Cat Grass';
+export const CATNIP = 'Catnip';
+export const CHAMOMILE = 'Chamomile';
+export const CHERVIL = 'Chervil';
+export const CHIVE = 'Chive';
+export const CILANTRO = 'Cilantro';
+export const DILL = 'Dill';
+export const FENNEL = 'Fennel';
+export const LAVENDER = 'Lavender';
+export const LEMON_BALM = 'Lemon Balm';
+export const LEMON_GRASS = 'Lemon Grass';
+export const MARJORAM = 'Marjoram';
+export const MINT = 'Mint';
+export const OREGANO = 'Oregano';
+export const THYME = 'Thyme';
+export const PARSLEY = 'Parsley';
+export const ROSEMARY = 'Rosemary';
+export const SAGE = 'Sage';
+export const STEVIA = 'Stevia';
+export const SWEET_MARIGOLD = 'Sweet Marigold';
+export const VERBENA = 'Verbena';
+
 export type PlantType =
   | typeof ARTICHOKE
   | typeof ARUGULA
@@ -116,7 +140,30 @@ export type PlantType =
   | typeof TOMATILLOE
   | typeof TOMATOE
   | typeof TURNIP
-  | typeof WATERMELON;
+  | typeof WATERMELON
+  | typeof BASIL
+  | typeof BORAGE
+  | typeof CAT_GRASS
+  | typeof CATNIP
+  | typeof CHAMOMILE
+  | typeof CHERVIL
+  | typeof CHIVE
+  | typeof CILANTRO
+  | typeof DILL
+  | typeof FENNEL
+  | typeof LAVENDER
+  | typeof LEMON_BALM
+  | typeof LEMON_GRASS
+  | typeof MARJORAM
+  | typeof MINT
+  | typeof OREGANO
+  | typeof THYME
+  | typeof PARSLEY
+  | typeof ROSEMARY
+  | typeof SAGE
+  | typeof STEVIA
+  | typeof SWEET_MARIGOLD
+  | typeof VERBENA;
 
 export const PLANT_TYPES: PlantType[] = [
   ARTICHOKE,
@@ -175,7 +222,30 @@ export const PLANT_TYPES: PlantType[] = [
   TOMATILLOE,
   TOMATOE,
   TURNIP,
-  WATERMELON
+  WATERMELON,
+  BASIL,
+  BORAGE,
+  CAT_GRASS,
+  CATNIP,
+  CHAMOMILE,
+  CHERVIL,
+  CHIVE,
+  CILANTRO,
+  DILL,
+  FENNEL,
+  LAVENDER,
+  LEMON_BALM,
+  LEMON_GRASS,
+  MARJORAM,
+  MINT,
+  OREGANO,
+  THYME,
+  PARSLEY,
+  ROSEMARY,
+  SAGE,
+  STEVIA,
+  SWEET_MARIGOLD,
+  VERBENA
 ];
 
 export interface Plant {

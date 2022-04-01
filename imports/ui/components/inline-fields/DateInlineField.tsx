@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box, TextField, Typography } from '@mui/material';
-import { DateTimePicker } from '@mui/lab';
+import { MobileDateTimePicker } from '@mui/lab';
 import { format } from 'date-fns';
 import './DateInlineField.css';
 
@@ -52,7 +52,7 @@ const DateInlineField = React.memo(({ label, value, onChange }: DateInlineFieldP
           {value ? format(value, 'MMM d, yyyy h:mmaaa') : ''}
         </Typography>
       </Box>
-      <DateTimePicker
+      <MobileDateTimePicker
         open={open}
         value={value}
         onChange={(date: Date | null) => setInternalValue(date ?? undefined)}

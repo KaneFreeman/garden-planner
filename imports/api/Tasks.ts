@@ -3,16 +3,14 @@ import { Picture, Comment } from './Common';
 
 export const NOT_PLANTED = 'Not Planted';
 export const PLANTED = 'Planted';
-export const TRANSPLANTED = 'Transplanted';
-export type Status = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED;
-export const STATUSES: Status[] = [NOT_PLANTED, PLANTED, TRANSPLANTED];
+export type Status = typeof NOT_PLANTED | typeof PLANTED;
+export const STATUSES: Status[] = [NOT_PLANTED, PLANTED];
 
 export interface Slot {
   plant?: string;
   status?: Status;
   plantedCount?: number;
   plantedDate?: Date;
-  transplantedDate?: Date;
   comments?: Comment[];
   pictures?: Picture[];
 }

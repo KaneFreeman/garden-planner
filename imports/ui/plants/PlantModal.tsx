@@ -1,11 +1,21 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Autocomplete,
+  TextField as MuiTextField
+} from '@mui/material';
 import { useTracker } from 'meteor/react-meteor-data';
 import { Picture } from '../../api/Common';
-import { Plant, PlantsCollection } from '../../api/Plants';
+import { Plant, PlantsCollection, PLANT_TYPES } from '../../api/Plants';
 import TextField from '../components/TextField';
 import PictureUpload from '../components/pictures/PictureUpload';
 import PictureView from '../components/pictures/PictureView';
+import './PlantModal.css';
 
 interface PlantModalProperties {
   id?: string | undefined;
@@ -96,11 +106,35 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
   );
 
   return (
-    <Dialog open={open} onClose={handleOnClose} maxWidth="sm" fullWidth>
+    <Dialog
+      classes={{
+        root: 'plantModal-root',
+        paper: 'plantModal-paper'
+      }}
+      open={open}
+      onClose={handleOnClose}
+      maxWidth="sm"
+      fullWidth
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <form name="plant-modal-form" onSubmit={onSubmit} noValidate>
-          <TextField autoFocus label="Name" value={editData?.name} onChange={(name) => update({ name })} required />
+          <TextField
+            autoFocus
+            label="Name"
+            value={editData?.name}
+            onChange={(name) => update({ name })}
+            required
+            variant="outlined"
+          />
+          <Autocomplete
+            disablePortal
+            id="plant-type"
+            options={PLANT_TYPES}
+            fullWidth
+            renderInput={(params) => <MuiTextField {...params} label="Type" />}
+            sx={{ mt: 1, mb: 1 }}
+          />
           <PictureUpload id="new-plant-picture" onChange={addPicture} />
           {editData?.pictures?.map((picture, pictureIndex) => (
             <PictureView

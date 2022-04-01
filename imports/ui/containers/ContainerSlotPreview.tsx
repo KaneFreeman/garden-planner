@@ -20,7 +20,16 @@ const ContainerSlotPreview = React.memo(({ id, index, slot, plant }: ContainerSl
     if (!plant) {
       return 'default';
     }
-    return (slot?.status ?? 'Not Planted') === 'Planted' ? 'success' : 'primary';
+
+    if (slot?.status === 'Planted') {
+      return 'success';
+    }
+
+    if (slot?.status === 'Transplanted') {
+      return 'error';
+    }
+
+    return 'primary';
   }, [plant, slot?.status]);
 
   return (

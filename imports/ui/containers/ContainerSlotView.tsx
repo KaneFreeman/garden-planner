@@ -99,22 +99,47 @@ const ContainerSlot = () => {
     [updateSlot]
   );
 
-  const renderPlant = useCallback((value: Plant | undefined) => {
+  const onPlantClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (slot.plant) {
+        event.stopPropagation();
+        navigate(`/plant/${slot.plant}`);
+      }
+    },
+    [navigate, slot.plant]
+  );
+
+  const renderPlant = useCallback((value: Plant | undefined, listType: 'value' | 'options') => {
     if (!value) {
       return undefined;
+    }
+
+    if (listType === 'value') {
+      return {
+        raw: (
+          <Button variant="text" onClick={onPlantClick} sx={{ ml: -1 }}>
+            {value.name}
+          </Button>
+        ),
+        avatar: <PlantAvatar plant={value} />
+      };
     }
 
     return {
       primary: value.name,
       avatar: <PlantAvatar plant={value} />
     };
-  }, []);
+  }, [onPlantClick]);
 
   const updateStatus = useCallback(
     (value: Status) => {
       if (value) {
         if (value === 'Planted') {
           setShowHowManyPlanted(true);
+          return;
+        }
+        if (value === 'Transplanted') {
+          updateSlot({ status: value, transplantedDate: new Date() });
           return;
         }
         updateSlot({ status: value });
@@ -134,8 +159,15 @@ const ContainerSlot = () => {
       return undefined;
     }
 
+    let color: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' = 'default';
+    if (value === 'Planted') {
+      color = 'success';
+    } else if (value === 'Transplanted') {
+      color = 'error';
+    }
+
     return {
-      chip: <Chip label={value} color={value === 'Not Planted' ? 'default' : 'success'} />
+      raw: <Chip label={value} color={color} />
     };
   }, []);
 
@@ -165,7 +197,7 @@ const ContainerSlot = () => {
           defaultValue="Not Planted"
           options={STATUSES}
           onChange={updateStatus}
-          render={renderStatus}
+          renderer={renderStatus}
           sx={{ mt: 1 }}
         />
         <DrawerInlineSelect
@@ -174,10 +206,10 @@ const ContainerSlot = () => {
           noValueLabel="No plant"
           options={plants}
           onChange={updatePlant}
-          render={renderPlant}
+          renderer={renderPlant}
           sx={{ mt: 1 }}
         />
-        {slot.status === 'Planted' ? (
+        {slot.status && slot.status !== 'Not Planted' ? (
           <>
             <DateInlineField
               label="Planted Date"
@@ -192,6 +224,13 @@ const ContainerSlot = () => {
               min={0}
             />
           </>
+        ) : null}
+        {slot.status === 'Transplanted' ? (
+          <DateInlineField
+            label="Transplanted Date"
+            value={slot.transplantedDate}
+            onChange={(transplantedDate) => updateSlot({ transplantedDate })}
+          />
         ) : null}
         <PicturesView
           key="container-slot-view-pictures"

@@ -28,13 +28,16 @@ interface BaseDrawerInlineSelectProps<T> {
   value: T | undefined;
   options: T[];
   onChange: (value: T) => void;
-  render: (value: T | undefined) =>
+  renderer: (
+    value: T | undefined,
+    type: 'value' | 'options'
+  ) =>
     | {
         primary?: string;
         secondary?: string;
         icon?: React.ReactNode;
         avatar?: React.ReactNode;
-        chip?: React.ReactNode;
+        raw?: React.ReactNode;
       }
     | undefined;
   sx?: SxProps<Theme> | undefined;
@@ -47,7 +50,7 @@ function hasDefault<T>(props: DrawerInlineSelectProps<T>): props is DefaultDrawe
 }
 
 const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInlineSelectProps<T>) => {
-  const { label, value, options, onChange, render, sx } = props;
+  const { label, value, options, onChange, renderer, sx } = props;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -75,7 +78,7 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
 
   const renderListItem = useCallback(
     (input: T | undefined, key: string, listType: 'value' | 'options') => {
-      let result = render(input);
+      let result = renderer(input, listType);
       if (
         isNullish(result) ||
         (listType === 'options' &&
@@ -95,7 +98,7 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
         }
 
         const { defaultValue } = props;
-        result = render(defaultValue);
+        result = renderer(defaultValue, listType);
         if (isNullish(result)) {
           return null;
         }
@@ -111,11 +114,11 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
           {result.avatar ? <ListItemAvatar sx={{ display: 'flex' }}>{result.avatar}</ListItemAvatar> : null}
           {result.icon ? <ListItemIcon>{result.icon}</ListItemIcon> : null}
           {result.primary ? <ListItemText primary={result.primary} secondary={result.secondary} /> : null}
-          {result.chip ? result.chip : null}
+          {result.raw ? result.raw : null}
         </ListItem>
       );
     },
-    [props, onClickHandler, render, value]
+    [props, onClickHandler, renderer, value]
   );
 
   const valueRenderResult = useMemo(() => renderListItem(value, 'value', 'value'), [renderListItem, value]);

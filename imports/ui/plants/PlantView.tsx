@@ -118,7 +118,7 @@ const PlantView = () => {
           noValueLabel="No plant type"
           options={PLANT_TYPES}
           onChange={(type) => updatePlant({ type })}
-          render={renderPlantType}
+          renderer={renderPlantType}
           sx={{ mt: 1 }}
         />
         <TextInlineField
