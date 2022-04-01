@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { Comment } from '../../../api/Containers';
+import { Comment } from '../../../api/Common';
 import { isNotEmpty } from '../../utility/string.util';
 import TextField from '../TextField';
 

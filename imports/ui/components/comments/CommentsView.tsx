@@ -3,8 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
-import { Picture } from '../../../api/Common';
-import { Comment } from '../../../api/Containers';
+import { Picture, Comment } from '../../../api/Common';
 import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 

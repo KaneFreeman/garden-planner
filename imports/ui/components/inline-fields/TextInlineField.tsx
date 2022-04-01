@@ -5,13 +5,43 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '../TextField';
 
 interface TextInlineFieldProps {
-  label: React.ReactNode;
+  label?: React.ReactNode;
+  labelVariant?:
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'h6'
+    | 'subtitle1'
+    | 'subtitle2'
+    | 'body1'
+    | 'body2'
+    | 'caption'
+    | 'button'
+    | 'overline'
+    | 'inherit';
   value: string | undefined;
+  valueVariant?:
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'h6'
+    | 'subtitle1'
+    | 'subtitle2'
+    | 'body1'
+    | 'body2'
+    | 'caption'
+    | 'button'
+    | 'overline'
+    | 'inherit';
   onChange(value: string | undefined): void;
   renderer?: (value: string | undefined) => React.ReactNode;
 }
 
-const TextInlineField = ({ label, value, onChange, renderer }: TextInlineFieldProps) => {
+const TextInlineField = ({ label, labelVariant = 'subtitle1', value, valueVariant = 'body1', onChange, renderer }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
@@ -61,14 +91,16 @@ const TextInlineField = ({ label, value, onChange, renderer }: TextInlineFieldPr
 
   return (
     <Box onClick={open ? undefined : handleOpen}>
-      <Typography
-        variant="subtitle1"
-        component="div"
-        sx={{ flexGrow: 1, mt: 2, display: 'flex', alignItems: 'center' }}
-        color="GrayText"
-      >
-        {label}
-      </Typography>
+      {label ? (
+        <Typography
+          variant={labelVariant}
+          component="div"
+          sx={{ flexGrow: 1, mt: 2, display: 'flex', alignItems: 'center' }}
+          color="GrayText"
+        >
+          {label}
+        </Typography>
+      ) : null}
       {open ? (
         <TextField
           autoFocus
@@ -90,7 +122,7 @@ const TextInlineField = ({ label, value, onChange, renderer }: TextInlineFieldPr
         />
       ) : (
         <Typography
-          variant="body1"
+          variant={valueVariant}
           component="div"
           sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center' }}
         >

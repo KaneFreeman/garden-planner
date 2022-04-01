@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import { Picture } from './Common';
+import { Picture, Comment } from './Common';
 
 export const ARTICHOKE = 'Artichoke';
 export const ARUGULA = 'Arugula';
@@ -183,7 +183,9 @@ export interface Plant {
   name: string;
   type?: PlantType;
   url?: string;
+  daysToMaturity?: [number | undefined, number | undefined];
   pictures?: Picture[];
+  comments?: Comment[];
 }
 
 export const PlantsCollection = new Mongo.Collection<Plant>('plants');

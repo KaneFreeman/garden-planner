@@ -13,8 +13,7 @@ import {
   Typography
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Picture } from '../../../api/Common';
-import { Comment } from '../../../api/Containers';
+import { Picture, Comment } from '../../../api/Common';
 import ReplaceAll from '../../utility/markup.util';
 import PictureView from '../pictures/PictureView';
 

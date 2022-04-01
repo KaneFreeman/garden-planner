@@ -4,3 +4,8 @@ export interface Picture {
   dataUrl: string;
   deleted?: boolean;
 }
+
+export interface Comment {
+  date: Date;
+  text: string;
+}
