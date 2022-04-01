@@ -1,8 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState } from 'react';
 import { Box, Dialog, Typography } from '@mui/material';
-import { Picture } from '../../../api/Common';
-import { Comment } from '../../../api/Containers';
+import { Picture, Comment } from '../../../api/Common';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
 import './PicturesView.css';

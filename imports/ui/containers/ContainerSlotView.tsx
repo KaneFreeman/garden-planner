@@ -15,8 +15,8 @@ import {
   Typography
 } from '@mui/material';
 import { useTracker } from 'meteor/react-meteor-data';
-import { Picture } from '../../api/Common';
-import { Comment, ContainersCollection, Slot, Status, STATUSES } from '../../api/Containers';
+import { Picture, Comment } from '../../api/Common';
+import { ContainersCollection, Slot, Status, STATUSES } from '../../api/Containers';
 import { PlantsCollection, Plant } from '../../api/Plants';
 import PicturesView from '../components/pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';

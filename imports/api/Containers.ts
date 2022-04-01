@@ -1,10 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import { Picture } from './Common';
-
-export interface Comment {
-  date: Date;
-  text: string;
-}
+import { Picture, Comment } from './Common';
 
 export const NOT_PLANTED = 'Not Planted';
 export const PLANTED = 'Planted';

@@ -15,12 +15,14 @@ import {
   IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Picture } from '../../api/Common';
+import { Picture, Comment } from '../../api/Common';
 import { Plant, PlantsCollection, PlantType, PLANT_TYPES } from '../../api/Plants';
 import PicturesView from '../components/pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantDataView from './PlantDataView';
+import CommentsView from '../components/comments/CommentsView';
+import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
 
 const PlantView = () => {
   const { id } = useParams();
@@ -50,6 +52,17 @@ const PlantView = () => {
   const handleOnClose = useCallback(() => setDeleting(false), []);
 
   const updatePictures = useCallback((pictures: Picture[]) => updatePlant({ pictures }), [updatePlant]);
+
+  const updateComments = useCallback(
+    (comments: Comment[], pictures?: Picture[]) => {
+      if (pictures) {
+        updatePlant({ comments, pictures });
+        return;
+      }
+      updatePlant({ comments });
+    },
+    [updatePlant]
+  );
 
   const onUrlClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -84,7 +97,7 @@ const PlantView = () => {
       <Box sx={{ p: 2, width: '100%' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {plant.name}
+            <TextInlineField valueVariant="h6" value={plant.name} onChange={(name) => updatePlant({ name })} />
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
                 aria-label="delete"
@@ -120,8 +133,14 @@ const PlantView = () => {
             ) : null
           }
         />
+        <NumberRangeInlineField
+          label="Days to Maturity"
+          value={plant.daysToMaturity}
+          onChange={(daysToMaturity) => updatePlant({ daysToMaturity })}
+        />
         <PlantDataView type={plant.type} />
-        <PicturesView pictures={plant.pictures} alt={plant.name} onChange={updatePictures} />
+        <PicturesView pictures={plant.pictures} comments={plant.comments} alt={plant.name} onChange={updatePictures} />
+        <CommentsView comments={plant.comments} alt={plant.name} pictures={plant.pictures} onChange={updateComments} />
       </Box>
       <Dialog
         open={deleting}
