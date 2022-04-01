@@ -15,10 +15,12 @@ import {
   IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Plant, PlantsCollection } from '../../api/Plants';
 import { Picture } from '../../api/Common';
+import { Plant, PlantsCollection, PlantType, PLANT_TYPES } from '../../api/Plants';
 import PicturesView from '../components/pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
+import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
+import PlantDataView from './PlantDataView';
 
 const PlantView = () => {
   const { id } = useParams();
@@ -59,6 +61,16 @@ const PlantView = () => {
     [plant]
   );
 
+  const renderPlantType = useCallback((value: PlantType | undefined) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return {
+      primary: value
+    };
+  }, []);
+
   if (!plant) {
     return (
       <Box sx={{ width: '100%', mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -87,18 +99,28 @@ const PlantView = () => {
             </Box>
           </Box>
         </Typography>
+        <DrawerInlineSelect
+          label="Type"
+          value={plant.type}
+          noValueLabel="No plant type"
+          options={PLANT_TYPES}
+          onChange={(type) => updatePlant({ type })}
+          render={renderPlantType}
+          sx={{ mt: 1 }}
+        />
         <TextInlineField
           label="Url"
           value={plant.url}
-          onChange={(value) => updatePlant({ url: value })}
+          onChange={(url) => updatePlant({ url })}
           renderer={(value) =>
             value ? (
-              <Button variant="text" onClick={onUrlClick}>
+              <Button variant="text" onClick={onUrlClick} sx={{ ml: -1 }}>
                 {value}
               </Button>
             ) : null
           }
         />
+        <PlantDataView type={plant.type} />
         <PicturesView pictures={plant.pictures} alt={plant.name} onChange={updatePictures} />
       </Box>
       <Dialog

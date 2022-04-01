@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 
-interface SimpleFieldProps {
+interface SimpleInlineFieldProps {
   label: React.ReactNode;
   value: React.ReactNode;
 }
 
-const SimpleField = ({ label, value }: SimpleFieldProps) => {
+const SimpleInlineField = ({ label, value }: SimpleInlineFieldProps) => {
   return (
     <>
       <Typography
@@ -20,7 +20,7 @@ const SimpleField = ({ label, value }: SimpleFieldProps) => {
       <Typography
         variant="body1"
         component="div"
-        sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center' }}
+        sx={{ mt: 1, flexGrow: 1, minHeight: 32, display: 'flex', alignItems: 'center' }}
       >
         {value}
       </Typography>
@@ -28,4 +28,4 @@ const SimpleField = ({ label, value }: SimpleFieldProps) => {
   );
 };
 
-export default SimpleField;
+export default SimpleInlineField;
