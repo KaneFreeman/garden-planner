@@ -4,6 +4,7 @@ import { Picture } from './Common';
 export interface Plant {
   _id?: string;
   name: string;
+  url?: string;
   pictures?: Picture[];
 }
 

@@ -37,7 +37,7 @@ const Actions = () => {
           actions: 'speedDial-actions'
         }}
         ariaLabel="Add menu"
-        sx={{ position: 'relative', width: 40, height: 40, zIndex: 1102 }}
+        sx={{ position: 'relative', width: 40, height: 36, zIndex: 1102 }}
         icon={<SpeedDialIcon />}
         FabProps={{ size: 'small', onClick: handleOpen }}
         onClose={handleClose}

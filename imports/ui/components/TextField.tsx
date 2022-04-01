@@ -1,5 +1,12 @@
 import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
-import { TextField as MuiTextField, InputBaseComponentProps, SxProps, Theme } from '@mui/material';
+import {
+  TextField as MuiTextField,
+  InputBaseComponentProps,
+  SxProps,
+  Theme,
+  InputAdornment,
+  InputProps
+} from '@mui/material';
 import { isNotEmpty } from '../utility/string.util';
 
 interface TextFieldProps {
@@ -19,10 +26,12 @@ interface TextFieldProps {
   rows?: number;
   autoFocus?: boolean;
   variant?: 'outlined' | 'filled' | 'standard';
+  startAdornment?: React.ReactNode;
+  endAdornment?: React.ReactNode;
 }
 
 const TextField = (props: TextFieldProps) => {
-  const { onChange, error, variant = 'standard', autoFocus, ...otherProps } = props;
+  const { onChange, error, variant = 'standard', autoFocus, startAdornment, endAdornment, ...otherProps } = props;
   const id = useMemo(() => otherProps.label?.toLowerCase().replace(' ', '_'), [otherProps.label]);
 
   const [isEmpty, setIsEmpty] = useState(
@@ -37,6 +46,22 @@ const TextField = (props: TextFieldProps) => {
   if ('value' in otherProps || !('defaultValue' in otherProps)) {
     otherProps.value = otherProps.value ?? '';
   }
+
+  const inputProps: Partial<InputProps> = useMemo(() => {
+    const allInputProps: Partial<InputProps> = {};
+    const baseInputProps: InputBaseComponentProps = {};
+
+    if (startAdornment !== undefined) {
+      allInputProps.startAdornment = <InputAdornment position="start">{startAdornment}</InputAdornment>;
+    }
+
+    if (endAdornment !== undefined) {
+      allInputProps.endAdornment = <InputAdornment position="end">{endAdornment}</InputAdornment>;
+    }
+
+    allInputProps.inputProps = baseInputProps;
+    return allInputProps;
+  }, [endAdornment, startAdornment]);
 
   const handleOnChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback(
     (event) => {
@@ -60,6 +85,7 @@ const TextField = (props: TextFieldProps) => {
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}
       autoFocus={autoFocus}
+      InputProps={inputProps}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...otherProps}
     />
