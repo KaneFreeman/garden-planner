@@ -134,6 +134,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
             fullWidth
             renderInput={(params) => <MuiTextField {...params} label="Type" />}
             sx={{ mt: 1, mb: 1 }}
+            onChange={(_, newValue) => update({ type: newValue ?? undefined })}
           />
           <PictureUpload id="new-plant-picture" onChange={addPicture} />
           {editData?.pictures?.map((picture, pictureIndex) => (

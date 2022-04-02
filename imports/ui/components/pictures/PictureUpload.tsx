@@ -1,9 +1,11 @@
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback } from 'react';
 import { IconButton, styled } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import { Picture } from '../../../api/Common';
+import generateThumbnail from '../../utility/thumbnail.util';
 
 const Input = styled('input')({
   display: 'none'
@@ -23,10 +25,17 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
       reader.addEventListener(
         'load',
         function () {
-          if (typeof reader.result === 'string') {
-            onChange({
-              date: new Date(),
-              dataUrl: reader.result
+          const dataUrl = reader.result;
+          if (dataUrl === 'string') {
+            console.log('dataUrl!', dataUrl);
+            // eslint-disable-next-line promise/always-return
+            generateThumbnail(dataUrl, { width: 80, height: 80 }).then((thumbnail) => {
+              console.log('thumbnail!', thumbnail);
+              onChange({
+                date: new Date(),
+                dataUrl,
+                thumbnail
+              });
             });
             // eslint-disable-next-line no-param-reassign
             event.target.value = '';
