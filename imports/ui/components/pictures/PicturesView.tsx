@@ -78,7 +78,7 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
           return (
             <PictureView
               key={`picture-${picture.id}`}
-              picture={picture.dataUrl}
+              picture={picture.thumbnail ?? picture.dataUrl}
               alt={alt}
               onDelete={() => removePicture(pictureIndex)}
               size="small"

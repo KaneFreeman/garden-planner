@@ -2,7 +2,7 @@
   "name": "garden-planner",
   "private": true,
   "scripts": {
-    "start": "MONGO_URL=mongodb://localhost:27017/garden-planner meteor run --settings settings.json --port 3100",
+    "start": "meteor run --settings settings.json --port 3000",
     "build": "docker build . -t garden-planner",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",

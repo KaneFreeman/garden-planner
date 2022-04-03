@@ -126,7 +126,8 @@ const ContainerSlot = () => {
     }
 
     return {
-      primary: value.name
+      primary: value.name,
+      avatar: <PlantAvatar plant={value} />
     };
   }, [onPlantClick]);
 
