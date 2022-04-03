@@ -15,7 +15,7 @@ import {
   Typography
 } from '@mui/material';
 import { useTracker } from 'meteor/react-meteor-data';
-import { Picture, Comment } from '../../api/Common';
+import { PictureData, Comment } from '../../api/Common';
 import { ContainersCollection, Slot, Status, STATUSES } from '../../api/Containers';
 import { PlantsCollection, Plant } from '../../api/Plants';
 import PicturesView from '../components/pictures/PicturesView';
@@ -59,7 +59,7 @@ const ContainerSlot = () => {
   );
 
   const updatePictures = useCallback(
-    (pictures: Picture[]) => {
+    (pictures: PictureData[]) => {
       if (id && container) {
         updateSlot({ pictures });
       }
@@ -68,7 +68,7 @@ const ContainerSlot = () => {
   );
 
   const updateComments = useCallback(
-    (comments: Comment[], pictures?: Picture[]) => {
+    (comments: Comment[], pictures?: PictureData[]) => {
       if (id && container) {
         if (pictures) {
           updateSlot({ comments, pictures });

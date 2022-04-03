@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import { Picture, Comment } from './Common';
+import { PictureData, Comment } from './Common';
 
 export const NOT_PLANTED = 'Not Planted';
 export const PLANTED = 'Planted';
@@ -14,7 +14,7 @@ export interface Slot {
   plantedDate?: Date;
   transplantedDate?: Date;
   comments?: Comment[];
-  pictures?: Picture[];
+  pictures?: PictureData[];
 }
 
 export interface Container {

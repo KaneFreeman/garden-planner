@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import { Picture, Comment } from './Common';
+import { PictureData, Comment } from './Common';
 
 export const ARTICHOKE = 'Artichoke';
 export const ARUGULA = 'Arugula';
@@ -249,12 +249,12 @@ export const PLANT_TYPES: PlantType[] = [
 ];
 
 export interface Plant {
-  _id?: string;
+  _id: string;
   name: string;
   type?: PlantType;
   url?: string;
   daysToMaturity?: [number | undefined, number | undefined];
-  pictures?: Picture[];
+  pictures?: PictureData[];
   comments?: Comment[];
 }
 

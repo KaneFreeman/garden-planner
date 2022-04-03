@@ -13,12 +13,12 @@ import {
   Typography
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Picture, Comment } from '../../../api/Common';
+import { PictureData, Comment } from '../../../api/Common';
 import ReplaceAll from '../../utility/markup.util';
 import PictureView from '../pictures/PictureView';
 
 interface CommentProps {
-  pictures?: Picture[];
+  pictures?: PictureData[];
   alt: string;
   comment: Comment;
   index: number;
@@ -42,7 +42,7 @@ const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) 
       formattedText = ReplaceAll(
         formattedText,
         new RegExp(`\\[[iI][mM][gG][ ]*${picture.id}\\]`),
-        <PictureView key={`comment-picture-${pictureIndex}`} picture={picture.dataUrl} alt={alt} />
+        <PictureView key={`comment-picture-${pictureIndex}`} picture={picture.thumbnail} alt={alt} />
       );
     });
 

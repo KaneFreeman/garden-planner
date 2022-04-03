@@ -23,7 +23,7 @@ const PlantAvatar = React.memo(({ plant, size = 40, variant }: PlantAvatarProper
   }
 
   return (
-    <Avatar variant={variant} src={plant.pictures[0].thumbnail ?? plant.pictures[0].dataUrl} alt={plant.name} sx={{ width: size, height: size }} />
+    <Avatar variant={variant} src={plant.pictures[0].thumbnail} alt={plant.name} sx={{ width: size, height: size }} />
   );
 });
 

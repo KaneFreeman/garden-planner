@@ -15,7 +15,7 @@ import {
   IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Picture, Comment } from '../../api/Common';
+import { PictureData, Comment } from '../../api/Common';
 import { Plant, PlantsCollection, PlantType, PLANT_TYPES } from '../../api/Plants';
 import PicturesView from '../components/pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
@@ -51,10 +51,10 @@ const PlantView = () => {
   }, [id, navigate]);
   const handleOnClose = useCallback(() => setDeleting(false), []);
 
-  const updatePictures = useCallback((pictures: Picture[]) => updatePlant({ pictures }), [updatePlant]);
+  const updatePictures = useCallback((pictures: PictureData[]) => updatePlant({ pictures }), [updatePlant]);
 
   const updateComments = useCallback(
-    (comments: Comment[], pictures?: Picture[]) => {
+    (comments: Comment[], pictures?: PictureData[]) => {
       if (pictures) {
         updatePlant({ comments, pictures });
         return;

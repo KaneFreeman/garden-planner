@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Box, Menu, MenuItem, styled } from '@mui/material';
+import { Box, Menu, MenuItem, styled, SxProps, Theme } from '@mui/material';
 
 interface ImageProps {
   size: number | string;
@@ -19,9 +19,10 @@ interface PictureProps {
   size?: 'small' | 'large' | 'full';
   onClick?: () => void;
   onDelete?: () => void;
+  sx?: SxProps<Theme> | undefined;
 }
 
-const PictureView = ({ picture, alt, size = 'large', onClick, onDelete }: PictureProps) => {
+const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, sx }: PictureProps) => {
   const handleOnDeleteConfirm = useCallback(() => {
     onDelete?.();
   }, [onDelete]);
@@ -68,10 +69,10 @@ const PictureView = ({ picture, alt, size = 'large', onClick, onDelete }: Pictur
 
   return (
     <Box
-      sx={{ display: 'flex', alignItems: 'flex-start' }}
+      sx={{ display: 'flex', alignItems: 'flex-start', ...sx }}
       onClick={contextMenu == null ? onClick : undefined}
       onContextMenu={handleContextMenu}
-      style={{ cursor: 'context-menu' }}
+      style={{ cursor: onClick ? 'pointer' : 'context-menu' }}
     >
       <Image src={picture} alt={alt} size={imageSize} />
       <Menu

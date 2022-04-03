@@ -10,7 +10,7 @@ import {
   TextField as MuiTextField
 } from '@mui/material';
 import { useTracker } from 'meteor/react-meteor-data';
-import { Picture } from '../../api/Common';
+import { PictureData } from '../../api/Common';
 import { Plant, PlantsCollection, PLANT_TYPES } from '../../api/Plants';
 import TextField from '../components/TextField';
 import PictureUpload from '../components/pictures/PictureUpload';
@@ -75,7 +75,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
   );
 
   const addPicture = useCallback(
-    (picture: Omit<Picture, 'id'>) => {
+    (picture: Omit<PictureData, 'id'>) => {
       const oldPictures = editData?.pictures ?? [];
       update({
         pictures: [
@@ -140,7 +140,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
           {editData?.pictures?.map((picture, pictureIndex) => (
             <PictureView
               key={`picture-${picture.id}`}
-              picture={picture.dataUrl}
+              picture={picture.thumbnail}
               alt={editData?.name ?? 'New plant'}
               onDelete={() => removePicture(pictureIndex)}
               size="small"

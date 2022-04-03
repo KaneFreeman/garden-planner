@@ -1,23 +1,24 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState } from 'react';
 import { Box, Dialog, Typography } from '@mui/material';
-import { Picture, Comment } from '../../../api/Common';
+import { PictureData, Comment } from '../../../api/Common';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
 import './PicturesView.css';
+import { PicturesCollection } from '../../../api/Pictures';
 
 interface PicturesViewProps {
-  pictures?: Picture[];
+  pictures?: PictureData[];
   comments?: Comment[];
   alt: string;
-  onChange: (pictures: Picture[]) => void;
+  onChange: (pictures: PictureData[]) => void;
 }
 
 const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) => {
   const [fullViewImage, setFullViewImage] = useState<string | null>(null);
 
   const addPicture = useCallback(
-    (picture: Omit<Picture, 'id'>) => {
+    (picture: Omit<PictureData, 'id'>) => {
       const oldPictures = pictures ?? [];
       onChange([
         ...oldPictures,
@@ -63,6 +64,10 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
     setFullViewImage(null);
   }, []);
 
+  const onFullViewImageOpen = useCallback((pictureId: string) => {
+    setFullViewImage(PicturesCollection.findOne(pictureId)?.dataUrl ?? '');
+  }, []);
+
   return (
     <>
       <Typography variant="subtitle1" component="div" sx={{ flexGrow: 1, mt: 2 }} color="GrayText">
@@ -78,11 +83,11 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
           return (
             <PictureView
               key={`picture-${picture.id}`}
-              picture={picture.thumbnail ?? picture.dataUrl}
+              picture={picture.thumbnail}
               alt={alt}
               onDelete={() => removePicture(pictureIndex)}
               size="small"
-              onClick={() => setFullViewImage(picture.dataUrl)}
+              onClick={() => onFullViewImageOpen(picture.pictureId ?? '')}
             />
           );
         })}

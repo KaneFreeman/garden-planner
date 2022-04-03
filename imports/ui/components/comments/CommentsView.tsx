@@ -3,15 +3,15 @@ import React, { useCallback, useState } from 'react';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
-import { Picture, Comment } from '../../../api/Common';
+import { PictureData, Comment } from '../../../api/Common';
 import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 
 interface CommentsViewProps {
   comments?: Comment[];
-  pictures?: Picture[];
+  pictures?: PictureData[];
   alt: string;
-  onChange: (comments: Comment[], pictures?: Picture[]) => void;
+  onChange: (comments: Comment[], pictures?: PictureData[]) => void;
 }
 
 const CommentsView = ({ comments, pictures, alt, onChange }: CommentsViewProps) => {
@@ -46,7 +46,7 @@ const CommentsView = ({ comments, pictures, alt, onChange }: CommentsViewProps) 
           cleanedUpPictures.push(picture);
         }
         return cleanedUpPictures;
-      }, [] as Picture[]);
+      }, [] as PictureData[]);
 
       onChange(newComments, newPictures);
     },

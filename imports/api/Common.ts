@@ -1,7 +1,8 @@
-export interface Picture {
+export interface PictureData {
   date: Date;
   id: number;
-  dataUrl: string;
+  pictureId?: string;
+  dataUrl?: string;
   thumbnail: string;
   deleted?: boolean;
 }

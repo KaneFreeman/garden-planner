@@ -4,8 +4,9 @@ import React, { useCallback } from 'react';
 import { IconButton, styled } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import { Picture } from '../../../api/Common';
+import { PictureData } from '../../../api/Common';
 import generateThumbnail from '../../utility/thumbnail.util';
+import { PicturesCollection } from '../../../api/Pictures';
 
 const Input = styled('input')({
   display: 'none'
@@ -13,7 +14,7 @@ const Input = styled('input')({
 
 interface PictureUploadProps {
   id: string;
-  onChange(picture: Omit<Picture, 'id'>): void;
+  onChange(picture: Omit<PictureData, 'id'>): void;
 }
 
 const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
@@ -27,11 +28,15 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
         function () {
           const dataUrl = reader.result;
           if (typeof dataUrl === 'string') {
+            const pictureId = PicturesCollection.insert({
+              dataUrl
+            });
+
             // eslint-disable-next-line promise/always-return
             generateThumbnail(dataUrl, { width: 80, height: 80 }).then((thumbnail) => {
               onChange({
                 date: new Date(),
-                dataUrl,
+                pictureId,
                 thumbnail
               });
             });
