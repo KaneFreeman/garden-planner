@@ -87,7 +87,7 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
               alt={alt}
               onDelete={() => removePicture(pictureIndex)}
               size="small"
-              onClick={() => onFullViewImageOpen(picture.pictureId ?? '')}
+              onClick={() => onFullViewImageOpen(picture.pictureId)}
             />
           );
         })}
