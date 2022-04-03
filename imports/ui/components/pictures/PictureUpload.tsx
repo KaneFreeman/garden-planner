@@ -19,7 +19,6 @@ interface PictureUploadProps {
 const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
   const onChangeHandler = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      console.log('onChangeHandler!');
       const file = event.target.files?.[0];
       const reader = new FileReader();
 
@@ -27,12 +26,9 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
         'load',
         function () {
           const dataUrl = reader.result;
-          console.log('dataUrl raw!', dataUrl);
           if (typeof dataUrl === 'string') {
-            console.log('dataUrl!', dataUrl);
             // eslint-disable-next-line promise/always-return
             generateThumbnail(dataUrl, { width: 80, height: 80 }).then((thumbnail) => {
-              console.log('thumbnail!', thumbnail);
               onChange({
                 date: new Date(),
                 dataUrl,
@@ -47,7 +43,6 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
       );
 
       if (file) {
-        console.log('file!', file);
         reader.readAsDataURL(file);
       }
     },

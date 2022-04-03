@@ -92,8 +92,6 @@ const PlantView = () => {
     );
   }
 
-  console.log(plant);
-
   return (
     <>
       <Box sx={{ p: 2, width: '100%' }}>
