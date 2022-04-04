@@ -59,7 +59,7 @@ const Header = () => {
     }, [current.length, overdue.length]);
 
   return (
-    <AppBar position="sticky" sx={{ top: 0 }}>
+    <AppBar position="fixed" sx={{ top: 0 }}>
       <Toolbar>
         <IconButton aria-label="menu" onClick={toggleDrawer(true)}>
           <MenuIcon />

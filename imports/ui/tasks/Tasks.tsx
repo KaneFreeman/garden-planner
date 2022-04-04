@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -10,17 +11,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
-  TextField as MuiTextField
+  TextField as MuiTextField,
+  List
 } from '@mui/material';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { Task, TasksCollection } from '../../api/Tasks';
 import useTasks from '../hooks/useTasks';
 import Tabs from '../components/tabs/Tabs';
@@ -53,7 +56,9 @@ const Tasks = () => {
   );
 
   const renderTask = useCallback(
-    (task: Task, showStart = false) => {
+    (key: string, task: Task, index: number, options?: { showStart: boolean; style?: React.CSSProperties }) => {
+      const { showStart = false, style } = options || {};
+
       let secondaryText: string;
       if (task.completedOn !== null) {
         secondaryText = `Completed ${format(task.completedOn, 'MMM d')}`;
@@ -62,7 +67,7 @@ const Tasks = () => {
       }
 
       return (
-        <ListItem key={`task-${task._id}`} disablePadding>
+        <ListItem style={style} key={`${key}-${index}`} disablePadding sx={{ height: 72 }}>
           <ListItemButton onClick={onClickHandler(task)}>
             <ListItemIcon>
               {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
@@ -73,6 +78,13 @@ const Tasks = () => {
       );
     },
     [onClickHandler]
+  );
+
+  const renderVirtualTask = useCallback(
+    (key: string, tasksToRender: Task[], showStart = false) =>
+      ({ index, style }: ListChildComponentProps) =>
+        renderTask(key, tasksToRender[index], index, { showStart, style }),
+    [renderTask]
   );
 
   const markTaskAsCompleted = useCallback(() => {
@@ -108,30 +120,32 @@ const Tasks = () => {
             </Tabs>
             <TabPanel ariaLabel="tasks open tab" value={tab} index={0}>
               {overdue.length > 0 || current.length > 0 || next30Days.length > 0 ? (
-                <Box sx={{ p: 2 }}>
+                <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {overdue.length > 0 ? (
-                    <>
+                    <Box>
                       <Typography variant="h6">Overdue</Typography>
-                      <Box component="nav" aria-label="main tasks-overdue" sx={{ mb: 2 }}>
-                        <List>{overdue.map((task) => renderTask(task))}</List>
+                      <Box component="nav" aria-label="main tasks-overdue">
+                        <List>{overdue.map((task, index) => renderTask('overdue', task, index))}</List>
                       </Box>
-                    </>
+                    </Box>
                   ) : null}
                   {current.length > 0 ? (
-                    <>
+                    <Box>
                       <Typography variant="h6">Current</Typography>
-                      <Box component="nav" aria-label="main tasks-current" sx={{ mb: 2 }}>
-                        <List>{current.map((task) => renderTask(task))}</List>
+                      <Box component="nav" aria-label="main tasks-current">
+                        <List>{current.map((task, index) => renderTask('overdue', task, index))}</List>
                       </Box>
-                    </>
+                    </Box>
                   ) : null}
                   {next30Days.length > 0 ? (
-                    <>
+                    <Box>
                       <Typography variant="h6">Next 30 Days</Typography>
-                      <Box component="nav" aria-label="main tasks-future" sx={{ mb: 2 }}>
-                        <List>{next30Days.map((task) => renderTask(task, true))}</List>
+                      <Box component="nav" aria-label="main tasks-future">
+                        <List>
+                          {next30Days.map((task, index) => renderTask('overdue', task, index, { showStart: true }))}
+                        </List>
                       </Box>
-                    </>
+                    </Box>
                   ) : null}
                 </Box>
               ) : (
@@ -140,12 +154,32 @@ const Tasks = () => {
                 </Alert>
               )}
             </TabPanel>
-            <TabPanel ariaLabel="tasks closed tab" value={tab} index={1}>
+            <TabPanel
+              ariaLabel="tasks closed tab"
+              value={tab}
+              index={1}
+              sx={{ overflow: 'hidden', height: 'calc(100vh - 113px)' }}
+            >
               {completed.length > 0 ? (
-                <Box sx={{ p: 2 }}>
-                  <Typography variant="h6">Completed</Typography>
-                  <Box component="nav" aria-label="main tasks-complete" sx={{ mb: 2 }}>
-                    <List>{completed.map((task) => renderTask(task))}</List>
+                <Box sx={{ pl: 2, pr: 2, boxSizing: 'border-box', height: '100%' }}>
+                  <Box
+                    component="nav"
+                    aria-label="main tasks-complete"
+                    sx={{ boxSizing: 'border-box', height: '100%', mr: -2 }}
+                  >
+                    <AutoSizer>
+                      {({ height, width }) => (
+                        <FixedSizeList
+                          height={height}
+                          width={width}
+                          itemSize={72}
+                          itemCount={completed.length}
+                          overscanCount={5}
+                        >
+                          {renderVirtualTask('completed', completed)}
+                        </FixedSizeList>
+                      )}
+                    </AutoSizer>
                   </Box>
                 </Box>
               ) : (

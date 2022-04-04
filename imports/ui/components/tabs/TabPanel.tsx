@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, SxProps, Theme } from '@mui/material';
 
 export function a11yProps(ariaLabel: string, index: number) {
   return {
@@ -13,17 +13,19 @@ interface TabPanelProps {
   value: number;
   index: number;
   ariaLabel: string;
+  sx?: SxProps<Theme> | undefined;
 }
 
-export default function TabPanel({ children, value, index, ariaLabel }: TabPanelProps) {
+export default function TabPanel({ children, value, index, ariaLabel, sx }: TabPanelProps) {
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`${ariaLabel}-tabpanel-${index}`}
       aria-labelledby={`${ariaLabel}-tab-${index}`}
+      sx={sx}
     >
-      {value === index && <Box sx={{ p: 1 }}>{children}</Box>}
-    </div>
+      {value === index && children}
+    </Box>
   );
 }

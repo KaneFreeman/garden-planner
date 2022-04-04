@@ -29,7 +29,17 @@ const Main = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Header />
-      <Box sx={{ display: 'flex', width: '100%', boxSizing: 'border-box', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          boxSizing: 'border-box',
+          justifyContent: 'center',
+          height: 'calc(100vh - 64px)',
+          top: 64,
+          position: 'relative'
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
