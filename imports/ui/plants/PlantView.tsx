@@ -1,9 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTracker } from 'meteor/react-meteor-data';
 import {
   Box,
+  Breadcrumbs,
   Typography,
   CircularProgress,
   Button,
@@ -12,7 +13,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton
+  IconButton,
+  Link
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { PictureData, Comment } from '../../api/Common';
@@ -27,6 +29,9 @@ import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlin
 const PlantView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const backPath = searchParams.get('backPath');
+  const backLabel = searchParams.get('backLabel');
 
   const plant = useTracker(() => PlantsCollection.findOne(id), [id]);
 
@@ -95,23 +100,31 @@ const PlantView = () => {
   return (
     <>
       <Box sx={{ p: 2, width: '100%' }}>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextInlineField valueVariant="h6" value={plant.name} onChange={(name) => updatePlant({ name })} />
+        <Breadcrumbs aria-label="breadcrumb" separator="›">
+          {backPath && backLabel ? (
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            <Link underline="hover" color="inherit" onClick={() => navigate(backPath)} sx={{ cursor: 'pointer' }}>
+              <Typography variant="h6">{backLabel}</Typography>
+            </Link>
+          ) : null}
+          <Typography variant="h6" color="text.primary">
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                aria-label="delete"
-                color="error"
-                size="small"
-                sx={{ ml: 1 }}
-                onClick={handleOnDelete}
-                title="Delete picture"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+              <TextInlineField valueVariant="h6" value={plant.name} onChange={(name) => updatePlant({ name })} />
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton
+                  aria-label="delete"
+                  color="error"
+                  size="small"
+                  sx={{ ml: 1 }}
+                  onClick={handleOnDelete}
+                  title="Delete picture"
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Box>
             </Box>
-          </Box>
-        </Typography>
+          </Typography>
+        </Breadcrumbs>
         <DrawerInlineSelect
           label="Type"
           value={plant.type}

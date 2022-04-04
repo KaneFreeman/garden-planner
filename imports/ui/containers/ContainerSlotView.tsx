@@ -82,7 +82,7 @@ const ContainerSlot = () => {
 
   const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
 
-  const column = useMemo(() => Math.floor((indexNumber) / (container?.rows ?? 1)), [container?.rows, indexNumber]);
+  const column = useMemo(() => Math.floor(indexNumber / (container?.rows ?? 1)), [container?.rows, indexNumber]);
 
   const row = useMemo(() => {
     const rowDivisor = (container?.rows ?? 1) * column;
@@ -110,10 +110,10 @@ const ContainerSlot = () => {
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       if (slot.plant) {
         event.stopPropagation();
-        navigate(`/plant/${slot.plant}`);
+        navigate(`/plant/${slot.plant}?backPath=/container/${id}/slot/${index}&backLabel=${title}`);
       }
     },
-    [navigate, slot.plant]
+    [id, index, navigate, slot.plant, title]
   );
 
   const renderPlant = useCallback(
@@ -194,7 +194,12 @@ const ContainerSlot = () => {
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
         <Breadcrumbs aria-label="breadcrumb" separator="›">
           {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <Link underline="hover" color="inherit" onClick={() => navigate(`/container/${container._id}`)}>
+          <Link
+            underline="hover"
+            color="inherit"
+            onClick={() => navigate(`/container/${container._id}`)}
+            sx={{ cursor: 'pointer' }}
+          >
             <Typography variant="h6">{container.name}</Typography>
           </Link>
           <Typography variant="h6" color="text.primary">
