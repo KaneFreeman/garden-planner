@@ -35,8 +35,8 @@ const Main = () => {
           width: '100%',
           boxSizing: 'border-box',
           justifyContent: 'center',
-          height: 'calc(100vh - 64px)',
-          top: 64,
+          height: 'calc(100vh - 56px)',
+          top: '56px',
           position: 'relative'
         }}
       >
