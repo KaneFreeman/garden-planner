@@ -17,7 +17,10 @@ import {
   ListItemText,
   Typography,
   TextField as MuiTextField,
-  List
+  List,
+  Menu,
+  MenuItem,
+  DialogContentText
 } from '@mui/material';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -38,6 +41,53 @@ const Tasks = () => {
   const [completedOn, setCompletedOn] = useState<Date>(new Date());
 
   const { tasks, completed, overdue, next30Days, current } = useTasks();
+
+  const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+
+  const handleOnDelete = useCallback((task: Task) => setDeletingTask(task), []);
+  const handleOnDeleteConfirm = useCallback(() => {
+    if (deletingTask) {
+      TasksCollection.remove(deletingTask._id);
+      setDeletingTask(null);
+    }
+  }, [deletingTask]);
+  const handleOnClose = useCallback(() => setDeletingTask(null), []);
+
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number;
+    mouseY: number;
+    task: Task;
+  } | null>(null);
+
+  const handleContextMenu = useCallback(
+    (task: Task) => (event: React.MouseEvent) => {
+      event.preventDefault();
+      setContextMenu(
+        contextMenu === null
+          ? {
+              mouseX: event.clientX - 2,
+              mouseY: event.clientY - 4,
+              task
+            }
+          : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+            // Other native context menus might behave different.
+            // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+            null
+      );
+    },
+    [contextMenu]
+  );
+
+  const handleContextMenuClose = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  const handleOnDeleteClick = useCallback(() => {
+    if (contextMenu !== null) {
+      handleOnDelete(contextMenu.task);
+      setContextMenu(null);
+    }
+  }, [contextMenu, handleOnDelete]);
 
   const onClickHandler = useCallback(
     (task: Task) => () => {
@@ -70,10 +120,11 @@ const Tasks = () => {
       return (
         <ListItem className="task" style={style} key={`${key}-${index}`} disablePadding>
           <ListItemButton
-            onClick={onClickHandler(task)}
+            onClick={contextMenu == null ? onClickHandler(task) : undefined}
             sx={{
               width: '100%'
             }}
+            onContextMenu={task.type === 'Custom' ? handleContextMenu(task) : undefined}
           >
             <ListItemIcon>
               {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
@@ -90,7 +141,7 @@ const Tasks = () => {
         </ListItem>
       );
     },
-    [onClickHandler]
+    [contextMenu, handleContextMenu, onClickHandler]
   );
 
   const renderVirtualTask = useCallback(
@@ -260,13 +311,45 @@ const Tasks = () => {
         </DialogActions>
       </Dialog>
       {taskToMarkAsOpen !== null ? (
-        <Dialog open onClose={() => setTaskToMarkAsOpen(null)} maxWidth="xs" fullWidth>
+        <Dialog key="markAsOpen-dialog" open onClose={() => setTaskToMarkAsOpen(null)} maxWidth="xs" fullWidth>
           <DialogTitle>Mark as open</DialogTitle>
           <DialogContent>Mark task {`'${taskToMarkAsOpen?.text}'`} as open?</DialogContent>
           <DialogActions>
             <Button onClick={() => setTaskToMarkAsOpen(null)}>Cancel</Button>
             <Button onClick={markTaskAsOpen} variant="contained">
               Mark Open
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleContextMenuClose}
+        anchorReference="anchorPosition"
+        anchorPosition={contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
+      >
+        <MenuItem onClick={handleOnDeleteClick}>Delete</MenuItem>
+      </Menu>
+      {deletingTask !== null ? (
+        <Dialog
+          key="delete-dialog"
+          open
+          onClose={handleOnClose}
+          aria-labelledby="deleting-task-title"
+          aria-describedby="deleting-task-description"
+        >
+          <DialogTitle id="deleting-task-title">Delete task</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="deleting-task-description">
+              Are you sure you want to delete task {`'${deletingTask?.text}'`}?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleOnClose} color="primary" autoFocus>
+              Cancel
+            </Button>
+            <Button onClick={handleOnDeleteConfirm} color="error">
+              Delete
             </Button>
           </DialogActions>
         </Dialog>
