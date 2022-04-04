@@ -67,7 +67,9 @@ const Header = () => {
         }}
       >
         <IconButton aria-label="menu" onClick={toggleDrawer(true)}>
-          <MenuIcon />
+          <Badge badgeContent={taskCount} color={taskColor}>
+            <MenuIcon />
+          </Badge>
         </IconButton>
         <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
           <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
