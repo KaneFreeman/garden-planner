@@ -25,7 +25,7 @@ export default function useTasks() {
   const completed = useMemo(() => {
     const completedTasks = tasks.filter((task) => Boolean(task.completedOn));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    completedTasks.sort((a, b) => a.completedOn!.getTime() - b.completedOn!.getTime());
+    completedTasks.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
     return completedTasks;
   }, [tasks]);
   const overdue = useMemo(() => {
