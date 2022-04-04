@@ -29,7 +29,10 @@ const TaskModal = ({ open, onClose }: TaskModalProperties) => {
   });
 
   const handleOnClose = useCallback(() => {
-    setEditData(null);
+    setEditData({
+      start: new Date(),
+      due: new Date()
+    });
     onClose();
   }, [onClose]);
 
