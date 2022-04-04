@@ -82,9 +82,16 @@ const ContainerSlot = () => {
 
   const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
 
-  const column = useMemo(() => Math.floor((indexNumber + 1) / (container?.rows ?? 1)), [container?.rows, indexNumber]);
+  const column = useMemo(() => Math.floor((indexNumber) / (container?.rows ?? 1)), [container?.rows, indexNumber]);
 
-  const row = useMemo(() => indexNumber % ((container?.rows ?? 1) * column), [container?.rows, indexNumber, column]);
+  const row = useMemo(() => {
+    const rowDivisor = (container?.rows ?? 1) * column;
+    if (rowDivisor === 0) {
+      return indexNumber;
+    }
+
+    return indexNumber % rowDivisor;
+  }, [container?.rows, indexNumber, column]);
 
   const title = useMemo(() => `Row ${row + 1}, Column ${column + 1}`, [column, row]);
 
@@ -109,27 +116,30 @@ const ContainerSlot = () => {
     [navigate, slot.plant]
   );
 
-  const renderPlant = useCallback((value: Plant | undefined, listType: 'value' | 'options') => {
-    if (!value) {
-      return undefined;
-    }
+  const renderPlant = useCallback(
+    (value: Plant | undefined, listType: 'value' | 'options') => {
+      if (!value) {
+        return undefined;
+      }
 
-    if (listType === 'value') {
+      if (listType === 'value') {
+        return {
+          raw: (
+            <Button variant="text" onClick={onPlantClick} sx={{ ml: -1 }}>
+              {value.name}
+            </Button>
+          ),
+          avatar: <PlantAvatar plant={value} />
+        };
+      }
+
       return {
-        raw: (
-          <Button variant="text" onClick={onPlantClick} sx={{ ml: -1 }}>
-            {value.name}
-          </Button>
-        ),
+        primary: value.name,
         avatar: <PlantAvatar plant={value} />
       };
-    }
-
-    return {
-      primary: value.name,
-      avatar: <PlantAvatar plant={value} />
-    };
-  }, [onPlantClick]);
+    },
+    [onPlantClick]
+  );
 
   const updateStatus = useCallback(
     (value: Status) => {
