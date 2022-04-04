@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,7 +9,6 @@ import {
   Autocomplete,
   TextField as MuiTextField
 } from '@mui/material';
-import { useTracker } from 'meteor/react-meteor-data';
 import { PictureData } from '../../api/Common';
 import { Plant, PlantsCollection, PLANT_TYPES } from '../../api/Plants';
 import TextField from '../components/TextField';
@@ -18,28 +17,16 @@ import PictureView from '../components/pictures/PictureView';
 import './PlantModal.css';
 
 interface PlantModalProperties {
-  id?: string | undefined;
   open: boolean;
   onClose: () => void;
 }
 
-function isValidPlant(plant: Partial<Plant> | null): plant is Plant {
+function isValidPlant(plant: Partial<Plant> | null): plant is Omit<Plant, 'id'> {
   return plant?.name !== undefined;
 }
 
-const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
-  const plant = useTracker(() => {
-    if (!id) {
-      return undefined;
-    }
-    return PlantsCollection.findOne(id);
-  }, [id]);
-
+const PlantModal = ({ open, onClose }: PlantModalProperties) => {
   const [editData, setEditData] = useState<Partial<Plant> | null>(null);
-
-  useEffect(() => {
-    setEditData(plant ?? null);
-  }, [plant]);
 
   const handleOnClose = useCallback(() => {
     setEditData(null);
@@ -48,7 +35,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
 
   const onSave = useCallback(() => {
     if (isValidPlant(editData)) {
-      PlantsCollection.insert(editData as Plant);
+      PlantsCollection.insert(editData);
       handleOnClose();
     }
   }, [editData, handleOnClose]);
@@ -60,9 +47,6 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
     },
     [onSave]
   );
-
-  const title = useMemo(() => `${plant?._id === undefined ? 'Add' : 'Edit'} Plant`, [plant]);
-  const action = useMemo(() => (plant?._id === undefined ? 'Create' : 'Save'), [plant]);
 
   const update = useCallback(
     (data: Partial<Plant>) => {
@@ -116,7 +100,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle>Add Plant</DialogTitle>
       <DialogContent>
         <form name="plant-modal-form" onSubmit={onSubmit} noValidate>
           <TextField
@@ -151,7 +135,7 @@ const PlantModal = ({ id, open, onClose }: PlantModalProperties) => {
       <DialogActions>
         <Button onClick={handleOnClose}>Cancel</Button>
         <Button onClick={onSave} variant="contained">
-          {action}
+          Create
         </Button>
       </DialogActions>
     </Dialog>

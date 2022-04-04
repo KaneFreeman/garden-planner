@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import {
   AppBar,
+  Badge,
   Box,
   Drawer,
   IconButton,
@@ -15,8 +16,10 @@ import {
 import InboxIcon from '@mui/icons-material/Inbox';
 import GrassIcon from '@mui/icons-material/Grass';
 import MenuIcon from '@mui/icons-material/Menu';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import './Actions.css';
 import Actions from './Actions';
+import useTasks from './hooks/useTasks';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -37,8 +40,26 @@ const Header = () => {
     []
   );
 
+  const { overdue, current } = useTasks();
+
+  const {
+    taskCount,
+    taskColor
+  }: { taskCount: number; taskColor: 'primary' | 'secondary' | 'default' | 'error' | 'info' | 'success' | 'warning' } =
+    useMemo(() => {
+      if (overdue.length > 0) {
+        return { taskCount: overdue.length, taskColor: 'error' };
+      }
+
+      if (current.length > 0) {
+        return { taskCount: current.length, taskColor: 'primary' };
+      }
+
+      return { taskCount: 0, taskColor: 'default' };
+    }, [current.length, overdue.length]);
+
   return (
-    <AppBar position="sticky" sx={{ top: -1 }}>
+    <AppBar position="sticky" sx={{ top: 0 }}>
       <Toolbar>
         <IconButton aria-label="menu" onClick={toggleDrawer(true)}>
           <MenuIcon />
@@ -48,9 +69,22 @@ const Header = () => {
             <List disablePadding>
               <ListItem
                 button
-                key="Containers"
-                selected={pathname === '/' || pathname.startsWith('/container')}
+                key="Tasks"
+                selected={pathname === '/' || pathname.startsWith('/task')}
                 onClick={() => navigate('/')}
+              >
+                <ListItemIcon>
+                  <Badge badgeContent={taskCount} color={taskColor}>
+                    <TaskAltIcon />
+                  </Badge>
+                </ListItemIcon>
+                <ListItemText primary="Tasks" />
+              </ListItem>
+              <ListItem
+                button
+                key="Containers"
+                selected={pathname === '/containers' || pathname.startsWith('/container')}
+                onClick={() => navigate('/containers')}
               >
                 <ListItemIcon>
                   <InboxIcon />

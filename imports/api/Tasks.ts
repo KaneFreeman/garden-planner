@@ -1,26 +1,19 @@
 import { Mongo } from 'meteor/mongo';
-import { PictureData, Comment } from './Common';
 
-export const NOT_PLANTED = 'Not Planted';
-export const PLANTED = 'Planted';
-export type Status = typeof NOT_PLANTED | typeof PLANTED;
-export const STATUSES: Status[] = [NOT_PLANTED, PLANTED];
+export const PLANT = 'Plant';
+export const TRANSPLANT = 'Transplant';
+export const CUSTOM = 'Custom';
+export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof CUSTOM
+export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, CUSTOM];
 
-export interface Slot {
-  plant?: string;
-  status?: Status;
-  plantedCount?: number;
-  plantedDate?: Date;
-  comments?: Comment[];
-  pictures?: PictureData[];
+export interface Task {
+  _id: string;
+  text: string;
+  type: TaskType;
+  start: Date;
+  due: Date;
+  path: string | null;
+  completedOn: Date | null;
 }
 
-export interface Container {
-  _id?: string;
-  name: string;
-  rows: number;
-  columns: number;
-  slots?: Record<number, Slot>;
-}
-
-export const ContainersCollection = new Mongo.Collection<Container>('containers');
+export const TasksCollection = new Mongo.Collection<Task>('tasks');

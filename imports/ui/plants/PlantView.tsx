@@ -153,7 +153,7 @@ const PlantView = () => {
         />
         <PlantDataView type={plant.type} />
         <PicturesView pictures={plant.pictures} comments={plant.comments} alt={plant.name} onChange={updatePictures} />
-        <CommentsView comments={plant.comments} alt={plant.name} pictures={plant.pictures} onChange={updateComments} />
+        <CommentsView id={`plant-${id}`} comments={plant.comments} alt={plant.name} pictures={plant.pictures} onChange={updateComments} />
       </Box>
       <Dialog
         open={deleting}

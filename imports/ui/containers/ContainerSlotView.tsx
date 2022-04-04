@@ -25,6 +25,7 @@ import NumberTextField from '../components/NumberTextField';
 import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import getSlotTitle from '../utility/slot.util';
 
 const ContainerSlot = () => {
   const navigate = useNavigate();
@@ -82,18 +83,7 @@ const ContainerSlot = () => {
 
   const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
 
-  const column = useMemo(() => Math.floor(indexNumber / (container?.rows ?? 1)), [container?.rows, indexNumber]);
-
-  const row = useMemo(() => {
-    const rowDivisor = (container?.rows ?? 1) * column;
-    if (rowDivisor === 0) {
-      return indexNumber;
-    }
-
-    return indexNumber % rowDivisor;
-  }, [container?.rows, indexNumber, column]);
-
-  const title = useMemo(() => `Row ${row + 1}, Column ${column + 1}`, [column, row]);
+  const title = useMemo(() => getSlotTitle(indexNumber, container?.rows), [container?.rows, indexNumber]);
 
   const plant = useMemo(() => plants.find((otherPlant) => otherPlant._id === slot.plant), [plants, slot]);
 
@@ -254,7 +244,7 @@ const ContainerSlot = () => {
           alt={title}
           onChange={updatePictures}
         />
-        <CommentsView comments={slot.comments} alt={title} pictures={slot.pictures} onChange={updateComments} />
+        <CommentsView id={`container-${id}-slot-${index}`} comments={slot.comments} alt={title} pictures={slot.pictures} onChange={updateComments} />
       </Box>
       <Dialog open={showHowManyPlanted} onClose={() => setShowHowManyPlanted(false)} maxWidth="sm" fullWidth>
         <DialogTitle>How many did you plant?</DialogTitle>

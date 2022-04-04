@@ -1,8 +1,8 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import '../imports/api/Containers';
-import '../imports/api/Plants';
 import '../imports/api/Pictures';
+// import { TasksCollection } from '../imports/api/Tasks';
 
 Meteor.startup(() => {
   process.env.MAIL_URL = Meteor.settings.MAIL_URL;
@@ -16,4 +16,10 @@ Meteor.startup(() => {
       user.username
     }&token=${sequence}">here</a>`;
   };
+
+  // TasksCollection.find()
+  //   .fetch()
+  //   .forEach((task) => {
+  //     TasksCollection.remove(task._id);
+  //   });
 });

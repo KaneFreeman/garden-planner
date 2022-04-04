@@ -8,13 +8,14 @@ import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 
 interface CommentsViewProps {
+  id: string;
   comments?: Comment[];
   pictures?: PictureData[];
   alt: string;
   onChange: (comments: Comment[], pictures?: PictureData[]) => void;
 }
 
-const CommentsView = ({ comments, pictures, alt, onChange }: CommentsViewProps) => {
+const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewProps) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
 
   const addComment = useCallback(
@@ -68,9 +69,10 @@ const CommentsView = ({ comments, pictures, alt, onChange }: CommentsViewProps) 
       </Typography>
       {comments?.map((comment, commentIndex) => (
         <CommentView
+          id={id}
           pictures={pictures}
           alt={alt}
-          key={`comment-${commentIndex}`}
+          key={`commentView-${id}-${commentIndex}`}
           comment={comment}
           index={commentIndex}
           onDelete={removeComment}

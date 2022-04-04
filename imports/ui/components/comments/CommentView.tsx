@@ -18,6 +18,7 @@ import ReplaceAll from '../../utility/markup.util';
 import PictureView from '../pictures/PictureView';
 
 interface CommentProps {
+  id: string;
   pictures?: PictureData[];
   alt: string;
   comment: Comment;
@@ -25,7 +26,7 @@ interface CommentProps {
   onDelete: (index: number) => void;
 }
 
-const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) => {
+const CommentView = ({ id, pictures, alt, comment, index, onDelete }: CommentProps) => {
   const [deleting, setDeleting] = useState(false);
 
   const handleOnDelete = useCallback(() => setDeleting(true), []);
@@ -46,8 +47,6 @@ const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) 
       );
     });
 
-    formattedText = ReplaceAll(formattedText, /\n/g, <br />);
-
     return formattedText.map((node, nodeIndex) => {
       if (typeof node !== 'string') {
         return node;
@@ -59,7 +58,7 @@ const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) 
 
   return (
     <>
-      <Box key={`comment-${index}`} sx={{ pl: 1, pr: 1, boxSizing: 'border-box' }}>
+      <Box key={`comment-${id}-${index}`} sx={{ pl: 1, pr: 1, boxSizing: 'border-box' }}>
         {index !== 0 ? <Divider sx={{ mb: 1.5 }} /> : null}
         <Box sx={{ display: 'flex', mb: 0.5, width: '100%', boxSizing: 'border-box' }}>
           <Typography
@@ -84,7 +83,7 @@ const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) 
           </Box>
         </Box>
         <Box sx={{ display: 'flex', mb: 2, width: '100%', boxSizing: 'border-box' }}>
-          <Typography variant="body1" component="div">
+          <Typography variant="body1" component="div" sx={{ whiteSpace: 'pre-wrap' }}>
             {text}
           </Typography>
         </Box>

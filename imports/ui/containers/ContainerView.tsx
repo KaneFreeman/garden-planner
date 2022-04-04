@@ -47,7 +47,7 @@ const ContainerView = () => {
     setDeleting(false);
     if (id) {
       ContainersCollection.remove(id);
-      navigate('/');
+      navigate('/containers');
     }
   }, [id, navigate]);
   const handleOnClose = useCallback(() => setDeleting(false), []);
