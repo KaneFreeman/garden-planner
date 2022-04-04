@@ -87,7 +87,6 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
           />
           &nbsp;-&nbsp;
           <NumberTextField
-            autoFocus
             value={internalValue?.[1]}
             onChange={handleOnChange(1)}
             onKeyDown={onKeyDown}

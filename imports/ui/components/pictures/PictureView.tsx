@@ -19,22 +19,21 @@ interface PictureProps {
   size?: 'small' | 'large' | 'full';
   onClick?: () => void;
   onDelete?: () => void;
+  onSetDefault?: () => void;
   sx?: SxProps<Theme> | undefined;
 }
 
-const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, sx }: PictureProps) => {
-  const handleOnDeleteConfirm = useCallback(() => {
-    onDelete?.();
-  }, [onDelete]);
-
+const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, onSetDefault, sx }: PictureProps) => {
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
 
+  const hasContextMenu = useMemo(() => onDelete || onSetDefault, [onDelete, onSetDefault]);
+
   const handleContextMenu = useCallback(
     (event: React.MouseEvent) => {
-      if (onDelete) {
+      if (hasContextMenu) {
         event.preventDefault();
         setContextMenu(
           contextMenu === null
@@ -49,12 +48,22 @@ const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, sx }: Pi
         );
       }
     },
-    [contextMenu, onDelete]
+    [contextMenu, hasContextMenu]
   );
 
   const handleContextMenuClose = useCallback(() => {
     setContextMenu(null);
   }, []);
+
+  const handleOnDeleteConfirm = useCallback(() => {
+    setContextMenu(null);
+    onDelete?.();
+  }, [onDelete]);
+
+  const handleOnSetDefault = useCallback(() => {
+    setContextMenu(null);
+    onSetDefault?.();
+  }, [onSetDefault]);
 
   const imageSize = useMemo(() => {
     switch (size) {
@@ -81,7 +90,8 @@ const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, sx }: Pi
         anchorReference="anchorPosition"
         anchorPosition={contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined}
       >
-        <MenuItem onClick={handleOnDeleteConfirm}>Remove</MenuItem>
+        {onDelete ? <MenuItem onClick={handleOnDeleteConfirm}>Remove</MenuItem> : null}
+        {onSetDefault ? <MenuItem onClick={handleOnSetDefault}>Set Default</MenuItem> : null}
       </Menu>
     </Box>
   );

@@ -115,7 +115,7 @@ const NumberTextField = ({
         setDirty(true);
 
         const newValue = Number(stringValue);
-        if (!Number.isNaN(newValue) && Boolean(stringValue)) {
+        if (!Number.isNaN(newValue) && (!required || Boolean(stringValue))) {
           onChange?.(newValue);
         }
       }}

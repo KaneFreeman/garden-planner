@@ -60,6 +60,21 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
     [pictures, comments, onChange]
   );
 
+  const onSetDefault = useCallback(
+    (picture: PictureData) => {
+      const newPictures = [...(pictures ?? [])];
+      newPictures.sort(function (x, y) {
+        if (x === picture) {
+          return -1;
+        }
+
+        return y === picture ? 1 : 0;
+      });
+      onChange(newPictures);
+    },
+    [pictures, onChange]
+  );
+
   const onFullViewImageClose = useCallback(() => {
     setFullViewImage(null);
   }, []);
@@ -86,6 +101,7 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
               picture={picture.thumbnail}
               alt={alt}
               onDelete={() => removePicture(pictureIndex)}
+              onSetDefault={() => onSetDefault(picture)}
               size="small"
               onClick={() => onFullViewImageOpen(picture.pictureId)}
             />
