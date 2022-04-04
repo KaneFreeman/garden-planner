@@ -53,16 +53,25 @@ const Tasks = () => {
   );
 
   const renderTask = useCallback(
-    (task: Task) => (
-      <ListItem key={`task-${task._id}`} disablePadding>
-        <ListItemButton onClick={onClickHandler(task)}>
-          <ListItemIcon>
-            {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
-          </ListItemIcon>
-          <ListItemText primary={task.text} secondary={`Due ${format(task.due, 'MMM d')}`} />
-        </ListItemButton>
-      </ListItem>
-    ),
+    (task: Task, showStart = false) => {
+      let secondaryText: string;
+      if (task.completedOn !== null) {
+        secondaryText = `Completed ${format(task.completedOn, 'MMM d')}`;
+      } else {
+        secondaryText = `${showStart ? `Starts ${format(task.start, 'MMM d')}, ` : ''}Due ${format(task.due, 'MMM d')}`;
+      }
+
+      return (
+        <ListItem key={`task-${task._id}`} disablePadding>
+          <ListItemButton onClick={onClickHandler(task)}>
+            <ListItemIcon>
+              {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
+            </ListItemIcon>
+            <ListItemText primary={task.text} secondary={secondaryText} />
+          </ListItemButton>
+        </ListItem>
+      );
+    },
     [onClickHandler]
   );
 
@@ -104,7 +113,7 @@ const Tasks = () => {
                     <>
                       <Typography variant="h6">Overdue</Typography>
                       <Box component="nav" aria-label="main tasks-overdue" sx={{ mb: 2 }}>
-                        <List>{overdue.map(renderTask)}</List>
+                        <List>{overdue.map((task) => renderTask(task))}</List>
                       </Box>
                     </>
                   ) : null}
@@ -112,7 +121,7 @@ const Tasks = () => {
                     <>
                       <Typography variant="h6">Current</Typography>
                       <Box component="nav" aria-label="main tasks-current" sx={{ mb: 2 }}>
-                        <List>{current.map(renderTask)}</List>
+                        <List>{current.map((task) => renderTask(task))}</List>
                       </Box>
                     </>
                   ) : null}
@@ -120,7 +129,7 @@ const Tasks = () => {
                     <>
                       <Typography variant="h6">Next 30 Days</Typography>
                       <Box component="nav" aria-label="main tasks-future" sx={{ mb: 2 }}>
-                        <List>{next30Days.map(renderTask)}</List>
+                        <List>{next30Days.map((task) => renderTask(task, true))}</List>
                       </Box>
                     </>
                   ) : null}
@@ -136,7 +145,7 @@ const Tasks = () => {
                 <Box sx={{ p: 2 }}>
                   <Typography variant="h6">Completed</Typography>
                   <Box component="nav" aria-label="main tasks-complete" sx={{ mb: 2 }}>
-                    <List>{completed.map(renderTask)}</List>
+                    <List>{completed.map((task) => renderTask(task))}</List>
                   </Box>
                 </Box>
               ) : (

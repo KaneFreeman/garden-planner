@@ -76,8 +76,6 @@ function createUpdatePlantedTask(
   const task = TasksCollection.findOne({ type: 'Plant', path });
   const completedOn = slot.status && slot.status !== 'Not Planted' ? slot.plantedDate ?? null : null;
 
-  console.log('task', completedOn, task);
-
   if (!task) {
     TasksCollection.insert({
       text: `Plant ${plant.name} in ${container.name} at ${slotTitle}`,

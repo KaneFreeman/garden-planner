@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,8 +13,10 @@ import {
   DialogContent,
   DialogTitle,
   Link,
-  Typography
+  Typography,
+  TextField as MuiTextField
 } from '@mui/material';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import { useTracker } from 'meteor/react-meteor-data';
 import { PictureData, Comment } from '../../api/Common';
 import { ContainersCollection, Slot, Status, STATUSES } from '../../api/Containers';
@@ -35,6 +38,7 @@ const ContainerSlot = () => {
 
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
   const [plantedCount, setPlantedCount] = useState(1);
+  const [plantedDate, setPlantedDate] = useState<Date>(new Date());
 
   const container = useTracker(() => ContainersCollection.findOne(id), [id]);
   const plants = useTracker(
@@ -135,6 +139,7 @@ const ContainerSlot = () => {
     (value: Status) => {
       if (value) {
         if (value === 'Planted') {
+          setPlantedDate(new Date());
           setShowHowManyPlanted(true);
           return;
         }
@@ -149,10 +154,10 @@ const ContainerSlot = () => {
   );
 
   const finishUpdateStatusPlanted = useCallback(() => {
-    updateSlot({ status: 'Planted', plantedCount, plantedDate: new Date() });
+    updateSlot({ status: 'Planted', plantedCount, plantedDate });
     setShowHowManyPlanted(false);
     setPlantedCount(1);
-  }, [plantedCount, updateSlot]);
+  }, [plantedCount, plantedDate, updateSlot]);
 
   const renderStatus = useCallback((value: Status | undefined) => {
     if (!value) {
@@ -244,13 +249,29 @@ const ContainerSlot = () => {
           alt={title}
           onChange={updatePictures}
         />
-        <CommentsView id={`container-${id}-slot-${index}`} comments={slot.comments} alt={title} pictures={slot.pictures} onChange={updateComments} />
+        <CommentsView
+          id={`container-${id}-slot-${index}`}
+          comments={slot.comments}
+          alt={title}
+          pictures={slot.pictures}
+          onChange={updateComments}
+        />
       </Box>
-      <Dialog open={showHowManyPlanted} onClose={() => setShowHowManyPlanted(false)} maxWidth="sm" fullWidth>
+      <Dialog open={showHowManyPlanted} onClose={() => setShowHowManyPlanted(false)} maxWidth="xs" fullWidth>
         <DialogTitle>How many did you plant?</DialogTitle>
         <DialogContent>
           <form name="plant-modal-form" onSubmit={finishUpdateStatusPlanted} noValidate>
-            <NumberTextField label="Count" value={plantedCount} onChange={setPlantedCount} required />
+            <NumberTextField label="Count" value={plantedCount} onChange={setPlantedCount} required variant="outlined" />
+            <Box sx={{ display: 'flex', pt: 2 }}>
+              <MobileDateTimePicker
+                label="Planted On"
+                value={plantedDate}
+                onChange={(newPlantedDate: Date | null) => newPlantedDate && setPlantedDate(newPlantedDate)}
+                renderInput={(params) => (
+                  <MuiTextField {...params} className="planted-dateTimeInput" sx={{ flexGrow: 1 }} />
+                )}
+              />
+            </Box>
           </form>
         </DialogContent>
         <DialogActions>
