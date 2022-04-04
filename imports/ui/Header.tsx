@@ -20,6 +20,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import './Actions.css';
 import Actions from './Actions';
 import useTasks from './hooks/useTasks';
+import './Header.css';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -59,8 +60,12 @@ const Header = () => {
     }, [current.length, overdue.length]);
 
   return (
-    <AppBar position="fixed" sx={{ top: 0 }}>
-      <Toolbar>
+    <AppBar className="app-header" position="fixed" sx={{ top: 0 }}>
+      <Toolbar
+        classes={{
+          root: 'header-toolbar'
+        }}
+      >
         <IconButton aria-label="menu" onClick={toggleDrawer(true)}>
           <MenuIcon />
         </IconButton>
@@ -105,7 +110,17 @@ const Header = () => {
             </List>
           </Box>
         </Drawer>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            ml: 1,
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+          }}
+        >
           Garden Planner
         </Typography>
         <Actions />

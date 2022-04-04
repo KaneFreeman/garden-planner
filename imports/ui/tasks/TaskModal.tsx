@@ -35,8 +35,15 @@ const TaskModal = ({ open, onClose }: TaskModalProperties) => {
 
   const onSave = useCallback(() => {
     if (isValidTask(editData)) {
+      const { text, start, due } = editData;
+
+      start.setHours(0, 0, 0, 0);
+      due.setHours(0, 0, 0, 0);
+
       TasksCollection.insert({
-        ...editData,
+        text,
+        start,
+        due,
         type: 'Custom',
         path: null,
         completedOn: null

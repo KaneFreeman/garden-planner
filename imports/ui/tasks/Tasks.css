@@ -1,0 +1,6 @@
+.task .textPrimary,
+.task .textSecondary {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

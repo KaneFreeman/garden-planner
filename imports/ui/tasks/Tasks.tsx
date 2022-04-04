@@ -28,6 +28,7 @@ import { Task, TasksCollection } from '../../api/Tasks';
 import useTasks from '../hooks/useTasks';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
+import './Tasks.css';
 
 const Tasks = () => {
   const navigate = useNavigate();
@@ -67,12 +68,24 @@ const Tasks = () => {
       }
 
       return (
-        <ListItem style={style} key={`${key}-${index}`} disablePadding sx={{ height: 72 }}>
-          <ListItemButton onClick={onClickHandler(task)}>
+        <ListItem className="task" style={style} key={`${key}-${index}`} disablePadding>
+          <ListItemButton
+            onClick={onClickHandler(task)}
+            sx={{
+              width: '100%'
+            }}
+          >
             <ListItemIcon>
               {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
             </ListItemIcon>
-            <ListItemText primary={task.text} secondary={secondaryText} />
+            <ListItemText
+              primary={task.text}
+              secondary={secondaryText}
+              classes={{
+                primary: 'textPrimary',
+                secondary: 'textSecondary'
+              }}
+            />
           </ListItemButton>
         </ListItem>
       );
@@ -110,7 +123,7 @@ const Tasks = () => {
           </Alert>
         ) : (
           <>
-            <Tabs ariaLabel="tasks tabs" onChange={(newTab) => setTab(newTab)} sxRoot={{ top: 64 }}>
+            <Tabs ariaLabel="tasks tabs" onChange={(newTab) => setTab(newTab)} sxRoot={{ top: 56 }}>
               {{
                 label: 'Open'
               }}
@@ -123,7 +136,16 @@ const Tasks = () => {
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {overdue.length > 0 ? (
                     <Box>
-                      <Typography variant="h6">Overdue</Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        Overdue
+                      </Typography>
                       <Box component="nav" aria-label="main tasks-overdue">
                         <List>{overdue.map((task, index) => renderTask('overdue', task, index))}</List>
                       </Box>
@@ -131,7 +153,16 @@ const Tasks = () => {
                   ) : null}
                   {current.length > 0 ? (
                     <Box>
-                      <Typography variant="h6">Current</Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        Current
+                      </Typography>
                       <Box component="nav" aria-label="main tasks-current">
                         <List>{current.map((task, index) => renderTask('overdue', task, index))}</List>
                       </Box>
@@ -139,7 +170,16 @@ const Tasks = () => {
                   ) : null}
                   {next30Days.length > 0 ? (
                     <Box>
-                      <Typography variant="h6">Next 30 Days</Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        Next 30 Days
+                      </Typography>
                       <Box component="nav" aria-label="main tasks-future">
                         <List>
                           {next30Days.map((task, index) => renderTask('overdue', task, index, { showStart: true }))}
