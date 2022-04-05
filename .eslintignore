@@ -31,3 +31,6 @@ npm-debug.log.*
 .erb
 
 global.d.ts
+
+src/service-worker.ts
+src/serviceWorkerRegistration.ts
