@@ -26,7 +26,6 @@ const Main = () => {
     return <button type="button" onClick={loginWithRedirect}>Log in</button>;
   }
 
-  console.log(user?.email, process.env.REACT_APP_MASTER_EMAIL);
   if (user?.email !== process.env.REACT_APP_MASTER_EMAIL) {
     return <div>Not authorized</div>;
   }
