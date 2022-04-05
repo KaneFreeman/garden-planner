@@ -6,7 +6,7 @@
 			"script": "start",
 			"problemMatcher": [],
 			"label": "npm: start",
-			"detail": "meteor run",
+			"detail": "react-scripts start",
 			"group": {
 				"kind": "build",
 				"isDefault": true

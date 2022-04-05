@@ -28,7 +28,9 @@ module.exports = {
     'func-names': 'off',
     'react/function-component-definition': 'off',
     'no-underscore-dangle': 'off',
-    'react/require-default-props': 'off'
+    'react/require-default-props': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'compat/compat': 'off'
   },
   env: {
     browser: true

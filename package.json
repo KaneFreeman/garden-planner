@@ -1,41 +1,49 @@
 {
   "name": "garden-planner",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "meteor run --settings settings.json --port 3000",
-    "build": "docker build . -t garden-planner",
-    "test": "meteor test --once --driver-package meteortesting:mocha",
-    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
-    "visualize": "meteor --production --extra-packages bundle-visualizer",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .ts"
   },
   "dependencies": {
-    "@babel/runtime": "7.17.8",
+    "@auth0/auth0-react": "1.9.0",
+    "@auth0/auth0-spa-js": "1.21.0",
     "@emotion/react": "11.8.2",
     "@emotion/styled": "11.8.1",
     "@mui/icons-material": "5.5.1",
     "@mui/lab": "5.0.0-alpha.75",
     "@mui/material": "5.5.3",
-    "date-fns": "2.28.0",
-    "html5-file-selector": "2.1.0",
-    "meteor-node-stubs": "1.2.1",
-    "react": "18.0.0",
-    "react-dom": "18.0.0",
-    "react-router": "6.3.0",
-    "react-router-dom": "6.3.0",
-    "react-virtualized-auto-sizer": "^1.0.6",
-    "react-window": "^1.8.6",
-    "simpl-schema": "1.12.0"
-  },
-  "devDependencies": {
-    "@types/meteor": "2.6.1",
-    "@types/mocha": "9.1.0",
+    "@reduxjs/toolkit": "1.8.1",
+    "@testing-library/jest-dom": "5.16.3",
+    "@testing-library/react": "12.1.4",
+    "@testing-library/user-event": "13.5.0",
+    "@types/jest": "27.4.1",
+    "@types/node": "16.11.26",
     "@types/react": "17.0.43",
     "@types/react-dom": "17.0.14",
-    "@types/react-virtualized-auto-sizer": "^1.0.1",
-    "@types/react-window": "^1.8.5",
-    "@typescript-eslint/eslint-plugin": "5.17.0",
-    "@typescript-eslint/parser": "5.17.0",
+    "date-fns": "2.28.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-redux": "7.2.8",
+    "react-router": "6.3.0",
+    "react-router-dom": "6.3.0",
+    "react-scripts": "5.0.0",
+    "react-virtualized-auto-sizer": "1.0.6",
+    "react-window": "1.8.6",
+    "redux": "4.1.2",
+    "redux-thunk": "2.4.1",
+    "typescript": "4.6.3",
+    "web-vitals": "2.1.4"
+  },
+  "devDependencies": {
+    "@types/react-router": "5.1.18",
+    "@types/react-router-dom": "5.3.3",
+    "@types/react-virtualized-auto-sizer": "1.0.1",
+    "@types/react-window": "1.8.5",
     "cross-env": "7.0.3",
     "eslint": "8.12.0",
     "eslint-config-airbnb": "19.0.4",
@@ -48,15 +56,25 @@
     "eslint-plugin-promise": "6.0.0",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.4.0",
-    "prettier": "2.6.2",
-    "typescript": "4.6.3"
+    "prettier": "2.6.2"
   },
-  "meteor": {
-    "mainModule": {
-      "client": "client/main.tsx",
-      "server": "server/main.ts"
-    },
-    "testModule": "tests/main.ts"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "prettier": {
     "overrides": [
