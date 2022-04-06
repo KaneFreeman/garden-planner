@@ -191,7 +191,7 @@ const Tasks = () => {
                 label: 'Completed'
               }}
             </Tabs>
-            <TabPanel ariaLabel="tasks open tab" value={tab} index={0}>
+            <TabPanel value={tab} index={0}>
               {overdue.length > 0 || current.length > 0 || next30Days.length > 0 ? (
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {overdue.length > 0 ? (
@@ -255,7 +255,6 @@ const Tasks = () => {
               )}
             </TabPanel>
             <TabPanel
-              ariaLabel="tasks closed tab"
               value={tab}
               index={1}
               sx={{ overflow: 'hidden', height: 'calc(100vh - 113px)' }}

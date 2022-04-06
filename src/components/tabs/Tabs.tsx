@@ -78,7 +78,6 @@ const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, e
               label={child.label}
               index={index}
               disabled={Boolean(child.disabled)}
-              ariaLabel={ariaLabel}
             />
           ))}
         </MuiTabs>

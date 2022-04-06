@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import { ReactNode } from 'react';
 import { Tab as MuiTab, Theme, Box, SxProps } from '@mui/material';
-import { a11yProps } from './TabPanel';
 
 export interface TabProps {
-  label: React.ReactNode;
+  label: ReactNode;
   index: number;
   sx?: SxProps<Theme> | undefined;
 
@@ -19,12 +18,10 @@ export interface TabProps {
   tabIndex?: number;
 
   disabled: boolean;
-
-  ariaLabel: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-const Tab = ({ label, index, disabled, ariaLabel, sx = {}, ...otherProps }: TabProps) => {
+const Tab = ({ label, index, disabled, sx = {}, ...otherProps }: TabProps) => {
   return (
     <MuiTab
       label={
@@ -34,8 +31,9 @@ const Tab = ({ label, index, disabled, ariaLabel, sx = {}, ...otherProps }: TabP
       }
       sx={sx}
       disabled={disabled}
+      id={`tab-${index + 1}`}
+      aria-controls={`panel-${index + 1}`}
       {...otherProps}
-      {...a11yProps(ariaLabel, index)}
     />
   );
 };
