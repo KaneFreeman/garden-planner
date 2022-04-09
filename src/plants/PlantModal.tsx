@@ -7,7 +7,8 @@ import {
   DialogActions,
   Button,
   Autocomplete,
-  TextField as MuiTextField
+  TextField as MuiTextField,
+  Box
 } from '@mui/material';
 import TextField from '../components/TextField';
 import PictureUpload from '../pictures/PictureUpload';
@@ -15,6 +16,7 @@ import PictureView from '../pictures/PictureView';
 import './PlantModal.css';
 import { PictureData, Plant, PLANT_TYPES } from '../interface';
 import { useAddPlant } from './usePlants';
+import NumberTextField from '../components/NumberTextField';
 
 interface PlantModalProperties {
   open: boolean;
@@ -119,9 +121,41 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
             options={PLANT_TYPES}
             fullWidth
             renderInput={(params) => <MuiTextField {...params} label="Type" />}
-            sx={{ mt: 1, mb: 1 }}
+            sx={{ mt: 1, mb: 0.5 }}
             onChange={(_, newValue) => update({ type: newValue ?? undefined })}
           />
+          <TextField
+            label="URL"
+            value={editData?.url}
+            onChange={(url) => update({ url })}
+            variant="outlined"
+          />
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 0.5 }}>
+            <NumberTextField
+              label="Days to Maturity"
+              value={editData?.daysToMaturity?.[0]}
+              onChange={(value) =>
+                update({
+                  daysToMaturity: [value, editData?.daysToMaturity?.[1]]
+                })
+              }
+              sx={{ mt: 0, mb: 0 }}
+              variant="outlined"
+              wholeNumber
+            />
+            &nbsp;-&nbsp;
+            <NumberTextField
+              value={editData?.daysToMaturity?.[1]}
+              onChange={(value) =>
+                update({
+                  daysToMaturity: [editData?.daysToMaturity?.[0], value]
+                })
+              }
+              sx={{ mt: 0, mb: 0 }}
+              variant="outlined"
+              wholeNumber
+            />
+          </Box>
           <PictureUpload id="new-plant-picture" onChange={addPicture} />
           {editData?.pictures?.map((picture, pictureIndex) => (
             <PictureView
