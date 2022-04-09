@@ -136,6 +136,10 @@ export const STEVIA = 'Stevia';
 export const SWEET_MARIGOLD = 'Sweet Marigold';
 export const VERBENA = 'Verbena';
 
+export const MARIGOLD = 'Marigold';
+export const COSMOS = 'Cosmos';
+export const SUNFLOWER = 'Sunflower';
+
 export type PlantType =
   | typeof ARTICHOKE
   | typeof ARUGULA
@@ -216,7 +220,10 @@ export type PlantType =
   | typeof SAGE
   | typeof STEVIA
   | typeof SWEET_MARIGOLD
-  | typeof VERBENA;
+  | typeof VERBENA
+  | typeof MARIGOLD
+  | typeof COSMOS
+  | typeof SUNFLOWER;
 
 export const PLANT_TYPES: PlantType[] = [
   ARTICHOKE,
@@ -298,7 +305,10 @@ export const PLANT_TYPES: PlantType[] = [
   SAGE,
   STEVIA,
   SWEET_MARIGOLD,
-  VERBENA
+  VERBENA,
+  MARIGOLD,
+  COSMOS,
+  SUNFLOWER
 ];
 
 export interface Plant {

@@ -46,7 +46,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: 'Aug 15', fall_direct_max: 'Sep 19' }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Sep 19'
+      }
     },
     faq: {
       how_to_grow: [
@@ -91,7 +96,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 08',
         fall_transplant_max: 'Aug 29'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -130,8 +140,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'Jun 12', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 12',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -170,8 +190,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: 'Aug 29', fall_direct_max: 'Sep 12' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 29',
+        fall_direct_max: 'Sep 12'
+      }
     },
     faq: {
       how_to_grow: [
@@ -216,7 +246,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Jul 25',
         fall_transplant_max: 'Aug 15'
       },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 08', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 08',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -255,8 +290,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 03', direct_max: 'May 15', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 03',
+        direct_max: 'May 15',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -295,8 +340,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -341,7 +396,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 08',
         fall_transplant_max: 'Aug 29'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -386,7 +446,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 08',
         fall_transplant_max: 'Aug 29'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -425,8 +490,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -521,7 +596,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 01',
         fall_transplant_max: 'Aug 29'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -566,7 +646,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -605,8 +690,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -645,8 +740,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 24', direct_max: 'May 22', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 24',
+        direct_max: 'May 22',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -685,8 +790,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 08', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 08',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -725,8 +840,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 03', direct_max: 'May 15', fall_direct_min: 'Aug 15', fall_direct_max: 'Sep 26' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 03',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Sep 26'
+      }
     },
     faq: {
       how_to_grow: [
@@ -765,8 +890,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {}
   },
@@ -782,8 +917,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -822,8 +967,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -868,7 +1023,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -907,8 +1067,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 03', direct_max: 'May 01', fall_direct_min: 'Aug 15', fall_direct_max: 'Sep 12' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 03',
+        direct_max: 'May 01',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Sep 12'
+      }
     },
     faq: {
       how_to_grow: [
@@ -953,7 +1123,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -992,8 +1167,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'Jun 12', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 12',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1038,7 +1223,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1083,7 +1273,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 08', fall_direct_min: 'Aug 15', fall_direct_max: 'Aug 29' }
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 08',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Aug 29'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1122,8 +1317,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1162,8 +1367,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1208,7 +1423,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 08',
         fall_transplant_max: 'Sep 12'
       },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: 'Aug 15', fall_direct_max: 'Aug 29' }
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Aug 29'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1247,8 +1467,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1287,8 +1517,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 03', direct_max: 'May 15', fall_direct_min: 'Aug 15', fall_direct_max: 'Sep 12' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 03',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Sep 12'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1327,8 +1567,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1367,8 +1617,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: 'Aug 15', fall_direct_max: 'Sep 12' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Sep 12'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1407,8 +1667,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1453,7 +1723,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1492,8 +1767,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1532,8 +1817,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1572,8 +1867,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1618,7 +1923,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1663,7 +1973,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1702,8 +2017,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1742,8 +2067,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 15', fall_direct_min: 'Aug 15', fall_direct_max: 'Aug 29' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 15',
+        fall_direct_min: 'Aug 15',
+        fall_direct_max: 'Aug 29'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1782,8 +2117,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'May 08', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'May 08',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1828,7 +2173,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 08',
         fall_transplant_max: 'Sep 12'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1867,8 +2217,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 03', direct_max: 'Apr 17', fall_direct_min: 'Jul 18', fall_direct_max: 'Aug 01' }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 03',
+        direct_max: 'Apr 17',
+        fall_direct_min: 'Jul 18',
+        fall_direct_max: 'Aug 01'
+      }
     },
     faq: {
       how_to_grow: [
@@ -1907,8 +2267,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1947,8 +2317,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -1987,8 +2367,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2024,8 +2414,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2064,8 +2464,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {}
   },
@@ -2081,8 +2491,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2121,8 +2541,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2161,8 +2591,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2207,7 +2647,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2246,8 +2691,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2286,8 +2741,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2332,7 +2797,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2371,8 +2841,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2411,8 +2891,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2457,7 +2947,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2502,7 +2997,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2547,7 +3047,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'Apr 24', direct_max: 'May 22', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'Apr 24',
+        direct_max: 'May 22',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2592,7 +3097,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2637,7 +3147,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 08', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 08',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2676,8 +3191,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: 'Apr 10', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'Apr 10',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2722,7 +3247,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2767,7 +3297,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: 'Aug 15',
         fall_transplant_max: 'Sep 26'
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2812,7 +3347,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2857,7 +3397,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2902,7 +3447,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 15', direct_max: 'May 29', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2947,7 +3497,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -2992,7 +3547,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3037,7 +3597,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3082,7 +3647,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: 'May 08', direct_max: 'Jun 05', fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: 'May 08',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3127,7 +3697,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3172,7 +3747,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3217,7 +3797,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3256,8 +3841,18 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      plant: { transplant_min: null, transplant_max: null, fall_transplant_min: null, fall_transplant_max: null },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3302,7 +3897,12 @@ const plantData: Record<PlantType, PlantData> = {
         fall_transplant_min: null,
         fall_transplant_max: null
       },
-      outdoor: { direct_min: null, direct_max: null, fall_direct_min: null, fall_direct_max: null }
+      outdoor: {
+        direct_min: null,
+        direct_max: null,
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
     },
     faq: {
       how_to_grow: [
@@ -3325,6 +3925,156 @@ const plantData: Record<PlantType, PlantData> = {
         [
           'FAQs',
           '<p><strong>Is verbena an annual  or perennial?</strong> There are annual and perennial species. The verbena which is  generally grown as an annual is a tender perennial. <br>\n  <strong><br>\n  Can I grow verbena in  containers?</strong> Yes it is ideal for containers. <br>\n  <strong><br>\n  Are verbenas good  pollinator plants?</strong> Yes they attract bees, butterflies and hummingbirds to  the garden.\u00a0 \u00a0<br>\n  <strong><br>\n  Why did my verbena  die?</strong> Verbenas are very sensitive to wet soils and are susceptible to root  rots in poorly drained soil. </p>'
+        ]
+      ]
+    }
+  },
+  Cosmos: {
+    howToGrow: {
+      indoor: {
+        indoor_min: 'Mar 20',
+        indoor_max: 'Apr 03',
+        transplant_min: 'May 15',
+        transplant_max: 'May 29',
+        fall_indoor_min: null,
+        fall_indoor_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      plant: {
+        transplant_min: 'May 15',
+        transplant_max: 'May 29',
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'May 29',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
+    },
+    faq: {
+      how_to_grow: [
+        [
+          'How to Sow and Plant',
+          '<p>Cosmos seed should  be sown directly in the garden after frost.</p>\n<ul>\n  <li>Direct  sow seeds in average soil in full sun after danger of heavy frost. </li>\n  <li>Select  a location in full to part shade with good rich well-drained organic soil  protected from wind. </li>\n  <li>Prepare  the bed by turning the soil under to a depth of 8 inches. Level with a rake to  remove clumps of grass and stones. </li>\n  <li>Most  plants respond well to soils amended with organic matter. Compost is a  wonderful form of organic matter with a good balance of nutrients and an ideal  pH level, it can be added to your planting area at any time. If compost is not  available, top dress the soil after planting with 1-2 inches of organic mulch,  which will begin to breakdown into compost. After the growing season, a soil  test will indicate what soil amendments are needed for the following season. </li>\n  <li>Sow  seeds 4 inches apart and \u00bc inch deep</li>\n  <li>Firm  soil lightly, water and keep evenly moist.\u00a0 </li>\n  <li>Seedlings  will emerge in 7-10 days.</li>\n  <li>Thin  plants to stand 8-10 inches when seedlings are 1 inch high.</li>\n</ul>'
+        ],
+        [
+          'How to Grow',
+          '<ul>\n  <li>Keep  weeds under control during the growing season. Weeds compete with plants for  water, space and nutrients, so control them by either cultivating often or use  a mulch to prevent their seeds from germinating.\u00a0 </li>\n  <li>Mulches  also help retain soil moisture and maintain even soil temperatures. For annuals  an organic mulch of shredded leaves lends a natural look to the bed and will  improve the soil as it breaks down in time. Always keep mulches off a plant&rsquo;s  stems to prevent possible rot.</li>\n  <li>Keep  soil evenly moist but not wet.</li>\n  <li>After  plants are about 6 inches tall, a light fertilizer may be applied. Keep  granular fertilizers away from the plant crown and foliage to avoid burn  injury. Use low rates of a slow release fertilizer such as Flower-tone, as  higher rates may encourage root rots. </li>\n  <li>Tall cultivars may need staking to prevent  their thick, hollow stems from breaking due to heavy rain or wind.</li>\n  <li>Pinch off spent flowers to encourage  continuous bloom. Pinching stem tips can reduce height and encourage branching  but isn&rsquo;t necessary. Deadheading is recommended since it lengthens the bloom  season. Cosmos plants that aren&rsquo;t deadheaded will self-sow in warm regions.</li>\n  <li>Monitor  for pests and diseases. Check with your local Cooperative Extension Service for  pest controls recommended for your area. </li>\n  <li>Remove  plants after they are killed by heavy frost in fall to avoid disease issues the  following year. </li>\n</ul>'
+        ],
+        [
+          'Tips',
+          '<ul>\n  <li>Cosmos  plants can withstand heat and drought conditions.<strong></strong></li>\n  <li>Tall  cosmos add a soft, airy touch to the back of an annual or mixed border. You can  also use them as a fast-growing annual hedge or in a cutting garden. Since the  taller cultivars are not always uniform in height, they&rsquo;re perfect for adding  an informal look to cottage gardens. Shorter cultivars of both species are ideal  near the front of the border, in containers, or as edgings. </li>\n  <li>Cosmos  makes beautiful cut flowers. </li>\n  <li>Because  cosmos is easy to grow and the seeds are large and easy to handle, it is a good  choice for a children&rsquo;s garden.</li>\n</ul>'
+        ],
+        [
+          'Common Pests and Problems',
+          "<p><strong><em>Common Disease Problems</em></strong><br>\n  <strong><br>\n  Aster Yellows: </strong>Plants are stunted, develop witch's brooms (excessive growth), petals  turn green and become deformed. This virus-like condition is spread by  leafhoppers.<strong> <em>Burpee Recommends: Remove infected plants and control  leafhoppers. Remove weeds in the area which serve as alternate hosts to the  disease. </em></strong><br>\n  <strong><br>\n  Bacterial Wilt: </strong>This causes yellow streaking on the foliage. It is soil borne and spread  by flea beetles. <strong><em>Burpee Recommends:  Rotate crops and control flea beetles. Remove and destroy infected plants.</em></strong><br>\n  <strong><br>\n  Curlytop: </strong>This  is a virus disease that is characterized by yellowing, stunting and eventual  death of plants. It is spread by leafhoppers. <strong><em>Burpee Recommends: Control the leafhoppers which spread the disease and  remove and destroy infected plants.</em></strong> <br>\n  <strong><br>\n  Damping Off: </strong>This  is one of the most common problems when starting plants from seed. The seedling  emerges and appears healthy; then it suddenly wilts and dies for no obvious  reason. Damping off is caused by a fungus that is active when there is abundant  moisture and soils and air temperatures are above 68 degrees F. Typically, this  indicates that the soil is too wet or contains high amounts of nitrogen  fertilizer. <strong><em>Burpee Recommends: Keep seedlings moist but do not overwater; avoid  over-fertilizing your seedlings; thin out seedlings to avoid overcrowding; make  sure the plants are getting good air circulation; if you plant in containers,  thoroughly wash them in soapy water and rinse in a ten per cent bleach solution  after use.</em></strong><br>\n  <strong><br>\n  Powdery Mildew: </strong>This fungus disease occurs on the top of the leaves in humid weather  conditions. The leaves appear to have a whitish or greyish surface and may  curl.<strong> <em>Burpee Recommends: Avoid powdery mildew by providing good air  circulation for the plants by good spacing and pruning. Contact your Cooperative  Extension Service for fungicide recommendations. </em></strong></p>\n<p><strong><em>Common Pest and  Cultural Problems</em></strong><br>\n  <strong><br>\n  Aphids: </strong>Greenish, red, black or peach colored sucking  insects can spread disease as they feed on the undersides of leaves. They leave  a sticky residue on foliage that attracts ants. <strong><em>Burpee Recommends:  Introduce or attract natural predators into your garden such as lady beetles  and wasps which feed on aphids. You can also wash them off with a strong spray,  or use an insecticidal soap. </em></strong><br>\n  <strong><br>\n  Flea Beetles: </strong>These  small hopping beetles feed on plant foliage and may spread diseases. <strong><em>Burpee Recommends: Rotate crops. Use  floating row covers to prevent damage to young foliage. Remove and destroy  plants. </em></strong><br>\n  <strong><br>\n  Leafhoppers: </strong>Leafhoppers cause injury to leaves and  stunt growth. They also spread disease. <strong><em>Burpee Recommends: Remove plant  debris. Use insecticidal soaps. Consult your Cooperative Extension Service for  other insecticide recommendations. </em></strong><br>\n  <strong><br>\n  </strong><strong>  Lygus Bugs  (Tarnished Plant Bug):</strong> Lygus bugs are \u00bc inch long and are green or brown  with yellow markings. Nymphs are flightless and smaller than the adults. They  suck on stem tips and flower buds and inject a toxic that deforms roots, stems  and ruins flowers.\u00a0 <strong><em>Burpee  Recommends: Because lygus bugs over winter in garden debris, remove all debris  after the first frost. Contact your Cooperative Extension Service for  insecticide recommendations.</em></strong><strong></strong></p>\n<strong>Thrips: </strong>Thrips are tiny needle-thin insects that are black or straw colored.  They suck the juices of plants and attack flower petals, leaves and stems. The  plant will have a stippling, discolored flecking or silvering of the leaf  surface. Thrips can spread many diseases from plant to plant. <strong><em>Burpee  Recommends: Many thrips may be repelled by sheets of aluminum foil spread  between rows of plants. Remove weeds from the bed and remove debris from the  bed after frost. Check with your Cooperative Extension Service for pest  controls.</em></strong>"
+        ],
+        [
+          'FAQs',
+          '<p><strong>Why hasn&rsquo;t my cosmos  bloomed? </strong>Be careful not to over fertilize as too much fertilizer will give  you beautiful plants but no flowers. Many varieties are day length sensitive  and will bloom in late summer when the days are shorter.<br>\n  <strong><br>\n  Can I start cosmos  inside? </strong>Cosmos is very easy to start outside and does not need to be  started inside, however you can start them inside 6-8 weeks before the last  frost.<br>\n  <strong><br>\n  Can I use cosmos as a  cut flower? </strong>Yes the best time to pick them is right after the flower  opens.\u00a0 Cosmos foliage can also be used  as greens in an arrangement.<br>\n  <strong><br>\n  Does cosmos attract  beneficial insects to my garden? </strong>Yes it attracts pollinators such as bees  and butterflies, as well as other beneficial insects. <br>\n  <strong><br>\n  Where should I put cosmos  in my flower bed? </strong>Since some cosmos varieties are so tall, place them in  the back of the flower bed. It can also be used as a temporary screen to cover  up unsightly elements. Shorter varieties work well in the mixed border or in  containers. </p>'
+        ]
+      ]
+    }
+  },
+  Marigold: {
+    howToGrow: {
+      indoor: {
+        indoor_min: 'Mar 13',
+        indoor_max: 'Apr 03',
+        transplant_min: 'May 15',
+        transplant_max: 'Jun 12',
+        fall_indoor_min: null,
+        fall_indoor_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      plant: {
+        transplant_min: 'May 15',
+        transplant_max: 'Jun 12',
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
+    },
+    faq: {
+      how_to_grow: [
+        [
+          'How to Sow and Plant',
+          '<p>Marigold may be  grown from seed sown early indoors and transplanted outside after frost, or  sown directly in the garden after frost, or from potted plants.<br>\n  <strong>Sowing Seed Indoors:</strong></p>\n<ul>\n  <li>Sow  indoors 4-6 weeks before the last frost using a seed starting kit</li>\n  <li>Sow  seeds \u00bc inch deep in seed starting soil</li>\n  <li>Keep  the soil moist at 70-75 degrees</li>\n  <li>Seedlings  emerge in 7-14 days</li>\n  <li>As  soon as seedlings emerge, provide plenty of light on a sunny windowsill or grow  seedlings 3-4 inches beneath fluorescent plant lights turned on 16 hours per  day, off for 8 hours at night. Raise the lights as the plants grow taller.  Incandescent bulbs will not work for this process because they will get too  hot. Most plants require a dark period to grow, do not leave lights on for 24  hours.</li>\n  <li>Thin  to one seedling per cell when they have two sets of leaves.</li>\n  <li>Seedlings  do not need much fertilizer, feed when they are 3-4 weeks old using a starter  solution (half strength of a complete indoor houseplant food) according to  manufacturer&rsquo;s directions. </li>\n  <li>Transplant hardened-off seedlings to the  garden after the frost. </li>\n  <li>Before  planting in the garden, seedling plants need to be &ldquo;hardened off&rdquo;. Accustom  young plants to outdoor conditions by moving them to a sheltered place outside  for a week. Be sure to protect them from wind and hot sun at first. If frost  threatens at night, cover or bring containers indoors, then take them out again  in the morning.\u00a0 This hardening off  process toughens the plant&rsquo;s cell structure and reduces transplant shock and  scalding. </li>\n</ul>\n<p><strong>Sowing Directly in  the Garden</strong></p>\n<ul>\n  <li>Direct sow seeds in average soil in full sun  after all danger of frost. In frost free areas, sow from fall to early spring. In the Deep South, a spot that receives  shade during the afternoon helps protect plants from excessive heat.</li>\n  <li>Prepare the bed by turning the soil under to a  depth of 8 inches. Level with a rake to remove clumps of grass and stones. </li>\n  <li>Most plants respond well to soils amended with  organic matter. Compost is a wonderful form of organic matter with a good  balance of nutrients and an ideal pH level, it can be added to your planting  area at any time. If compost is not available, top dress the soil after  planting with 1-2 inches of organic mulch, which will begin to breakdown into  compost. After the growing season, a soil test will indicate what soil  amendments are needed for the following season. </li>\n  <li>Sow seeds about 6 inches apart and cover  with \u00bc inch of fine soil. </li>\n  <li>Firm  soil lightly, water and keep evenly moist.\u00a0 </li>\n  <li>Seedlings  emerge in 7-14 days.</li>\n  <li>Thin  plants to stand 9-12 inches when seedlings are 1 inch high.</li>\n</ul>\n<p><strong>Planting Potted  Plants:</strong></p>\n<ul>\n  <li>Select a location in full sun with good rich,  moist, well drained organic soil. In  the deep South, a spot that receives shade during the afternoon helps protect  plants from excessive heat.</li>\n  <li>Prepare the bed by turning the soil under to a  depth of 8 inches. Level with a rake to remove clumps of grass and stones. </li>\n  <li>Most plants respond well to soils amended with  organic matter. Compost is a wonderful form of organic matter with a good  balance of nutrients and an ideal pH level, it can be added to your planting  area at any time. If compost is not available, top dress the soil after  planting with 1-2 inches of organic mulch, which will begin to breakdown into  compost. After the growing season, a soil test will indicate what soil  amendments are needed for the following season. </li>\n  <li>Dig  a hole for each plant large enough to amply accommodate the root ball.\u00a0 </li>\n  <li>Set  level with the surrounding soil. Fill with soil to the top of the root ball.  Press soil down firmly with your hand leaving a slight depression around the  plant to hold water.\u00a0 </li>\n  <li>Water  thoroughly, so that a puddle forms in the saucer you have created. This settles  the plants in, drives out air pockets and results in good root-to-soil contact.</li>\n  <li>Use  the plant tag as a location marker.\u00a0 </li>\n</ul>'
+        ],
+        [
+          'How to Grow',
+          '<ul>\n  <li>Keep  weeds under control during the growing season. Weeds compete with plants for  water, space and nutrients, so control them by either cultivating often or use  a mulch to prevent their seeds from germinating.\u00a0 </li>\n  <li>Mulches  also help retain soil moisture and maintain even soil temperatures. For annuals  an organic mulch of shredded leaves lends a natural look to the bed and will  improve the soil as it breaks down in time. Always keep mulches off a plant&rsquo;s  stems to prevent possible rot.</li>\n  <li>Keep  plants well-watered during the growing season, especially during dry spells. Watering during dry spells will improve  flowering--although it will produce lots of succulent leaves.</li>\n  <li>Until  plants become established, some protection from extreme winds and direct, hot  sunlight may be necessary. Good air movement is also important. </li>\n  <li>After  new growth appears, a light fertilizer may be applied. Keep granular  fertilizers away from the plant crown and foliage to avoid burn injury. Use low  rates of a slow release fertilizer such as Flower-tone, as higher rates may  encourage root rots. </li>\n  <li>Deadhead  marigolds to keep them flowering from late spring until frost.</li>\n  <li>Monitor  for pests and diseases. Check with your local Cooperative Extension Service for  pest controls recommended for your area. </li>\n  <li>Remove  plants after they are killed by frost in fall to avoid disease issues the  following year. </li>\n</ul>'
+        ],
+        [
+          'Tips',
+          '<ul>\n  <li>Add  marigolds to sunny beds, borders and containers. Plant marigolds with both  sun-loving annuals and perennials in your garden. Marigolds combine well with  lavenders, salvias or sages, cosmos, daylilies, coreopsis, and nasturtium.</li>\n  <li>Marigolds  are frequently planted among vegetable crops to prevent pest and disease  problems. </li>\n  <li>Many  shorter marigold varieties are great for containers. </li>\n</ul>'
+        ],
+        [
+          'Common Pests and Problems',
+          "<p><strong><em>Common Disease Problems</em></strong><br>\n  <strong><br>\n  Alternaria Leaf Spot: </strong>Small, round reddish brown spots with white to gray centers form on the  upper surface of the leaves. The lesions may encircle the stems and cause wilt.  This disease is worse in warm, wet or very humid weather.<strong> <em>Burpee  Recommends: Avoid getting water on the foliage. Remove infected plant parts and  do not work around wet plants. Provide plenty of air circulation. Contact your  Cooperative Extension Service for fungicide recommendations.</em></strong><br>\n  <strong><br>\n  Aster Yellows: </strong>Plants are stunted, develop witch's brooms (excessive growth), petals  turn green and become deformed. This virus-like condition is spread by  leafhoppers.<strong> <em>Burpee Recommends: Remove infected plants and control  leafhoppers. Remove weeds in the area which serve as alternate hosts to the  disease. </em></strong><br>\n  <strong><br>\n  Botrytis: </strong>This  fungus causes a grey mold on flowers, leaves, stems and buds. It thrives in  cool wet weather conditions. White flowers are more susceptible than darker  colors. <strong>\u00a0<em>Burpee Recommends: Remove  affected plant parts, avoid watering at night and getting water on the plant  when watering. Make sure plants have good air circulation. Contact your  Cooperative Extension Service for fungicide recommendations. </em></strong><br>\n  <strong><br>\n  Damping Off: </strong>This  is one of the most common problems when starting plants from seed. The seed  emerges and appears healthy; then it suddenly wilts and dies for no obvious  reason. Damping off is caused by a fungus that is active when there is abundant  moisture and soils and air temperatures are above 68 degrees F. Typically, this  indicates that the soil is too wet or contains high amounts of nitrogen  fertilizer. <strong><em>Burpee Recommends: Keep seedlings moist but do not overwater; avoid  over-fertilizing your seedlings; thin out seedlings to avoid overcrowding; make  sure the plants are getting good air circulation; if you plant in containers,  thoroughly wash them in soapy water and rinse in a ten per cent bleach solution  after use.</em></strong><br>\n  <strong><br>\n  Verticillium Wilt:</strong> causes a wilting of the leaves and stems on several branches. Leaf  margins cup upward, leaves turn yellow and drop off. This will enter through  the roots, migrating up the stem and plugging a plant's transport vessels. It  is transmitted in the soil. It can also be spread by water and tools. <strong><em>Burpee Recommends: Practice at least a 4  year crop rotation. Remove and burn crop debris. </em></strong><strong></strong></p>\n<p><strong><em>Common Pest and  Cultural Problems</em></strong><br>\n  <br>\n  <strong>Aphids: </strong>Greenish, red, black or peach colored sucking  insects can spread disease as they feed on the undersides of leaves. They leave  a sticky residue on foliage that attracts ants. <strong><em>Burpee Recommends:  Introduce or attract natural predators into your garden such as lady beetles  and wasps who feed on aphids. You can also wash them off with a strong spray,  or use an insecticidal soap. </em></strong><br>\n  <strong><br>\n  Leafhoppers: </strong>Leafhoppers cause injury to leaves and  stunt growth. They also spread disease. <strong><em>Burpee Recommends: Remove plant  debris. Use insecticidal soaps. Consult your Cooperative Extension Service for  other insecticide recommendations. </em></strong><br>\n  <strong><br>\n  Slugs: </strong>These  pests leave large holes in the foliage or eat leaves entirely. They leave a  slime trail, feed at night and are mostly a problem in damp weather.<strong> <em>Burpee  Recommends: Hand pick, at night if possible. You can try attracting the slugs  to traps either using cornmeal or beer. For a beer trap, dig a hole in the  ground and place a large cup or bowl into the hole; use something that has  steep sides so that the slugs can&rsquo;t crawl back out when they&rsquo;re finished. Fill  the bowl about \u00be of the way full with beer, and let it sit overnight. In the  morning, the bowl should be full of drowned slugs that can be dumped out for  the birds to eat. For a cornmeal trap, put a tablespoon or two of cornmeal in a  jar and put it on its side near the plants. Slugs are attracted to the scent  but they cannot digest it and it will kill them. You can also try placing a  barrier around your plants of diatomaceous earth or even coffee grounds. They  cannot crawl over these.</em></strong><br>\n  <strong><br>\n  Spider Mites: </strong>These tiny spider-like pests are about  the size of a grain of pepper. They may be red, black, brown or yellow. They  suck on the plant juices removing chlorophyll and injecting toxins which cause  white dots on the foliage. There is often webbing visible on the plant. They  cause the foliage to turn yellow and become dry and stippled. They multiply  quickly and thrive in dry conditions. <strong><em>Burpee Recommends: Spider mites may  be controlled with a forceful spray every other day. Try hot pepper wax or  insecticidal soap. Check with your Cooperative Extension Service for miticide  recommendations. </em></strong><br>\n<strong><br>\nThrips: </strong>Thrips are tiny  needle-thin insects that are black or straw colored. They suck the juices of  plants and attack flower petals, leaves and stems. The plant will have a  stippling, discolored flecking or silvering of the leaf surface. Thrips can spread  many diseases from plant to plant. <strong><em>Burpee Recommends: Many thrips may be  repelled by sheets of aluminum foil spread between rows of plants. Remove weeds  from the bed and remove debris from the bed after frost. Check with your  Cooperative Extension Service for pest controls. </em></strong></p>"
+        ],
+        [
+          'FAQs',
+          '<p><strong>Can I use marigolds  as cut flowers? </strong>Yes, for  fresh bouquets, cut newly opened blooms early in the morning and immediately  set the stems in a jar of warm water. Later, strip the stems of lower leaves  that might foul the water and arrange the flowers in a vase with fresh water. Marigolds  will last up to a week, even longer if you add some floral preservative to the  vase water. Marigolds are also great for dried arrangements and floral crafts.  Cut perfect blossoms at their peak; remove foliage from the stems; and hang  upside down in a warm, dry place such as an attic until dry. The flowers will  shrink a bit, but their color will remain strong. Insert wire into the marigold  stems if needed for support in an arrangement.<br>\n  <strong><br>\n  My marigolds are  tall, skinny with small flowers, what happened? </strong>Usually this is a result of  overcrowding. Make sure to space or thin plants at the recommended spacing. <br>\n  <strong><br>\n  Do marigolds attract  beneficial insects to my garden? </strong>Yes they attract pollinators such as bees  and butterflies, as well as other beneficial insects. <br>\n  <strong><br>\n  Do marigolds make  good companion plants? </strong>Yes they are good companion for beans and cucumbers  because they can repel beetles. They can also repel nematodes in the garden.<br>\n  <strong><br>\n  Are marigolds edible?</strong> Yes the flowers of smaller flowered marigolds make a lovely garnish on salads. </p>'
+        ]
+      ]
+    }
+  },
+  Sunflower: {
+    howToGrow: {
+      indoor: {
+        indoor_min: null,
+        indoor_max: null,
+        transplant_min: null,
+        transplant_max: null,
+        fall_indoor_min: null,
+        fall_indoor_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      plant: {
+        transplant_min: null,
+        transplant_max: null,
+        fall_transplant_min: null,
+        fall_transplant_max: null
+      },
+      outdoor: {
+        direct_min: 'May 15',
+        direct_max: 'Jun 05',
+        fall_direct_min: null,
+        fall_direct_max: null
+      }
+    },
+    faq: {
+      how_to_grow: [
+        [
+          'How to Sow and Plant',
+          '<p>Sunflowers are grown from seed sown directly in the garden after frost.</p>\r\n<ul>\r\n<li>Direct sow seeds in average soil in full sun after all danger of frost.</li>\r\n<li>When choosing a site consider that sunflowers need a well-drained soil. &nbsp;They face the sun, so make sure they are in an open area of the garden. The taller varieties will cast shadows on other plants, so plant these at the north end of your garden.</li>\r\n<li>Prepare the soil by removing weeds and working organic matter into the top 6-8 inches of soil; then level and smooth.</li>\r\n<li>Most plants respond well to soils amended with organic matter. Compost is a wonderful form of organic matter with a good balance of nutrients and an ideal pH level, it can be added to your planting area at any time. If compost is not available, top dress the soil after planting with 1-2 inches of organic mulch, which will begin to breakdown into compost. After the growing season, a soil test will indicate what soil amendments are needed for the following season.</li>\r\n<li>Sow seeds \u00bd inch deep in groups of 2 or 3 seeds. Space the groups 18-24 inches apart, depending on the variety.</li>\r\n<li>Firm soil lightly, water and keep evenly moist.&nbsp;</li>\r\n<li>Seedlings will emerge in 7-10 days.</li>\r\n<li>Thin to one plant per group when seedlings have two sets of leaves.</li>\r\n</ul>'
+        ],
+        [
+          'How to Grow',
+          '<ul>\n  <li>Keep  weeds under control during the growing season. Weeds compete with plants for  water, space and nutrients, so control them by either cultivating often or use  a mulch to prevent their seeds from germinating.\u00a0 </li>\n  <li>Mulches  also help retain soil moisture and maintain even soil temperatures. For annuals  an organic mulch of shredded leaves lends a natural look to the bed and will  improve the soil as it breaks down in time. Always keep mulches off a plant&rsquo;s  stems to prevent possible rot.</li>\n  <li>Keep  soil evenly moist but not wet.</li>\n  <li>Once  established sunflowers can tolerate drought.</li>\n  <li>No  fertilizer is needed unless the soil is poor. Do not over fertilize.</li>\n  <li>Monitor  for pests and diseases. Check with your local Cooperative Extension Service for  pest controls recommended for your area. </li>\n  <li>Some  varieties only produce one bloom so once the bloom is spent, the plant may be  removed.</li>\n  <li>Remove  plants after they are killed by frost in fall to avoid disease issues the  following year. </li>\n</ul>'
+        ],
+        [
+          'Tips',
+          '<ul>\n  <li>Edible sunflowers will mature in about 3 months or  more after sowing. To harvest the seeds, cut the heads off after the stalks are  quite dry but before fall or winter rains come. Check the flower heads for  maturity to see if the florets in the center of the flower disk have shriveled  and the back of the flower head is turning yellow, or the head is starting to  droop. Cut flower-heads with a foot of the stalk attached. Hang heads in a  warm, dry, well-ventilated place so the seeds may fully ripen and dry.  Cheesecloth, netting or a paper bag with holes punched in for ventilation  should be placed over the head to protect the seeds and to collect those that  may drop from drying.</li>\n  <li>Shorter varieties may be grown in containers. Be  sure to use a commercial potting mix. </li>\n  <li>Pollenless varieties make terrific cut flowers.</li>\n</ul>'
+        ],
+        [
+          'Common Pests and Problems',
+          "<p><strong><em>Common Disease Problems</em></strong><br>\n  <strong><br>\n  Alternaria Leaf Spot: </strong>Small, round reddish brown spots with white to gray centers form on the  upper surface of the leaves. The lesions may encircle the stems and cause wilt.  This disease is worse in warm, wet or very humid weather.<strong> <em>Burpee  Recommends: Avoid getting water on the foliage. Remove infected plant parts and  do not work around wet plants. Provide plenty of air circulation. Contact your  Cooperative Extension Service for fungicide recommendations.</em></strong><br>\n  <strong><br>\n  Downy Mildew: </strong>This  fungus causes whitish gray patches on the undersides and eventually both sides  of the leaves. <strong><em>Burpee Recommends: Rotate crops with plants in a different family.  Avoid overhead watering. Provide adequate air circulation, do not overcrowd  plants. Do not work around plants when they are wet. </em></strong><br>\n  <strong><br>\n  Powdery Mildew: </strong>This fungus disease occurs on the top of the leaves in humid weather  conditions. The leaves appear to have a whitish or greyish surface and may  curl.<strong> <em>Burpee Recommends: Avoid powdery mildew by providing good air  circulation for the plants by good spacing and pruning. Contact your  Cooperative Extension Service for fungicide recommendations. </em></strong><br>\n  <strong><br>\n  Rust:</strong> A  number of fungus diseases that rust colored spots on foliage, stalks and husks. <strong><em>Burpee Recommends: Plant resistant  varieties. Practice crop rotation. Remove infected plants. Contact your Cooperative Extension Service  for fungicide recommendations. \u00a0 </em></strong><br>\n  <strong><br>\n  Septoria Leaf Spot: </strong>It is most severe during rainy  seasons in closely planted gardens. Water soaked circular or angular spots with  a greasy, greenish appearance on lower leafs appear. Fungus spores are produced  and darken the center of the spots. There is a progressive loss of foliage. <strong><em>Burpee Recommends: Remove and destroy </em></strong><strong><em>infected  plant debris. Don't handle or brush against plants when they are wet. Rotate  plantings. Remove weeds growing nearby.</em></strong></p>\n<p><strong><em>Common Pest and  Cultural Problems</em></strong><br>\n  <strong><br>\n  Aphids: </strong>Greenish, red, black or peach colored sucking  insects can spread disease as they feed on the undersides of leaves. They leave  a sticky residue on foliage that attracts ants. <strong><em>Burpee Recommends:  Introduce or attract natural predators into your garden such as lady beetles  and wasps who feed on aphids. You can also wash them off with a strong spray,  or use an insecticidal soap. </em></strong><br>\n  <strong><br>\n  Cutworms</strong>: These insects cut off the seedlings at the  soil level. <strong><em>Burpee Recommends: Place a paper cup collar (use a coffee cut  with the bottom cut out) around the base of the plant. They are usually mostly  a problem with young seedlings. You can also control by handpicking and  controlling weeds, where they lay their eggs. </em></strong><br>\n  <strong><br>\n  Flea Beetles: </strong>These  small hopping beetles feed on plant foliage and may spread diseases. <strong><em>Burpee Recommends: Rotate crops with plants  in a different plant family. Use floating row covers to prevent damage to young  foliage.</em></strong> <br>\n  <strong><br>\n  Sunflower Moth: </strong>A<strong> </strong>small gray sunflower moth sometimes lays its eggs in developing  sunflower blossoms. Its larvae are greenish-yellow with 5 brown stripes down  their backs. They feed in the flower and destroy seeds, creating a mass of  webbing and debris. <strong><em>Burpee Recommends: Hand pick the worms from the plants and drop them  into a plastic bag for the trash</em></strong>. <strong><em>Consult your Cooperative  Extension Service for other insecticide recommendations. </em></strong><br>\n  <strong><br>\n  Sunflower Stem  Weevil: </strong>Adults are dark brown with light spot about 1/8 inch long. Larvae  are pale. They bore into the stems and the foliage turns yellow and wilts.  Plants fall over and die. <strong><em>Burpee Recommends: Delay planting so beetles  will emerge and die before laying eggs. Remove and dispose of debris at the end  of the season.</em></strong></p>"
+        ],
+        [
+          'FAQs',
+          '<p><strong>What direction do the  flowers face? </strong>Sunflowers follow the sun.<br>\n  <strong><br>\n  Are any of the seeds  toxic? </strong>No, they are not toxic, however only the giant sunflower seeds are  good for eating.<br>\n  <strong><br>\n  Why are the seeds  hollow? </strong>This could be from a lack of pollination, sunflowers need insects  for pollination. Also sunflower moth larvae may leave tiny holes in the shell.<br>\n  <strong><br>\n  How many flowers does  each stem of the giant flowers get? </strong>One.<br>\n  <strong><br>\n  How long do  sunflowers bloom? </strong>Sunflowers bloom for about 4-6 weeks.</p>'
         ]
       ]
     }

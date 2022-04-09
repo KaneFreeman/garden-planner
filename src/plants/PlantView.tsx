@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Box,
@@ -93,6 +93,12 @@ const PlantView = () => {
     };
   }, []);
 
+  const sortedPlantTypes = useMemo(() => {
+    const plantTypes = [...PLANT_TYPES];
+    plantTypes.sort((a, b) => a.localeCompare(b));
+    return plantTypes;
+  }, []);
+
   if (!plant || plant?._id !== id) {
     return (
       <Box sx={{ width: '100%', mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -133,7 +139,7 @@ const PlantView = () => {
           label="Type"
           value={plant.type}
           noValueLabel="No plant type"
-          options={PLANT_TYPES}
+          options={sortedPlantTypes}
           onChange={(type) => handleUpdatePlant({ type })}
           renderer={renderPlantType}
           sx={{ mt: 1 }}
