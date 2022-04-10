@@ -353,12 +353,18 @@ export const TRANSPLANTED = 'Transplanted';
 export type Status = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED;
 export const STATUSES: Status[] = [NOT_PLANTED, PLANTED, TRANSPLANTED];
 
+export interface TransplantedTo {
+  containerId: string;
+  slotId: number;
+}
+
 export interface Slot {
   plant?: string;
   status?: Status;
   plantedCount?: number;
   plantedDate?: Date;
   transplantedDate?: Date;
+  transplantedTo?: TransplantedTo;
   comments?: Comment[];
   pictures?: PictureData[];
 }

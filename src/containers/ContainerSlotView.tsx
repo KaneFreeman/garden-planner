@@ -25,9 +25,10 @@ import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import getSlotTitle from '../utility/slot.util';
-import { PictureData, Plant, Slot, Comment, Status, STATUSES } from '../interface';
+import { PictureData, Plant, Slot, Comment, Status, STATUSES, Container } from '../interface';
 import { usePlants } from '../plants/usePlants';
-import { useContainer, useUpdateContainer } from './useContainers';
+import { useContainer, useContainers, useUpdateContainer } from './useContainers';
+import Select from '../components/Select';
 
 const ContainerSlot = () => {
   const navigate = useNavigate();
@@ -35,11 +36,33 @@ const ContainerSlot = () => {
   const { id, index } = useParams();
   const indexNumber = +(index ?? '0');
 
+  const [showTransplantedModal, setShowTransplantedModal] = useState(false);
+  const [transplantedDate, setTransplantedDate] = useState<Date>(new Date());
+  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string>();
+  const [transplantedToSlotId, setTransplantedToSlotId] = useState<number>();
+
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
   const [plantedCount, setPlantedCount] = useState(1);
   const [plantedDate, setPlantedDate] = useState<Date>(new Date());
 
   const updateContainer = useUpdateContainer();
+  const containers = useContainers();
+  const containersById = useMemo(
+    () =>
+      containers.reduce((byId, container) => {
+        // eslint-disable-next-line no-param-reassign
+        byId[container._id] = container;
+        return byId;
+      }, {} as Record<string, Container>),
+    [containers]
+  );
+  const transplantedToContainer = useMemo(() => {
+    if (!transplantedToContainerId) {
+      return undefined;
+    }
+
+    return containersById[transplantedToContainerId];
+  }, [containersById, transplantedToContainerId]);
 
   const container = useContainer(id);
   const plants = usePlants();
@@ -139,7 +162,8 @@ const ContainerSlot = () => {
           return;
         }
         if (value === 'Transplanted') {
-          updateSlot({ status: value, transplantedDate: new Date() });
+          setTransplantedDate(new Date());
+          setShowTransplantedModal(true);
           return;
         }
         updateSlot({ status: value });
@@ -153,6 +177,24 @@ const ContainerSlot = () => {
     setShowHowManyPlanted(false);
     setPlantedCount(1);
   }, [plantedCount, plantedDate, updateSlot]);
+
+  const finishUpdateStatusTransplanted = useCallback(() => {
+    if (transplantedToContainerId && transplantedToSlotId) {
+      updateSlot({
+        status: 'Planted',
+        transplantedDate,
+        transplantedTo: {
+          containerId: transplantedToContainerId,
+          slotId: transplantedToSlotId
+        }
+      });
+    } else {
+      updateSlot({ status: 'Planted', transplantedDate });
+    }
+    setShowTransplantedModal(false);
+    setTransplantedToContainerId(undefined);
+    setTransplantedToSlotId(undefined);
+  }, [transplantedDate, transplantedToContainerId, transplantedToSlotId, updateSlot]);
 
   const renderStatus = useCallback((value: Status | undefined) => {
     if (!value) {
@@ -234,7 +276,7 @@ const ContainerSlot = () => {
           <DateInlineField
             label="Transplanted Date"
             value={slot.transplantedDate}
-            onChange={(transplantedDate) => updateSlot({ transplantedDate })}
+            onChange={(newTransplantedDate) => updateSlot({ transplantedDate: newTransplantedDate })}
           />
         ) : null}
         <PicturesView
@@ -278,6 +320,54 @@ const ContainerSlot = () => {
         <DialogActions>
           <Button onClick={() => setShowHowManyPlanted(false)}>Cancel</Button>
           <Button onClick={finishUpdateStatusPlanted} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showTransplantedModal} onClose={() => setShowHowManyPlanted(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Transplant</DialogTitle>
+        <DialogContent>
+          <form name="plant-modal-form" onSubmit={finishUpdateStatusTransplanted} noValidate>
+            <Box sx={{ display: 'flex', mt: 1, mb: 2, gap: 1 }}>
+              <Select
+                label="Container"
+                value={transplantedToContainerId}
+                onChange={setTransplantedToContainerId}
+                options={containers?.map((entry) => ({
+                  label: entry.name,
+                  value: entry._id
+                }))}
+              />
+              <Select
+                label="Slot"
+                value={transplantedToSlotId}
+                disabled={!transplantedToContainer?.slots}
+                onChange={setTransplantedToSlotId}
+                options={
+                  transplantedToContainer?.slots
+                    ? Object.keys(transplantedToContainer.slots).map((entry) => ({
+                        label: getSlotTitle(+entry, transplantedToContainer.rows),
+                        value: +entry
+                      }))
+                    : []
+                }
+              />
+            </Box>
+            <Box sx={{ display: 'flex', mt: 1, mb: 0.5 }}>
+              <MobileDateTimePicker
+                label="Transplanted On"
+                value={transplantedDate}
+                onChange={(newPlantedDate: Date | null) => newPlantedDate && setTransplantedDate(newPlantedDate)}
+                renderInput={(params) => (
+                  <MuiTextField {...params} className="transplanted-dateTimeInput" sx={{ flexGrow: 1 }} />
+                )}
+              />
+            </Box>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowTransplantedModal(false)}>Cancel</Button>
+          <Button onClick={finishUpdateStatusTransplanted} variant="contained">
             Save
           </Button>
         </DialogActions>
