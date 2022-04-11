@@ -66,6 +66,7 @@ const ContainerSlot = () => {
       } as Slot),
     [container?.slots, indexNumber]
   );
+
   const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(
     slot.transplantedTo?.containerId ?? null
   );
@@ -102,8 +103,10 @@ const ContainerSlot = () => {
         const newSlots = { ...(container.slots ?? {}) };
         newSlots[indexNumber] = newSlot;
 
-        updateContainer({ ...container, slots: newSlots });
-        setVersion(version + 1);
+        // eslint-disable-next-line promise/catch-or-return
+        updateContainer({ ...container, slots: newSlots }).finally(() => {
+          setVersion(version + 1);
+        });
       }
     },
     [container, id, indexNumber, updateContainer, version]
