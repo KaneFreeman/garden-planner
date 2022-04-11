@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { TaskDTO, PlantDTO, ContainerDTO, PictureDTO } from '../interface';
+import { TaskDTO, PlantDTO, ContainerDTO, PictureDTO, PlantType, PlantDataDTO } from '../interface';
 
 interface Rest {
   'GET:/task': {
     method: 'GET';
-    request: {};
+    request: {
+      query?: {
+        path?: string;
+      };
+    };
     response: TaskDTO[];
   };
   'POST:/task': {
@@ -146,6 +150,20 @@ interface Rest {
       };
     };
     response: PictureDTO;
+  };
+  'GET:/static/plantData': {
+    method: 'GET';
+    request: {};
+    response: Record<PlantType, PlantDataDTO>;
+  };
+  'GET:/static/plantData/{plantType}': {
+    method: 'GET';
+    request: {
+      params: {
+        plantType: string;
+      };
+    };
+    response: PlantDataDTO | null;
   };
 }
 

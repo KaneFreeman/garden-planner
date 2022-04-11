@@ -4,12 +4,13 @@ import { ContainerDTO } from '../../interface';
 
 // Define a type for the slice state
 export interface ContainersState {
-  container?: ContainerDTO;
+  containersById: Record<string, ContainerDTO>;
   containers: ContainerDTO[];
 }
 
 // Define the initial state using that type
 const initialState: ContainersState = {
+  containersById: {},
   containers: []
 };
 
@@ -20,15 +21,18 @@ export const ContainersSlice = createSlice({
   reducers: {
     updateContainers: (state, action: PayloadAction<ContainerDTO[]>) => ({ ...state, containers: action.payload }),
     updateContainer: (state, action: PayloadAction<ContainerDTO>) => {
+      const containersById = {...state.containersById};
+      containersById[action.payload._id] = action.payload;
+
       const index = state.containers.findIndex((value) => value._id === action.payload._id);
       if (index < 0) {
-        return { ...state, container: action.payload };
+        return { ...state, containersById };
       }
 
       const containers = [...state.containers];
       containers[index] = action.payload;
 
-      return { ...state, container: action.payload, containers };
+      return { ...state, containersById, containers };
     }
   }
 });
@@ -36,6 +40,6 @@ export const ContainersSlice = createSlice({
 export const { updateContainers, updateContainer } = ContainersSlice.actions;
 
 export const selectContainers = (state: RootState) => state.containers.containers;
-export const selectContainer = (state: RootState) => state.containers.container;
+export const selectContainer = (id?: string) => (state: RootState) => id ? state.containers.containersById[id] : undefined;
 
 export default ContainersSlice.reducer;

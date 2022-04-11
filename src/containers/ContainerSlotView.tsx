@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -29,6 +29,8 @@ import { PictureData, Plant, Slot, Comment, Status, STATUSES, Container } from '
 import { usePlants } from '../plants/usePlants';
 import { useContainer, useContainers, useUpdateContainer } from './useContainers';
 import Select from '../components/Select';
+import ContainerSlotSelectInlineField from '../components/inline-fields/ContainerSlotSelectInlineField';
+import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 
 const ContainerSlot = () => {
   const navigate = useNavigate();
@@ -36,14 +38,9 @@ const ContainerSlot = () => {
   const { id, index } = useParams();
   const indexNumber = +(index ?? '0');
 
+  const [version, setVersion] = useState(0);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
   const [transplantedDate, setTransplantedDate] = useState<Date>(new Date());
-  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string>();
-  const [transplantedToSlotId, setTransplantedToSlotId] = useState<number>();
-
-  const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
-  const [plantedCount, setPlantedCount] = useState(1);
-  const [plantedDate, setPlantedDate] = useState<Date>(new Date());
 
   const updateContainer = useUpdateContainer();
   const containers = useContainers();
@@ -56,6 +53,33 @@ const ContainerSlot = () => {
       }, {} as Record<string, Container>),
     [containers]
   );
+
+  const container = useContainer(id);
+  const plants = usePlants();
+
+  const slot = useMemo(
+    () =>
+      container?.slots?.[indexNumber] ??
+      ({
+        transplantedFrom: null,
+        transplantedTo: null
+      } as Slot),
+    [container?.slots, indexNumber]
+  );
+  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(
+    slot.transplantedTo?.containerId ?? null
+  );
+  const [transplantedToSlotId, setTransplantedToSlotId] = useState<number | null>(slot.transplantedTo?.slotId ?? null);
+
+  useEffect(() => {
+    setTransplantedToContainerId(slot.transplantedTo?.containerId ?? null);
+    setTransplantedToSlotId(slot.transplantedTo?.slotId ?? null);
+  }, [slot]);
+
+  const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
+  const [plantedCount, setPlantedCount] = useState(1);
+  const [plantedDate, setPlantedDate] = useState<Date>(new Date());
+
   const transplantedToContainer = useMemo(() => {
     if (!transplantedToContainerId) {
       return undefined;
@@ -64,21 +88,25 @@ const ContainerSlot = () => {
     return containersById[transplantedToContainerId];
   }, [containersById, transplantedToContainerId]);
 
-  const container = useContainer(id);
-  const plants = usePlants();
-
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
       if (id && container) {
-        const newSlot: Slot = { ...(container.slots?.[indexNumber] ?? {}), ...data };
+        const newSlot: Slot = {
+          ...(container.slots?.[indexNumber] ?? {
+            transplantedTo: null,
+            transplantedFrom: null
+          }),
+          ...data
+        };
 
         const newSlots = { ...(container.slots ?? {}) };
         newSlots[indexNumber] = newSlot;
 
         updateContainer({ ...container, slots: newSlots });
+        setVersion(version + 1);
       }
     },
-    [container, id, indexNumber, updateContainer]
+    [container, id, indexNumber, updateContainer, version]
   );
 
   const updatePictures = useCallback(
@@ -102,8 +130,6 @@ const ContainerSlot = () => {
     },
     [id, container, updateSlot]
   );
-
-  const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
 
   const title = useMemo(() => getSlotTitle(indexNumber, container?.rows), [container?.rows, indexNumber]);
 
@@ -181,7 +207,7 @@ const ContainerSlot = () => {
   const finishUpdateStatusTransplanted = useCallback(() => {
     if (transplantedToContainerId && transplantedToSlotId) {
       updateSlot({
-        status: 'Planted',
+        status: 'Transplanted',
         transplantedDate,
         transplantedTo: {
           containerId: transplantedToContainerId,
@@ -189,11 +215,11 @@ const ContainerSlot = () => {
         }
       });
     } else {
-      updateSlot({ status: 'Planted', transplantedDate });
+      updateSlot({ status: 'Transplanted', transplantedDate, transplantedTo: null });
     }
     setShowTransplantedModal(false);
-    setTransplantedToContainerId(undefined);
-    setTransplantedToSlotId(undefined);
+    setTransplantedToContainerId(null);
+    setTransplantedToSlotId(null);
   }, [transplantedDate, transplantedToContainerId, transplantedToSlotId, updateSlot]);
 
   const renderStatus = useCallback((value: Status | undefined) => {
@@ -212,6 +238,17 @@ const ContainerSlot = () => {
       raw: <Chip label={value} color={color} />
     };
   }, []);
+
+  const slotOptions = useMemo(
+    () =>
+      transplantedToContainer
+        ? [...Array(transplantedToContainer.rows * transplantedToContainer.columns)].map((_, entry) => ({
+            label: getSlotTitle(entry, transplantedToContainer.rows),
+            value: entry
+          }))
+        : [],
+    [transplantedToContainer]
+  );
 
   if (!container) {
     return (
@@ -273,12 +310,25 @@ const ContainerSlot = () => {
           </>
         ) : null}
         {slot.status === 'Transplanted' ? (
-          <DateInlineField
-            label="Transplanted Date"
-            value={slot.transplantedDate}
-            onChange={(newTransplantedDate) => updateSlot({ transplantedDate: newTransplantedDate })}
-          />
+          <>
+            <DateInlineField
+              label="Transplanted Date"
+              value={slot.transplantedDate}
+              onChange={(newTransplantedDate) => updateSlot({ transplantedDate: newTransplantedDate })}
+            />
+            <ContainerSlotSelectInlineField
+              label="Transplanted To"
+              value={slot.transplantedTo}
+              onChange={(transplantedTo) => updateSlot({ transplantedTo })}
+            />
+            <ContainerSlotSelectInlineField
+              label="Transplanted From"
+              value={slot.transplantedFrom}
+              onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
+            />
+          </>
         ) : null}
+        <ContainerSlotTasksView containerId={id} slotId={indexNumber} version={version} />
         <PicturesView
           key="container-slot-view-pictures"
           pictures={slot.pictures}
@@ -331,8 +381,13 @@ const ContainerSlot = () => {
             <Box sx={{ display: 'flex', mt: 1, mb: 2, gap: 1 }}>
               <Select
                 label="Container"
-                value={transplantedToContainerId}
-                onChange={setTransplantedToContainerId}
+                value={transplantedToContainerId ?? undefined}
+                onChange={(newValue) => {
+                  if (transplantedToContainerId !== newValue) {
+                    setTransplantedToContainerId(newValue ?? null);
+                    setTransplantedToSlotId(null);
+                  }
+                }}
                 options={containers?.map((entry) => ({
                   label: entry.name,
                   value: entry._id
@@ -340,17 +395,10 @@ const ContainerSlot = () => {
               />
               <Select
                 label="Slot"
-                value={transplantedToSlotId}
-                disabled={!transplantedToContainer?.slots}
-                onChange={setTransplantedToSlotId}
-                options={
-                  transplantedToContainer?.slots
-                    ? Object.keys(transplantedToContainer.slots).map((entry) => ({
-                        label: getSlotTitle(+entry, transplantedToContainer.rows),
-                        value: +entry
-                      }))
-                    : []
-                }
+                value={transplantedToSlotId ?? undefined}
+                disabled={slotOptions.length === 0}
+                onChange={(newValue) => setTransplantedToSlotId(newValue ?? null)}
+                options={slotOptions}
               />
             </Box>
             <Box sx={{ display: 'flex', mt: 1, mb: 0.5 }}>

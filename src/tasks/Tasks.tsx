@@ -43,7 +43,7 @@ const Tasks = () => {
   const [taskToMarkAsOpen, setTaskToMarkAsOpen] = useState<Task | null>(null);
   const [completedOn, setCompletedOn] = useState<Date>(new Date());
 
-  const { tasks, completed, overdue, next30Days, current } = useTasks();
+  const { tasks, completed, overdue, next, current } = useTasks();
 
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
 
@@ -192,7 +192,7 @@ const Tasks = () => {
               }}
             </Tabs>
             <TabPanel value={tab} index={0}>
-              {overdue.length > 0 || current.length > 0 || next30Days.length > 0 ? (
+              {overdue.length > 0 || current.length > 0 || next.length > 0 ? (
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {overdue.length > 0 ? (
                     <Box>
@@ -224,11 +224,11 @@ const Tasks = () => {
                         Current
                       </Typography>
                       <Box component="nav" aria-label="main tasks-current">
-                        <List>{current.map((task, index) => renderTask('overdue', task, index))}</List>
+                        <List>{current.map((task, index) => renderTask('current', task, index))}</List>
                       </Box>
                     </Box>
                   ) : null}
-                  {next30Days.length > 0 ? (
+                  {next.length > 0 ? (
                     <Box>
                       <Typography
                         variant="h6"
@@ -242,7 +242,7 @@ const Tasks = () => {
                       </Typography>
                       <Box component="nav" aria-label="main tasks-future">
                         <List>
-                          {next30Days.map((task, index) => renderTask('overdue', task, index, { showStart: true }))}
+                          {next.map((task, index) => renderTask('next-30-days', task, index, { showStart: true }))}
                         </List>
                       </Box>
                     </Box>

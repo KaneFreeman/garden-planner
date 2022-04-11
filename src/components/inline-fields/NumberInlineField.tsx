@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, IconButton, ListItem, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import NumberTextField from '../NumberTextField';
@@ -89,9 +89,11 @@ const NumberInlineField = ({ label, value, onChange, wholeNumber, min, max }: Nu
         <Typography
           variant="body1"
           component="div"
-          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center' }}
+          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
         >
-          {value}
+          <ListItem button key="numberInlineField-display" onClick={open ? undefined : handleOpen}>
+            {value}
+          </ListItem>
         </Typography>
       )}
     </Box>

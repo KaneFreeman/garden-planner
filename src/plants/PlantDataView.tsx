@@ -1,10 +1,9 @@
-/* eslint-disable react/no-array-index-key */
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Box, styled } from '@mui/material';
-import { PlantData, PlantType } from '../interface';
+import { PlantType } from '../interface';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import CollapsableSimpleInlineField from '../components/inline-fields/CollapsableSimpleInlineField';
-import plantData from '../data/plantData';
+import { usePlantData } from '../hooks/useStaticData';
 
 interface PlantDataViewProps {
   type?: PlantType;
@@ -16,13 +15,15 @@ const TextBox = styled(Box)({
 });
 
 const PlantDataView = ({ type }: PlantDataViewProps) => {
-  const [data, setData] = useState<PlantData | null>(null);
+  const plantData = usePlantData();
 
-  useEffect(() => {
-    if (type && type in plantData) {
-      setData(plantData[type]);
+  const data = useMemo(() => {
+    if (type && plantData && type in plantData) {
+      return plantData[type];
     }
-  }, [type]);
+
+    return undefined;
+  }, [plantData, type]);
 
   if (!data) {
     return null;
@@ -30,34 +31,33 @@ const PlantDataView = ({ type }: PlantDataViewProps) => {
 
   return (
     <>
-      {data.howToGrow.indoor?.indoor_min || data.howToGrow.indoor?.fall_indoor_min ? (
+      {data.howToGrow.spring?.indoor || data.howToGrow.fall?.indoor ? (
         <SimpleInlineField
           label="From Seed Indoors"
           value={
             <Box sx={{ display: 'block' }}>
-              {data.howToGrow.indoor.indoor_min ? (
+              {data.howToGrow.spring?.indoor ? (
                 <>
                   <TextBox>
-                    <strong>Start</strong>: {data.howToGrow.indoor.indoor_min} - {data.howToGrow.indoor.indoor_max}
+                    <strong>Start</strong>: {data.howToGrow.spring.indoor.min} - {data.howToGrow.spring.indoor.max}
                   </TextBox>
-                  {data.howToGrow.indoor.transplant_min ? (
+                  {data.howToGrow.spring.indoor.transplant_min ? (
                     <TextBox>
-                      <strong>Transplant</strong>: {data.howToGrow.indoor.transplant_min} -{' '}
-                      {data.howToGrow.indoor.transplant_max}
+                      <strong>Transplant</strong>: {data.howToGrow.spring.indoor.transplant_min} -{' '}
+                      {data.howToGrow.spring.indoor.transplant_max}
                     </TextBox>
                   ) : null}
                 </>
               ) : null}
-              {data.howToGrow.indoor.fall_indoor_min ? (
+              {data.howToGrow.fall?.indoor ? (
                 <>
                   <TextBox>
-                    <strong>Fall Start</strong>: {data.howToGrow.indoor.fall_indoor_min} -{' '}
-                    {data.howToGrow.indoor.fall_indoor_max}
+                    <strong>Fall Start</strong>: {data.howToGrow.fall.indoor.min} - {data.howToGrow.fall.indoor.max}
                   </TextBox>
-                  {data.howToGrow.indoor.fall_transplant_min ? (
+                  {data.howToGrow.fall.indoor.transplant_min ? (
                     <TextBox>
-                      <strong>Transplant</strong>: {data.howToGrow.indoor.fall_transplant_min} -{' '}
-                      {data.howToGrow.indoor.fall_transplant_max}
+                      <strong>Transplant</strong>: {data.howToGrow.fall.indoor.transplant_min} -{' '}
+                      {data.howToGrow.fall.indoor.transplant_max}
                     </TextBox>
                   ) : null}
                 </>
@@ -66,40 +66,38 @@ const PlantDataView = ({ type }: PlantDataViewProps) => {
           }
         />
       ) : null}
-      {data.howToGrow.outdoor?.direct_min || data.howToGrow.outdoor?.fall_direct_min ? (
+      {data.howToGrow.spring?.outdoor || data.howToGrow.fall?.outdoor ? (
         <SimpleInlineField
           label="From Seed Outdoors"
           value={
             <Box sx={{ display: 'block' }}>
-              {data.howToGrow.outdoor.direct_min ? (
+              {data.howToGrow.spring?.outdoor ? (
                 <TextBox>
-                  <strong>Start</strong>: {data.howToGrow.outdoor.direct_min} - {data.howToGrow.outdoor.direct_max}
+                  <strong>Start</strong>: {data.howToGrow.spring.outdoor.min} - {data.howToGrow.spring.outdoor.max}
                 </TextBox>
               ) : null}
-              {data.howToGrow.outdoor.fall_direct_min ? (
+              {data.howToGrow.fall?.outdoor ? (
                 <TextBox>
-                  <strong>Fall Start</strong>: {data.howToGrow.outdoor.fall_direct_min} -{' '}
-                  {data.howToGrow.outdoor.fall_direct_max}
+                  <strong>Fall Start</strong>: {data.howToGrow.fall.outdoor.min} - {data.howToGrow.fall.outdoor.max}
                 </TextBox>
               ) : null}
             </Box>
           }
         />
       ) : null}
-      {data.howToGrow.plant?.transplant_min || data.howToGrow.plant?.transplant_max ? (
+      {data.howToGrow.spring?.plant || data.howToGrow.fall?.plant ? (
         <SimpleInlineField
           label="From Plant"
           value={
             <Box sx={{ display: 'block' }}>
-              {data.howToGrow.plant.transplant_min ? (
+              {data.howToGrow.spring?.plant ? (
                 <TextBox>
-                  <strong>Start</strong>: {data.howToGrow.plant.transplant_min} - {data.howToGrow.plant.transplant_max}
+                  <strong>Start</strong>: {data.howToGrow.spring.plant.min} - {data.howToGrow.spring.plant.max}
                 </TextBox>
               ) : null}
-              {data.howToGrow.plant.fall_transplant_min ? (
+              {data.howToGrow.fall?.plant ? (
                 <TextBox>
-                  <strong>Fall Start</strong>: {data.howToGrow.plant.fall_transplant_min} -{' '}
-                  {data.howToGrow.plant.fall_transplant_max}
+                  <strong>Fall Start</strong>: {data.howToGrow.fall.plant.min} - {data.howToGrow.fall.plant.max}
                 </TextBox>
               ) : null}
             </Box>

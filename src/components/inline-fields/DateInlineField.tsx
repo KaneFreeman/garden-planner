@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, ListItem, TextField, Typography } from '@mui/material';
 import { MobileDateTimePicker } from '@mui/lab';
 import { format } from 'date-fns';
 import './DateInlineField.css';
@@ -35,7 +35,7 @@ const DateInlineField = React.memo(({ label, value, onChange }: DateInlineFieldP
 
   return (
     <Box className="dateInlineField-root">
-      <Box onClick={handleOpen}>
+      <Box onClick={open ? undefined : handleOpen}>
         <Typography
           variant="subtitle1"
           component="div"
@@ -47,9 +47,11 @@ const DateInlineField = React.memo(({ label, value, onChange }: DateInlineFieldP
         <Typography
           variant="body1"
           component="div"
-          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center' }}
+          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
         >
-          {value ? format(value, 'MMM d, yyyy h:mmaaa') : ''}
+          <ListItem button key="dateInlineField-display" onClick={open ? undefined : handleOpen}>
+            {value ? format(value, 'MMM d, yyyy h:mmaaa') : ''}
+          </ListItem>
         </Typography>
       </Box>
       <MobileDateTimePicker

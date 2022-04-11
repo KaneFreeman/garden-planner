@@ -121,7 +121,8 @@ export const useRemoveContainer = () => {
 export function useContainer(containerId: string | undefined) {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
-  const containerDto = useAppSelector(selectContainer);
+  const selector = useMemo(() => selectContainer(containerId), [containerId]);
+  const containerDto = useAppSelector(selector);
   const container = useMemo(() => (containerDto ? fromContainerDTO(containerDto) : undefined), [containerDto]);
 
   useEffect(() => {

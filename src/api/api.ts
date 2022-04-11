@@ -23,6 +23,8 @@ const enum Api {
   picture_IdGet = 'GET:/picture/{pictureId}',
   picture_Post = 'POST:/picture',
   picture_IdDelete = 'DELETE:/picture/{pictureId}',
+
+  static_plantData_Get = 'GET:/static/plantData'
 }
 
 export default Api;

@@ -114,7 +114,17 @@ const PlantView = () => {
           {backPath && backLabel ? (
             // eslint-disable-next-line jsx-a11y/anchor-is-valid
             <Link underline="hover" color="inherit" onClick={() => navigate(backPath)} sx={{ cursor: 'pointer' }}>
-              <Typography variant="h6">{backLabel}</Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  height: 52,
+                  alignItems: 'center',
+                  display: 'flex',
+                  marginTop: 0.5
+                }}
+              >
+                {backLabel}
+              </Typography>
             </Link>
           ) : null}
           <Typography variant="h6" color="text.primary">
