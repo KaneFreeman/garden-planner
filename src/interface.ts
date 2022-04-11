@@ -72,7 +72,6 @@ export const CHINESE_CABBAGE = 'Chinese Cabbage';
 export const COLLARD = 'Collard';
 export const CORN = 'Corn';
 export const CORN_SALAD = 'Corn Salad';
-export const COVER_CROP = 'Cover Crop';
 export const COWPEA = 'Cowpea';
 export const CUCUMBER = 'Cucumber';
 export const EGGPLANT = 'Eggplant';
@@ -86,7 +85,6 @@ export const LEEK = 'Leek';
 export const LETTUCE = 'Lettuce';
 export const MELON = 'Melon';
 export const MESCLUN = 'Mesclun';
-export const MICROGREENS = 'Microgreens';
 export const MUSTARD = 'Mustard';
 export const OKRA = 'Okra';
 export const ONION = 'Onion';
@@ -100,15 +98,13 @@ export const RADICCHIO = 'Radicchio';
 export const RADISH = 'Radish';
 export const RHUBARB = 'Rhubarb';
 export const RUTABAGA = 'Rutabaga';
-export const SALAD_GREENS = 'Salad Greens';
 export const SHALLOT = 'Shallot';
 export const SPINACH = 'Spinach';
-export const SPROUTING_SEED = 'Sprouting Seed';
 export const SQUASH = 'Squash';
 export const SWEET_POTATOE = 'Sweet Potatoe';
 export const SWISS_CHARD = 'Swiss Chard';
-export const TOMATILLOE = 'Tomatilloe';
-export const TOMATOE = 'Tomatoe';
+export const TOMATILLO = 'Tomatillo';
+export const TOMATO = 'Tomato';
 export const TURNIP = 'Turnip';
 export const WATERMELON = 'Watermelon';
 
@@ -159,7 +155,6 @@ export type PlantType =
   | typeof COLLARD
   | typeof CORN
   | typeof CORN_SALAD
-  | typeof COVER_CROP
   | typeof COWPEA
   | typeof CUCUMBER
   | typeof EGGPLANT
@@ -173,7 +168,6 @@ export type PlantType =
   | typeof LETTUCE
   | typeof MELON
   | typeof MESCLUN
-  | typeof MICROGREENS
   | typeof MUSTARD
   | typeof OKRA
   | typeof ONION
@@ -187,15 +181,13 @@ export type PlantType =
   | typeof RADISH
   | typeof RHUBARB
   | typeof RUTABAGA
-  | typeof SALAD_GREENS
   | typeof SHALLOT
   | typeof SPINACH
-  | typeof SPROUTING_SEED
   | typeof SQUASH
   | typeof SWEET_POTATOE
   | typeof SWISS_CHARD
-  | typeof TOMATILLOE
-  | typeof TOMATOE
+  | typeof TOMATILLO
+  | typeof TOMATO
   | typeof TURNIP
   | typeof WATERMELON
   | typeof BASIL
@@ -244,7 +236,6 @@ export const PLANT_TYPES: PlantType[] = [
   COLLARD,
   CORN,
   CORN_SALAD,
-  COVER_CROP,
   COWPEA,
   CUCUMBER,
   EGGPLANT,
@@ -258,7 +249,6 @@ export const PLANT_TYPES: PlantType[] = [
   LETTUCE,
   MELON,
   MESCLUN,
-  MICROGREENS,
   MUSTARD,
   OKRA,
   ONION,
@@ -272,15 +262,13 @@ export const PLANT_TYPES: PlantType[] = [
   RADISH,
   RHUBARB,
   RUTABAGA,
-  SALAD_GREENS,
   SHALLOT,
   SPINACH,
-  SPROUTING_SEED,
   SQUASH,
   SWEET_POTATOE,
   SWISS_CHARD,
-  TOMATILLOE,
-  TOMATOE,
+  TOMATILLO,
+  TOMATO,
   TURNIP,
   WATERMELON,
   BASIL,
@@ -353,12 +341,18 @@ export const TRANSPLANTED = 'Transplanted';
 export type Status = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED;
 export const STATUSES: Status[] = [NOT_PLANTED, PLANTED, TRANSPLANTED];
 
+export interface ContainerSlotIdentifier {
+  containerId: string;
+  slotId: number;
+}
 export interface Slot {
   plant?: string;
   status?: Status;
   plantedCount?: number;
   plantedDate?: Date;
   transplantedDate?: Date;
+  transplantedTo: ContainerSlotIdentifier | null;
+  transplantedFrom: ContainerSlotIdentifier | null;
   comments?: Comment[];
   pictures?: PictureData[];
 }
@@ -369,6 +363,8 @@ export interface SlotDTO {
   plantedCount?: number;
   plantedDate?: string;
   transplantedDate?: string;
+  transplantedTo: ContainerSlotIdentifier | null;
+  transplantedFrom: ContainerSlotIdentifier | null;
   comments?: CommentDTO[];
   pictures?: PictureDataDTO[];
 }
@@ -489,29 +485,39 @@ export function toTaskDTO(dto: Omit<Task, '_id'>): Omit<TaskDTO, '_id'> {
   };
 }
 
-export interface PlantData {
+export interface PlantDataDTO {
   howToGrow: {
-    indoor?: {
-      indoor_min: string | null;
-      indoor_max: string | null;
-      transplant_min: string | null;
-      transplant_max: string | null;
-      fall_indoor_min: string | null;
-      fall_indoor_max: string | null;
-      fall_transplant_min: string | null;
-      fall_transplant_max: string | null;
+    spring?: {
+      indoor?: {
+        min: string;
+        max: string;
+        transplant_min: string;
+        transplant_max: string;
+      };
+      plant?: {
+        min: string;
+        max: string;
+      };
+      outdoor?: {
+        min: string;
+        max: string;
+      };
     };
-    plant?: {
-      transplant_min: string | null;
-      transplant_max: string | null;
-      fall_transplant_min: string | null;
-      fall_transplant_max: string | null;
-    };
-    outdoor?: {
-      direct_min: string | null;
-      direct_max: string | null;
-      fall_direct_min: string | null;
-      fall_direct_max: string | null;
+    fall?: {
+      indoor?: {
+        min: string;
+        max: string;
+        transplant_min: string;
+        transplant_max: string;
+      };
+      plant?: {
+        min: string;
+        max: string;
+      };
+      outdoor?: {
+        min: string;
+        max: string;
+      };
     };
   };
   faq: {

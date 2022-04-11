@@ -4,9 +4,9 @@ import { fromTaskDTO, Task, toTaskDTO } from '../interface';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectTasks, updateTasks } from '../store/slices/tasks';
+import { selectTasks, selectTasksByPath, updateTasks, updateTasksForPath } from '../store/slices/tasks';
 
-export const useGetTasks = () => {
+const useGetTasks = () => {
   const fetch = useFetch();
 
   const getTasks = useCallback(async () => {
@@ -17,7 +17,7 @@ export const useGetTasks = () => {
   return getTasks;
 };
 
-const useTaskOperation = () => {
+const useTasksOperation = () => {
   const getTasks = useGetTasks();
   const dispatch = useAppDispatch();
 
@@ -44,7 +44,7 @@ const useTaskOperation = () => {
 
 export const useAddTask = () => {
   const fetch = useFetch();
-  const runOperation = useTaskOperation();
+  const runOperation = useTasksOperation();
 
   const addTask = useCallback(
     async (data: Omit<Task, '_id'>) => {
@@ -68,7 +68,7 @@ export const useAddTask = () => {
 
 export const useUpdateTask = () => {
   const fetch = useFetch();
-  const runOperation = useTaskOperation();
+  const runOperation = useTasksOperation();
 
   const addTask = useCallback(
     async (data: Task) => {
@@ -95,7 +95,7 @@ export const useUpdateTask = () => {
 
 export const useRemoveTask = () => {
   const fetch = useFetch();
-  const runOperation = useTaskOperation();
+  const runOperation = useTasksOperation();
 
   const removeTask = useCallback(
     async (taskId: string) => {
@@ -118,6 +118,52 @@ export const useRemoveTask = () => {
 
   return removeTask;
 };
+
+function useSortTasks(tasks: Task[], limit = 30) {
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }, []);
+
+  const daysFromNow = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return addDays(d, limit).getTime();
+  }, [limit]);
+
+  const completed = useMemo(() => {
+    const completedTasks = tasks.filter((task) => Boolean(task.completedOn));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    completedTasks.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
+    return completedTasks;
+  }, [tasks]);
+
+  const overdue = useMemo(() => {
+    const overdueTasks = tasks.filter((task) => !task.completedOn && task.due.getTime() < today);
+    overdueTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
+    return overdueTasks;
+  }, [tasks, today]);
+
+  const next = useMemo(() => {
+    const nextTasks = tasks.filter(
+      (task) =>
+        !task.completedOn && task.start.getTime() > today && (limit === -1 || task.start.getTime() <= daysFromNow)
+    );
+    nextTasks.sort((a, b) => a.start.getTime() - b.start.getTime());
+    return nextTasks;
+  }, [daysFromNow, limit, tasks, today]);
+
+  const current = useMemo(() => {
+    const currentTasks = tasks.filter(
+      (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= today
+    );
+    currentTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
+    return currentTasks;
+  }, [tasks, today]);
+
+  return { tasks, completed, overdue, next, current };
+}
 
 export function useTasks() {
   const getTasks = useGetTasks();
@@ -143,46 +189,38 @@ export function useTasks() {
     };
   }, [dispatch, getTasks]);
 
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }, []);
-
-  const thirtyDaysFromNow = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return addDays(d, 30).getTime();
-  }, []);
-
-  const completed = useMemo(() => {
-    const completedTasks = tasks.filter((task) => Boolean(task.completedOn));
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    completedTasks.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
-    return completedTasks;
-  }, [tasks]);
-
-  const overdue = useMemo(() => {
-    const overdueTasks = tasks.filter((task) => !task.completedOn && task.due.getTime() < today);
-    overdueTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
-    return overdueTasks;
-  }, [tasks, today]);
-
-  const next30Days = useMemo(() => {
-    const next30DaysTasks = tasks.filter(
-      (task) => !task.completedOn && task.start.getTime() > today && task.start.getTime() <= thirtyDaysFromNow
-    );
-    next30DaysTasks.sort((a, b) => a.start.getTime() - b.start.getTime());
-    return next30DaysTasks;
-  }, [tasks, thirtyDaysFromNow, today]);
-
-  const current = useMemo(() => {
-    const currentTasks = tasks.filter(
-      (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= today
-    );
-    currentTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
-    return currentTasks;
-  }, [tasks, today]);
-
-  return { tasks, completed, overdue, next30Days, current };
+  return useSortTasks(tasks);
 }
+
+const useGetTasksByPath = () => {
+  const fetch = useFetch();
+  const dispatch = useAppDispatch();
+
+  const getTasks = useCallback(
+    async (path: string | undefined) => {
+      if (!path) {
+        return [];
+      }
+
+      const response = await fetch(Api.task_Get, { query: { path } });
+
+      if (response) {
+        dispatch(updateTasksForPath({ path, tasks: response }));
+      }
+
+      return response;
+    },
+    [dispatch, fetch]
+  );
+
+  return getTasks;
+};
+
+export const useTasksByPath = (path: string | undefined, limit?: number) => {
+  const getTasksByPath = useGetTasksByPath();
+  const selector = useMemo(() => selectTasksByPath(path), [path]);
+  const taskDtos = useAppSelector(selector);
+  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
+
+  return { ...useSortTasks(tasks, limit), getTasksByPath };
+};

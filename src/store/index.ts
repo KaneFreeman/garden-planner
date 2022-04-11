@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import thunkMiddleware from 'redux-thunk';
+import staticReducer from './slices/static';
 import tasksReducer from './slices/tasks';
 import plantsReducer from './slices/plants';
 import containersReducer from './slices/containers';
@@ -9,6 +10,7 @@ import monitorReducersEnhancer from '../middleware/monitorReducer';
 
 export const store = configureStore({
   reducer: {
+    static: staticReducer,
     tasks: tasksReducer,
     plants: plantsReducer,
     containers: containersReducer,

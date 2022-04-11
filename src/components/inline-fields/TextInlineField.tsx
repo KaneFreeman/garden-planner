@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, IconButton, ListItem, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '../TextField';
@@ -41,7 +41,14 @@ interface TextInlineFieldProps {
   renderer?: (value: string | undefined) => React.ReactNode;
 }
 
-const TextInlineField = ({ label, labelVariant = 'subtitle1', value, valueVariant = 'body1', onChange, renderer }: TextInlineFieldProps) => {
+const TextInlineField = ({
+  label,
+  labelVariant = 'subtitle1',
+  value,
+  valueVariant = 'body1',
+  onChange,
+  renderer
+}: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
@@ -124,9 +131,11 @@ const TextInlineField = ({ label, labelVariant = 'subtitle1', value, valueVarian
         <Typography
           variant={valueVariant}
           component="div"
-          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center' }}
+          sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
         >
-          {displayValue}
+          <ListItem button key="dateInlineField-display" onClick={open ? undefined : handleOpen}>
+            {displayValue}
+          </ListItem>
         </Typography>
       )}
     </Box>
