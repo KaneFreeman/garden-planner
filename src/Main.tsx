@@ -1,5 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -14,20 +16,57 @@ import Tasks from './tasks/Tasks';
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Oops... {error.message}</div>;
+  if (isLoading || error) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Typography variant="body1">Loading...</Typography>
+      </Box>
+    );
   }
 
   if (!isAuthenticated) {
-    return <button type="button" onClick={loginWithRedirect}>Log in</button>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Button variant="outlined" size="large" onClick={loginWithRedirect}>
+          Login in
+        </Button>
+      </Box>
+    );
   }
 
   if (user?.email !== process.env.REACT_APP_MASTER_EMAIL) {
-    return <div>Not authorized</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Typography variant="body1">Not authorized</Typography>
+      </Box>
+    );
   }
 
   return (

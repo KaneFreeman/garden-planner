@@ -21,8 +21,8 @@ const ContainerEditModal = ({ open, container, onClose }: ContainerEditModalProp
   const updateContainer = useUpdateContainer();
 
   const handleOnClose = useCallback(() => {
-    setEditData(container);
     onClose();
+    setEditData(container);
   }, [container, onClose]);
 
   const onSave = useCallback(() => {

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -13,7 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
-import useScreenOrientation from '../hooks/useOrientation';
+import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
@@ -22,8 +22,16 @@ import ContainerEditModal from './ContainerEditModal';
 
 const ContainerView = () => {
   const { id } = useParams();
-  const orientation = useScreenOrientation();
   const navigate = useNavigate();
+
+  const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
+
+  useEffect(() => {
+    const storedOrientation = window.localStorage.getItem(`container-${id}-orientation`);
+    if (storedOrientation && (storedOrientation === 'portrait' || storedOrientation === 'landscape')) {
+      setOrientation(storedOrientation);
+    }
+  }, [id]);
 
   const removeContainer = useRemoveContainer();
 
@@ -41,11 +49,14 @@ const ContainerView = () => {
     [plants]
   );
 
-  const isPortrait = useMemo(() => orientation.startsWith('portrait'), [orientation]);
+  const isPortrait = useMemo(() => orientation === 'portrait', [orientation]);
 
   const [deleting, setDeleting] = useState(false);
 
-  const handleOnDelete = useCallback(() => setDeleting(true), []);
+  const handleOnDelete = useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.stopPropagation();
+    setDeleting(true);
+  }, []);
   const handleOnDeleteConfirm = useCallback(() => {
     setDeleting(false);
     if (id) {
@@ -58,6 +69,16 @@ const ContainerView = () => {
   const [editing, setEditing] = useState(false);
   const handleEditOpen = useCallback(() => setEditing(true), []);
   const handleEditClose = useCallback(() => setEditing(false), []);
+
+  const handleRotate = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      event.stopPropagation();
+      const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
+      setOrientation(newOrientation);
+      window.localStorage.setItem(`container-${id}-orientation`, newOrientation);
+    },
+    [id, orientation]
+  );
 
   const slots = useMemo(() => {
     if (!id || !container) {
@@ -117,10 +138,24 @@ const ContainerView = () => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
+                aria-label="rotate"
+                color="info"
+                size="small"
+                sx={{
+                  ml: 1,
+                  transition: 'transform 333ms ease-out',
+                  transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                }}
+                onClick={handleRotate}
+                title="Rotate container"
+              >
+                <RotateLeftIcon fontSize="small" />
+              </IconButton>
+              <IconButton
                 aria-label="delete"
                 color="error"
                 size="small"
-                sx={{ ml: 1 }}
+                sx={{ ml: 0.5 }}
                 onClick={handleOnDelete}
                 title="Delete picture"
               >
