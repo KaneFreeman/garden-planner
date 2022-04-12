@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
-import { Box, Menu, MenuItem, styled, SxProps, Theme } from '@mui/material';
+import { styled, SxProps, Theme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 interface ImageProps {
   size: number | string;

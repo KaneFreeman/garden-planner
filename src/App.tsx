@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createTheme, ThemeProvider } from '@mui/material';
 import { Auth0Provider } from '@auth0/auth0-react';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import createTheme from '@mui/material/styles/createTheme';
 import Main from './Main';
 import { store } from './store';
 import './App.css';

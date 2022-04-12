@@ -1,5 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import { Backdrop, Box, CircularProgress, Dialog } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import Backdrop from '@mui/material/Backdrop';
 import PictureView from './PictureView';
 import { usePicture } from './usePictures';
 import './FullPictureView.css';

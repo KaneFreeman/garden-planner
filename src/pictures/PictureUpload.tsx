@@ -3,7 +3,8 @@
 /* eslint-disable promise/catch-or-return */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback } from 'react';
-import { IconButton, styled } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
 import { PhotoCamera } from '@mui/icons-material';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import generateThumbnail from '../utility/thumbnail.util';

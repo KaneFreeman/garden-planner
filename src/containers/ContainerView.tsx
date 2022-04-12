@@ -1,23 +1,24 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  Typography
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CircularProgress from '@mui/material/CircularProgress';
+import DialogContentText from '@mui/material/DialogContentText';
 import DeleteIcon from '@mui/icons-material/Delete';
+import HomeIcon from '@mui/icons-material/Home';
+import ParkIcon from '@mui/icons-material/Park';
 import useScreenOrientation from '../hooks/useOrientation';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import { useContainer, useRemoveContainer } from './useContainers';
+import ContainerEditModal from './ContainerEditModal';
 
 const ContainerView = () => {
   const { id } = useParams();
@@ -52,7 +53,11 @@ const ContainerView = () => {
       navigate('/containers');
     }
   }, [id, navigate, removeContainer]);
-  const handleOnClose = useCallback(() => setDeleting(false), []);
+  const handleDeleteOnClose = useCallback(() => setDeleting(false), []);
+
+  const [editing, setEditing] = useState(false);
+  const handleEditOpen = useCallback(() => setEditing(true), []);
+  const handleEditClose = useCallback(() => setEditing(false), []);
 
   const slots = useMemo(() => {
     if (!id || !container) {
@@ -79,6 +84,7 @@ const ContainerView = () => {
           key={`container-slot-${finalIndex}`}
           plant={plant}
           slot={slot}
+          container={container}
           id={id}
           index={finalIndex}
         />
@@ -98,9 +104,15 @@ const ContainerView = () => {
     <>
       <Box sx={{ p: 2, flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleEditOpen}>
             {container.name}
-            <Typography variant="subtitle1" component="span" sx={{ ml: 1 }} color="GrayText">
+            <Typography
+              variant="subtitle1"
+              component="span"
+              sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1 }}
+              color="GrayText"
+            >
+              {container.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
               {container.rows} x {container.columns}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -151,7 +163,7 @@ const ContainerView = () => {
       </Box>
       <Dialog
         open={deleting}
-        onClose={handleOnClose}
+        onClose={handleDeleteOnClose}
         aria-labelledby="deleting-container-title"
         aria-describedby="deleting-container-description"
       >
@@ -162,7 +174,7 @@ const ContainerView = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOnClose} color="primary" autoFocus>
+          <Button onClick={handleDeleteOnClose} color="primary" autoFocus>
             Cancel
           </Button>
           <Button onClick={handleOnDeleteConfirm} color="error">
@@ -170,6 +182,7 @@ const ContainerView = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <ContainerEditModal open={editing} container={container} onClose={handleEditClose} />
     </>
   );
 };

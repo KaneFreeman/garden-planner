@@ -2,20 +2,18 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  Chip,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Link,
-  Typography,
-  TextField as MuiTextField
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
+import MuiTextField from '@mui/material/TextField';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -208,7 +206,7 @@ const ContainerSlot = () => {
   }, [plantedCount, plantedDate, updateSlot]);
 
   const finishUpdateStatusTransplanted = useCallback(() => {
-    if (transplantedToContainerId && transplantedToSlotId) {
+    if (transplantedToContainerId !== null && transplantedToSlotId !== null) {
       updateSlot({
         status: 'Transplanted',
         transplantedDate,
@@ -324,12 +322,14 @@ const ContainerSlot = () => {
               value={slot.transplantedTo}
               onChange={(transplantedTo) => updateSlot({ transplantedTo })}
             />
-            <ContainerSlotSelectInlineField
-              label="Transplanted From"
-              value={slot.transplantedFrom}
-              onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
-            />
           </>
+        ) : null}
+        {slot.transplantedFrom !== null ? (
+          <ContainerSlotSelectInlineField
+            label="Transplanted From"
+            value={slot.transplantedFrom}
+            onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
+          />
         ) : null}
         <ContainerSlotTasksView containerId={id} slotId={indexNumber} version={version} />
         <PicturesView

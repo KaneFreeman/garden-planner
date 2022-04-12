@@ -1,4 +1,5 @@
-import { Box, SxProps, Theme } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 interface TabPanelProps {
   children: JSX.Element;

@@ -1,12 +1,9 @@
 import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
-import {
-  TextField as MuiTextField,
-  InputBaseComponentProps,
-  SxProps,
-  Theme,
-  InputAdornment,
-  InputProps
-} from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
+import { InputBaseComponentProps } from '@mui/material/InputBase';
+import { InputProps } from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import MuiTextField from '@mui/material/TextField';
 import { isNotEmpty } from '../utility/string.util';
 
 interface TextFieldProps {

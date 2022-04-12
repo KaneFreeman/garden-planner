@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router';
-import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import List from '@mui/material/List';
+import Box from '@mui/material/Box';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import Avatar from '@mui/material/Avatar';
 import InboxIcon from '@mui/icons-material/Inbox';
 import { useContainers } from './useContainers';
 

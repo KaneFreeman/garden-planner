@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns';
+import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
 import { fromTaskDTO, Task, toTaskDTO } from '../interface';
 import Api from '../api/api';

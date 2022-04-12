@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { memo, useCallback, useState } from 'react';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Collapse from '@mui/material/Collapse';
 
@@ -9,7 +10,7 @@ interface CollapsableSimpleInlineFieldProps {
   startCollapsed?: boolean;
 }
 
-const CollapsableSimpleInlineField = React.memo(
+const CollapsableSimpleInlineField = memo(
   ({ label, value, startCollapsed = false }: CollapsableSimpleInlineFieldProps) => {
     const [collapsed, setCollapsed] = useState(startCollapsed);
 

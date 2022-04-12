@@ -1,18 +1,22 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router';
-import { Badge, Box, IconButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Badge from '@mui/material/Badge';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
-import { Plant, Slot } from '../interface';
+import { Container, Plant, Slot } from '../interface';
+import getSlotTitle from '../utility/slot.util';
 
 interface ContainerSlotProps {
   id: string;
   index: number;
+  container: Container;
   slot?: Slot;
   plant?: Plant;
 }
 
-const ContainerSlotPreview = React.memo(({ id, index, slot, plant }: ContainerSlotProps) => {
+const ContainerSlotPreview = React.memo(({ id, index, container, slot, plant }: ContainerSlotProps) => {
   const navigate = useNavigate();
 
   const badgeColor = useMemo(() => {
@@ -31,10 +35,36 @@ const ContainerSlotPreview = React.memo(({ id, index, slot, plant }: ContainerSl
     return 'primary';
   }, [plant, slot?.status]);
 
+  const title = useMemo(() => {
+    let slotTitle = `${getSlotTitle(index, container.rows)}`;
+    if (!slot || slot.status === 'Not Planted') {
+      return `${slotTitle} - Not Planted`;
+    }
+
+    if (plant) {
+      slotTitle += ` - ${plant.name}`;
+    }
+
+    if (slot.status === 'Planted') {
+      slotTitle += ` - Planted`;
+      if (slot.plantedDate) {
+        slotTitle += ` on ${slot.plantedDate}`;
+      }
+    } else if (slot.status === 'Transplanted') {
+      slotTitle += ` - Transplanted`;
+      if (slot.transplantedDate) {
+        slotTitle += ` on ${slot.transplantedDate}`;
+      }
+    }
+
+    return slotTitle;
+  }, [container.rows, index, plant, slot]);
+
   return (
     <IconButton
       sx={{ p: 2, width: 80, height: 80, border: '2px solid #2c2c2c', borderRadius: 0 }}
       onClick={() => navigate(`/container/${id}/slot/${index}`)}
+      title={title}
     >
       <Box
         sx={{

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { Box, styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import { PlantType } from '../interface';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import CollapsableSimpleInlineField from '../components/inline-fields/CollapsableSimpleInlineField';

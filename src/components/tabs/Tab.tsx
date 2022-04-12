@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from 'react';
-import { Tab as MuiTab, Theme, Box, SxProps } from '@mui/material';
+import MuiTab from '@mui/material/Tab';
+import { SxProps, Theme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 export interface TabProps {
   label: ReactNode;

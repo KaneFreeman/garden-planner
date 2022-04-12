@@ -1,15 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Autocomplete,
-  TextField as MuiTextField,
-  Box
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Autocomplete from '@mui/material/Autocomplete';
+import MuiTextField from '@mui/material/TextField';
 import TextField from '../components/TextField';
 import PictureUpload from '../pictures/PictureUpload';
 import PictureView from '../pictures/PictureView';
@@ -121,16 +119,11 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
             options={PLANT_TYPES}
             fullWidth
             renderInput={(params) => <MuiTextField {...params} label="Type" />}
-            sx={{ mt: 1, mb: 0.5 }}
+            sx={{ mt: 1.5, mb: 1 }}
             onChange={(_, newValue) => update({ type: newValue ?? undefined })}
           />
-          <TextField
-            label="URL"
-            value={editData?.url}
-            onChange={(url) => update({ url })}
-            variant="outlined"
-          />
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, mb: 0.5 }}>
+          <TextField label="URL" value={editData?.url} onChange={(url) => update({ url })} variant="outlined" />
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1 }}>
             <NumberTextField
               label="Days to Maturity"
               value={editData?.daysToMaturity?.[0]}

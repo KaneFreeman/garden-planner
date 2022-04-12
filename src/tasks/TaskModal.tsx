@@ -1,14 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField as MuiTextField,
-  Box
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import MuiTextField from '@mui/material/TextField';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import TextField from '../components/TextField';
 import { Task } from '../interface';
@@ -78,7 +76,7 @@ const TaskModal = ({ open, onClose }: TaskModalProperties) => {
   );
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleOnClose} maxWidth="sm" fullWidth>
       <form name="task-modal-form" onSubmit={onSubmit} noValidate>
         <DialogTitle>Add Task</DialogTitle>
         <DialogContent>

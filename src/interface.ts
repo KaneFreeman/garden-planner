@@ -389,9 +389,20 @@ export function toSlotDTO(dto: Slot): SlotDTO {
   };
 }
 
+export const CONTAINER_TYPE_INSIDE = 'Inside';
+export const CONTAINER_TYPE_OUTSIDE = 'Outside';
+export type ContainerType =
+  | typeof CONTAINER_TYPE_INSIDE
+  | typeof CONTAINER_TYPE_OUTSIDE;
+export const CONTAINER_TYPES: ContainerType[] = [
+  CONTAINER_TYPE_INSIDE,
+  CONTAINER_TYPE_OUTSIDE,
+];
+
 export interface Container {
   _id: string;
   name: string;
+  type: ContainerType;
   rows: number;
   columns: number;
   slots?: Record<number, Slot>;
@@ -400,6 +411,7 @@ export interface Container {
 export interface ContainerDTO {
   _id: string;
   name: string;
+  type: ContainerType;
   rows: number;
   columns: number;
   slots?: Record<number, SlotDTO>;

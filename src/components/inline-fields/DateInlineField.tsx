@@ -1,8 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useEffect, useState } from 'react';
-import { Box, ListItem, TextField, Typography } from '@mui/material';
-import { MobileDateTimePicker } from '@mui/lab';
-import { format } from 'date-fns';
+import { memo, useCallback, useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import ListItem from '@mui/material/ListItem';
+import TextField from '@mui/material/TextField';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import format from 'date-fns/format';
 import './DateInlineField.css';
 
 interface DateInlineFieldProps {
@@ -11,7 +14,7 @@ interface DateInlineFieldProps {
   onChange(value: Date | undefined): void;
 }
 
-const DateInlineField = React.memo(({ label, value, onChange }: DateInlineFieldProps) => {
+const DateInlineField = memo(({ label, value, onChange }: DateInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<Date | undefined>(value);
 

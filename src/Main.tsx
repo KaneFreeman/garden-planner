@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useAuth0 } from '@auth0/auth0-react';

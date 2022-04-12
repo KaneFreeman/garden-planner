@@ -1,18 +1,15 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  Box,
-  Theme,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  SxProps,
-  ListItemAvatar,
-  ListItemIcon,
-  ListItemText
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import ListItem from '@mui/material/ListItem';
+import { SxProps, Theme } from '@mui/material/styles';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
 import { isNullish } from '../../utility/null.util';
 
 interface DefaultDrawerInlineSelectProps<T> extends BaseDrawerInlineSelectProps<T> {

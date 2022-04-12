@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { Box, Tabs as MuiTabs, Theme, SxProps } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import MuiTabs from '@mui/material/Tabs';
 import Tab from './Tab';
 
 export interface TabType {
@@ -73,12 +75,7 @@ const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, e
       >
         <MuiTabs value={tab} onChange={handleTabChange} aria-label={ariaLabel} sx={sxTabs}>
           {tabs.map((child, index) => (
-            <Tab
-              key={`tab-${child.label}`}
-              label={child.label}
-              index={index}
-              disabled={Boolean(child.disabled)}
-            />
+            <Tab key={`tab-${child.label}`} label={child.label} index={index} disabled={Boolean(child.disabled)} />
           ))}
         </MuiTabs>
         {endAdornment}

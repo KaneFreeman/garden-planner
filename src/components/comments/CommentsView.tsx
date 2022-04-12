@@ -1,6 +1,9 @@
 /* eslint-disable react/no-array-index-key */
 import { useCallback, useState } from 'react';
-import { Box, Button, IconButton, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
 import { PictureData, Comment } from '../../interface';
