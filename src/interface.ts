@@ -345,7 +345,8 @@ export interface ContainerSlotIdentifier {
   containerId: string;
   slotId: number;
 }
-export interface Slot {
+
+export interface BaseSlot {
   plant?: string;
   status?: Status;
   plantedCount?: number;
@@ -357,7 +358,11 @@ export interface Slot {
   pictures?: PictureData[];
 }
 
-export interface SlotDTO {
+export interface Slot extends BaseSlot {
+  subSlot?: BaseSlot;
+}
+
+export interface BaseSlotDTO {
   plant?: string;
   status?: Status;
   plantedCount?: number;
@@ -369,7 +374,11 @@ export interface SlotDTO {
   pictures?: PictureDataDTO[];
 }
 
-export function fromSlotDTO(dto: SlotDTO): Slot {
+export interface SlotDTO extends BaseSlotDTO {
+  subSlot?: BaseSlotDTO;
+}
+
+function fromBaseSlotDTO(dto: BaseSlotDTO): BaseSlot {
   return {
     ...dto,
     plantedDate: dto.plantedDate ? new Date(dto.plantedDate) : undefined,
@@ -379,7 +388,14 @@ export function fromSlotDTO(dto: SlotDTO): Slot {
   };
 }
 
-export function toSlotDTO(dto: Slot): SlotDTO {
+export function fromSlotDTO(dto: SlotDTO): Slot {
+  return {
+    ...fromBaseSlotDTO(dto),
+    subSlot: dto.subSlot ? fromBaseSlotDTO(dto.subSlot) : undefined
+  };
+}
+
+export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
   return {
     ...dto,
     plantedDate: dto.plantedDate ? dto.plantedDate.toISOString() : undefined,
@@ -389,15 +405,17 @@ export function toSlotDTO(dto: Slot): SlotDTO {
   };
 }
 
+export function toSlotDTO(dto: Slot): SlotDTO {
+  return {
+    ...toBaseSlotDTO(dto),
+    subSlot: dto.subSlot ? toBaseSlotDTO(dto.subSlot) : undefined
+  };
+}
+
 export const CONTAINER_TYPE_INSIDE = 'Inside';
 export const CONTAINER_TYPE_OUTSIDE = 'Outside';
-export type ContainerType =
-  | typeof CONTAINER_TYPE_INSIDE
-  | typeof CONTAINER_TYPE_OUTSIDE;
-export const CONTAINER_TYPES: ContainerType[] = [
-  CONTAINER_TYPE_INSIDE,
-  CONTAINER_TYPE_OUTSIDE,
-];
+export type ContainerType = typeof CONTAINER_TYPE_INSIDE | typeof CONTAINER_TYPE_OUTSIDE;
+export const CONTAINER_TYPES: ContainerType[] = [CONTAINER_TYPE_INSIDE, CONTAINER_TYPE_OUTSIDE];
 
 export interface Container {
   _id: string;

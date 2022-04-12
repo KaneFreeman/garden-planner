@@ -6,7 +6,8 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
-import InboxIcon from '@mui/icons-material/Inbox';
+import HomeIcon from '@mui/icons-material/Home';
+import ParkIcon from '@mui/icons-material/Park';
 import { useContainers } from './useContainers';
 
 const Containers = () => {
@@ -22,7 +23,11 @@ const Containers = () => {
               <ListItemButton onClick={() => navigate(`/container/${container._id}`)}>
                 <ListItemAvatar>
                   <Avatar>
-                    <InboxIcon />
+                    {container.type === 'Inside' ? (
+                      <HomeIcon titleAccess="Inside" />
+                    ) : (
+                      <ParkIcon titleAccess="Inside" />
+                    )}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={container.name} secondary={`${container.rows} x ${container.columns}`} />

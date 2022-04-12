@@ -17,16 +17,17 @@ interface ContainerSlotTasksViewProps {
   containerId: string | undefined;
   slotId: number;
   version: number;
+  type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ containerId, slotId, version }: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({ containerId, slotId, version, type }: ContainerSlotTasksViewProps) => {
   const path = useMemo(() => {
     if (!containerId) {
       return undefined;
     }
 
-    return `/container/${containerId}/slot/${slotId}`;
-  }, [containerId, slotId]);
+    return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
+  }, [containerId, slotId, type]);
 
   const { tasks, completed, overdue, next, current, getTasksByPath } = useTasksByPath(path, -1);
 

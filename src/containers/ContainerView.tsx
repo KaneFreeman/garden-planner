@@ -100,6 +100,12 @@ const ContainerView = () => {
         plant = plantsById[plantId];
       }
 
+      let subPlant: Plant | undefined;
+      const subPlantId = slot?.subSlot?.plant;
+      if (subPlantId !== undefined) {
+        subPlant = plantsById[subPlantId];
+      }
+
       return (
         <ContainerSlotPreview
           key={`container-slot-${finalIndex}`}
@@ -108,6 +114,8 @@ const ContainerView = () => {
           container={container}
           id={id}
           index={finalIndex}
+          subSlot={slot?.subSlot}
+          subPlant={subPlant}
         />
       );
     });

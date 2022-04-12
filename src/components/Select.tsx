@@ -53,7 +53,7 @@ const Select = <T extends string | number>({
     (event: SelectChangeEvent<string | NonNullable<T>>) => {
       setDirty(true);
       if (onChange) {
-        onChange(event.target.value as T);
+        onChange(event.target.value === '' ? (undefined as unknown as T) : (event.target.value as T));
       }
     },
     [onChange]
@@ -70,7 +70,7 @@ const Select = <T extends string | number>({
       <InputLabel id={labelId}>{label}</InputLabel>
       <MuiSelect labelId={labelId} id={id} value={value ?? ''} label={label} onChange={handleOnChange}>
         {!required ? (
-          <MenuItem key="NONE" value={undefined}>
+          <MenuItem key="NONE" value="">
             <em>None</em>
           </MenuItem>
         ) : null}

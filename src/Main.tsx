@@ -10,8 +10,9 @@ import Plants from './plants/Plants';
 import PlantView from './plants/PlantView';
 import Containers from './containers/Containers';
 import ContainerView from './containers/ContainerView';
-import ContainerSlotView from './containers/ContainerSlotView';
 import Tasks from './tasks/Tasks';
+import ContainerSlotRoute from './containers/ContainerSlotRoute';
+import ContainerSubSlotRoute from './containers/ContainerSubSlotRoute';
 
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
@@ -95,7 +96,8 @@ const Main = () => {
             <Route path="/" element={<Tasks />} />
             <Route path="/containers" element={<Containers />} />
             <Route path="/container/:id" element={<ContainerView />} />
-            <Route path="/container/:id/slot/:index" element={<ContainerSlotView />} />
+            <Route path="/container/:id/slot/:index" element={<ContainerSlotRoute />} />
+            <Route path="/container/:id/slot/:index/sub-slot" element={<ContainerSubSlotRoute />} />
             <Route path="/plants" element={<Plants />} />
             <Route path="/plant/:id" element={<PlantView />} />
           </Routes>
