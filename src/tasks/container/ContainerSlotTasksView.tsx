@@ -1,17 +1,12 @@
-import React, { useCallback, useMemo } from 'react';
-import format from 'date-fns/format';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import { useCallback, useMemo } from 'react';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
 import Alert from '@mui/material/Alert';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../../interface';
 import { useTasksByPath } from '../useTasks';
 import '../Tasks.css';
+import TaskListItem from '../TaskListItem';
 
 interface ContainerSlotTasksViewProps {
   containerId: string | undefined;
@@ -30,34 +25,20 @@ const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTask
 
   const { tasks, completed, overdue, next, current } = useTasksByPath(path, -1);
 
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }, []);
+
   const renderTask = useCallback(
-    (key: string, task: Task, index: number, options?: { showStart: boolean; style?: React.CSSProperties }) => {
-      const { showStart = false, style } = options || {};
-
-      let secondaryText: string;
-      if (task.completedOn !== null) {
-        secondaryText = `Completed ${format(task.completedOn, 'MMM d')}`;
-      } else {
-        secondaryText = `${showStart ? `Starts ${format(task.start, 'MMM d')}, ` : ''}Due ${format(task.due, 'MMM d')}`;
-      }
-
+    (key: string, task: Task, index: number, options?: { showStart?: boolean; isOverdue?: boolean }) => {
+      const { showStart = false, isOverdue = false } = options || {};
       return (
-        <ListItem className="task" style={style} key={`${key}-${index}`} disablePadding>
-          <ListItemIcon>
-            {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
-          </ListItemIcon>
-          <ListItemText
-            primary={task.text}
-            secondary={secondaryText}
-            classes={{
-              primary: 'textPrimary',
-              secondary: 'textSecondary'
-            }}
-          />
-        </ListItem>
+        <TaskListItem key={`${key}-${index}`} today={today} task={task} showStart={showStart} isOverdue={isOverdue} />
       );
     },
-    []
+    [today]
   );
 
   return (
@@ -70,16 +51,16 @@ const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTask
       >
         Tasks
       </Typography>
-      <Box sx={{ width: '100%', ml: -2, mr: -2 }}>
+      <Box sx={{ width: '100%' }}>
         {tasks.length === 0 ? (
           <Alert severity="info" sx={{ m: 2 }}>
             No tasks at this time!
           </Alert>
         ) : (
-          <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <List>
               {completed.map((task, index) => renderTask('completed', task, index))}
-              {overdue.map((task, index) => renderTask('completed', task, index))}
+              {overdue.map((task, index) => renderTask('completed', task, index, { isOverdue: true }))}
               {current.map((task, index) => renderTask('completed', task, index))}
               {next.map((task, index) => renderTask('completed', task, index, { showStart: true }))}
             </List>

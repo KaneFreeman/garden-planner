@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -17,6 +17,8 @@ import MuiTextField from '@mui/material/TextField';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import { styled } from '@mui/material/styles';
+import { blue, red } from '@mui/material/colors';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -33,6 +35,23 @@ import Select from '../components/Select';
 import ContainerSlotSelectInlineField from '../components/inline-fields/ContainerSlotSelectInlineField';
 import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
+import { useTasksByPath } from '../tasks/useTasks';
+
+interface CircleProps {
+  backgroundColor: string;
+}
+
+const Circle = styled(Box)<CircleProps>(({ backgroundColor }) => ({
+  borderRadius: '50%',
+  backgroundColor,
+  width: 32,
+  height: 32,
+  marginLeft: 8,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '0.8125rem'
+}));
 
 interface ContainerSlotViewProps {
   id: string | undefined;
@@ -63,6 +82,10 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   );
 
   const plants = usePlants();
+
+  const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
+  const subPlantPath = useMemo(() => (path ? `${path}/sub-slot` : undefined), [path]);
+  const subPlantTasks = useTasksByPath(subPlantPath);
 
   const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(
     slot.transplantedTo?.containerId ?? null
@@ -140,22 +163,22 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const onPlantClick = useCallback(
     (target: Plant) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      if (target) {
+      if (target && path) {
         event.stopPropagation();
-        navigate(`/plant/${target._id}?backPath=/container/${id}/slot/${index}&backLabel=${title}`);
+        navigate(`/plant/${target._id}?backPath=${path}&backLabel=${title}`);
       }
     },
-    [id, index, navigate, title]
+    [navigate, path, title]
   );
 
   const onSubPlantClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (slot.plant) {
+      if (slot.plant && path) {
         event.stopPropagation();
-        navigate(`/container/${id}/slot/${index}/sub-slot`);
+        navigate(`${path}/sub-slot`);
       }
     },
-    [id, index, navigate, slot.plant]
+    [navigate, path, slot.plant]
   );
 
   const renderPlant = useCallback(
@@ -209,6 +232,15 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
     const { raw } = renderStatus(subSlot?.status ?? 'Not Planted') ?? {};
 
+    const { current, overdue } = subPlantTasks;
+
+    let badge: ReactNode = null;
+    if (overdue.length > 0) {
+      badge = <Circle backgroundColor={red[500]}>{overdue.length}</Circle>;
+    } else if (current.length > 0) {
+      badge = <Circle backgroundColor={blue[500]}>{current.length}</Circle>;
+    }
+
     return (
       <ListItemButton key="sub-plant" onClick={onSubPlantClick} sx={{ ml: -2, mr: -2 }}>
         {subPlant ? (
@@ -222,13 +254,14 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
               </Box>
             </Button>
             {raw ?? null}
+            {badge}
           </>
         ) : (
           <ListItemText primary="None" />
         )}
       </ListItemButton>
     );
-  }, [subSlot, renderStatus, onSubPlantClick, subPlant, onPlantClick]);
+  }, [subSlot, renderStatus, subPlantTasks, onSubPlantClick, subPlant, onPlantClick]);
 
   const updateStatus = useCallback(
     (value: Status) => {

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
+import { green, red } from '@mui/material/colors';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
 import getSlotTitle from '../utility/slot.util';
+import { useTasksByPath } from '../tasks/useTasks';
 
 interface ContainerSlotPreviewProps {
   id: string;
@@ -22,36 +24,80 @@ const ContainerSlotPreview = React.memo(
   ({ id, index, container, slot, plant, subSlot, subPlant }: ContainerSlotPreviewProps) => {
     const navigate = useNavigate();
 
-    const badgeColor = useMemo(() => {
+    const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
+    const tasks = useTasksByPath(path);
+
+    const subPlantPath = useMemo(() => `${path}/sub-slot`, [path]);
+    const subPlantTasks = useTasksByPath(subPlantPath);
+
+    const { badgeColor, badgeCount } = useMemo(() => {
+      const { current, overdue } = tasks;
+
+      let color: 'success' | 'default' | 'primary' | 'error';
+
+      if (overdue.length > 0) {
+        color = 'error';
+        return { badgeColor: color, badgeCount: overdue.length };
+      }
+
+      if (current.length > 0) {
+        color = 'primary';
+        return { badgeColor: color, badgeCount: current.length };
+      }
+
+      color = 'default';
+      return { badgeColor: color, badgeCount: 0 };
+    }, [tasks]);
+
+    const borderColor = useMemo(() => {
       if (!plant) {
-        return 'default';
+        return '#2c2c2c';
       }
 
       if (slot?.status === 'Planted') {
-        return 'success';
+        return green[300];
       }
 
       if (slot?.status === 'Transplanted') {
-        return 'error';
+        return red[300];
       }
 
-      return 'primary';
+      return '#2c2c2c';
     }, [plant, slot?.status]);
 
-    const subPlantBadgeColor = useMemo(() => {
+    const { subPlantBadgeColor, subPlantBadgeCount } = useMemo(() => {
+      const { current, overdue } = subPlantTasks;
+
+      let color: 'success' | 'default' | 'primary' | 'error';
+
+      if (overdue.length > 0) {
+        color = 'error';
+        return { subPlantBadgeColor: color, subPlantBadgeCount: overdue.length };
+      }
+
+      if (current.length > 0) {
+        color = 'primary';
+        return { subPlantBadgeColor: color, subPlantBadgeCount: current.length };
+      }
+
+      color = 'default';
+      return { subPlantBadgeColor: color, subPlantBadgeCount: 0 };
+    }, [subPlantTasks]);
+
+    const subPlantBorderColor = useMemo(() => {
       if (!subPlant) {
-        return 'default';
+        return '#2c2c2c';
       }
 
       if (subSlot?.status === 'Planted') {
-        return 'success';
+        return green[300];
       }
 
       if (subSlot?.status === 'Transplanted') {
-        return 'error';
+        return red[300];
       }
 
-      return 'primary';
+      return '#1f1f1f';
     }, [subPlant, subSlot?.status]);
 
     const title = useMemo(() => {
@@ -81,31 +127,33 @@ const ContainerSlotPreview = React.memo(
 
     return (
       <IconButton
-        sx={{ p: 2, width: 80, height: 80, border: '2px solid #2c2c2c', borderRadius: 0 }}
+        sx={{ p: 2, width: 80, height: 80, border: `2px solid ${borderColor}`, borderRadius: 0 }}
         onClick={() => navigate(`/container/${id}/slot/${index}`)}
         title={title}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Badge
-            badgeContent=" "
-            color={badgeColor}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
+        {badgeCount ? (
+          <Box
+            sx={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
           >
-            <Box sx={{ width: 52, height: 52, display: 'flex', boxSizing: 'border-box' }} />
-          </Badge>
-        </Box>
+            <Badge
+              badgeContent={badgeCount}
+              color={badgeColor}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+            >
+              <Box sx={{ width: 52, height: 52, display: 'flex', boxSizing: 'border-box' }} />
+            </Badge>
+          </Box>
+        ) : null}
         {plant ? <PlantAvatar plant={plant} size={76} variant="square" /> : <GrassIcon color="disabled" />}
         {subSlot && subPlant ? (
           <Box
@@ -118,31 +166,33 @@ const ContainerSlotPreview = React.memo(
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid #1f1f1f'
+              border: `1px solid ${subPlantBorderColor}`
             }}
           >
-            <Box
-              sx={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <Badge
-                badgeContent=" "
-                color={subPlantBadgeColor}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
+            {subPlantBadgeCount ? (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
-                variant="dot"
               >
-                <Box sx={{ width: 18, height: 18, display: 'flex', boxSizing: 'border-box' }} />
-              </Badge>
-            </Box>
+                <Badge
+                  badgeContent={subPlantBadgeCount}
+                  color={subPlantBadgeColor}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  variant="dot"
+                >
+                  <Box sx={{ width: 18, height: 18, display: 'flex', boxSizing: 'border-box' }} />
+                </Badge>
+              </Box>
+            ) : null}
             <PlantAvatar plant={subPlant} size={29} variant="square" />
           </Box>
         ) : null}
