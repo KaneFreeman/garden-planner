@@ -10,6 +10,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import DialogContentText from '@mui/material/DialogContentText';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
@@ -134,16 +136,29 @@ const ContainerView = () => {
       <Box sx={{ p: 2, flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleEditOpen}>
-            {container.name}
-            <Typography
-              variant="subtitle1"
-              component="span"
-              sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1 }}
-              color="GrayText"
-            >
-              {container.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
-              {container.rows} x {container.columns}
-            </Typography>
+            <Breadcrumbs aria-label="breadcrumb" separator="›">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <Link
+                underline="hover"
+                color="inherit"
+                onClick={() => navigate(`/containers`)}
+                sx={{ cursor: 'pointer' }}
+              >
+                <Typography variant="h6">Containers</Typography>
+              </Link>
+              <Typography variant="h6" color="text.primary" sx={{ display: 'flex' }}>
+                {container.name}
+                <Typography
+                  variant="subtitle1"
+                  component="span"
+                  sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1 }}
+                  color="GrayText"
+                >
+                  {container.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
+                  {container.rows} x {container.columns}
+                </Typography>
+              </Typography>
+            </Breadcrumbs>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton
                 aria-label="rotate"

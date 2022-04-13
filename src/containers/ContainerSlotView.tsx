@@ -9,7 +9,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
@@ -36,6 +35,7 @@ import ContainerSlotSelectInlineField from '../components/inline-fields/Containe
 import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { useTasksByPath } from '../tasks/useTasks';
+import StatusChip from './StatusChip';
 
 interface CircleProps {
   backgroundColor: string;
@@ -213,15 +213,8 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
       return undefined;
     }
 
-    let color: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' = 'default';
-    if (value === 'Planted') {
-      color = 'success';
-    } else if (value === 'Transplanted') {
-      color = 'error';
-    }
-
     return {
-      raw: <Chip label={value} color={color} />
+      raw: <StatusChip status={value} />
     };
   }, []);
 

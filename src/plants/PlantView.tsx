@@ -109,20 +109,23 @@ const PlantView = () => {
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
         <Breadcrumbs aria-label="breadcrumb" separator="›">
-          {backPath && backLabel ? (
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            <Link underline="hover" color="inherit" onClick={() => navigate(backPath)} sx={{ cursor: 'pointer' }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  alignItems: 'center',
-                  display: 'flex'
-                }}
-              >
-                {backLabel}
-              </Typography>
-            </Link>
-          ) : null}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <Link
+            underline="hover"
+            color="inherit"
+            onClick={() => navigate(backPath && backLabel ? backPath : '/plants')}
+            sx={{ cursor: 'pointer' }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                alignItems: 'center',
+                display: 'flex'
+              }}
+            >
+              {backPath && backLabel ? backLabel : 'Plants'}
+            </Typography>
+          </Link>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <TextInlineField
               valueVariant="h6"
