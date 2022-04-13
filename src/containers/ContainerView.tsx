@@ -96,13 +96,13 @@ const ContainerView = () => {
       const slot = container.slots?.[finalIndex];
       const plantId = slot?.plant;
       let plant: Plant | undefined;
-      if (plantId !== undefined) {
+      if (plantId !== undefined && plantId !== null) {
         plant = plantsById[plantId];
       }
 
       let subPlant: Plant | undefined;
       const subPlantId = slot?.subSlot?.plant;
-      if (subPlantId !== undefined) {
+      if (subPlantId !== undefined && subPlantId !== null) {
         subPlant = plantsById[subPlantId];
       }
 

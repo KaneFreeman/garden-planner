@@ -302,7 +302,7 @@ export const PLANT_TYPES: PlantType[] = [
 export interface Plant {
   _id: string;
   name: string;
-  type?: PlantType;
+  type?: PlantType | null;
   url?: string;
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureData[];
@@ -312,7 +312,7 @@ export interface Plant {
 export interface PlantDTO {
   _id: string;
   name: string;
-  type?: PlantType;
+  type?: PlantType | null;
   url?: string;
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureDataDTO[];
@@ -347,7 +347,7 @@ export interface ContainerSlotIdentifier {
 }
 
 export interface BaseSlot {
-  plant?: string;
+  plant?: string | null;
   status?: Status;
   plantedCount?: number;
   plantedDate?: Date;
@@ -363,7 +363,7 @@ export interface Slot extends BaseSlot {
 }
 
 export interface BaseSlotDTO {
-  plant?: string;
+  plant?: string | null;
   status?: Status;
   plantedCount?: number;
   plantedDate?: string;

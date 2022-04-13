@@ -4,21 +4,28 @@ import Api from '../api/api';
 import useFetch from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectContainer, selectContainers, updateContainer, updateContainers } from '../store/slices/containers';
+import { useGetTasks } from '../tasks/useTasks';
 
 export const useGetContainers = () => {
   const fetch = useFetch();
+  const dispatch = useAppDispatch();
 
   const getContainers = useCallback(async () => {
     const response = await fetch(Api.container_Get, {});
+
+    if (response) {
+      dispatch(updateContainers(response));
+    }
+
     return response;
-  }, [fetch]);
+  }, [dispatch, fetch]);
 
   return getContainers;
 };
 
 const useContainerOperation = () => {
   const getContainers = useGetContainers();
-  const dispatch = useAppDispatch();
+  const getTasks = useGetTasks();
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -28,14 +35,12 @@ const useContainerOperation = () => {
         return undefined;
       }
 
-      const containers = await getContainers();
-      if (containers) {
-        dispatch(updateContainers(containers));
-      }
+      await getContainers();
+      await getTasks();
 
       return response;
     },
-    [dispatch, getContainers]
+    [getContainers, getTasks]
   );
 
   return runOperation;
@@ -68,6 +73,7 @@ export const useAddContainer = () => {
 export const useUpdateContainer = () => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
+  const getTasks = useGetTasks();
 
   const addContainer = useCallback(
     async (data: Container) => {
@@ -83,10 +89,11 @@ export const useUpdateContainer = () => {
       }
 
       dispatch(updateContainer(response));
+      await getTasks();
 
       return fromContainerDTO(response);
     },
-    [dispatch, fetch]
+    [dispatch, fetch, getTasks]
   );
 
   return addContainer;
@@ -156,7 +163,6 @@ export function useContainer(containerId: string | undefined) {
 
 export function useContainers() {
   const getContainers = useGetContainers();
-  const dispatch = useAppDispatch();
   const containerDtos = useAppSelector(selectContainers);
   const containers = useMemo(() => {
     const data = containerDtos.map(fromContainerDTO);
@@ -165,22 +171,8 @@ export function useContainers() {
   }, [containerDtos]);
 
   useEffect(() => {
-    let alive = true;
-
-    const getContainersCall = async () => {
-      const data = await getContainers();
-
-      if (data && alive) {
-        dispatch(updateContainers(data));
-      }
-    };
-
-    getContainersCall();
-
-    return () => {
-      alive = false;
-    };
-  }, [dispatch, getContainers]);
+    getContainers();
+  }, [getContainers]);
 
   return containers;
 }

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -25,6 +25,7 @@ interface TextInlineFieldProps {
     | 'overline'
     | 'inherit';
   value: string | undefined;
+  valueActive?: boolean;
   valueVariant?:
     | 'h1'
     | 'h2'
@@ -42,6 +43,8 @@ interface TextInlineFieldProps {
     | 'inherit';
   onChange(value: string | undefined): void;
   renderer?: (value: string | undefined) => React.ReactNode;
+  noMargin?: boolean;
+  noPadding?: boolean;
 }
 
 const TextInlineField = ({
@@ -49,8 +52,11 @@ const TextInlineField = ({
   labelVariant = 'subtitle1',
   value,
   valueVariant = 'body1',
+  valueActive = false,
   onChange,
-  renderer
+  renderer,
+  noMargin = false,
+  noPadding = false
 }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
@@ -134,11 +140,16 @@ const TextInlineField = ({
         <Typography
           variant={valueVariant}
           component="div"
-          sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
+          sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ...(noMargin ? {} : { ml: -2, mr: -2, mt: 0.5 }) }}
+          color={valueActive ? 'text.primary' : undefined}
         >
-          <ListItem button key="dateInlineField-display" onClick={open ? undefined : handleOpen}>
+          <ListItemButton
+            key="dateInlineField-display"
+            onClick={open ? undefined : handleOpen}
+            sx={{ ...(noPadding ? { p: 0 } : {}) }}
+          >
             {displayValue}
-          </ListItem>
+          </ListItemButton>
         </Typography>
       )}
     </Box>

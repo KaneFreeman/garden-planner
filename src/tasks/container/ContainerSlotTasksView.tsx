@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import format from 'date-fns/format';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -16,11 +16,10 @@ import '../Tasks.css';
 interface ContainerSlotTasksViewProps {
   containerId: string | undefined;
   slotId: number;
-  version: number;
   type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ containerId, slotId, version, type }: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTasksViewProps) => {
   const path = useMemo(() => {
     if (!containerId) {
       return undefined;
@@ -29,11 +28,7 @@ const ContainerSlotTasksView = ({ containerId, slotId, version, type }: Containe
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, current, getTasksByPath } = useTasksByPath(path, -1);
-
-  useEffect(() => {
-    getTasksByPath(path);
-  }, [getTasksByPath, path, version]);
+  const { tasks, completed, overdue, next, current } = useTasksByPath(path, -1);
 
   const renderTask = useCallback(
     (key: string, task: Task, index: number, options?: { showStart: boolean; style?: React.CSSProperties }) => {

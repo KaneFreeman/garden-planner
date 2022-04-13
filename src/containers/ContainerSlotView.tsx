@@ -132,10 +132,8 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   );
 
   const updatePlant = useCallback(
-    (value: Plant) => {
-      if (value) {
-        updateSlot({ plant: value._id });
-      }
+    (value: Plant | null) => {
+      updateSlot({ plant: value?._id });
     },
     [updateSlot]
   );
@@ -161,7 +159,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   );
 
   const renderPlant = useCallback(
-    (value: Plant | undefined, listType: 'value' | 'options') => {
+    (value: Plant | null | undefined, listType: 'value' | 'options') => {
       if (!value) {
         return undefined;
       }
@@ -170,7 +168,9 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
         return {
           raw: (
             <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
-              {value.name}
+              <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {value.name}
+              </Box>
             </Button>
           ),
           avatar: <PlantAvatar plant={value} />
@@ -185,7 +185,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     [onPlantClick]
   );
 
-  const renderStatus = useCallback((value: Status | undefined) => {
+  const renderStatus = useCallback((value: Status | null | undefined) => {
     if (!value) {
       return undefined;
     }
@@ -217,13 +217,15 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
               <PlantAvatar plant={subPlant} />
             </ListItemAvatar>
             <Button variant="text" onClick={onPlantClick(subPlant)} sx={{ ml: -1 }}>
-              {subPlant.name}
+              <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {subPlant.name}
+              </Box>
             </Button>
+            {raw ?? null}
           </>
         ) : (
           <ListItemText primary="None" />
         )}
-        {raw ?? null}
       </ListItemButton>
     );
   }, [subSlot, renderStatus, onSubPlantClick, subPlant, onPlantClick]);
@@ -310,7 +312,9 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
             onClick={() => navigate(`/container/${container._id}/slot/${index}`)}
             sx={{ cursor: 'pointer' }}
           >
-            <Typography variant="h6">{title}</Typography>
+            <Typography variant="h6" color={type === 'slot' ? 'text.primary' : undefined}>
+              {title}
+            </Typography>
           </Link>
           {type === 'sub-slot' ? (
             <Typography variant="h6" color="text.primary">
@@ -322,6 +326,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           label="Status"
           value={slot.status}
           defaultValue="Not Planted"
+          required
           options={STATUSES}
           onChange={updateStatus}
           renderer={renderStatus}
@@ -374,7 +379,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
             onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
           />
         ) : null}
-        <ContainerSlotTasksView containerId={id} slotId={index} version={version} type={type} />
+        <ContainerSlotTasksView containerId={id} slotId={index} type={type} />
         <PicturesView
           key="container-slot-view-pictures"
           pictures={slot.pictures}

@@ -81,7 +81,7 @@ const PlantView = () => {
     [plant]
   );
 
-  const renderPlantType = useCallback((value: PlantType | undefined) => {
+  const renderPlantType = useCallback((value: PlantType | null | undefined) => {
     if (!value) {
       return undefined;
     }
@@ -107,7 +107,7 @@ const PlantView = () => {
 
   return (
     <>
-      <Box sx={{ p: 2, width: '100%' }}>
+      <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
         <Breadcrumbs aria-label="breadcrumb" separator="›">
           {backPath && backLabel ? (
             // eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -115,33 +115,36 @@ const PlantView = () => {
               <Typography
                 variant="h6"
                 sx={{
-                  height: 52,
                   alignItems: 'center',
-                  display: 'flex',
-                  marginTop: 0.5
+                  display: 'flex'
                 }}
               >
                 {backLabel}
               </Typography>
             </Link>
           ) : null}
-          <Typography variant="h6" color="text.primary">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <TextInlineField
+              valueVariant="h6"
+              value={plant.name}
+              valueActive
+              onChange={(name) => handleUpdatePlant({ name })}
+              noMargin
+              noPadding
+            />
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextInlineField valueVariant="h6" value={plant.name} onChange={(name) => handleUpdatePlant({ name })} />
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton
-                  aria-label="delete"
-                  color="error"
-                  size="small"
-                  sx={{ ml: 1 }}
-                  onClick={handleOnDelete}
-                  title="Delete picture"
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Box>
+              <IconButton
+                aria-label="delete"
+                color="error"
+                size="small"
+                sx={{ ml: 1 }}
+                onClick={handleOnDelete}
+                title="Delete picture"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
             </Box>
-          </Typography>
+          </Box>
         </Breadcrumbs>
         <DrawerInlineSelect
           label="Type"
@@ -159,7 +162,9 @@ const PlantView = () => {
           renderer={(value) =>
             value ? (
               <Button variant="text" onClick={onUrlClick} sx={{ ml: -1 }}>
-                {value}
+                <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                  {value}
+                </Box>
               </Button>
             ) : null
           }

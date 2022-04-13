@@ -83,7 +83,7 @@ const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewPro
       ))}
       <CommentBox open={showCommentBox} onComment={addComment} onClose={() => setShowCommentBox(false)} />
       {!showCommentBox ? (
-        <Button onClick={() => setShowCommentBox(true)}>
+        <Button onClick={() => setShowCommentBox(true)} sx={{ mb: 1 }}>
           <CommentIcon />
           <Box sx={{ ml: 0.5 }}>Comment</Box>
         </Button>

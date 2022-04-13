@@ -19,20 +19,26 @@ export const TasksSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    updateTasks: (state, action: PayloadAction<TaskDTO[]>) => ({ ...state, tasks: action.payload }),
-    updateTasksForPath: (state, action: PayloadAction<{ path: string; tasks: TaskDTO[] }>) => {
-      const newTasksByPath = { ...state.tasksByPath };
-      newTasksByPath[action.payload.path] = action.payload.tasks;
+    updateTasks: (state, action: PayloadAction<TaskDTO[]>) => {
+      const tasksByPath: Record<string, TaskDTO[]> = {};
+      action.payload.forEach((task) => {
+        if (!task.path) {
+          return;
+        }
 
-      return {
-        ...state,
-        tasksByPath: newTasksByPath
-      };
+        if (!(task.path in tasksByPath)) {
+          tasksByPath[task.path] = [];
+        }
+
+        tasksByPath[task.path].push(task);
+      });
+
+      return { ...state, tasks: action.payload, tasksByPath };
     }
   }
 });
 
-export const { updateTasks, updateTasksForPath } = TasksSlice.actions;
+export const { updateTasks } = TasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.tasks;
 export const selectTasksByPath = (path?: string) => (state: RootState) => path ? state.tasks.tasksByPath[path] : [];

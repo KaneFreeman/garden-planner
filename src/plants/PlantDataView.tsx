@@ -7,7 +7,7 @@ import CollapsableSimpleInlineField from '../components/inline-fields/Collapsabl
 import { usePlantData } from '../hooks/useStaticData';
 
 interface PlantDataViewProps {
-  type?: PlantType;
+  type?: PlantType | null;
 }
 
 const TextBox = styled(Box)({

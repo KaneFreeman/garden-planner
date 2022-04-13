@@ -8,10 +8,12 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useContainer, useContainers } from '../../containers/useContainers';
+import { useContainer, useGetContainers } from '../../containers/useContainers';
 import getSlotTitle from '../../utility/slot.util';
 import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
+import { useAppSelector } from '../../store/hooks';
+import { selectContainer, selectContainers } from '../../store/slices/containers';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;
@@ -71,10 +73,12 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
     [navigate, value]
   );
 
-  const transplantContainer = useContainer(value?.containerId);
+  const transplantContainerSelector = useMemo(() => selectContainer(value?.containerId), [value?.containerId]);
+  const transplantContainer = useAppSelector(transplantContainerSelector);
 
   const internalTransplantContainer = useContainer(internalValue?.containerId);
-  const containers = useContainers();
+  const containers = useAppSelector(selectContainers);
+  const getContainers = useGetContainers();
   const slotOptions = useMemo(
     () =>
       internalTransplantContainer
@@ -85,6 +89,12 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
         : [],
     [internalTransplantContainer]
   );
+
+  useEffect(() => {
+    if (open) {
+      getContainers();
+    }
+  }, [getContainers, open])
 
   return (
     <>

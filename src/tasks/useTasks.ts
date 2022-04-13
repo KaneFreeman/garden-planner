@@ -4,22 +4,27 @@ import { fromTaskDTO, Task, toTaskDTO } from '../interface';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectTasks, selectTasksByPath, updateTasks, updateTasksForPath } from '../store/slices/tasks';
+import { selectTasks, selectTasksByPath, updateTasks } from '../store/slices/tasks';
 
-const useGetTasks = () => {
+export const useGetTasks = () => {
   const fetch = useFetch();
+  const dispatch = useAppDispatch();
 
   const getTasks = useCallback(async () => {
     const response = await fetch(Api.task_Get, {});
+
+    if (response) {
+      dispatch(updateTasks(response));
+    }
+
     return response;
-  }, [fetch]);
+  }, [dispatch, fetch]);
 
   return getTasks;
 };
 
 const useTasksOperation = () => {
   const getTasks = useGetTasks();
-  const dispatch = useAppDispatch();
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -29,14 +34,11 @@ const useTasksOperation = () => {
         return undefined;
       }
 
-      const tasks = await getTasks();
-      if (tasks) {
-        dispatch(updateTasks(tasks));
-      }
+      await getTasks();
 
       return response;
     },
-    [dispatch, getTasks]
+    [getTasks]
   );
 
   return runOperation;
@@ -172,55 +174,16 @@ export function useTasks() {
   const tasks = useMemo(() => taskDtos.map(fromTaskDTO), [taskDtos]);
 
   useEffect(() => {
-    let alive = true;
-
-    const getTasksCall = async () => {
-      const data = await getTasks();
-
-      if (data && alive) {
-        dispatch(updateTasks(data));
-      }
-    };
-
-    getTasksCall();
-
-    return () => {
-      alive = false;
-    };
+    getTasks();
   }, [dispatch, getTasks]);
 
   return useSortTasks(tasks);
 }
 
-const useGetTasksByPath = () => {
-  const fetch = useFetch();
-  const dispatch = useAppDispatch();
-
-  const getTasks = useCallback(
-    async (path: string | undefined) => {
-      if (!path) {
-        return [];
-      }
-
-      const response = await fetch(Api.task_Get, { query: { path } });
-
-      if (response) {
-        dispatch(updateTasksForPath({ path, tasks: response }));
-      }
-
-      return response;
-    },
-    [dispatch, fetch]
-  );
-
-  return getTasks;
-};
-
 export const useTasksByPath = (path: string | undefined, limit?: number) => {
-  const getTasksByPath = useGetTasksByPath();
   const selector = useMemo(() => selectTasksByPath(path), [path]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
 
-  return { ...useSortTasks(tasks, limit), getTasksByPath };
+  return { ...useSortTasks(tasks, limit) };
 };

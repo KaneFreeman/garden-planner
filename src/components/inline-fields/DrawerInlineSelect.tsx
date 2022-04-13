@@ -3,30 +3,51 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
-import { SxProps, Theme } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Drawer from '@mui/material/Drawer';
+import ListItemButton from '@mui/material/ListItemButton';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import List from '@mui/material/List';
+import { grey } from '@mui/material/colors';
 import { isNullish } from '../../utility/null.util';
+import './DrawerInlineSelect.css';
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800]
+}));
+
+const drawerBleeding = 22;
+
+const Puller = styled(Box)(({ theme }) => ({
+  width: 30,
+  height: 6,
+  backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
+  borderRadius: 3,
+  position: 'absolute',
+  top: 8,
+  left: 'calc(50% - 15px)'
+}));
 
 interface DefaultDrawerInlineSelectProps<T> extends BaseDrawerInlineSelectProps<T> {
   defaultValue: T;
+  onChange: (value: T) => void;
+  required: true;
 }
 
 interface NoDefaultDrawerInlineSelectProps<T> extends BaseDrawerInlineSelectProps<T> {
   noValueLabel: string;
+  onChange: (value: T | null) => void;
+  required?: false;
 }
 
 interface BaseDrawerInlineSelectProps<T> {
   label: string;
-  value: T | undefined;
+  value: T | null | undefined;
   options: T[];
-  onChange: (value: T) => void;
   renderer: (
-    value: T | undefined,
+    value: T | null | undefined,
     type: 'value' | 'options'
   ) =>
     | {
@@ -47,11 +68,11 @@ function hasDefault<T>(props: DrawerInlineSelectProps<T>): props is DefaultDrawe
 }
 
 const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInlineSelectProps<T>) => {
-  const { label, value, options, onChange, renderer, sx } = props;
+  const { label, value, options, renderer, sx, required } = props;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const toggleDrawer = useCallback(
+  const handleDrawerToggle = useCallback(
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
         event.type === 'keydown' &&
@@ -65,22 +86,30 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
     []
   );
 
+  const openDrawer = useMemo(() => handleDrawerToggle(true), [handleDrawerToggle]);
+
+  const closeDrawer = useMemo(() => handleDrawerToggle(false), [handleDrawerToggle]);
+
+  const toggleDrawer = useMemo(() => handleDrawerToggle(!drawerOpen), [drawerOpen, handleDrawerToggle]);
+
   const onClickHandler = useCallback(
-    (newValue: T) => {
-      onChange(newValue);
-      toggleDrawer(false);
+    (newValue: T | null) => {
+      if (newValue !== value) {
+        if (hasDefault(props)) {
+          props.onChange(newValue ?? props.defaultValue);
+        } else {
+          props.onChange(newValue);
+        }
+      }
+      setDrawerOpen(false);
     },
-    [onChange, toggleDrawer]
+    [props, value]
   );
 
   const renderListItem = useCallback(
-    (input: T | undefined, key: string, listType: 'value' | 'options') => {
+    (input: T | null | undefined, key: string, listType: 'value' | 'options') => {
       let result = renderer(input, listType);
-      if (
-        isNullish(result) ||
-        (listType === 'options' &&
-          (input === value || (hasDefault(props) && props.defaultValue === input && isNullish(value))))
-      ) {
+      if (isNullish(result)) {
         if (listType === 'options') {
           return null;
         }
@@ -88,9 +117,9 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
         if (!hasDefault(props)) {
           const { noValueLabel } = props;
           return (
-            <ListItem button key={key}>
+            <ListItemButton key={key}>
               <ListItemText primary={noValueLabel} />
-            </ListItem>
+            </ListItemButton>
           );
         }
 
@@ -107,12 +136,19 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
       }
 
       return (
-        <ListItem button key={key} onClick={clickHandler}>
+        <ListItemButton
+          key={key}
+          onClick={clickHandler}
+          selected={
+            listType === 'options' &&
+            (value === input || (hasDefault(props) && input === props.defaultValue && isNullish(value)))
+          }
+        >
           {result.avatar ? <ListItemAvatar sx={{ display: 'flex' }}>{result.avatar}</ListItemAvatar> : null}
           {result.icon ? <ListItemIcon>{result.icon}</ListItemIcon> : null}
           {result.primary ? <ListItemText primary={result.primary} secondary={result.secondary} /> : null}
           {result.raw ? result.raw : null}
-        </ListItem>
+        </ListItemButton>
       );
     },
     [props, onClickHandler, renderer, value]
@@ -126,7 +162,7 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
 
   return (
     <>
-      <Box sx={{ ...sx }} onClick={toggleDrawer(true)}>
+      <Box sx={{ ...sx }} onClick={openDrawer}>
         <Typography variant="subtitle1" component="div" color="GrayText">
           {label}
         </Typography>
@@ -134,11 +170,51 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
           {valueRenderResult}
         </Typography>
       </Box>
-      <Drawer anchor="bottom" open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 'auto' }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-          <List>{optionsRenderResult}</List>
+      <SwipeableDrawer
+        anchor="bottom"
+        open={drawerOpen}
+        onClose={closeDrawer}
+        onOpen={openDrawer}
+        classes={{
+          root: 'drawer-inline-select-root',
+          paper: 'drawer-inline-select-paper'
+        }}
+      >
+        <StyledBox
+          sx={{
+            position: 'absolute',
+            top: -drawerBleeding,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            visibility: 'visible',
+            right: 0,
+            left: 0,
+            height: drawerBleeding
+          }}
+          onClick={toggleDrawer}
+        >
+          <Puller />
+        </StyledBox>
+        <Box
+          sx={{ width: 'auto', overflowY: 'auto' }}
+          role="presentation"
+          onClick={closeDrawer}
+          onKeyDown={closeDrawer}
+        >
+          <List>
+            {!required ? (
+              <ListItemButton
+                key="option-none"
+                onClick={() => onClickHandler(null)}
+                selected={value === null || value === undefined}
+              >
+                <ListItemText primary="None" />
+              </ListItemButton>
+            ) : null}
+            {optionsRenderResult}
+          </List>
         </Box>
-      </Drawer>
+      </SwipeableDrawer>
     </>
   );
 };

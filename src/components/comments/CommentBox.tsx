@@ -36,10 +36,10 @@ const CommentBox = ({ open, comment, onComment, onClose }: CommentBoxProps) => {
         autoFocus
       />
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button onClick={onClose} color="inherit" autoFocus>
+        <Button sx={{ mb: 1 }} onClick={onClose} color="inherit" autoFocus>
           Cancel
         </Button>
-        <Button onClick={onCommentHandler} color="primary">
+        <Button sx={{ mb: 1 }} onClick={onCommentHandler} color="primary">
           Save
         </Button>
       </Box>
