@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
 import { useContainers } from './useContainers';
@@ -22,6 +23,8 @@ interface Counts {
 const Containers = () => {
   const navigate = useNavigate();
   const containers = useContainers();
+
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   const counts: Record<string, Counts> = useMemo(() => {
     return containers.reduce((data, container) => {
@@ -73,19 +76,28 @@ const Containers = () => {
     }, {} as Record<string, Counts>);
   }, [containers]);
 
-  const renderCounts = useCallback((countData?: Counts) => {
-    if (!countData) {
-      return null;
-    }
+  const renderCounts = useCallback(
+    (countData?: Counts) => {
+      if (!countData) {
+        return null;
+      }
 
-    return (
-      <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
-        {countData.notPlanted > 0 ? <StatusChip count={countData.notPlanted} status="Not Planted" /> : null}
-        {countData.planted > 0 ? <StatusChip count={countData.planted} status="Planted" /> : null}
-        {countData.transplanted > 0 ? <StatusChip count={countData.transplanted} status="Transplanted" /> : null}
-      </Box>
-    );
-  }, []);
+      return (
+        <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
+          {countData.notPlanted > 0 ? (
+            <StatusChip count={countData.notPlanted} status="Not Planted" shrink={isSmallScreen} />
+          ) : null}
+          {countData.planted > 0 ? (
+            <StatusChip count={countData.planted} status="Planted" shrink={isSmallScreen} />
+          ) : null}
+          {countData.transplanted > 0 ? (
+            <StatusChip count={countData.transplanted} status="Transplanted" shrink={isSmallScreen} />
+          ) : null}
+        </Box>
+      );
+    },
+    [isSmallScreen]
+  );
 
   return (
     <Box sx={{ width: '100%' }}>
