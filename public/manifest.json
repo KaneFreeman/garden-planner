@@ -24,9 +24,9 @@
     },
     {
       "src": "favicon_maskable.png",
-      "sizes": "196x196",
+      "sizes": "787x787",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",
