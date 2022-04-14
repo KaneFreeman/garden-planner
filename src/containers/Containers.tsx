@@ -11,8 +11,11 @@ import Avatar from '@mui/material/Avatar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
+import { useTasksByContainers } from '../tasks/useTasks';
+import TaskBadge from '../tasks/TaskBadge';
 import { useContainers } from './useContainers';
 import StatusChip from './StatusChip';
+import './Containers.css';
 
 interface Counts {
   notPlanted: number;
@@ -99,6 +102,8 @@ const Containers = () => {
     [isSmallScreen]
   );
 
+  const tasksByContainers = useTasksByContainers();
+
   return (
     <Box sx={{ width: '100%' }}>
       <nav aria-label="main containers">
@@ -107,18 +112,24 @@ const Containers = () => {
             <ListItem key={`container-${container._id}`} disablePadding>
               <ListItemButton onClick={() => navigate(`/container/${container._id}`)}>
                 <ListItemAvatar>
-                  <Avatar>
-                    {container.type === 'Inside' ? (
-                      <HomeIcon titleAccess="Inside" />
-                    ) : (
-                      <ParkIcon titleAccess="Inside" />
-                    )}
-                  </Avatar>
+                  <TaskBadge tasks={tasksByContainers[container._id]}>
+                    <Avatar>
+                      {container.type === 'Inside' ? (
+                        <HomeIcon titleAccess="Inside" />
+                      ) : (
+                        <ParkIcon titleAccess="Inside" />
+                      )}
+                    </Avatar>
+                  </TaskBadge>
                 </ListItemAvatar>
                 <ListItemText
                   primary={container.name}
                   secondary={`${container.rows} x ${container.columns}`}
-                  sx={{ flex: 'unset' }}
+                  classes={{
+                    root: 'listItemText-root',
+                    primary: 'listItemText-primary'
+                  }}
+                  sx={isSmallScreen ? {} : { flex: 'unset' }}
                 />
                 {renderCounts(counts[container._id])}
               </ListItemButton>

@@ -1,10 +1,17 @@
+/* eslint-disable no-param-reassign */
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromTaskDTO, Task, toTaskDTO } from '../interface';
+import { fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../interface';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectTasks, selectTasksByPath, updateTasks } from '../store/slices/tasks';
+import {
+  selectTasks,
+  selectTasksByContainer,
+  selectTasksByContainers,
+  selectTasksByPath,
+  updateTasks
+} from '../store/slices/tasks';
 
 export const useGetTasks = () => {
   const fetch = useFetch();
@@ -121,7 +128,28 @@ export const useRemoveTask = () => {
   return removeTask;
 };
 
-function useSortTasks(tasks: Task[], limit = 30) {
+function sortTasks(tasks: Task[], today: number, daysFromNow: number, limit: number): SortedTasks {
+  const completed = tasks.filter((task) => Boolean(task.completedOn));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  completed.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
+
+  const overdue = tasks.filter((task) => !task.completedOn && task.due.getTime() < today);
+  overdue.sort((a, b) => a.due.getTime() - b.due.getTime());
+
+  const next = tasks.filter(
+    (task) => !task.completedOn && task.start.getTime() > today && (limit === -1 || task.start.getTime() <= daysFromNow)
+  );
+  next.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  const current = tasks.filter(
+    (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= today
+  );
+  current.sort((a, b) => a.due.getTime() - b.due.getTime());
+
+  return { tasks, completed, overdue, next, current };
+}
+
+function useSortDates(daysLimit = 30) {
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -131,40 +159,16 @@ function useSortTasks(tasks: Task[], limit = 30) {
   const daysFromNow = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
-    return addDays(d, limit).getTime();
-  }, [limit]);
+    return addDays(d, daysLimit).getTime();
+  }, [daysLimit]);
 
-  const completed = useMemo(() => {
-    const completedTasks = tasks.filter((task) => Boolean(task.completedOn));
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    completedTasks.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
-    return completedTasks;
-  }, [tasks]);
+  return { today, daysFromNow, daysLimit };
+}
 
-  const overdue = useMemo(() => {
-    const overdueTasks = tasks.filter((task) => !task.completedOn && task.due.getTime() < today);
-    overdueTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
-    return overdueTasks;
-  }, [tasks, today]);
+function useSortTasks(tasks: Task[], limit?: number) {
+  const { today, daysFromNow, daysLimit } = useSortDates(limit);
 
-  const next = useMemo(() => {
-    const nextTasks = tasks.filter(
-      (task) =>
-        !task.completedOn && task.start.getTime() > today && (limit === -1 || task.start.getTime() <= daysFromNow)
-    );
-    nextTasks.sort((a, b) => a.start.getTime() - b.start.getTime());
-    return nextTasks;
-  }, [daysFromNow, limit, tasks, today]);
-
-  const current = useMemo(() => {
-    const currentTasks = tasks.filter(
-      (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= today
-    );
-    currentTasks.sort((a, b) => a.due.getTime() - b.due.getTime());
-    return currentTasks;
-  }, [tasks, today]);
-
-  return { tasks, completed, overdue, next, current };
+  return useMemo(() => sortTasks(tasks, today, daysFromNow, daysLimit), [daysFromNow, daysLimit, tasks, today]);
 }
 
 export function useTasks() {
@@ -184,6 +188,26 @@ export const useTasksByPath = (path: string | undefined, limit?: number) => {
   const selector = useMemo(() => selectTasksByPath(path), [path]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
+  return useSortTasks(tasks, limit);
+};
 
-  return { ...useSortTasks(tasks, limit) };
+export const useTasksByContainer = (containerId: string | undefined, limit?: number) => {
+  const selector = useMemo(() => selectTasksByContainer(containerId), [containerId]);
+  const taskDtos = useAppSelector(selector);
+  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
+  return useSortTasks(tasks, limit);
+};
+
+export const useTasksByContainers = (limit?: number) => {
+  const taskDtos = useAppSelector(selectTasksByContainers);
+  const { today, daysFromNow, daysLimit } = useSortDates(limit);
+  return useMemo(
+    () =>
+      Object.keys(taskDtos).reduce((byContainer, containerId) => {
+        byContainer[containerId] = sortTasks(taskDtos[containerId].map(fromTaskDTO), today, daysFromNow, daysLimit);
+
+        return byContainer;
+      }, {} as Record<string, ReturnType<typeof useSortTasks>>),
+    [daysFromNow, daysLimit, taskDtos, today]
+  );
 };

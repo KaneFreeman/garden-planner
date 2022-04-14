@@ -150,47 +150,43 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
   const wrap = useCallback(
     (children: ReactNode) =>
       shouldLinkTo || task.type === 'Custom' ? (
-        <ListItemButton
-          onClick={contextMenu == null ? onClickHandler : undefined}
-          sx={{
-            width: '100%'
-          }}
-          onContextMenu={task.type === 'Custom' ? handleContextMenu : undefined}
-        >
-          {children}
-        </ListItemButton>
+        <ListItem style={style} className="task" disablePadding>
+          <ListItemButton
+            onClick={contextMenu == null ? onClickHandler : undefined}
+            sx={{
+              width: '100%'
+            }}
+            onContextMenu={task.type === 'Custom' ? handleContextMenu : undefined}
+          >
+            {children}
+          </ListItemButton>
+        </ListItem>
       ) : (
-        <ListItem
-          sx={{
-            width: '100%'
-          }}
-        >
+        <ListItem style={style} className="task">
           {children}
         </ListItem>
       ),
-    [contextMenu, handleContextMenu, onClickHandler, shouldLinkTo, task.type]
+    [contextMenu, handleContextMenu, onClickHandler, shouldLinkTo, style, task.type]
   );
 
   return (
     <>
-      <ListItem style={style} className="task" disablePadding>
-        {wrap(
-          <>
-            <ListItemIcon>
-              {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
-            </ListItemIcon>
-            {isOverdue ? <ErrorIcon sx={{ mr: 1 }} color="error" /> : null}
-            <ListItemText
-              primary={task.text}
-              secondary={secondaryText}
-              classes={{
-                primary: 'textPrimary',
-                secondary: 'textSecondary'
-              }}
-            />
-          </>
-        )}
-      </ListItem>
+      {wrap(
+        <>
+          <ListItemIcon>
+            {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
+          </ListItemIcon>
+          {isOverdue ? <ErrorIcon sx={{ mr: 1 }} color="error" /> : null}
+          <ListItemText
+            primary={task.text}
+            secondary={secondaryText}
+            classes={{
+              primary: 'textPrimary',
+              secondary: 'textSecondary'
+            }}
+          />
+        </>
+      )}
       {isMarkingAsCompleted ? (
         <Dialog open onClose={() => setIsMarkingAsCompleted(false)} maxWidth="xs" fullWidth>
           <DialogTitle>Mark as completed</DialogTitle>

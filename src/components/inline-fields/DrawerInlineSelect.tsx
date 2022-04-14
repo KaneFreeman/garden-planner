@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { grey } from '@mui/material/colors';
 import { isNullish } from '../../utility/null.util';
@@ -170,11 +170,10 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
           {valueRenderResult}
         </Typography>
       </Box>
-      <SwipeableDrawer
+      <Drawer
         anchor="bottom"
         open={drawerOpen}
         onClose={closeDrawer}
-        onOpen={openDrawer}
         classes={{
           root: 'drawer-inline-select-root',
           paper: 'drawer-inline-select-paper'
@@ -214,7 +213,7 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
             {optionsRenderResult}
           </List>
         </Box>
-      </SwipeableDrawer>
+      </Drawer>
     </>
   );
 };

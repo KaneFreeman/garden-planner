@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 import IconButton from '@mui/material/IconButton';
+import { SxProps, Theme } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '../TextField';
@@ -45,6 +46,7 @@ interface TextInlineFieldProps {
   renderer?: (value: string | undefined) => React.ReactNode;
   noMargin?: boolean;
   noPadding?: boolean;
+  sx?: SxProps<Theme> | undefined;
 }
 
 const TextInlineField = ({
@@ -56,7 +58,8 @@ const TextInlineField = ({
   onChange,
   renderer,
   noMargin = false,
-  noPadding = false
+  noPadding = false,
+  sx
 }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
@@ -102,11 +105,15 @@ const TextInlineField = ({
       return renderer(value);
     }
 
-    return value;
+    return (
+      <Box sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} title={value}>
+        {value}
+      </Box>
+    );
   }, [renderer, value]);
 
   return (
-    <Box onClick={open ? undefined : handleOpen}>
+    <Box onClick={open ? undefined : handleOpen} sx={sx}>
       {label ? (
         <Typography
           variant={labelVariant}

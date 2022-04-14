@@ -6,12 +6,14 @@ import { TaskDTO } from '../../interface';
 export interface TasksState {
   tasks: TaskDTO[];
   tasksByPath: Record<string, TaskDTO[]>;
+  tasksByContainer: Record<string, TaskDTO[]>;
 }
 
 // Define the initial state using that type
 const initialState: TasksState = {
   tasks: [],
-  tasksByPath: {}
+  tasksByPath: {},
+  tasksByContainer: {}
 };
 
 export const TasksSlice = createSlice({
@@ -33,7 +35,20 @@ export const TasksSlice = createSlice({
         tasksByPath[task.path].push(task);
       });
 
-      return { ...state, tasks: action.payload, tasksByPath };
+      const tasksByContainer: Record<string, TaskDTO[]> = {};
+      action.payload.forEach((task) => {
+        if (!task.containerId) {
+          return;
+        }
+
+        if (!(task.containerId in tasksByContainer)) {
+          tasksByContainer[task.containerId] = [];
+        }
+
+        tasksByContainer[task.containerId].push(task);
+      });
+
+      return { ...state, tasks: action.payload, tasksByPath, tasksByContainer };
     }
   }
 });
@@ -42,5 +57,8 @@ export const { updateTasks } = TasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.tasks;
 export const selectTasksByPath = (path?: string) => (state: RootState) => path ? state.tasks.tasksByPath[path] : [];
+export const selectTasksByContainer = (containerId?: string) => (state: RootState) =>
+  containerId ? state.tasks.tasksByContainer[containerId] : [];
+export const selectTasksByContainers = (state: RootState) => state.tasks.tasksByContainer;
 
 export default TasksSlice.reducer;

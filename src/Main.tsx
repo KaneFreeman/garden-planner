@@ -2,8 +2,6 @@ import { Route, Routes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { useAuth0 } from '@auth0/auth0-react';
 import Header from './Header';
 import Plants from './plants/Plants';
@@ -71,7 +69,7 @@ const Main = () => {
   }
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <>
       <Header />
       <Box
         sx={{
@@ -103,7 +101,7 @@ const Main = () => {
           </Routes>
         </Box>
       </Box>
-    </LocalizationProvider>
+    </>
   );
 };
 

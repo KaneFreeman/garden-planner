@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Drawer from '@mui/material/Drawer';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -69,7 +69,16 @@ const Header = () => {
             <MenuIcon />
           </Badge>
         </IconButton>
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <SwipeableDrawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+          disableSwipeToOpen={false}
+          ModalProps={{
+            keepMounted: true
+          }}
+        >
           <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
             <List disablePadding>
               <ListItem
@@ -109,7 +118,7 @@ const Header = () => {
               </ListItem>
             </List>
           </Box>
-        </Drawer>
+        </SwipeableDrawer>
         <Typography
           variant="h6"
           component="div"

@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import PlantAvatar from './PlantAvatar';
 import { usePlants } from './usePlants';
+import './Plants.css';
 
 const Plants = () => {
   const navigate = useNavigate();
@@ -23,7 +24,13 @@ const Plants = () => {
                 <ListItemAvatar>
                   <PlantAvatar plant={plant} />
                 </ListItemAvatar>
-                <ListItemText primary={plant.name} />
+                <ListItemText
+                  primary={plant.name}
+                  classes={{
+                    root: 'listItemText-root',
+                    primary: 'listItemText-primary'
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           ))}

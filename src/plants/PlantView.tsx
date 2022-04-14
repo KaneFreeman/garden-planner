@@ -13,6 +13,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PicturesView from '../pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
@@ -22,6 +23,7 @@ import CommentsView from '../components/comments/CommentsView';
 import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
 import { Plant, Comment, PictureData, PlantType, PLANT_TYPES } from '../interface';
 import { useRemovePlant, usePlant, useUpdatePlant } from './usePlants';
+import './PlantView.css';
 
 const PlantView = () => {
   const { id } = useParams();
@@ -29,6 +31,8 @@ const PlantView = () => {
   const [searchParams] = useSearchParams();
   const backPath = searchParams.get('backPath');
   const backLabel = searchParams.get('backLabel');
+
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   const plant = usePlant(id);
   const updatePlant = useUpdatePlant();
@@ -108,24 +112,26 @@ const PlantView = () => {
   return (
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
-        <Breadcrumbs aria-label="breadcrumb" separator="›">
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate(backPath && backLabel ? backPath : '/plants')}
-            sx={{ cursor: 'pointer' }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                alignItems: 'center',
-                display: 'flex'
-              }}
+        <Breadcrumbs aria-label="breadcrumb" separator="›" classes={{ root: 'breadcrumbs-root', li: 'breadcrumbs-li' }}>
+          {!isSmallScreen ? (
+            /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+            <Link
+              underline="hover"
+              color="inherit"
+              onClick={() => navigate(backPath && backLabel ? backPath : '/plants')}
+              sx={{ cursor: 'pointer' }}
             >
-              {backPath && backLabel ? backLabel : 'Plants'}
-            </Typography>
-          </Link>
+              <Typography
+                variant="h6"
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex'
+                }}
+              >
+                {backPath && backLabel ? backLabel : 'Plants'}
+              </Typography>
+            </Link>
+          ) : null}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <TextInlineField
               valueVariant="h6"
@@ -134,6 +140,9 @@ const PlantView = () => {
               onChange={(name) => handleUpdatePlant({ name })}
               noMargin
               noPadding
+              sx={{
+                minWidth: 0
+              }}
             />
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton

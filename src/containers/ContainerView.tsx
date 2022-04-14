@@ -12,6 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import DialogContentText from '@mui/material/DialogContentText';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
@@ -21,12 +22,15 @@ import { Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import { useContainer, useRemoveContainer } from './useContainers';
 import ContainerEditModal from './ContainerEditModal';
+import './ContainerView.css';
 
 const ContainerView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
+
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
     const storedOrientation = window.localStorage.getItem(`container-${id}-orientation`);
@@ -135,23 +139,35 @@ const ContainerView = () => {
     <>
       <Box sx={{ p: 2, flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleEditOpen}>
-            <Breadcrumbs aria-label="breadcrumb" separator="›">
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <Link
-                underline="hover"
-                color="inherit"
-                onClick={() => navigate(`/containers`)}
-                sx={{ cursor: 'pointer' }}
-              >
-                <Typography variant="h6">Containers</Typography>
-              </Link>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: '100%' }}
+            onClick={handleEditOpen}
+          >
+            <Breadcrumbs
+              aria-label="breadcrumb"
+              separator="›"
+              sx={{ minWidth: 0 }}
+              classes={{ root: 'breadcrumbs-root', li: 'breadcrumbs-li' }}
+            >
+              {!isSmallScreen ? (
+                /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+                <Link
+                  underline="hover"
+                  color="inherit"
+                  onClick={() => navigate(`/containers`)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <Typography variant="h6">Containers</Typography>
+                </Link>
+              ) : null}
               <Typography variant="h6" color="text.primary" sx={{ display: 'flex' }}>
-                {container.name}
+                <Box sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} title={container.name}>
+                  {container.name}
+                </Box>
                 <Typography
                   variant="subtitle1"
                   component="span"
-                  sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1 }}
+                  sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
                   color="GrayText"
                 >
                   {container.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
@@ -159,7 +175,7 @@ const ContainerView = () => {
                 </Typography>
               </Typography>
             </Breadcrumbs>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
               <IconButton
                 aria-label="rotate"
                 color="info"

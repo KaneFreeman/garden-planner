@@ -483,6 +483,7 @@ export interface Task {
   type: TaskType;
   start: Date;
   due: Date;
+  containerId: string | null;
   path: string | null;
   completedOn: Date | null;
 }
@@ -493,6 +494,7 @@ export interface TaskDTO {
   type: TaskType;
   start: string;
   due: string;
+  containerId: string | null;
   path: string | null;
   completedOn: string | null;
 }
@@ -553,4 +555,12 @@ export interface PlantDataDTO {
   faq: {
     how_to_grow?: [string, string][];
   };
+}
+
+export interface SortedTasks {
+  tasks: Task[];
+  completed: Task[];
+  overdue: Task[];
+  next: Task[];
+  current: Task[];
 }

@@ -48,6 +48,7 @@ const TaskModal = ({ open, onClose }: TaskModalProperties) => {
         text,
         start,
         due,
+        containerId: null,
         type: 'Custom',
         path: null,
         completedOn: null
