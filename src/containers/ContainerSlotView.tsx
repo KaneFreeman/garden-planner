@@ -214,7 +214,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     }
 
     return {
-      raw: <StatusChip status={value} />
+      raw: <StatusChip status={value} size="large" />
     };
   }, []);
 

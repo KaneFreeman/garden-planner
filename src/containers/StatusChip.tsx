@@ -13,9 +13,10 @@ interface StatusChipProps {
   status: Status;
   count?: number;
   shrink?: boolean;
+  size?: 'small' | 'large';
 }
 
-const StatusChip = ({ status, count, shrink }: StatusChipProps) => {
+const StatusChip = ({ status, count, shrink, size = 'small' }: StatusChipProps) => {
   const color: 'default' | 'success' | 'error' = useMemo(() => {
     switch (status) {
       case 'Planted':
@@ -40,7 +41,11 @@ const StatusChip = ({ status, count, shrink }: StatusChipProps) => {
 
   const title = useMemo(() => `${count ? `${count} ` : ''}${status}`, [count, status]);
 
-  return <StyledChip label={label} color={color} title={title} />;
+  if (size === 'small') {
+    return <StyledChip label={label} color={color} title={title} />;
+  }
+
+  return <Chip label={label} color={color} title={title} />;
 };
 
 export default StatusChip;
