@@ -69,16 +69,7 @@ const Header = () => {
             <MenuIcon />
           </Badge>
         </IconButton>
-        <SwipeableDrawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
-          disableSwipeToOpen={false}
-          ModalProps={{
-            keepMounted: true
-          }}
-        >
+        <SwipeableDrawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
           <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
             <List disablePadding>
               <ListItem
