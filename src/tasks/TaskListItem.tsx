@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import formatDistance from 'date-fns/formatDistance';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,6 +24,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
 import { useRemoveTask, useUpdateTask } from './useTasks';
 import './Tasks.css';
+import { setToMidnight } from '../utility/date.util';
 
 interface TaskListItemProps {
   today: number;
@@ -35,6 +36,7 @@ interface TaskListItemProps {
 
 const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style }: TaskListItemProps) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const removeTask = useRemoveTask();
   const updateTask = useUpdateTask();
 
@@ -47,7 +49,7 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
     mouseY: number;
   } | null>(null);
 
-  const shouldLinkTo = useMemo(() => task.path && !window.location.pathname.endsWith(task.path), [task.path]);
+  const shouldLinkTo = useMemo(() => task.path && !pathname.endsWith(task.path), [pathname, task.path]);
 
   const markTaskAsCompleted = useCallback(() => {
     updateTask({
@@ -105,8 +107,8 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
     if (task.path !== null) {
       if (shouldLinkTo) {
         navigate(task.path);
+        return;
       }
-      return;
     }
 
     if (task.completedOn !== null) {
@@ -120,10 +122,13 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
   const secondaryText = useMemo(() => {
     let text = '';
 
-    if (task.completedOn !== null) {
-      text += `Completed ${format(task.completedOn, 'MMM d')}`;
-      if (task.completedOn.getTime() < today) {
-        text += ` (${formatDistance(today, task.completedOn)} ago)`;
+    const completedOnDate = setToMidnight(task.completedOn);
+    if (completedOnDate !== null) {
+      text += `Completed ${format(completedOnDate, 'MMM d')}`;
+      if (completedOnDate.getTime() < today) {
+        text += ` (${formatDistance(today, completedOnDate)} ago)`;
+      } else if (completedOnDate.getTime() === today) {
+        text += ` (today)`;
       }
     } else {
       if (showStart) {
@@ -149,7 +154,7 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
 
   const wrap = useCallback(
     (children: ReactNode) =>
-      shouldLinkTo || task.type === 'Custom' ? (
+      shouldLinkTo || task.type === 'Custom' || task.type === 'Fertilize' ? (
         <ListItem style={style} className="task" disablePadding>
           <ListItemButton
             onClick={contextMenu == null ? onClickHandler : undefined}

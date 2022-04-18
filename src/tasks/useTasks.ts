@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -128,10 +129,22 @@ export const useRemoveTask = () => {
   return removeTask;
 };
 
-function sortTasks(tasks: Task[], today: number, daysFromNow: number, limit: number): SortedTasks {
+function sortTasks(
+  tasks: Task[],
+  today: number,
+  daysFromNow: number,
+  limit: number,
+  options?: { reverseSortCompleted: boolean }
+): SortedTasks {
+  const { reverseSortCompleted = true } = options || {};
+
   const completed = tasks.filter((task) => Boolean(task.completedOn));
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  completed.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
+  completed.sort((a, b) => {
+    if (reverseSortCompleted) {
+      return b.completedOn!.getTime() - a.completedOn!.getTime();
+    }
+    return a.completedOn!.getTime() - b.completedOn!.getTime();
+  });
 
   const overdue = tasks.filter((task) => !task.completedOn && task.due.getTime() < today);
   overdue.sort((a, b) => a.due.getTime() - b.due.getTime());
@@ -165,10 +178,13 @@ function useSortDates(daysLimit = 30) {
   return { today, daysFromNow, daysLimit };
 }
 
-function useSortTasks(tasks: Task[], limit?: number) {
+function useSortTasks(tasks: Task[], limit?: number, options?: { reverseSortCompleted: boolean }) {
   const { today, daysFromNow, daysLimit } = useSortDates(limit);
 
-  return useMemo(() => sortTasks(tasks, today, daysFromNow, daysLimit), [daysFromNow, daysLimit, tasks, today]);
+  return useMemo(
+    () => sortTasks(tasks, today, daysFromNow, daysLimit, options),
+    [daysFromNow, daysLimit, options, tasks, today]
+  );
 }
 
 export function useTasks() {
@@ -184,18 +200,26 @@ export function useTasks() {
   return useSortTasks(tasks);
 }
 
-export const useTasksByPath = (path: string | undefined, limit?: number) => {
+export const useTasksByPath = (
+  path: string | undefined,
+  limit?: number,
+  options?: { reverseSortCompleted: boolean }
+) => {
   const selector = useMemo(() => selectTasksByPath(path), [path]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
-  return useSortTasks(tasks, limit);
+  return useSortTasks(tasks, limit, options);
 };
 
-export const useTasksByContainer = (containerId: string | undefined, limit?: number) => {
+export const useTasksByContainer = (
+  containerId: string | undefined,
+  limit?: number,
+  options?: { reverseSortCompleted: boolean }
+) => {
   const selector = useMemo(() => selectTasksByContainer(containerId), [containerId]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
-  return useSortTasks(tasks, limit);
+  return useSortTasks(tasks, limit, options);
 };
 
 export const useTasksByContainers = (limit?: number) => {

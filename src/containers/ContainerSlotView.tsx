@@ -27,7 +27,18 @@ import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import getSlotTitle from '../utility/slot.util';
-import { PictureData, Plant, Slot, Comment, Status, STATUSES, Container, BaseSlot } from '../interface';
+import {
+  PictureData,
+  Plant,
+  Slot,
+  Comment,
+  Status,
+  STATUSES,
+  Container,
+  BaseSlot,
+  STARTED_FROM_TYPES,
+  StartedFromType
+} from '../interface';
 import { usePlants } from '../plants/usePlants';
 import { useContainers } from './useContainers';
 import Select from '../components/Select';
@@ -275,6 +286,25 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     [slot.plantedDate, slot.transplantedDate, updateSlot]
   );
 
+  const updateStartedFrom = useCallback(
+    (value: StartedFromType) => {
+      if (value) {
+        updateSlot({ startedFrom: value });
+      }
+    },
+    [updateSlot]
+  );
+
+  const renderStartedFrom = useCallback((value: StartedFromType | null | undefined) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return {
+      primary: value
+    };
+  }, []);
+
   const finishUpdateStatusPlanted = useCallback(() => {
     updateSlot({ status: 'Planted', plantedCount, plantedDate });
     setShowHowManyPlanted(false);
@@ -367,6 +397,18 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           renderer={renderPlant}
           sx={{ mt: 1 }}
         />
+        {container.type === 'Outside' ? (
+          <DrawerInlineSelect
+            label="Started From"
+            value={slot.startedFrom}
+            defaultValue="Seed"
+            required
+            options={STARTED_FROM_TYPES}
+            onChange={updateStartedFrom}
+            renderer={renderStartedFrom}
+            sx={{ mt: 1 }}
+          />
+        ) : null}
         {type === 'slot' ? <SimpleInlineField label="Sub Plant" value={renderedSubPlant} /> : null}
         {slot.status && slot.status !== 'Not Planted' ? (
           <>

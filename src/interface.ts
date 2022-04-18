@@ -354,6 +354,8 @@ export interface BaseSlot {
   transplantedDate?: Date;
   transplantedTo: ContainerSlotIdentifier | null;
   transplantedFrom: ContainerSlotIdentifier | null;
+  firstHarvestDate?: Date;
+  startedFrom: StartedFromType;
   comments?: Comment[];
   pictures?: PictureData[];
 }
@@ -370,6 +372,8 @@ export interface BaseSlotDTO {
   transplantedDate?: string;
   transplantedTo: ContainerSlotIdentifier | null;
   transplantedFrom: ContainerSlotIdentifier | null;
+  firstHarvestDate?: string;
+  startedFrom: StartedFromType;
   comments?: CommentDTO[];
   pictures?: PictureDataDTO[];
 }
@@ -383,6 +387,7 @@ function fromBaseSlotDTO(dto: BaseSlotDTO): BaseSlot {
     ...dto,
     plantedDate: dto.plantedDate ? new Date(dto.plantedDate) : undefined,
     transplantedDate: dto.transplantedDate ? new Date(dto.transplantedDate) : undefined,
+    firstHarvestDate: dto.firstHarvestDate ? new Date(dto.firstHarvestDate) : undefined,
     pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined
   };
@@ -400,6 +405,7 @@ export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
     ...dto,
     plantedDate: dto.plantedDate ? dto.plantedDate.toISOString() : undefined,
     transplantedDate: dto.transplantedDate ? dto.transplantedDate.toISOString() : undefined,
+    firstHarvestDate: dto.firstHarvestDate ? dto.firstHarvestDate.toISOString() : undefined,
     pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined
   };
@@ -411,6 +417,11 @@ export function toSlotDTO(dto: Slot): SlotDTO {
     subSlot: dto.subSlot ? toBaseSlotDTO(dto.subSlot) : undefined
   };
 }
+
+export const STARTED_FROM_TYPE_SEED = 'Seed';
+export const STARTED_FROM_TYPE_TRANSPLANT = 'Transplant';
+export type StartedFromType = typeof STARTED_FROM_TYPE_SEED | typeof STARTED_FROM_TYPE_TRANSPLANT;
+export const STARTED_FROM_TYPES: StartedFromType[] = [STARTED_FROM_TYPE_SEED, STARTED_FROM_TYPE_TRANSPLANT];
 
 export const CONTAINER_TYPE_INSIDE = 'Inside';
 export const CONTAINER_TYPE_OUTSIDE = 'Outside';
@@ -473,9 +484,10 @@ export function toPictureDTO(dto: Omit<Picture, '_id'>): Omit<PictureDTO, '_id'>
 
 export const PLANT = 'Plant';
 export const TRANSPLANT = 'Transplant';
+export const FERTILIZE = 'Fertilize';
 export const CUSTOM = 'Custom';
-export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof CUSTOM;
-export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, CUSTOM];
+export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof FERTILIZE | typeof CUSTOM;
+export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, FERTILIZE, CUSTOM];
 
 export interface Task {
   _id: string;

@@ -23,7 +23,7 @@ const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTask
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, current } = useTasksByPath(path, -1);
+  const { tasks, completed, overdue, next, current } = useTasksByPath(path, -1, { reverseSortCompleted: false });
 
   const today = useMemo(() => {
     const d = new Date();
