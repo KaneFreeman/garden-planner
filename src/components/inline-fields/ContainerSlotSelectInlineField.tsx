@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
@@ -9,11 +10,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useContainer, useGetContainers } from '../../containers/useContainers';
-import getSlotTitle from '../../utility/slot.util';
 import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
-import { selectContainer, selectContainers } from '../../store/slices/containers';
+import { selectContainer } from '../../store/slices/containers';
+import { getSlotTitle, useSlotOptions } from '../../utility/slot.util';
+import { useContainerOptions } from '../../utility/container.util';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;
@@ -73,28 +75,30 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
     [navigate, value]
   );
 
+  const onContainerChange = useCallback(
+    (containerId: string | undefined) => {
+      if (internalValue?.containerId !== containerId) {
+        handleOnChange({ containerId, slotId: undefined });
+      }
+    },
+    [handleOnChange, internalValue?.containerId]
+  );
+
   const transplantContainerSelector = useMemo(() => selectContainer(value?.containerId), [value?.containerId]);
   const transplantContainer = useAppSelector(transplantContainerSelector);
 
   const internalTransplantContainer = useContainer(internalValue?.containerId);
-  const containers = useAppSelector(selectContainers);
+
   const getContainers = useGetContainers();
-  const slotOptions = useMemo(
-    () =>
-      internalTransplantContainer
-        ? [...Array(internalTransplantContainer.rows * internalTransplantContainer.columns)].map((_, entry) => ({
-            label: getSlotTitle(entry, internalTransplantContainer.rows),
-            value: entry
-          }))
-        : [],
-    [internalTransplantContainer]
-  );
+
+  const containerOptions = useContainerOptions();
+  const slotOptions = useSlotOptions(internalTransplantContainer);
 
   useEffect(() => {
     if (open) {
       getContainers();
     }
-  }, [getContainers, open])
+  }, [getContainers, open]);
 
   return (
     <>
@@ -129,15 +133,8 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
               <Select
                 label="Container"
                 value={internalValue?.containerId}
-                onChange={(containerId) => {
-                  if (internalValue?.containerId !== containerId) {
-                    handleOnChange({ containerId, slotId: undefined });
-                  }
-                }}
-                options={containers?.map((entry) => ({
-                  label: entry.name,
-                  value: entry._id
-                }))}
+                onChange={onContainerChange}
+                options={containerOptions}
               />
               <Select
                 label="Slot"

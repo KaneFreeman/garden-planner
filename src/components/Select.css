@@ -1,0 +1,37 @@
+.form-control-root .select-root {
+  display: flex;
+}
+
+.form-control-root .select-root > .list-item-icon-root {
+  display: flex;
+  align-items: center;
+  height: 23px;
+  min-width: 32px;
+}
+
+.form-control-root .select-root > .list-item-icon-root > svg {
+  height: 23px;
+  width: 23px;
+}
+
+.form-control-root .select-root > .list-item-text-root {
+  margin: 0;
+}
+
+.form-control-root .select-root > .list-item-text-root > .list-item-text-primary {
+  display: flex;
+  align-items: center;
+  height: 23px;
+  font-size: 16px;
+}
+
+.form-control-root .select-root > .list-item-text-root > .list-item-text-primary > .list-item-text-primary-wrapper {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-control-root .select-root > .list-item-text-root > .list-item-text-secondary {
+  display: none;
+}

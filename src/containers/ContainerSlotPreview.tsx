@@ -7,7 +7,7 @@ import { green, red } from '@mui/material/colors';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
-import getSlotTitle from '../utility/slot.util';
+import { getSlotTitle } from '../utility/slot.util';
 import { useTasksByPath } from '../tasks/useTasks';
 
 interface ContainerSlotPreviewProps {

@@ -26,7 +26,7 @@ import NumberTextField from '../components/NumberTextField';
 import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
-import getSlotTitle from '../utility/slot.util';
+import { getSlotTitle, useSlotOptions } from '../utility/slot.util';
 import {
   PictureData,
   Plant,
@@ -47,6 +47,7 @@ import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { useTasksByPath } from '../tasks/useTasks';
 import StatusChip from './StatusChip';
+import { useContainerOptions } from '../utility/container.util';
 
 interface CircleProps {
   backgroundColor: string;
@@ -329,16 +330,18 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     setTransplantedToSlotId(null);
   }, [transplantedDate, transplantedToContainerId, transplantedToSlotId, updateSlot]);
 
-  const slotOptions = useMemo(
-    () =>
-      transplantedToContainer
-        ? [...Array(transplantedToContainer.rows * transplantedToContainer.columns)].map((_, entry) => ({
-            label: getSlotTitle(entry, transplantedToContainer.rows),
-            value: entry
-          }))
-        : [],
-    [transplantedToContainer]
+  const onTransplantContainerChange = useCallback(
+    (newValue: string | undefined) => {
+      if (transplantedToContainerId !== newValue) {
+        setTransplantedToContainerId(newValue ?? null);
+        setTransplantedToSlotId(null);
+      }
+    },
+    [transplantedToContainerId]
   );
+
+  const containerOptions = useContainerOptions();
+  const slotOptions = useSlotOptions(transplantedToContainer);
 
   if (!container) {
     return (
@@ -501,16 +504,8 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
               <Select
                 label="Container"
                 value={transplantedToContainerId ?? undefined}
-                onChange={(newValue) => {
-                  if (transplantedToContainerId !== newValue) {
-                    setTransplantedToContainerId(newValue ?? null);
-                    setTransplantedToSlotId(null);
-                  }
-                }}
-                options={containers?.map((entry) => ({
-                  label: entry.name,
-                  value: entry._id
-                }))}
+                onChange={onTransplantContainerChange}
+                options={containerOptions}
               />
               <Select
                 label="Slot"

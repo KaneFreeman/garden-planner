@@ -80,12 +80,10 @@ const ContainerModal = ({ open, onClose }: ContainerModalProperties) => {
             value={editData?.type}
             onChange={(type) => update({ type })}
             options={CONTAINER_TYPES?.map((entry) => ({
-              label: (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {entry === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
-                  {entry}
-                </Box>
-              ),
+              label: {
+                primary: entry,
+                icon: entry === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Outside" />
+              },
               value: entry
             }))}
             sx={{ mt: 1.5, mb: 1 }}
