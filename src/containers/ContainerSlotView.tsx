@@ -26,7 +26,7 @@ import NumberTextField from '../components/NumberTextField';
 import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
-import { getSlotTitle, useSlotOptions } from '../utility/slot.util';
+import { getSlotTitle } from '../utility/slot.util';
 import {
   PictureData,
   Plant,
@@ -46,8 +46,9 @@ import ContainerSlotSelectInlineField from '../components/inline-fields/Containe
 import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { useTasksByPath } from '../tasks/useTasks';
+import useSlotOptions from './hooks/useSlotOptions';
+import useContainerOptions from './hooks/useContainerOptions';
 import StatusChip from './StatusChip';
-import { useContainerOptions } from '../utility/container.util';
 
 interface CircleProps {
   backgroundColor: string;

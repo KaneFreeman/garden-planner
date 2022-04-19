@@ -1,23 +1,27 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-param-reassign */
 import { useMemo } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
-import { useAppSelector } from '../store/hooks';
-import { selectContainers } from '../store/slices/containers';
+import { useAppSelector } from '../../store/hooks';
+import { selectContainers } from '../../store/slices/containers';
 
-export function useContainerOptions() {
+export default function useContainerOptions() {
   const containers = useAppSelector(selectContainers);
+
+  const sortedContainers = useMemo(() => {
+    const temp = [...containers];
+    temp.sort((a, b) => a.name.localeCompare(b.name));
+    return temp;
+  }, [containers]);
 
   return useMemo(
     () =>
-      containers?.map((entry) => ({
+      sortedContainers?.map((entry) => ({
         label: {
           primary: entry.name,
           icon: entry.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />
         },
         value: entry._id
       })),
-    [containers]
+    [sortedContainers]
   );
 }

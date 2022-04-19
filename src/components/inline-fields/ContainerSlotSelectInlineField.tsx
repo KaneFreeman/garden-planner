@@ -14,8 +14,9 @@ import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
 import { selectContainer } from '../../store/slices/containers';
-import { getSlotTitle, useSlotOptions } from '../../utility/slot.util';
-import { useContainerOptions } from '../../utility/container.util';
+import { getSlotTitle } from '../../utility/slot.util';
+import useSlotOptions from '../../containers/hooks/useSlotOptions';
+import useContainerOptions from '../../containers/hooks/useContainerOptions';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;

@@ -7,7 +7,7 @@ import { green, red } from '@mui/material/colors';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
-import { getSlotTitle } from '../utility/slot.util';
+import { getSlotTitle, useStatusColor } from '../utility/slot.util';
 import { useTasksByPath } from '../tasks/useTasks';
 
 interface ContainerSlotPreviewProps {
@@ -49,21 +49,7 @@ const ContainerSlotPreview = React.memo(
       return { badgeColor: color, badgeCount: 0 };
     }, [tasks]);
 
-    const borderColor = useMemo(() => {
-      if (!plant) {
-        return '#2c2c2c';
-      }
-
-      if (slot?.status === 'Planted') {
-        return green[300];
-      }
-
-      if (slot?.status === 'Transplanted') {
-        return red[300];
-      }
-
-      return '#2c2c2c';
-    }, [plant, slot?.status]);
+    const borderColor = useStatusColor(slot, plant);
 
     const { subPlantBadgeColor, subPlantBadgeCount } = useMemo(() => {
       const { current, overdue } = subPlantTasks;

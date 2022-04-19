@@ -1,20 +1,37 @@
-import React from 'react';
+import { memo, useMemo } from 'react';
 import Avatar from '@mui/material/Avatar';
 import { SxProps, Theme } from '@mui/material/styles';
 import GrassIcon from '@mui/icons-material/Grass';
-import { Plant } from '../interface';
+import { useStatusColor } from '../utility/slot.util';
+import { Plant, Slot } from '../interface';
 
 interface PlantAvatarProperties {
   plant?: Plant;
   size?: number;
   variant?: 'square' | 'circular' | 'rounded' | undefined;
+  slot?: Slot;
   sx?: SxProps<Theme> | undefined;
 }
 
-const PlantAvatar = React.memo(({ plant, size = 40, variant, sx }: PlantAvatarProperties) => {
+const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx }: PlantAvatarProperties) => {
+  const statusColor = useStatusColor(slot, plant, 'transparent');
+  const borderSx: SxProps<Theme> | undefined = useMemo(() => {
+    if (slot === undefined || statusColor === 'transparent') {
+      return {};
+    }
+
+    return {
+      border: `3px solid ${statusColor}`
+    };
+  }, [slot, statusColor]);
+
   if (!plant) {
     return (
-      <Avatar variant={variant} alt="Empty" sx={{ width: size, height: size, ...sx }}>
+      <Avatar
+        variant={variant}
+        alt="Empty"
+        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
+      >
         <GrassIcon />
       </Avatar>
     );
@@ -22,7 +39,11 @@ const PlantAvatar = React.memo(({ plant, size = 40, variant, sx }: PlantAvatarPr
 
   if (!plant.pictures || plant.pictures.length === 0) {
     return (
-      <Avatar variant={variant} alt={plant.name} sx={{ width: size, height: size, ...sx }}>
+      <Avatar
+        variant={variant}
+        alt={plant.name}
+        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
+      >
         <GrassIcon color="primary" />
       </Avatar>
     );
@@ -33,7 +54,7 @@ const PlantAvatar = React.memo(({ plant, size = 40, variant, sx }: PlantAvatarPr
       variant={variant}
       src={plant.pictures[0].thumbnail}
       alt={plant.name}
-      sx={{ width: size, height: size, ...sx }}
+      sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
     />
   );
 });
