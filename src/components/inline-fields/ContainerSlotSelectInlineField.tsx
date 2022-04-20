@@ -9,7 +9,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useContainer, useGetContainers } from '../../containers/useContainers';
+import { useContainer } from '../../containers/hooks/useContainers';
 import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
@@ -90,16 +90,8 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
 
   const internalTransplantContainer = useContainer(internalValue?.containerId);
 
-  const getContainers = useGetContainers();
-
   const containerOptions = useContainerOptions();
   const slotOptions = useSlotOptions(internalTransplantContainer);
-
-  useEffect(() => {
-    if (open) {
-      getContainers();
-    }
-  }, [getContainers, open]);
 
   return (
     <>

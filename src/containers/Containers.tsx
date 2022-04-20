@@ -11,9 +11,9 @@ import Avatar from '@mui/material/Avatar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
-import { useTasksByContainers } from '../tasks/useTasks';
+import { useTasksByContainers } from '../tasks/hooks/useTasks';
 import TaskBadge from '../tasks/TaskBadge';
-import { useContainers } from './useContainers';
+import { useContainers } from './hooks/useContainers';
 import StatusChip from './StatusChip';
 import './Containers.css';
 

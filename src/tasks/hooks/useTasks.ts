@@ -2,17 +2,18 @@
 /* eslint-disable no-param-reassign */
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../interface';
-import Api from '../api/api';
-import useFetch from '../api/useFetch';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';
+import Api from '../../api/api';
+import useFetch from '../../api/useFetch';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
+  selectTaskById,
   selectTasks,
   selectTasksByContainer,
   selectTasksByContainers,
   selectTasksByPath,
   updateTasks
-} from '../store/slices/tasks';
+} from '../../store/slices/tasks';
 
 export const useGetTasks = () => {
   const fetch = useFetch();
@@ -234,4 +235,10 @@ export const useTasksByContainers = (limit?: number) => {
       }, {} as Record<string, ReturnType<typeof useSortTasks>>),
     [daysFromNow, daysLimit, taskDtos, today]
   );
+};
+
+export const useTask = (id: string | undefined) => {
+  const selector = useMemo(() => selectTaskById(id), [id]);
+  const taskDto = useAppSelector(selector);
+  return useMemo(() => (taskDto ? fromTaskDTO(taskDto) : undefined), [taskDto]);
 };

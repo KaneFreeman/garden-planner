@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '../components/TextField';
 import { Container, CONTAINER_TYPES } from '../interface';
-import { useUpdateContainer } from './useContainers';
+import { useUpdateContainer } from './hooks/useContainers';
 import Select from '../components/Select';
 
 interface ContainerEditModalProperties {

@@ -1,16 +1,18 @@
 /* eslint-disable no-param-reassign */
 import { useMemo } from 'react';
-import { Plant, Container } from '../../interface';
+import { Plant, Container, fromPlantDTO } from '../../interface';
 import PlantAvatar from '../../plants/PlantAvatar';
-import { usePlants } from '../../plants/usePlants';
+import { useAppSelector } from '../../store/hooks';
+import { selectPlants } from '../../store/slices/plants';
 import { getRowColumn, formatSlotTitle } from '../../utility/slot.util';
 
 export default function useSlotOptions(container: Container | undefined) {
-  const plants = usePlants();
+  const plants = useAppSelector(selectPlants);
+
   const plantsById = useMemo(
     () =>
       plants.reduce((byId, plant) => {
-        byId[plant._id] = plant;
+        byId[plant._id] = fromPlantDTO(plant);
         return byId;
       }, {} as Record<string, Plant>),
     [plants]

@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
 import { PictureData, Comment } from '../../interface';
@@ -19,6 +20,8 @@ interface CommentsViewProps {
 }
 
 const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewProps) => {
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
   const [showCommentBox, setShowCommentBox] = useState(false);
 
   const addComment = useCallback(
@@ -62,11 +65,18 @@ const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewPro
       <Typography
         variant="subtitle1"
         component="div"
-        sx={{ flexGrow: 1, mt: 2, display: 'flex', alignItems: 'center' }}
+        sx={{
+          flexGrow: 1,
+          mt: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          justifyContent: isSmallScreen ? 'space-between' : undefined
+        }}
         color="GrayText"
       >
         Comments
-        <IconButton onClick={() => setShowCommentBox(true)} disabled={showCommentBox}>
+        <IconButton color="primary" onClick={() => setShowCommentBox(true)} disabled={showCommentBox}>
           <AddIcon />
         </IconButton>
       </Typography>

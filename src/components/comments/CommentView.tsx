@@ -74,7 +74,7 @@ const CommentView = ({ id, pictures, alt, comment, index, onDelete }: CommentPro
               size="small"
               sx={{ ml: 1 }}
               onClick={handleOnDelete}
-              title="Delete picture"
+              title="Delete comment"
             >
               <DeleteIcon fontSize="small" />
             </IconButton>

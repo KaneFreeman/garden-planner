@@ -1,18 +1,14 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate, useParams } from 'react-router-dom';
 import DialogContentText from '@mui/material/DialogContentText';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PicturesView from '../pictures/PicturesView';
@@ -22,15 +18,13 @@ import PlantDataView from './PlantDataView';
 import CommentsView from '../components/comments/CommentsView';
 import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
 import { Plant, Comment, PictureData, PlantType, PLANT_TYPES } from '../interface';
+import Breadcrumbs from '../components/Breadcrumbs';
+import Loading from '../components/Loading';
 import { useRemovePlant, usePlant, useUpdatePlant } from './usePlants';
-import './PlantView.css';
 
 const PlantView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const backPath = searchParams.get('backPath');
-  const backLabel = searchParams.get('backLabel');
 
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
@@ -102,61 +96,59 @@ const PlantView = () => {
   }, []);
 
   if (!plant || plant?._id !== id) {
-    return (
-      <Box sx={{ width: '100%', mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading />;
   }
 
   return (
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
-        <Breadcrumbs aria-label="breadcrumb" separator="›" classes={{ root: 'breadcrumbs-root', li: 'breadcrumbs-li' }}>
-          {!isSmallScreen ? (
-            /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-            <Link
-              underline="hover"
-              color="inherit"
-              onClick={() => navigate(backPath && backLabel ? backPath : '/plants')}
-              sx={{ cursor: 'pointer' }}
-            >
-              <Typography
-                variant="h6"
+        <Breadcrumbs
+          trail={[
+            {
+              to: `/plants`,
+              label: 'Plants'
+            }
+          ]}
+        >
+          {{
+            current: (
+              <TextInlineField
+                valueVariant="h6"
+                value={plant.name}
+                valueActive
+                onChange={(name) => handleUpdatePlant({ name })}
+                noMargin
+                noPadding
                 sx={{
-                  alignItems: 'center',
-                  display: 'flex'
+                  minWidth: 0
                 }}
-              >
-                {backPath && backLabel ? backLabel : 'Plants'}
-              </Typography>
-            </Link>
-          ) : null}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <TextInlineField
-              valueVariant="h6"
-              value={plant.name}
-              valueActive
-              onChange={(name) => handleUpdatePlant({ name })}
-              noMargin
-              noPadding
-              sx={{
-                minWidth: 0
-              }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                aria-label="delete"
-                color="error"
-                size="small"
-                sx={{ ml: 1 }}
-                onClick={handleOnDelete}
-                title="Delete picture"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Box>
+              />
+            ),
+            actions: (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {isSmallScreen ? (
+                  <Box sx={{ display: 'flex', ml: 1, gap: 0.5 }}>
+                    <IconButton
+                      aria-label="delete"
+                      color="error"
+                      size="small"
+                      onClick={handleOnDelete}
+                      title="Delete container"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', ml: 1, gap: 1.5 }}>
+                    <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete task">
+                      <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
+                      Delete
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )
+          }}
         </Breadcrumbs>
         <DrawerInlineSelect
           label="Type"

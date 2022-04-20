@@ -2,9 +2,10 @@
 import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { PictureData, Comment } from '../interface';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
-import { PictureData, Comment } from '../interface';
 import FullPictureView from './FullPictureView';
 
 interface PicturesViewProps {
@@ -15,6 +16,8 @@ interface PicturesViewProps {
 }
 
 const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) => {
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
   const [fullViewImageId, setFullViewImageId] = useState<string | null>(null);
 
   const addPicture = useCallback(
@@ -85,7 +88,18 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
 
   return (
     <>
-      <Typography variant="subtitle1" component="div" sx={{ flexGrow: 1, mt: 2 }} color="GrayText">
+      <Typography
+        variant="subtitle1"
+        component="div"
+        sx={{
+          display: 'flex',
+          flexGrow: 1,
+          mt: 1,
+          alignItems: 'center',
+          justifyContent: isSmallScreen ? 'space-between' : undefined
+        }}
+        color="GrayText"
+      >
         Pictures
         <PictureUpload id="pictures-view-upload" onChange={addPicture} />
       </Typography>

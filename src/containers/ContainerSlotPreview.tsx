@@ -8,7 +8,7 @@ import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
 import { getSlotTitle, useStatusColor } from '../utility/slot.util';
-import { useTasksByPath } from '../tasks/useTasks';
+import { useTasksByPath } from '../tasks/hooks/useTasks';
 
 interface ContainerSlotPreviewProps {
   id: string;

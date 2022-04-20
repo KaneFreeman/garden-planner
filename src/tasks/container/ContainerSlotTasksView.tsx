@@ -1,20 +1,35 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import AddIcon from '@mui/icons-material/Add';
 import { Task } from '../../interface';
-import { useTasksByPath } from '../useTasks';
-import '../Tasks.css';
+import { useTasksByPath } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
+import TaskModal from '../TaskModal';
 
 interface ContainerSlotTasksViewProps {
   containerId: string | undefined;
   slotId: number;
+  slotTitle: string;
   type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const openTaskModal = useCallback(() => {
+    setIsCreateTaskModalOpen(true);
+  }, []);
+
+  const closeModals = useCallback(() => {
+    setIsCreateTaskModalOpen(false);
+  }, []);
+
   const path = useMemo(() => {
     if (!containerId) {
       return undefined;
@@ -35,39 +50,66 @@ const ContainerSlotTasksView = ({ containerId, slotId, type }: ContainerSlotTask
     (key: string, task: Task, index: number, options?: { showStart?: boolean; isOverdue?: boolean }) => {
       const { showStart = false, isOverdue = false } = options || {};
       return (
-        <TaskListItem key={`${key}-${index}`} today={today} task={task} showStart={showStart} isOverdue={isOverdue} />
+        <TaskListItem
+          key={`${key}-${index}`}
+          today={today}
+          task={task}
+          showStart={showStart}
+          isOverdue={isOverdue}
+          back={
+            path
+              ? {
+                  path,
+                  title: `${slotTitle}${type === 'sub-slot' ? ` - Sub Plant` : ''}`
+                }
+              : undefined
+          }
+        />
       );
     },
-    [today]
+    [path, slotTitle, today, type]
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography
-        variant="subtitle1"
-        component="div"
-        sx={{ flexGrow: 1, mt: 2, display: 'flex', alignItems: 'center' }}
-        color="GrayText"
-      >
-        Tasks
-      </Typography>
+    <>
       <Box sx={{ width: '100%' }}>
-        {tasks.length === 0 ? (
-          <Alert severity="info" sx={{ m: 2 }}>
-            No tasks at this time!
-          </Alert>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <List>
-              {completed.map((task, index) => renderTask('completed', task, index))}
-              {overdue.map((task, index) => renderTask('completed', task, index, { isOverdue: true }))}
-              {current.map((task, index) => renderTask('completed', task, index))}
-              {next.map((task, index) => renderTask('completed', task, index, { showStart: true }))}
-            </List>
-          </Box>
-        )}
+        <Typography
+          variant="subtitle1"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            mt: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            justifyContent: isSmallScreen ? 'space-between' : undefined
+          }}
+          color="GrayText"
+        >
+          Tasks
+          <IconButton aria-label="add" color="primary" onClick={openTaskModal} title="Add task">
+            <AddIcon />
+          </IconButton>
+        </Typography>
+        <Box sx={{ width: '100%' }}>
+          {tasks.length === 0 ? (
+            <Alert severity="info" sx={{ m: 2 }}>
+              No tasks at this time!
+            </Alert>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <List>
+                {completed.map((task, index) => renderTask('completed', task, index))}
+                {overdue.map((task, index) => renderTask('completed', task, index, { isOverdue: true }))}
+                {current.map((task, index) => renderTask('completed', task, index))}
+                {next.map((task, index) => renderTask('completed', task, index, { showStart: true }))}
+              </List>
+            </Box>
+          )}
+        </Box>
       </Box>
-    </Box>
+      <TaskModal open={isCreateTaskModalOpen} path={path} onClose={closeModals} />
+    </>
   );
 };
 

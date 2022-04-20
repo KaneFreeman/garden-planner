@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { useTasks } from './useTasks';
+import { useTasks } from './hooks/useTasks';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
 import { Task } from '../interface';

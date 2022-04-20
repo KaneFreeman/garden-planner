@@ -4,9 +4,12 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback } from 'react';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
-import { PhotoCamera } from '@mui/icons-material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import AddIcon from '@mui/icons-material/Add';
 import generateThumbnail from '../utility/thumbnail.util';
 import { PictureData } from '../interface';
 import { useAddPicture } from './usePictures';
@@ -21,6 +24,8 @@ interface PictureUploadProps {
 }
 
 const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
   const addPicture = useAddPicture();
 
   const onChangeHandler = useCallback(
@@ -59,20 +64,22 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
   );
 
   return (
-    <>
-      <label htmlFor={`camera-${id}`}>
-        <Input
-          accept="image/*"
-          id={`camera-${id}`}
-          type="file"
-          capture="environment"
-          onChange={onChangeHandler}
-          onClick={(event) => event.stopPropagation()}
-        />
-        <IconButton color="primary" aria-label="upload picture" component="span">
-          <PhotoCamera />
-        </IconButton>
-      </label>
+    <Box sx={{ ml: 1 }}>
+      {isSmallScreen ? (
+        <label htmlFor={`camera-${id}`}>
+          <Input
+            accept="image/*"
+            id={`camera-${id}`}
+            type="file"
+            capture="environment"
+            onChange={onChangeHandler}
+            onClick={(event) => event.stopPropagation()}
+          />
+          <IconButton color="primary" aria-label="capture picture" component="span">
+            <PhotoCamera />
+          </IconButton>
+        </label>
+      ) : null}
       <label htmlFor={`upload-${id}`}>
         <Input
           accept="image/*"
@@ -82,10 +89,10 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
           onClick={(event) => event.stopPropagation()}
         />
         <IconButton color="primary" aria-label="upload picture" component="span">
-          <InsertPhotoIcon />
+          {isSmallScreen ? <InsertPhotoIcon /> : <AddIcon />}
         </IconButton>
       </label>
-    </>
+    </Box>
   );
 };
 

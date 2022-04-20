@@ -11,6 +11,7 @@ import ContainerView from './containers/ContainerView';
 import Tasks from './tasks/Tasks';
 import ContainerSlotRoute from './containers/ContainerSlotRoute';
 import ContainerSubSlotRoute from './containers/ContainerSubSlotRoute';
+import TaskViewRoute from './tasks/TaskViewRoute';
 
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
@@ -98,6 +99,7 @@ const Main = () => {
             <Route path="/container/:id/slot/:index/sub-slot" element={<ContainerSubSlotRoute />} />
             <Route path="/plants" element={<Plants />} />
             <Route path="/plant/:id" element={<PlantView />} />
+            <Route path="/task/:id" element={<TaskViewRoute />} />
           </Routes>
         </Box>
       </Box>

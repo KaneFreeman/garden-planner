@@ -353,6 +353,7 @@ export interface BaseSlot {
   plantedDate?: Date;
   transplantedDate?: Date;
   transplantedTo: ContainerSlotIdentifier | null;
+  transplantedFromDate?: Date;
   transplantedFrom: ContainerSlotIdentifier | null;
   firstHarvestDate?: Date;
   startedFrom: StartedFromType;
@@ -371,6 +372,7 @@ export interface BaseSlotDTO {
   plantedDate?: string;
   transplantedDate?: string;
   transplantedTo: ContainerSlotIdentifier | null;
+  transplantedFromDate?: string;
   transplantedFrom: ContainerSlotIdentifier | null;
   firstHarvestDate?: string;
   startedFrom: StartedFromType;
@@ -387,6 +389,7 @@ function fromBaseSlotDTO(dto: BaseSlotDTO): BaseSlot {
     ...dto,
     plantedDate: dto.plantedDate ? new Date(dto.plantedDate) : undefined,
     transplantedDate: dto.transplantedDate ? new Date(dto.transplantedDate) : undefined,
+    transplantedFromDate: dto.transplantedFromDate ? new Date(dto.transplantedFromDate) : undefined,
     firstHarvestDate: dto.firstHarvestDate ? new Date(dto.firstHarvestDate) : undefined,
     pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined
@@ -405,6 +408,7 @@ export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
     ...dto,
     plantedDate: dto.plantedDate ? dto.plantedDate.toISOString() : undefined,
     transplantedDate: dto.transplantedDate ? dto.transplantedDate.toISOString() : undefined,
+    transplantedFromDate: dto.transplantedFromDate ? dto.transplantedFromDate.toISOString() : undefined,
     firstHarvestDate: dto.firstHarvestDate ? dto.firstHarvestDate.toISOString() : undefined,
     pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined

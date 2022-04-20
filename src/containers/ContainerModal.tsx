@@ -10,7 +10,7 @@ import ParkIcon from '@mui/icons-material/Park';
 import NumberTextField from '../components/NumberTextField';
 import TextField from '../components/TextField';
 import { Container, CONTAINER_TYPES } from '../interface';
-import { useAddContainer } from './useContainers';
+import { useAddContainer } from './hooks/useContainers';
 import Select from '../components/Select';
 
 interface ContainerModalProperties {

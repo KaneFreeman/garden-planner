@@ -8,10 +8,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import CircularProgress from '@mui/material/CircularProgress';
 import DialogContentText from '@mui/material/DialogContentText';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
@@ -20,16 +17,16 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
-import { useContainer, useRemoveContainer } from './useContainers';
+import Breadcrumbs from '../components/Breadcrumbs';
+import Loading from '../components/Loading';
+import { useContainer, useRemoveContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
-import './ContainerView.css';
 
 const ContainerView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
-
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
@@ -128,11 +125,7 @@ const ContainerView = () => {
   }, [container, id, isPortrait, plantsById]);
 
   if (!container || container._id !== id) {
-    return (
-      <Box sx={{ width: '100%', mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading />;
   }
 
   return (
@@ -144,62 +137,84 @@ const ContainerView = () => {
             onClick={handleEditOpen}
           >
             <Breadcrumbs
-              aria-label="breadcrumb"
-              separator="›"
-              sx={{ minWidth: 0 }}
-              classes={{ root: 'breadcrumbs-root', li: 'breadcrumbs-li' }}
+              trail={[
+                {
+                  to: `/containers`,
+                  label: 'Containers'
+                }
+              ]}
             >
-              {!isSmallScreen ? (
-                /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-                <Link
-                  underline="hover"
-                  color="inherit"
-                  onClick={() => navigate(`/containers`)}
-                  sx={{ cursor: 'pointer' }}
-                >
-                  <Typography variant="h6">Containers</Typography>
-                </Link>
-              ) : null}
-              <Typography variant="h6" color="text.primary" sx={{ display: 'flex' }}>
-                <Box sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} title={container.name}>
-                  {container.name}
-                </Box>
-                <Typography
-                  variant="subtitle1"
-                  component="span"
-                  sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
-                  color="GrayText"
-                >
-                  {container.type === 'Inside' ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />}
-                  {container.rows} x {container.columns}
-                </Typography>
-              </Typography>
+              {{
+                current: (
+                  <>
+                    <Box
+                      sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+                      title={container.name}
+                    >
+                      {container.name}
+                    </Box>
+                    <Typography
+                      variant="subtitle1"
+                      component="span"
+                      sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
+                      color="GrayText"
+                    >
+                      {container.type === 'Inside' ? (
+                        <HomeIcon titleAccess="Inside" />
+                      ) : (
+                        <ParkIcon titleAccess="Inside" />
+                      )}
+                      {container.rows} x {container.columns}
+                    </Typography>
+                  </>
+                )
+              }}
             </Breadcrumbs>
             <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-              <IconButton
-                aria-label="rotate"
-                color="info"
-                size="small"
-                sx={{
-                  ml: 1,
-                  transition: 'transform 333ms ease-out',
-                  transform: `scaleX(${isPortrait ? '-1' : '1'})`
-                }}
-                onClick={handleRotate}
-                title="Rotate container"
-              >
-                <RotateLeftIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                aria-label="delete"
-                color="error"
-                size="small"
-                sx={{ ml: 0.5 }}
-                onClick={handleOnDelete}
-                title="Delete picture"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+              {isSmallScreen ? (
+                <Box sx={{ display: 'flex', ml: 1, gap: 0.5 }}>
+                  <IconButton
+                    aria-label="rotate"
+                    color="info"
+                    size="small"
+                    sx={{
+                      transition: 'transform 333ms ease-out',
+                      transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                    }}
+                    onClick={handleRotate}
+                    title="Rotate container"
+                  >
+                    <RotateLeftIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    color="error"
+                    size="small"
+                    onClick={handleOnDelete}
+                    title="Delete container"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', ml: 2, gap: 1.5 }}>
+                  <Button variant="outlined" color="primary" onClick={handleRotate} title="Rotate">
+                    <RotateLeftIcon
+                      sx={{
+                        mr: 1,
+                        transition: 'transform 333ms ease-out',
+                        transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                      }}
+                      fontSize="small"
+                    />
+                    Rotate
+                  </Button>
+                  <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete task">
+                    <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
+                    Delete
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Box>
           <Box

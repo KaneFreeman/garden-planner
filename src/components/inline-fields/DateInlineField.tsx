@@ -53,7 +53,7 @@ const DateInlineField = memo(({ label, value, onChange }: DateInlineFieldProps) 
           sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
         >
           <ListItem button key="dateInlineField-display" onClick={open ? undefined : handleOpen}>
-            {value ? format(value, 'MMM d, yyyy h:mmaaa') : ''}
+            {value ? format(value, 'MMM d, yyyy h:mmaaa') : 'None'}
           </ListItem>
         </Typography>
       </Box>

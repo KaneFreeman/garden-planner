@@ -5,6 +5,7 @@ import { TaskDTO } from '../../interface';
 // Define a type for the slice state
 export interface TasksState {
   tasks: TaskDTO[];
+  tasksById: Record<string, TaskDTO>;
   tasksByPath: Record<string, TaskDTO[]>;
   tasksByContainer: Record<string, TaskDTO[]>;
 }
@@ -12,6 +13,7 @@ export interface TasksState {
 // Define the initial state using that type
 const initialState: TasksState = {
   tasks: [],
+  tasksById: {},
   tasksByPath: {},
   tasksByContainer: {}
 };
@@ -22,33 +24,30 @@ export const TasksSlice = createSlice({
   initialState,
   reducers: {
     updateTasks: (state, action: PayloadAction<TaskDTO[]>) => {
+      const tasksById: Record<string, TaskDTO> = {};
       const tasksByPath: Record<string, TaskDTO[]> = {};
-      action.payload.forEach((task) => {
-        if (!task.path) {
-          return;
-        }
-
-        if (!(task.path in tasksByPath)) {
-          tasksByPath[task.path] = [];
-        }
-
-        tasksByPath[task.path].push(task);
-      });
-
       const tasksByContainer: Record<string, TaskDTO[]> = {};
       action.payload.forEach((task) => {
-        if (!task.containerId) {
-          return;
+        if (task.path) {
+          if (!(task.path in tasksByPath)) {
+            tasksByPath[task.path] = [];
+          }
+
+          tasksByPath[task.path].push(task);
         }
 
-        if (!(task.containerId in tasksByContainer)) {
-          tasksByContainer[task.containerId] = [];
+        if (task.containerId) {
+          if (!(task.containerId in tasksByContainer)) {
+            tasksByContainer[task.containerId] = [];
+          }
+
+          tasksByContainer[task.containerId].push(task);
         }
 
-        tasksByContainer[task.containerId].push(task);
+        tasksById[task._id] = task;
       });
 
-      return { ...state, tasks: action.payload, tasksByPath, tasksByContainer };
+      return { ...state, tasks: action.payload, tasksById, tasksByPath, tasksByContainer };
     }
   }
 });
@@ -56,6 +55,7 @@ export const TasksSlice = createSlice({
 export const { updateTasks } = TasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.tasks;
+export const selectTaskById = (id?: string) => (state: RootState) => id ? state.tasks.tasksById[id] : undefined;
 export const selectTasksByPath = (path?: string) => (state: RootState) => path ? state.tasks.tasksByPath[path] : [];
 export const selectTasksByContainer = (containerId?: string) => (state: RootState) =>
   containerId ? state.tasks.tasksByContainer[containerId] : [];

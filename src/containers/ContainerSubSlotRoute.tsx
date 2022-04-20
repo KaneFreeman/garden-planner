@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { BaseSlot, Slot } from '../interface';
 import ContainerSlotView from './ContainerSlotView';
-import { useContainer, useUpdateContainer } from './useContainers';
+import { useContainer, useUpdateContainer } from './hooks/useContainers';
 
 const ContainerSubSlotRoute = () => {
   const { id, index } = useParams();

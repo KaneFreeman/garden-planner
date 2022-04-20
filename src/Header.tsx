@@ -17,7 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import './Actions.css';
 import Actions from './Actions';
-import { useTasks } from './tasks/useTasks';
+import { useTasks } from './tasks/hooks/useTasks';
 import './Header.css';
 
 const Header = () => {

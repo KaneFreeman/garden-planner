@@ -10,10 +10,11 @@ import MuiTextField from '@mui/material/TextField';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import TextField from '../components/TextField';
 import { Task } from '../interface';
-import { useAddTask } from './useTasks';
+import { useAddTask } from './hooks/useTasks';
 
 interface TaskModalProperties {
   open: boolean;
+  path?: string | null;
   onClose: () => void;
 }
 
@@ -21,7 +22,7 @@ function isValidTask(task: Partial<Task> | null): task is Omit<Task, 'id' | 'typ
   return task?.text !== undefined && task?.start !== undefined && task?.due !== undefined;
 }
 
-const TaskModal = ({ open, onClose }: TaskModalProperties) => {
+const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
   const [editData, setEditData] = useState<Partial<Task> | null>({
     start: new Date(),
     due: new Date()
@@ -50,13 +51,13 @@ const TaskModal = ({ open, onClose }: TaskModalProperties) => {
         due,
         containerId: null,
         type: 'Custom',
-        path: null,
+        path,
         completedOn: null
       });
 
       handleOnClose();
     }
-  }, [addTask, editData, handleOnClose]);
+  }, [addTask, editData, handleOnClose, path]);
 
   const onSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromContainerDTO, Container, toContainerDTO } from '../interface';
-import Api from '../api/api';
-import useFetch from '../api/useFetch';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectContainer, selectContainers, updateContainer, updateContainers } from '../store/slices/containers';
-import { useGetTasks } from '../tasks/useTasks';
+import { fromContainerDTO, Container, toContainerDTO } from '../../interface';
+import Api from '../../api/api';
+import useFetch from '../../api/useFetch';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectContainer, selectContainers, updateContainers } from '../../store/slices/containers';
+import { useGetTasks } from '../../tasks/hooks/useTasks';
 
-export const useGetContainers = () => {
+const useGetContainers = () => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 
@@ -16,8 +16,6 @@ export const useGetContainers = () => {
     if (response) {
       dispatch(updateContainers(response));
     }
-
-    return response;
   }, [dispatch, fetch]);
 
   return getContainers;
@@ -72,28 +70,26 @@ export const useAddContainer = () => {
 
 export const useUpdateContainer = () => {
   const fetch = useFetch();
-  const dispatch = useAppDispatch();
-  const getTasks = useGetTasks();
+  const runOperation = useContainerOperation();
 
   const addContainer = useCallback(
     async (data: Container) => {
-      const response = await fetch(Api.container_IdPut, {
-        params: {
-          containerId: data._id
-        },
-        body: toContainerDTO(data)
-      });
+      const response = await runOperation(() =>
+        fetch(Api.container_IdPut, {
+          params: {
+            containerId: data._id
+          },
+          body: toContainerDTO(data)
+        })
+      );
 
       if (!response) {
         return undefined;
       }
 
-      dispatch(updateContainer(response));
-      await getTasks();
-
       return fromContainerDTO(response);
     },
-    [dispatch, fetch, getTasks]
+    [fetch, runOperation]
   );
 
   return addContainer;
@@ -126,39 +122,9 @@ export const useRemoveContainer = () => {
 };
 
 export function useContainer(containerId: string | undefined) {
-  const fetch = useFetch();
-  const dispatch = useAppDispatch();
   const selector = useMemo(() => selectContainer(containerId), [containerId]);
   const containerDto = useAppSelector(selector);
-  const container = useMemo(() => (containerDto ? fromContainerDTO(containerDto) : undefined), [containerDto]);
-
-  useEffect(() => {
-    if (containerId === undefined) {
-      return () => {};
-    }
-
-    let alive = true;
-
-    const getContainersCall = async () => {
-      const data = await fetch(Api.container_IdGet, {
-        params: {
-          containerId
-        }
-      });
-
-      if (data && alive) {
-        dispatch(updateContainer(data));
-      }
-    };
-
-    getContainersCall();
-
-    return () => {
-      alive = false;
-    };
-  }, [dispatch, fetch, containerId]);
-
-  return container;
+  return useMemo(() => (containerDto ? fromContainerDTO(containerDto) : undefined), [containerDto]);
 }
 
 export function useContainers() {

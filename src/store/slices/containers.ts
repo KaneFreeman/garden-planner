@@ -19,27 +19,21 @@ export const ContainersSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    updateContainers: (state, action: PayloadAction<ContainerDTO[]>) => ({ ...state, containers: action.payload }),
-    updateContainer: (state, action: PayloadAction<ContainerDTO>) => {
-      const containersById = {...state.containersById};
-      containersById[action.payload._id] = action.payload;
+    updateContainers: (state, action: PayloadAction<ContainerDTO[]>) => {
+      const containersById: Record<string, ContainerDTO> = {};
+      action.payload.forEach((container) => {
+        containersById[container._id] = container;
+      });
 
-      const index = state.containers.findIndex((value) => value._id === action.payload._id);
-      if (index < 0) {
-        return { ...state, containersById };
-      }
-
-      const containers = [...state.containers];
-      containers[index] = action.payload;
-
-      return { ...state, containersById, containers };
+      return { ...state, containers: action.payload, containersById };
     }
   }
 });
 
-export const { updateContainers, updateContainer } = ContainersSlice.actions;
+export const { updateContainers } = ContainersSlice.actions;
 
 export const selectContainers = (state: RootState) => state.containers.containers;
-export const selectContainer = (id?: string) => (state: RootState) => id ? state.containers.containersById[id] : undefined;
+export const selectContainer = (id?: string) => (state: RootState) =>
+  id ? state.containers.containersById[id] : undefined;
 
 export default ContainersSlice.reducer;

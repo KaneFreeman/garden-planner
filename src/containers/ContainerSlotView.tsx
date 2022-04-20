@@ -3,15 +3,11 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import CircularProgress from '@mui/material/CircularProgress';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import MuiTextField from '@mui/material/TextField';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -40,12 +36,14 @@ import {
   StartedFromType
 } from '../interface';
 import { usePlants } from '../plants/usePlants';
-import { useContainers } from './useContainers';
+import { useContainers } from './hooks/useContainers';
 import Select from '../components/Select';
 import ContainerSlotSelectInlineField from '../components/inline-fields/ContainerSlotSelectInlineField';
 import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
-import { useTasksByPath } from '../tasks/useTasks';
+import { useTasksByPath } from '../tasks/hooks/useTasks';
+import Breadcrumbs from '../components/Breadcrumbs';
+import Loading from '../components/Loading';
 import useSlotOptions from './hooks/useSlotOptions';
 import useContainerOptions from './hooks/useContainerOptions';
 import StatusChip from './StatusChip';
@@ -345,42 +343,33 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   const slotOptions = useSlotOptions(transplantedToContainer);
 
   if (!container) {
-    return (
-      <Box sx={{ width: '100%', mt: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loading />;
   }
 
   return (
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
-        <Breadcrumbs aria-label="breadcrumb" separator="›">
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate(`/container/${container._id}`)}
-            sx={{ cursor: 'pointer' }}
-          >
-            <Typography variant="h6">{container.name}</Typography>
-          </Link>
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate(`/container/${container._id}/slot/${index}`)}
-            sx={{ cursor: 'pointer' }}
-          >
-            <Typography variant="h6" color={type === 'slot' ? 'text.primary' : undefined}>
-              {title}
-            </Typography>
-          </Link>
-          {type === 'sub-slot' ? (
-            <Typography variant="h6" color="text.primary">
-              Sub Plant
-            </Typography>
-          ) : null}
+        <Breadcrumbs
+          trail={[
+            {
+              to: `/containers`,
+              label: 'Containers'
+            },
+            {
+              to: `/container/${container._id}`,
+              label: container.name
+            },
+            type === 'sub-slot'
+              ? {
+                  to: `/container/${container._id}/slot/${index}`,
+                  label: title
+                }
+              : null
+          ]}
+        >
+          {{
+            current: type === 'sub-slot' ? 'Sub Plant' : title
+          }}
         </Breadcrumbs>
         <DrawerInlineSelect
           label="Status"
@@ -445,13 +434,20 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           </>
         ) : null}
         {slot.status !== 'Not Planted' ? (
-          <ContainerSlotSelectInlineField
-            label="Transplanted From"
-            value={slot.transplantedFrom}
-            onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
-          />
+          <>
+            <DateInlineField
+              label="Transplanted From Date"
+              value={slot.transplantedFromDate}
+              onChange={(newTransplantedFromDate) => updateSlot({ transplantedFromDate: newTransplantedFromDate })}
+            />
+            <ContainerSlotSelectInlineField
+              label="Transplanted From"
+              value={slot.transplantedFrom}
+              onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
+            />
+          </>
         ) : null}
-        <ContainerSlotTasksView containerId={id} slotId={index} type={type} />
+        <ContainerSlotTasksView containerId={id} slotId={index} slotTitle={title} type={type} />
         <PicturesView
           key="container-slot-view-pictures"
           pictures={slot.pictures}
