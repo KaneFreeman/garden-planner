@@ -104,6 +104,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
     () =>
       isSmallScreen
         ? {
+            current: 'Task',
             actions: (
               <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
                 {shouldLinkTo ? (
