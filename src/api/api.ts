@@ -19,6 +19,7 @@ const enum Api {
   container_IdPut = 'PUT:/container/{containerId}',
   container_Post = 'POST:/container',
   container_IdDelete = 'DELETE:/container/{containerId}',
+  container_FertilizePost = 'POST:/container/{containerId}/fertilize',
 
   picture_IdGet = 'GET:/picture/{pictureId}',
   picture_Post = 'POST:/picture',

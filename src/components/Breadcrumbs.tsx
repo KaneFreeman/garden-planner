@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { ReactNode, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -42,6 +43,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
     if (isSmallScreen) {
       return [
         <Link
+          key="breadcrumb-back"
           underline="hover"
           color="inherit"
           onClick={() => navigate(finalTrail[finalTrail.length - 1].to)}
@@ -61,9 +63,9 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
     }
 
     return finalTrail
-      ? finalTrail.map((entry) => (
+      ? finalTrail.map((entry, index) => (
           <Link
-            key={`breadcrumb-${entry.label}`}
+            key={`breadcrumb-${index}`}
             underline="hover"
             color="inherit"
             onClick={() => navigate(entry.to)}
@@ -85,7 +87,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
 
   const renderedCurrent = useMemo(
     () => (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box key="current" sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant="h6" color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
           {current}
         </Typography>

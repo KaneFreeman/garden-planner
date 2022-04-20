@@ -122,8 +122,16 @@ export const useRemoveContainer = () => {
 };
 
 export function useContainer(containerId: string | undefined) {
+  const getContainers = useGetContainers();
   const selector = useMemo(() => selectContainer(containerId), [containerId]);
   const containerDto = useAppSelector(selector);
+
+  useEffect(() => {
+    if (containerDto === undefined) {
+      getContainers();
+    }
+  }, [containerDto, getContainers]);
+
   return useMemo(() => (containerDto ? fromContainerDTO(containerDto) : undefined), [containerDto]);
 }
 
@@ -142,3 +150,26 @@ export function useContainers() {
 
   return containers;
 }
+
+export const useFertilizeContainer = (containerId: string | undefined) => {
+  const fetch = useFetch();
+  const runOperation = useContainerOperation();
+
+  const getContainers = useCallback(
+    async (date: Date) => {
+      if (containerId === undefined) {
+        return;
+      }
+
+      await runOperation(() =>
+        fetch(Api.container_FertilizePost, {
+          params: { containerId },
+          body: { date: date.toISOString() }
+        })
+      );
+    },
+    [containerId, fetch, runOperation]
+  );
+
+  return getContainers;
+};

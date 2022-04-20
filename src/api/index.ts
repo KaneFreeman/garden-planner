@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { TaskDTO, PlantDTO, ContainerDTO, PictureDTO, PlantType, PlantDataDTO } from '../interface';
+import {
+  TaskDTO,
+  PlantDTO,
+  ContainerDTO,
+  PictureDTO,
+  PlantType,
+  PlantDataDTO,
+  ContainerFertilizeDTO
+} from '../interface';
 
 interface Rest {
   'GET:/task': {
@@ -95,6 +103,16 @@ interface Rest {
     method: 'POST';
     request: {
       body: Omit<ContainerDTO, '_id'>;
+    };
+    response: ContainerDTO;
+  };
+  'POST:/container/{containerId}/fertilize': {
+    method: 'POST';
+    request: {
+      params: {
+        containerId: string;
+      };
+      body: ContainerFertilizeDTO;
     };
     response: ContainerDTO;
   };

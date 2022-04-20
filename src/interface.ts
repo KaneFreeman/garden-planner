@@ -341,6 +341,10 @@ export const TRANSPLANTED = 'Transplanted';
 export type Status = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED;
 export const STATUSES: Status[] = [NOT_PLANTED, PLANTED, TRANSPLANTED];
 
+export interface ContainerFertilizeDTO {
+  readonly date: string;
+}
+
 export interface ContainerSlotIdentifier {
   containerId: string;
   slotId: number;
@@ -533,40 +537,36 @@ export function toTaskDTO(dto: Omit<Task, '_id'>): Omit<TaskDTO, '_id'> {
   };
 }
 
+export interface FertilizerApplication {
+  start: number;
+  end?: number;
+  from: 'Planted' | 'Transplanted';
+  description?: string;
+}
+
+export interface GrowDates {
+  indoor?: {
+    min: number;
+    max: number;
+    transplant_min: number;
+    transplant_max: number;
+    fertilize?: FertilizerApplication[];
+  };
+  plant?: {
+    min: number;
+    max: number;
+  };
+  outdoor?: {
+    min: number;
+    max: number;
+  };
+  fertilize?: FertilizerApplication[];
+}
+
 export interface PlantDataDTO {
   howToGrow: {
-    spring?: {
-      indoor?: {
-        min: string;
-        max: string;
-        transplant_min: string;
-        transplant_max: string;
-      };
-      plant?: {
-        min: string;
-        max: string;
-      };
-      outdoor?: {
-        min: string;
-        max: string;
-      };
-    };
-    fall?: {
-      indoor?: {
-        min: string;
-        max: string;
-        transplant_min: string;
-        transplant_max: string;
-      };
-      plant?: {
-        min: string;
-        max: string;
-      };
-      outdoor?: {
-        min: string;
-        max: string;
-      };
-    };
+    spring?: GrowDates;
+    fall?: GrowDates;
   };
   faq: {
     how_to_grow?: [string, string][];

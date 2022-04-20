@@ -140,7 +140,7 @@ const PlantView = () => {
                   </Box>
                 ) : (
                   <Box sx={{ display: 'flex', ml: 1, gap: 1.5 }}>
-                    <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete task">
+                    <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete plant">
                       <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
                       Delete
                     </Button>

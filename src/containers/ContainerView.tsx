@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -10,16 +11,23 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import MuiTextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import YardIcon from '@mui/icons-material/Yard';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
-import { useContainer, useRemoveContainer } from './hooks/useContainers';
+import { useContainer, useFertilizeContainer, useRemoveContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
 
 const ContainerView = () => {
@@ -29,6 +37,19 @@ const ContainerView = () => {
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
+
   useEffect(() => {
     const storedOrientation = window.localStorage.getItem(`container-${id}-orientation`);
     if (storedOrientation && (storedOrientation === 'portrait' || storedOrientation === 'landscape')) {
@@ -37,6 +58,7 @@ const ContainerView = () => {
   }, [id]);
 
   const removeContainer = useRemoveContainer();
+  const fertilizeContainer = useFertilizeContainer(id);
 
   const container = useContainer(id);
   const plants = usePlants();
@@ -56,8 +78,8 @@ const ContainerView = () => {
 
   const [deleting, setDeleting] = useState(false);
 
-  const handleOnDelete = useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.stopPropagation();
+  const handleOnDelete = useCallback(() => {
+    handleMoreMenuClose();
     setDeleting(true);
   }, []);
   const handleOnDeleteConfirm = useCallback(() => {
@@ -73,15 +95,24 @@ const ContainerView = () => {
   const handleEditOpen = useCallback(() => setEditing(true), []);
   const handleEditClose = useCallback(() => setEditing(false), []);
 
-  const handleRotate = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      event.stopPropagation();
-      const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
-      setOrientation(newOrientation);
-      window.localStorage.setItem(`container-${id}-orientation`, newOrientation);
-    },
-    [id, orientation]
-  );
+  const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
+  const [fertilizeDate, setFertilizeDate] = useState<Date>(new Date());
+  const handleFertilizeClose = useCallback(() => setIsFertilizeModalOpen(false), []);
+  const handleFertilizeConfirm = useCallback(() => {
+    fertilizeContainer(fertilizeDate);
+    setIsFertilizeModalOpen(false);
+  }, [fertilizeContainer, fertilizeDate]);
+  const handleOnFertilizeClick = useCallback(() => {
+    handleMoreMenuClose();
+    setFertilizeDate(new Date());
+    setIsFertilizeModalOpen(true);
+  }, []);
+
+  const handleRotate = useCallback(() => {
+    const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
+    setOrientation(newOrientation);
+    window.localStorage.setItem(`container-${id}-orientation`, newOrientation);
+  }, [id, orientation]);
 
   const slots = useMemo(() => {
     if (!id || !container) {
@@ -132,91 +163,123 @@ const ContainerView = () => {
     <>
       <Box sx={{ p: 2, flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
-          <Box
-            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: '100%' }}
-            onClick={handleEditOpen}
+          <Breadcrumbs
+            trail={[
+              {
+                to: `/containers`,
+                label: 'Containers'
+              }
+            ]}
           >
-            <Breadcrumbs
-              trail={[
-                {
-                  to: `/containers`,
-                  label: 'Containers'
-                }
-              ]}
-            >
-              {{
-                current: (
-                  <>
-                    <Box
-                      sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
-                      title={container.name}
-                    >
-                      {container.name}
+            {{
+              current: (
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: '100%' }}
+                  onClick={handleEditOpen}
+                >
+                  <Box
+                    sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+                    title={container.name}
+                  >
+                    {container.name}
+                  </Box>
+                  <Typography
+                    variant="subtitle1"
+                    component="span"
+                    sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
+                    color="GrayText"
+                  >
+                    {container.type === 'Inside' ? (
+                      <HomeIcon titleAccess="Inside" />
+                    ) : (
+                      <ParkIcon titleAccess="Inside" />
+                    )}
+                    {container.rows} x {container.columns}
+                  </Typography>
+                </Box>
+              ),
+              actions: (
+                <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                  {isSmallScreen ? (
+                    <Box key="small-screen-actions" sx={{ display: 'flex' }}>
+                      <IconButton
+                        aria-label="rotate"
+                        color="secondary"
+                        size="small"
+                        sx={{
+                          transition: 'transform 333ms ease-out',
+                          transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                        }}
+                        onClick={handleRotate}
+                        title="Rotate container"
+                      >
+                        <RotateLeftIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                        aria-expanded={moreMenuOpen ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleMoreMenuClick}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={moreMenuAnchorElement}
+                        open={moreMenuOpen}
+                        onClose={handleMoreMenuClose}
+                        MenuListProps={{
+                          'aria-labelledby': 'basic-button'
+                        }}
+                      >
+                        <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                          <ListItemIcon>
+                            <YardIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary">Fertilze</Typography>
+                        </MenuItem>
+                        <MenuItem onClick={handleOnDelete}>
+                          <ListItemIcon>
+                            <DeleteIcon color="error" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="error">Delete</Typography>
+                        </MenuItem>
+                      </Menu>
                     </Box>
-                    <Typography
-                      variant="subtitle1"
-                      component="span"
-                      sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
-                      color="GrayText"
-                    >
-                      {container.type === 'Inside' ? (
-                        <HomeIcon titleAccess="Inside" />
-                      ) : (
-                        <ParkIcon titleAccess="Inside" />
-                      )}
-                      {container.rows} x {container.columns}
-                    </Typography>
-                  </>
-                )
-              }}
-            </Breadcrumbs>
-            <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-              {isSmallScreen ? (
-                <Box sx={{ display: 'flex', ml: 1, gap: 0.5 }}>
-                  <IconButton
-                    aria-label="rotate"
-                    color="info"
-                    size="small"
-                    sx={{
-                      transition: 'transform 333ms ease-out',
-                      transform: `scaleX(${isPortrait ? '-1' : '1'})`
-                    }}
-                    onClick={handleRotate}
-                    title="Rotate container"
-                  >
-                    <RotateLeftIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    color="error"
-                    size="small"
-                    onClick={handleOnDelete}
-                    title="Delete container"
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
+                  ) : (
+                    <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleOnFertilizeClick}
+                        title="Fertilize container"
+                      >
+                        <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                        Fertilze
+                      </Button>
+                      <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
+                        <RotateLeftIcon
+                          sx={{
+                            mr: 1,
+                            transition: 'transform 333ms ease-out',
+                            transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                          }}
+                          fontSize="small"
+                        />
+                        Rotate
+                      </Button>
+                      <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete container">
+                        <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
+                        Delete
+                      </Button>
+                    </Box>
+                  )}
                 </Box>
-              ) : (
-                <Box sx={{ display: 'flex', ml: 2, gap: 1.5 }}>
-                  <Button variant="outlined" color="primary" onClick={handleRotate} title="Rotate">
-                    <RotateLeftIcon
-                      sx={{
-                        mr: 1,
-                        transition: 'transform 333ms ease-out',
-                        transform: `scaleX(${isPortrait ? '-1' : '1'})`
-                      }}
-                      fontSize="small"
-                    />
-                    Rotate
-                  </Button>
-                  <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete task">
-                    <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-                    Delete
-                  </Button>
-                </Box>
-              )}
-            </Box>
-          </Box>
+              )
+            }}
+          </Breadcrumbs>
           <Box
             sx={{
               display: 'flex',
@@ -272,6 +335,31 @@ const ContainerView = () => {
         </DialogActions>
       </Dialog>
       <ContainerEditModal open={editing} container={container} onClose={handleEditClose} />
+      {isFertilizeModalOpen ? (
+        <Dialog open onClose={handleFertilizeClose} maxWidth="xs" fullWidth>
+          <DialogTitle>Fertilize</DialogTitle>
+          <DialogContent>
+            <form name="plant-modal-form" onSubmit={handleFertilizeConfirm} noValidate>
+              <Box sx={{ display: 'flex', pt: 2, pb: 2 }}>
+                <MobileDateTimePicker
+                  label="Fertilized On"
+                  value={fertilizeDate}
+                  onChange={(newFertilizeDate: Date | null) => newFertilizeDate && setFertilizeDate(newFertilizeDate)}
+                  renderInput={(params) => (
+                    <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
+                  )}
+                />
+              </Box>
+            </form>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleFertilizeClose}>Cancel</Button>
+            <Button onClick={handleFertilizeConfirm} variant="contained">
+              Fertilize
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </>
   );
 };
