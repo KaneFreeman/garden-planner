@@ -6,11 +6,13 @@ import { PlantDTO } from '../../interface';
 export interface PlantsState {
   plant?: PlantDTO;
   plants: PlantDTO[];
+  filterPlants: boolean;
 }
 
 // Define the initial state using that type
 const initialState: PlantsState = {
-  plants: []
+  plants: [],
+  filterPlants: false
 };
 
 export const PlantsSlice = createSlice({
@@ -29,13 +31,15 @@ export const PlantsSlice = createSlice({
       plants[index] = action.payload;
 
       return { ...state, plant: action.payload, plants };
-    }
+    },
+    toggleFilterPlants: (state) => ({ ...state, filterPlants: !state.filterPlants })
   }
 });
 
-export const { updatePlants, updatePlant } = PlantsSlice.actions;
+export const { updatePlants, updatePlant, toggleFilterPlants } = PlantsSlice.actions;
 
 export const selectPlants = (state: RootState) => state.plants.plants;
 export const selectPlant = (state: RootState) => state.plants.plant;
+export const selectFilterPlants = (state: RootState) => state.plants.filterPlants;
 
 export default PlantsSlice.reducer;

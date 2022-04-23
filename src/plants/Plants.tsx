@@ -5,14 +5,19 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
+import { useAppSelector } from '../store/hooks';
+import { selectFilterPlants } from '../store/slices/plants';
+import { useContainers } from '../containers/hooks/useContainers';
 import PlantAvatar from './PlantAvatar';
 import { usePlants } from './usePlants';
 import './Plants.css';
 
 const Plants = () => {
   const navigate = useNavigate();
+  const filterPlants = useAppSelector(selectFilterPlants);
+  const containers = useContainers();
 
-  const plants = usePlants();
+  const plants = usePlants(filterPlants ? containers : undefined);
 
   return (
     <Box sx={{ width: '100%' }}>

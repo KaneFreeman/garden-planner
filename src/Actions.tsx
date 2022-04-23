@@ -1,18 +1,27 @@
 import React, { useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
+import IconButton from '@mui/material/IconButton';
 import InboxIcon from '@mui/icons-material/Inbox';
 import GrassIcon from '@mui/icons-material/Grass';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { selectFilterPlants, toggleFilterPlants } from './store/slices/plants';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import ContainerModal from './containers/ContainerModal';
 import PlantModal from './plants/PlantModal';
 import TaskModal from './tasks/TaskModal';
 import './Actions.css';
 
 const Actions = () => {
+  const { pathname } = useLocation();
+  const filterPlants = useAppSelector(selectFilterPlants);
+  const dispatch = useAppDispatch();
+
   const [modalOpen, setModalOpen] = React.useState<'container' | 'plant' | 'task' | null>(null);
   const [open, setOpen] = React.useState(false);
 
@@ -40,7 +49,21 @@ const Actions = () => {
   const handleClose = useCallback(() => setOpen(false), []);
 
   return (
-    <Box className="actions">
+    <Box className="actions" sx={{ display: 'flex', gap: 2 }}>
+      {pathname === '/plants' ? (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            aria-label="delete"
+            size="small"
+            sx={{ ml: 1 }}
+            onClick={() => dispatch(toggleFilterPlants())}
+            title="Delete comment"
+            color={filterPlants ? 'secondary' : 'default'}
+          >
+            <FilterListIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ) : null}
       <Backdrop open={open} sx={{ position: 'fixed', zIndex: 1101 }} />
       <SpeedDial
         classes={{

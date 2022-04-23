@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromPlantDTO, Plant, toPlantDTO } from '../interface';
+import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -153,15 +153,38 @@ export function usePlant(plantId: string | undefined) {
   return plant;
 }
 
-export function usePlants() {
+export function usePlants(containersToFilter?: Container[]) {
   const getPlants = useGetPlants();
   const dispatch = useAppDispatch();
   const plantDtos = useAppSelector(selectPlants);
   const plants = useMemo(() => {
-    const data = plantDtos.map(fromPlantDTO);
+    let data = plantDtos.map(fromPlantDTO);
     data.sort((a, b) => a.name.localeCompare(b.name));
+
+    if (containersToFilter) {
+      const uniquePlantsInContainers = containersToFilter.flatMap((container) => {
+        const slots = container.slots ?? {};
+        return Object.keys(slots).flatMap((slotId) => {
+          const slot = slots[+slotId];
+          const plantIds: string[] = [];
+          if (slot.plant) {
+            plantIds.push(slot.plant);
+          }
+
+          if (slot.subSlot?.plant) {
+            plantIds.push(slot.subSlot.plant);
+          }
+          return plantIds;
+        });
+      }).filter((value, index, self) => {
+        return self.indexOf(value) === index;
+      });
+
+      data = data.filter((plant) => uniquePlantsInContainers.includes(plant._id));
+    }
+
     return data;
-  }, [plantDtos]);
+  }, [plantDtos, containersToFilter]);
 
   useEffect(() => {
     let alive = true;
