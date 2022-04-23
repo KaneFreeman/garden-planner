@@ -53,7 +53,8 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
             variant="h6"
             sx={{
               alignItems: 'center',
-              display: 'flex'
+              display: 'flex',
+              minWidth: 0
             }}
           >
             <ArrowBackIcon />
@@ -87,8 +88,8 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
 
   const renderedCurrent = useMemo(
     () => (
-      <Box key="current" sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h6" color="text.primary" sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box key="current" sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+        <Typography variant="h6" color="text.primary" sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
           {current}
         </Typography>
       </Box>
@@ -97,8 +98,8 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
   );
 
   return isSmallScreen ? (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, minWidth: 0 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
         {backTrail}
         {renderedCurrent}
       </Box>

@@ -127,7 +127,7 @@ const PlantView = () => {
             actions: (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 {isSmallScreen ? (
-                  <Box sx={{ display: 'flex', ml: 1, gap: 0.5 }}>
+                  <Box sx={{ display: 'flex' }}>
                     <IconButton
                       aria-label="delete"
                       color="error"
@@ -139,7 +139,7 @@ const PlantView = () => {
                     </IconButton>
                   </Box>
                 ) : (
-                  <Box sx={{ display: 'flex', ml: 1, gap: 1.5 }}>
+                  <Box sx={{ display: 'flex' }}>
                     <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete plant">
                       <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
                       Delete
