@@ -23,12 +23,13 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
 import ContainerSlotPreview from './ContainerSlotPreview';
-import { Plant } from '../interface';
+import { FERTILIZE, Plant } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
 import { useContainer, useFertilizeContainer, useRemoveContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
+import { useTasksByContainer } from '../tasks/hooks/useTasks';
 
 const ContainerView = () => {
   const { id } = useParams();
@@ -94,6 +95,15 @@ const ContainerView = () => {
   const [editing, setEditing] = useState(false);
   const handleEditOpen = useCallback(() => setEditing(true), []);
   const handleEditClose = useCallback(() => setEditing(false), []);
+
+  const tasks = useTasksByContainer(id);
+  const hasActiveFertilizeTasks = useMemo(() => {
+    if (tasks.current.length > 0) {
+      return Boolean(tasks.current.find((task) => task.type === FERTILIZE));
+    }
+
+    return false;
+  }, [tasks]);
 
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
   const [fertilizeDate, setFertilizeDate] = useState<Date>(new Date());
@@ -234,12 +244,14 @@ const ContainerView = () => {
                           'aria-labelledby': 'basic-button'
                         }}
                       >
-                        <MenuItem color="primary" onClick={handleOnFertilizeClick}>
-                          <ListItemIcon>
-                            <YardIcon color="primary" fontSize="small" />
-                          </ListItemIcon>
-                          <Typography color="primary">Fertilze</Typography>
-                        </MenuItem>
+                        {hasActiveFertilizeTasks ? (
+                          <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                            <ListItemIcon>
+                              <YardIcon color="primary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="primary">Fertilze</Typography>
+                          </MenuItem>
+                        ) : null}
                         <MenuItem onClick={handleOnDelete}>
                           <ListItemIcon>
                             <DeleteIcon color="error" fontSize="small" />
@@ -250,15 +262,17 @@ const ContainerView = () => {
                     </Box>
                   ) : (
                     <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={handleOnFertilizeClick}
-                        title="Fertilize container"
-                      >
-                        <YardIcon sx={{ mr: 1 }} fontSize="small" />
-                        Fertilze
-                      </Button>
+                      {hasActiveFertilizeTasks ? (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={handleOnFertilizeClick}
+                          title="Fertilize container"
+                        >
+                          <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                          Fertilze
+                        </Button>
+                      ) : null}
                       <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
                         <RotateLeftIcon
                           sx={{

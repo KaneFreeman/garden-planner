@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
@@ -94,22 +95,40 @@ const ContainerSlotPreview = React.memo(
 
       if (plant) {
         slotTitle += ` - ${plant.name}`;
+
+        if (slot.status === 'Planted') {
+          slotTitle += `, Planted`;
+          if (slot.plantedDate) {
+            slotTitle += ` on ${format(slot.plantedDate, 'MMM d, yyyy')}`;
+          }
+        } else if (slot.status === 'Transplanted') {
+          slotTitle += `, Transplanted`;
+          if (slot.transplantedDate) {
+            slotTitle += ` on ${format(slot.transplantedDate, 'MMM d, yyyy')}`;
+          }
+        }
       }
 
-      if (slot.status === 'Planted') {
-        slotTitle += ` - Planted`;
-        if (slot.plantedDate) {
-          slotTitle += ` on ${slot.plantedDate}`;
-        }
-      } else if (slot.status === 'Transplanted') {
-        slotTitle += ` - Transplanted`;
-        if (slot.transplantedDate) {
-          slotTitle += ` on ${slot.transplantedDate}`;
+      if (slot.subSlot) {
+        if (subPlant) {
+          slotTitle += ` and ${subPlant.name}`;
+
+          if (slot.subSlot.status === 'Planted') {
+            slotTitle += `, Planted`;
+            if (slot.subSlot.plantedDate) {
+              slotTitle += ` on ${format(slot.subSlot.plantedDate, 'MMM d, yyyy')}`;
+            }
+          } else if (slot.subSlot.status === 'Transplanted') {
+            slotTitle += `, Transplanted`;
+            if (slot.subSlot.transplantedDate) {
+              slotTitle += ` on ${format(slot.subSlot.transplantedDate, 'MMM d, yyyy')}`;
+            }
+          }
         }
       }
 
       return slotTitle;
-    }, [container.rows, index, plant, slot]);
+    }, [container.rows, index, plant, slot, subPlant]);
 
     return (
       <IconButton
