@@ -443,6 +443,7 @@ export interface Container {
   rows: number;
   columns: number;
   slots?: Record<number, Slot>;
+  startedFrom?: StartedFromType;
 }
 
 export interface ContainerDTO {

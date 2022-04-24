@@ -390,18 +390,16 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           renderer={renderPlant}
           sx={{ mt: 1 }}
         />
-        {container.type === 'Outside' ? (
-          <DrawerInlineSelect
-            label="Started From"
-            value={slot.startedFrom}
-            defaultValue="Seed"
-            required
-            options={STARTED_FROM_TYPES}
-            onChange={updateStartedFrom}
-            renderer={renderStartedFrom}
-            sx={{ mt: 1 }}
-          />
-        ) : null}
+        <DrawerInlineSelect
+          label="Started From"
+          value={slot.startedFrom}
+          defaultValue="Seed"
+          required
+          options={STARTED_FROM_TYPES}
+          onChange={updateStartedFrom}
+          renderer={renderStartedFrom}
+          sx={{ mt: 1 }}
+        />
         {type === 'slot' ? <SimpleInlineField label="Sub Plant" value={renderedSubPlant} /> : null}
         {slot.status && slot.status !== 'Not Planted' ? (
           <>

@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '../components/TextField';
-import { Container, CONTAINER_TYPES } from '../interface';
+import { Container, CONTAINER_TYPES, STARTED_FROM_TYPES } from '../interface';
 import { useUpdateContainer } from './hooks/useContainers';
 import Select from '../components/Select';
 
@@ -71,6 +71,16 @@ const ContainerEditModal = ({ open, container, onClose }: ContainerEditModalProp
             }))}
             sx={{ mt: 1.5, mb: 1 }}
             required
+          />
+          <Select
+            label="Started From"
+            value={editData?.startedFrom}
+            onChange={(startedFrom) => update({ startedFrom })}
+            options={STARTED_FROM_TYPES?.map((entry) => ({
+              label: entry,
+              value: entry
+            }))}
+            sx={{ mt: 1.5, mb: 1 }}
           />
         </DialogContent>
         <DialogActions>

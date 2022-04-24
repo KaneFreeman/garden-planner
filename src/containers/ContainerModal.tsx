@@ -9,7 +9,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
 import NumberTextField from '../components/NumberTextField';
 import TextField from '../components/TextField';
-import { Container, CONTAINER_TYPES } from '../interface';
+import { Container, CONTAINER_TYPES, STARTED_FROM_TYPES } from '../interface';
 import { useAddContainer } from './hooks/useContainers';
 import Select from '../components/Select';
 
@@ -88,6 +88,16 @@ const ContainerModal = ({ open, onClose }: ContainerModalProperties) => {
             }))}
             sx={{ mt: 1.5, mb: 1 }}
             required
+          />
+          <Select
+            label="Started From"
+            value={editData?.startedFrom}
+            onChange={(startedFrom) => update({ startedFrom })}
+            options={STARTED_FROM_TYPES?.map((entry) => ({
+              label: entry,
+              value: entry
+            }))}
+            sx={{ mt: 1.5, mb: 1 }}
           />
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             <NumberTextField

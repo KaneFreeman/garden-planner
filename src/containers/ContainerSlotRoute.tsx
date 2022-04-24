@@ -16,9 +16,10 @@ const ContainerSlotRoute = () => {
       container?.slots?.[indexNumber] ??
       ({
         transplantedFrom: null,
-        transplantedTo: null
+        transplantedTo: null,
+        startedFrom: container?.startedFrom
       } as Slot),
-    [container?.slots, indexNumber]
+    [container?.slots, container?.startedFrom, indexNumber]
   );
 
   const handleOnChange = useCallback(
