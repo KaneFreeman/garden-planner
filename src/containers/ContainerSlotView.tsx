@@ -13,7 +13,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
-import { blue, red } from '@mui/material/colors';
+import { blue, red, yellow } from '@mui/material/colors';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -236,13 +236,15 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
     const { raw } = renderStatus(subSlot?.status ?? 'Not Planted') ?? {};
 
-    const { current, overdue } = subPlantTasks;
+    const { active, thisWeek, overdue } = subPlantTasks;
 
     let badge: ReactNode = null;
     if (overdue.length > 0) {
       badge = <Circle backgroundColor={red[500]}>{overdue.length}</Circle>;
-    } else if (current.length > 0) {
-      badge = <Circle backgroundColor={blue[500]}>{current.length}</Circle>;
+    } else if (thisWeek.length > 0) {
+      badge = <Circle backgroundColor={yellow[500]}>{thisWeek.length}</Circle>;
+    } else if (active.length > 0) {
+      badge = <Circle backgroundColor={blue[500]}>{active.length}</Circle>;
     }
 
     return (

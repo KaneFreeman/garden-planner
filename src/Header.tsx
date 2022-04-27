@@ -39,7 +39,7 @@ const Header = () => {
     []
   );
 
-  const { overdue, current } = useTasks();
+  const { overdue, thisWeek, active } = useTasks();
 
   const {
     taskCount,
@@ -50,12 +50,16 @@ const Header = () => {
         return { taskCount: overdue.length, taskColor: 'error' };
       }
 
-      if (current.length > 0) {
-        return { taskCount: current.length, taskColor: 'primary' };
+      if (thisWeek.length > 0) {
+        return { taskCount: thisWeek.length, taskColor: 'warning' };
+      }
+
+      if (active.length > 0) {
+        return { taskCount: active.length, taskColor: 'primary' };
       }
 
       return { taskCount: 0, taskColor: 'default' };
-    }, [current.length, overdue.length]);
+    }, [active.length, thisWeek.length, overdue.length]);
 
   return (
     <AppBar className="app-header" position="fixed" sx={{ top: 0 }}>

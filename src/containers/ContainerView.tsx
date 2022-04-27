@@ -98,8 +98,16 @@ const ContainerView = () => {
 
   const tasks = useTasksByContainer(id);
   const hasActiveFertilizeTasks = useMemo(() => {
-    if (tasks.current.length > 0) {
-      return Boolean(tasks.current.find((task) => task.type === FERTILIZE));
+    if (tasks.overdue.length > 0) {
+      return Boolean(tasks.overdue.find((task) => task.type === FERTILIZE));
+    }
+
+    if (tasks.thisWeek.length > 0) {
+      return Boolean(tasks.thisWeek.find((task) => task.type === FERTILIZE));
+    }
+
+    if (tasks.active.length > 0) {
+      return Boolean(tasks.active.find((task) => task.type === FERTILIZE));
     }
 
     return false;

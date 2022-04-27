@@ -579,5 +579,6 @@ export interface SortedTasks {
   completed: Task[];
   overdue: Task[];
   next: Task[];
-  current: Task[];
+  thisWeek: Task[];
+  active: Task[];
 }

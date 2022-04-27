@@ -38,7 +38,9 @@ const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: Contai
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, current } = useTasksByPath(path, -1, { reverseSortCompleted: false });
+  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPath(path, -1, {
+    reverseSortCompleted: false
+  });
 
   const today = useMemo(() => {
     const d = new Date();
@@ -47,14 +49,20 @@ const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: Contai
   }, []);
 
   const renderTask = useCallback(
-    (key: string, task: Task, index: number, options?: { showStart?: boolean; isOverdue?: boolean }) => {
-      const { showStart = false, isOverdue = false } = options || {};
+    (
+      key: string,
+      task: Task,
+      index: number,
+      options?: { showStart?: boolean; isThisWeek?: boolean; isOverdue?: boolean }
+    ) => {
+      const { showStart = false, isThisWeek = false, isOverdue = false } = options || {};
       return (
         <TaskListItem
           key={`${key}-${index}`}
           today={today}
           task={task}
           showStart={showStart}
+          isThisWeek={isThisWeek}
           isOverdue={isOverdue}
           back={
             path
@@ -100,9 +108,10 @@ const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: Contai
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <List>
                 {completed.map((task, index) => renderTask('completed', task, index))}
-                {overdue.map((task, index) => renderTask('completed', task, index, { isOverdue: true }))}
-                {current.map((task, index) => renderTask('completed', task, index))}
-                {next.map((task, index) => renderTask('completed', task, index, { showStart: true }))}
+                {overdue.map((task, index) => renderTask('overdue', task, index, { isOverdue: true }))}
+                {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
+                {active.map((task, index) => renderTask('active', task, index))}
+                {next.map((task, index) => renderTask('next', task, index, { showStart: true }))}
               </List>
             </Box>
           )}

@@ -133,6 +133,7 @@ export const useRemoveTask = () => {
 function sortTasks(
   tasks: Task[],
   today: number,
+  oneWeekFromNow: number,
   daysFromNow: number,
   limit: number,
   options?: { reverseSortCompleted: boolean }
@@ -155,12 +156,21 @@ function sortTasks(
   );
   next.sort((a, b) => a.start.getTime() - b.start.getTime());
 
-  const current = tasks.filter(
-    (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= today
+  const thisWeek = tasks.filter(
+    (task) =>
+      !task.completedOn &&
+      task.start.getTime() <= today &&
+      task.due.getTime() >= today &&
+      task.due.getTime() < oneWeekFromNow
   );
-  current.sort((a, b) => a.due.getTime() - b.due.getTime());
+  thisWeek.sort((a, b) => a.due.getTime() - b.due.getTime());
 
-  return { tasks, completed, overdue, next, current };
+  const active = tasks.filter(
+    (task) => !task.completedOn && task.start.getTime() <= today && task.due.getTime() >= oneWeekFromNow
+  );
+  active.sort((a, b) => a.due.getTime() - b.due.getTime());
+
+  return { tasks, completed, overdue, next, thisWeek, active };
 }
 
 function useSortDates(daysLimit = 30) {
@@ -170,21 +180,27 @@ function useSortDates(daysLimit = 30) {
     return d.getTime();
   }, []);
 
+  const oneWeekFromNow = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return addDays(d, 7).getTime();
+  }, []);
+
   const daysFromNow = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return addDays(d, daysLimit).getTime();
   }, [daysLimit]);
 
-  return { today, daysFromNow, daysLimit };
+  return { today, oneWeekFromNow, daysFromNow, daysLimit };
 }
 
 function useSortTasks(tasks: Task[], limit?: number, options?: { reverseSortCompleted: boolean }) {
-  const { today, daysFromNow, daysLimit } = useSortDates(limit);
+  const { today, oneWeekFromNow, daysFromNow, daysLimit } = useSortDates(limit);
 
   return useMemo(
-    () => sortTasks(tasks, today, daysFromNow, daysLimit, options),
-    [daysFromNow, daysLimit, options, tasks, today]
+    () => sortTasks(tasks, today, oneWeekFromNow, daysFromNow, daysLimit, options),
+    [daysFromNow, daysLimit, oneWeekFromNow, options, tasks, today]
   );
 }
 
@@ -225,15 +241,21 @@ export const useTasksByContainer = (
 
 export const useTasksByContainers = (limit?: number) => {
   const taskDtos = useAppSelector(selectTasksByContainers);
-  const { today, daysFromNow, daysLimit } = useSortDates(limit);
+  const { today, oneWeekFromNow, daysFromNow, daysLimit } = useSortDates(limit);
   return useMemo(
     () =>
       Object.keys(taskDtos).reduce((byContainer, containerId) => {
-        byContainer[containerId] = sortTasks(taskDtos[containerId].map(fromTaskDTO), today, daysFromNow, daysLimit);
+        byContainer[containerId] = sortTasks(
+          taskDtos[containerId].map(fromTaskDTO),
+          today,
+          oneWeekFromNow,
+          daysFromNow,
+          daysLimit
+        );
 
         return byContainer;
       }, {} as Record<string, ReturnType<typeof useSortTasks>>),
-    [daysFromNow, daysLimit, taskDtos, today]
+    [daysFromNow, daysLimit, oneWeekFromNow, taskDtos, today]
   );
 };
 

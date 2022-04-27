@@ -7,6 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItem from '@mui/material/ListItem';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import ErrorIcon from '@mui/icons-material/Error';
+import WarningIcon from '@mui/icons-material/Warning';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
 import useGetTaskText from './hooks/useGetTaskText';
@@ -16,6 +17,7 @@ interface TaskListItemProps {
   today: number;
   task: Task;
   showStart?: boolean;
+  isThisWeek?: boolean;
   isOverdue?: boolean;
   style?: React.CSSProperties;
   back?: {
@@ -24,7 +26,15 @@ interface TaskListItemProps {
   };
 }
 
-const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style, back }: TaskListItemProps) => {
+const TaskListItem = ({
+  today,
+  task,
+  showStart = false,
+  isThisWeek = false,
+  isOverdue = false,
+  style,
+  back
+}: TaskListItemProps) => {
   const navigate = useNavigate();
 
   const queryString = useMemo(() => {
@@ -52,6 +62,7 @@ const TaskListItem = ({ today, task, showStart = false, isOverdue = false, style
         <ListItemIcon>
           {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
         </ListItemIcon>
+        {isThisWeek ? <WarningIcon sx={{ mr: 1 }} color="warning" /> : null}
         {isOverdue ? <ErrorIcon sx={{ mr: 1 }} color="error" /> : null}
         <ListItemText
           primary={primary}

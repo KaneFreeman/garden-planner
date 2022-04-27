@@ -15,7 +15,7 @@ import TaskListItem from './TaskListItem';
 const Tasks = () => {
   const [tab, setTab] = useState(0);
 
-  const { tasks, completed, overdue, next, current } = useTasks();
+  const { tasks, completed, overdue, next, active, thisWeek } = useTasks();
 
   const today = useMemo(() => {
     const d = new Date();
@@ -28,15 +28,16 @@ const Tasks = () => {
       key: string,
       task: Task,
       index: number,
-      options?: { showStart?: boolean; isOverdue?: boolean; style?: React.CSSProperties }
+      options?: { showStart?: boolean; isThisWeek?: boolean; isOverdue?: boolean; style?: React.CSSProperties }
     ) => {
-      const { showStart = false, isOverdue = false, style } = options || {};
+      const { showStart = false, isThisWeek = false, isOverdue = false, style } = options || {};
       return (
         <TaskListItem
           key={`${key}-${index}`}
           today={today}
           task={task}
           showStart={showStart}
+          isThisWeek={isThisWeek}
           isOverdue={isOverdue}
           style={style}
         />
@@ -69,7 +70,7 @@ const Tasks = () => {
             }}
           </Tabs>
           <TabPanel value={tab} index={0}>
-            {overdue.length > 0 || current.length > 0 || next.length > 0 ? (
+            {overdue.length > 0 || thisWeek.length > 0 || active.length > 0 || next.length > 0 ? (
               <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
                 {overdue.length > 0 ? (
                   <Box>
@@ -90,7 +91,7 @@ const Tasks = () => {
                     </Box>
                   </Box>
                 ) : null}
-                {current.length > 0 ? (
+                {thisWeek.length > 0 ? (
                   <Box>
                     <Typography
                       variant="h6"
@@ -100,10 +101,29 @@ const Tasks = () => {
                         overflow: 'hidden'
                       }}
                     >
-                      Current
+                      This Week
                     </Typography>
-                    <Box component="nav" aria-label="main tasks-current">
-                      <List>{current.map((task, index) => renderTask('current', task, index))}</List>
+                    <Box component="nav" aria-label="main tasks-thisWeek">
+                      <List>
+                        {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
+                      </List>
+                    </Box>
+                  </Box>
+                ) : null}
+                {active.length > 0 ? (
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      Active
+                    </Typography>
+                    <Box component="nav" aria-label="main tasks-active">
+                      <List>{active.map((task, index) => renderTask('active', task, index))}</List>
                     </Box>
                   </Box>
                 ) : null}

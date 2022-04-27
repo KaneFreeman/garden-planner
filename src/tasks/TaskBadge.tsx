@@ -8,19 +8,23 @@ interface TaskBadgeProperties {
 }
 
 const TaskBadge = ({ tasks, children }: TaskBadgeProperties) => {
-  const { overdue = [], current = [] } = tasks || {};
+  const { overdue = [], active = [], thisWeek = [] } = tasks || {};
 
   const { taskCount, taskColor }: { taskCount: number; taskColor: BadgeProps['color'] } = useMemo(() => {
     if (overdue.length > 0) {
       return { taskCount: overdue.length, taskColor: 'error' };
     }
 
-    if (current.length > 0) {
-      return { taskCount: current.length, taskColor: 'primary' };
+    if (thisWeek.length > 0) {
+      return { taskCount: thisWeek.length, taskColor: 'warning' };
+    }
+
+    if (active.length > 0) {
+      return { taskCount: active.length, taskColor: 'primary' };
     }
 
     return { taskCount: 0, taskColor: 'default' };
-  }, [current.length, overdue.length]);
+  }, [active.length, overdue.length, thisWeek.length]);
 
   return (
     <Badge badgeContent={taskCount} color={taskColor}>

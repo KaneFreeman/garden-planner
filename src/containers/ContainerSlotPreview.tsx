@@ -32,18 +32,23 @@ const ContainerSlotPreview = React.memo(
     const subPlantTasks = useTasksByPath(subPlantPath);
 
     const { badgeColor, badgeCount } = useMemo(() => {
-      const { current, overdue } = tasks;
+      const { thisWeek, active, overdue } = tasks;
 
-      let color: 'success' | 'default' | 'primary' | 'error';
+      let color: 'success' | 'default' | 'primary' | 'error' | 'warning';
 
       if (overdue.length > 0) {
         color = 'error';
         return { badgeColor: color, badgeCount: overdue.length };
       }
 
-      if (current.length > 0) {
+      if (thisWeek.length > 0) {
+        color = 'warning';
+        return { badgeColor: color, badgeCount: thisWeek.length };
+      }
+
+      if (active.length > 0) {
         color = 'primary';
-        return { badgeColor: color, badgeCount: current.length };
+        return { badgeColor: color, badgeCount: active.length };
       }
 
       color = 'default';
@@ -53,18 +58,23 @@ const ContainerSlotPreview = React.memo(
     const borderColor = useStatusColor(slot, plant);
 
     const { subPlantBadgeColor, subPlantBadgeCount } = useMemo(() => {
-      const { current, overdue } = subPlantTasks;
+      const { thisWeek, active, overdue } = subPlantTasks;
 
-      let color: 'success' | 'default' | 'primary' | 'error';
+      let color: 'success' | 'default' | 'primary' | 'error' | 'warning';
 
       if (overdue.length > 0) {
         color = 'error';
         return { subPlantBadgeColor: color, subPlantBadgeCount: overdue.length };
       }
 
-      if (current.length > 0) {
+      if (thisWeek.length > 0) {
+        color = 'warning';
+        return { subPlantBadgeColor: color, subPlantBadgeCount: thisWeek.length };
+      }
+
+      if (active.length > 0) {
         color = 'primary';
-        return { subPlantBadgeColor: color, subPlantBadgeCount: current.length };
+        return { subPlantBadgeColor: color, subPlantBadgeCount: active.length };
       }
 
       color = 'default';
