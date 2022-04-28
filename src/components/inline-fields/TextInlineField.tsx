@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import IconButton from '@mui/material/IconButton';
 import { SxProps, Theme } from '@mui/material/styles';
@@ -47,6 +48,7 @@ interface TextInlineFieldProps {
   noMargin?: boolean;
   noPadding?: boolean;
   sx?: SxProps<Theme> | undefined;
+  readOnly?: boolean;
 }
 
 const TextInlineField = ({
@@ -59,7 +61,8 @@ const TextInlineField = ({
   renderer,
   noMargin = false,
   noPadding = false,
-  sx
+  sx,
+  readOnly = false
 }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
@@ -113,7 +116,7 @@ const TextInlineField = ({
   }, [renderer, value]);
 
   return (
-    <Box onClick={open ? undefined : handleOpen} sx={sx}>
+    <Box onClick={readOnly || open ? undefined : handleOpen} sx={sx}>
       {label ? (
         <Typography
           variant={labelVariant}
@@ -150,13 +153,22 @@ const TextInlineField = ({
           sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ...(noMargin ? {} : { ml: -2, mr: -2, mt: 0.5 }) }}
           color={valueActive ? 'text.primary' : undefined}
         >
-          <ListItemButton
-            key="dateInlineField-display"
-            onClick={open ? undefined : handleOpen}
-            sx={{ ...(noPadding ? { p: 0 } : {}) }}
-          >
-            {displayValue}
-          </ListItemButton>
+          {readOnly ? (
+            <ListItem
+              key="dateInlineField-display"
+              sx={{ ...(noPadding ? { p: 0 } : {}) }}
+            >
+              {displayValue}
+            </ListItem>
+          ) : (
+            <ListItemButton
+              key="dateInlineField-display-button"
+              onClick={open ? undefined : handleOpen}
+              sx={{ ...(noPadding ? { p: 0 } : {}) }}
+            >
+              {displayValue}
+            </ListItemButton>
+          )}
         </Typography>
       )}
     </Box>

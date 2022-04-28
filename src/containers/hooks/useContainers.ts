@@ -1,28 +1,28 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { fromContainerDTO, Container, toContainerDTO } from '../../interface';
 import Api from '../../api/api';
-import useFetch from '../../api/useFetch';
+import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectContainer, selectContainers, updateContainers } from '../../store/slices/containers';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 
-const useGetContainers = () => {
+const useGetContainers = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 
   const getContainers = useCallback(async () => {
-    const response = await fetch(Api.container_Get, {});
+    const response = await fetch(Api.container_Get, {}, options);
 
     if (response) {
       dispatch(updateContainers(response));
     }
-  }, [dispatch, fetch]);
+  }, [dispatch, fetch, options]);
 
   return getContainers;
 };
 
-const useContainerOperation = () => {
-  const getContainers = useGetContainers();
+const useContainerOperation = (options?: ExtraFetchOptions) => {
+  const getContainers = useGetContainers(options);
   const getTasks = useGetTasks();
 
   const runOperation = useCallback(
@@ -46,7 +46,7 @@ const useContainerOperation = () => {
 
 export const useAddContainer = () => {
   const fetch = useFetch();
-  const runOperation = useContainerOperation();
+  const runOperation = useContainerOperation({ force: true });
 
   const addContainer = useCallback(
     async (data: Omit<Container, '_id'>) => {
@@ -70,7 +70,7 @@ export const useAddContainer = () => {
 
 export const useUpdateContainer = () => {
   const fetch = useFetch();
-  const runOperation = useContainerOperation();
+  const runOperation = useContainerOperation({ force: true });
 
   const addContainer = useCallback(
     async (data: Container) => {
@@ -97,7 +97,7 @@ export const useUpdateContainer = () => {
 
 export const useRemoveContainer = () => {
   const fetch = useFetch();
-  const runOperation = useContainerOperation();
+  const runOperation = useContainerOperation({ force: true });
 
   const removeContainer = useCallback(
     async (containerId: string) => {

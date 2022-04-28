@@ -4,7 +4,7 @@ import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
 import { fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';
 import Api from '../../api/api';
-import useFetch from '../../api/useFetch';
+import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectTaskById,
@@ -15,25 +15,25 @@ import {
   updateTasks
 } from '../../store/slices/tasks';
 
-export const useGetTasks = () => {
+export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 
   const getTasks = useCallback(async () => {
-    const response = await fetch(Api.task_Get, {});
+    const response = await fetch(Api.task_Get, {}, options);
 
     if (response) {
       dispatch(updateTasks(response));
     }
 
     return response;
-  }, [dispatch, fetch]);
+  }, [dispatch, fetch, options]);
 
   return getTasks;
 };
 
-const useTasksOperation = () => {
-  const getTasks = useGetTasks();
+const useTasksOperation = (options?: ExtraFetchOptions) => {
+  const getTasks = useGetTasks(options);
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -55,7 +55,7 @@ const useTasksOperation = () => {
 
 export const useAddTask = () => {
   const fetch = useFetch();
-  const runOperation = useTasksOperation();
+  const runOperation = useTasksOperation({ force: true });
 
   const addTask = useCallback(
     async (data: Omit<Task, '_id'>) => {
@@ -79,7 +79,7 @@ export const useAddTask = () => {
 
 export const useUpdateTask = () => {
   const fetch = useFetch();
-  const runOperation = useTasksOperation();
+  const runOperation = useTasksOperation({ force: true });
 
   const addTask = useCallback(
     async (data: Task) => {
@@ -106,7 +106,7 @@ export const useUpdateTask = () => {
 
 export const useRemoveTask = () => {
   const fetch = useFetch();
-  const runOperation = useTasksOperation();
+  const runOperation = useTasksOperation({ force: true });
 
   const removeTask = useCallback(
     async (taskId: string) => {

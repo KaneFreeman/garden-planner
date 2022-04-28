@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import format from 'date-fns/format';
+import formatDistance from 'date-fns/formatDistance';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -11,7 +13,6 @@ import MuiTextField from '@mui/material/TextField';
 import DialogContentText from '@mui/material/DialogContentText';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -20,7 +21,9 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useRemoveTask, useUpdateTask } from './hooks/useTasks';
-import useGetTaskText from './hooks/useGetTaskText';
+import TextInlineField from '../components/inline-fields/TextInlineField';
+import DateInlineField from '../components/inline-fields/DateInlineField';
+import { setToMidnight } from '../utility/date.util';
 
 interface TaskViewProperties {
   task: Task;
@@ -47,15 +50,6 @@ const TaskView = ({ task }: TaskViewProperties) => {
     d.setHours(0, 0, 0, 0);
     return d.getTime();
   }, []);
-
-  const showStart = useMemo(
-    () => !task?.completedOn && task.start.getTime() > today,
-    [task?.completedOn, task.start, today]
-  );
-
-  const { primary, secondary } = useGetTaskText(task, today, showStart);
-
-  const secondaryParts = useMemo(() => secondary.split(', '), [secondary]);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
   const canComplete = useMemo(() => task.type === 'Custom' || task.type === 'Fertilize', [task.type]);
@@ -100,15 +94,30 @@ const TaskView = ({ task }: TaskViewProperties) => {
     setIsMarkingAsCompleted(true);
   }, []);
 
+  const handleOnChange = useCallback(
+    async (newData: Partial<Task>) => {
+      if (task) {
+        updateTask({
+          ...task,
+          ...newData
+        });
+      }
+
+      return undefined;
+    },
+    [task, updateTask]
+  );
+
   const current = useMemo(
     () =>
       isSmallScreen
         ? {
             current: 'Task',
             actions: (
-              <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
+              <Box key="actions" sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
                 {shouldLinkTo ? (
                   <IconButton
+                    key="go-to-button"
                     aria-label="go to"
                     color="secondary"
                     size="small"
@@ -120,6 +129,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
                 ) : null}
                 {canComplete ? (
                   <IconButton
+                    key="mark-complete-button"
                     aria-label={task.completedOn ? 'reopen' : 'mark as complete'}
                     color={task.completedOn ? 'success' : 'primary'}
                     size="small"
@@ -127,14 +137,15 @@ const TaskView = ({ task }: TaskViewProperties) => {
                     title={task.completedOn ? 'Reopen' : 'Mark as complete'}
                   >
                     {task.completedOn ? (
-                      <CheckBoxIcon fontSize="small" />
+                      <CheckBoxIcon key="reopen-icon" fontSize="small" />
                     ) : (
-                      <CheckBoxOutlineBlankIcon fontSize="small" />
+                      <CheckBoxOutlineBlankIcon key="complete-icon" fontSize="small" />
                     )}
                   </IconButton>
                 ) : null}
                 {canDelete ? (
                   <IconButton
+                    key="delete-button"
                     aria-label="delete"
                     color="error"
                     size="small"
@@ -150,9 +161,9 @@ const TaskView = ({ task }: TaskViewProperties) => {
         : {
             current: 'Task',
             actions: (
-              <Box sx={{ display: 'flex', alignItems: 'center', ml: 2, gap: 1.5 }}>
+              <Box key="actions-desktop" sx={{ display: 'flex', alignItems: 'center', ml: 2, gap: 1.5 }}>
                 {shouldLinkTo ? (
-                  <Button color="secondary" onClick={handleOnGoTo} title="Go to task target">
+                  <Button key="go-to-button-desktop" color="secondary" onClick={handleOnGoTo} title="Go to task target">
                     <OpenInNewIcon sx={{ mr: 1 }} fontSize="small" />
                     Go to
                   </Button>
@@ -160,12 +171,19 @@ const TaskView = ({ task }: TaskViewProperties) => {
                 {/* eslint-disable-next-line no-nested-ternary */}
                 {canComplete ? (
                   task.completedOn ? (
-                    <Button variant="outlined" color="success" onClick={handleOnMarkAsOpen} title="Reopen">
+                    <Button
+                      key="reopen-button-desktop"
+                      variant="outlined"
+                      color="success"
+                      onClick={handleOnMarkAsOpen}
+                      title="Reopen"
+                    >
                       <CheckBoxIcon sx={{ mr: 1 }} fontSize="small" />
                       Reopen
                     </Button>
                   ) : (
                     <Button
+                      key="mark-complete-button-desktop"
                       variant="outlined"
                       color="primary"
                       onClick={handleOnMarkAsComplete}
@@ -177,7 +195,13 @@ const TaskView = ({ task }: TaskViewProperties) => {
                   )
                 ) : null}
                 {canDelete ? (
-                  <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete task">
+                  <Button
+                    key="delete-button-desktop"
+                    variant="outlined"
+                    color="error"
+                    onClick={handleOnDelete}
+                    title="Delete task"
+                  >
                     <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
                     Delete
                   </Button>
@@ -198,6 +222,26 @@ const TaskView = ({ task }: TaskViewProperties) => {
     ]
   );
 
+  const formatDate = useCallback(
+    (date: Date | undefined) => {
+      const midnightDate = setToMidnight(date);
+      if (!midnightDate) {
+        return 'None';
+      }
+
+      if (midnightDate.getTime() > today) {
+        return `${format(midnightDate, 'MMMM d')} (in ${formatDistance(midnightDate, today)})`;
+      }
+
+      if (midnightDate.getTime() === today) {
+        return `${format(midnightDate, 'MMMM d')} (today)`;
+      }
+
+      return `${format(midnightDate, 'MMMM d')} (${formatDistance(midnightDate, today)} ago)`;
+    },
+    [today]
+  );
+
   return (
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
@@ -212,16 +256,45 @@ const TaskView = ({ task }: TaskViewProperties) => {
           {current}
         </Breadcrumbs>
         <Box sx={{ mt: 2, width: '100%', boxSizing: 'border-box' }}>
-          <Typography variant="body1">{primary}</Typography>
-          {secondaryParts.map((part) => (
-            <Typography variant="subtitle1" color="GrayText" sx={{ mt: 2 }}>
-              {part}
-            </Typography>
-          ))}
+          <TextInlineField
+            label="Description"
+            value={task.text}
+            valueActive
+            onChange={(text) => handleOnChange({ text })}
+            sx={{
+              minWidth: 0
+            }}
+            readOnly={task.type !== 'Custom'}
+          />
+          <DateInlineField
+            label="Start Date"
+            value={task.start}
+            onChange={(start) => handleOnChange({ start })}
+            renderer={formatDate}
+            readOnly={task.type !== 'Custom'}
+            dateOnly
+          />
+          <DateInlineField
+            label="Due Date"
+            value={task.due}
+            onChange={(due) => handleOnChange({ due })}
+            renderer={formatDate}
+            readOnly={task.type !== 'Custom'}
+            dateOnly
+          />
+          {task.completedOn !== null ? (
+            <DateInlineField
+              label="Completed Date"
+              value={task.completedOn}
+              renderer={formatDate}
+              readOnly
+              dateOnly
+            />
+          ) : null}
         </Box>
       </Box>
       {isMarkingAsCompleted ? (
-        <Dialog open onClose={() => setIsMarkingAsCompleted(false)} maxWidth="xs" fullWidth>
+        <Dialog key="mark-complete-dialog" open onClose={() => setIsMarkingAsCompleted(false)} maxWidth="xs" fullWidth>
           <DialogTitle>Mark as completed</DialogTitle>
           <DialogContent>
             <form name="plant-modal-form" onSubmit={markTaskAsCompleted} noValidate>

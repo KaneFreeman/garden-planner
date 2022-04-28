@@ -1,10 +1,10 @@
 /* eslint-disable import/prefer-default-export */
-export function setToMidnight(d: Date | null) {
+export function setToMidnight(d: Date | null | undefined) {
   if (!d) {
-    return d;
+    return null;
   }
 
   const date = new Date(d);
-  d.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
   return date;
 }

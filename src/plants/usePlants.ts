@@ -1,24 +1,29 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
 import Api from '../api/api';
-import useFetch from '../api/useFetch';
+import useFetch, { ExtraFetchOptions } from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectPlant, selectPlants, updatePlant, updatePlants } from '../store/slices/plants';
+import { selectPlant, selectPlants, updatePlants } from '../store/slices/plants';
+import { useGetTasks } from '../tasks/hooks/useTasks';
 
-export const useGetPlants = () => {
+export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
+  const dispatch = useAppDispatch();
 
   const getPlants = useCallback(async () => {
-    const response = await fetch(Api.plant_Get, {});
-    return response;
-  }, [fetch]);
+    const response = await fetch(Api.plant_Get, {}, options);
+
+    if (response) {
+      dispatch(updatePlants(response));
+    }
+  }, [dispatch, fetch, options]);
 
   return getPlants;
 };
 
-const usePlantOperation = () => {
-  const getPlants = useGetPlants();
-  const dispatch = useAppDispatch();
+const usePlantOperation = (options?: ExtraFetchOptions) => {
+  const getPlants = useGetPlants(options);
+  const getTasks = useGetTasks();
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -28,14 +33,12 @@ const usePlantOperation = () => {
         return undefined;
       }
 
-      const plants = await getPlants();
-      if (plants) {
-        dispatch(updatePlants(plants));
-      }
+      await getPlants();
+      await getTasks();
 
       return response;
     },
-    [dispatch, getPlants]
+    [getPlants, getTasks]
   );
 
   return runOperation;
@@ -43,7 +46,7 @@ const usePlantOperation = () => {
 
 export const useAddPlant = () => {
   const fetch = useFetch();
-  const runOperation = usePlantOperation();
+  const runOperation = usePlantOperation({ force: true });
 
   const addPlant = useCallback(
     async (data: Omit<Plant, '_id'>) => {
@@ -67,26 +70,26 @@ export const useAddPlant = () => {
 
 export const useUpdatePlant = () => {
   const fetch = useFetch();
-  const dispatch = useAppDispatch();
+  const runOperation = usePlantOperation({ force: true });
 
   const addPlant = useCallback(
     async (data: Plant) => {
-      const response = await fetch(Api.plant_IdPut, {
-        params: {
-          plantId: data._id
-        },
-        body: toPlantDTO(data)
-      });
+      const response = await runOperation(() =>
+        fetch(Api.plant_IdPut, {
+          params: {
+            plantId: data._id
+          },
+          body: toPlantDTO(data)
+        })
+      );
 
       if (!response) {
         return undefined;
       }
 
-      dispatch(updatePlant(response));
-
       return fromPlantDTO(response);
     },
-    [dispatch, fetch]
+    [fetch, runOperation]
   );
 
   return addPlant;
@@ -94,7 +97,7 @@ export const useUpdatePlant = () => {
 
 export const useRemovePlant = () => {
   const fetch = useFetch();
-  const runOperation = usePlantOperation();
+  const runOperation = usePlantOperation({ force: true });
 
   const removePlant = useCallback(
     async (plantId: string) => {
@@ -119,36 +122,16 @@ export const useRemovePlant = () => {
 };
 
 export function usePlant(plantId: string | undefined) {
-  const fetch = useFetch();
-  const dispatch = useAppDispatch();
-  const plantDto = useAppSelector(selectPlant);
+  const getPlants = useGetPlants();
+  const selector = useMemo(() => selectPlant(plantId), [plantId]);
+  const plantDto = useAppSelector(selector);
   const plant = useMemo(() => (plantDto ? fromPlantDTO(plantDto) : undefined), [plantDto]);
 
   useEffect(() => {
-    if (plantId === undefined) {
-      return () => {};
+    if (plantDto === undefined) {
+      getPlants();
     }
-
-    let alive = true;
-
-    const getPlantsCall = async () => {
-      const data = await fetch(Api.plant_IdGet, {
-        params: {
-          plantId
-        }
-      });
-
-      if (data && alive) {
-        dispatch(updatePlant(data));
-      }
-    };
-
-    getPlantsCall();
-
-    return () => {
-      alive = false;
-    };
-  }, [dispatch, fetch, plantId]);
+  }, [getPlants, plantDto]);
 
   return plant;
 }
@@ -162,23 +145,25 @@ export function usePlants(containersToFilter?: Container[]) {
     data.sort((a, b) => a.name.localeCompare(b.name));
 
     if (containersToFilter) {
-      const uniquePlantsInContainers = containersToFilter.flatMap((container) => {
-        const slots = container.slots ?? {};
-        return Object.keys(slots).flatMap((slotId) => {
-          const slot = slots[+slotId];
-          const plantIds: string[] = [];
-          if (slot.plant) {
-            plantIds.push(slot.plant);
-          }
+      const uniquePlantsInContainers = containersToFilter
+        .flatMap((container) => {
+          const slots = container.slots ?? {};
+          return Object.keys(slots).flatMap((slotId) => {
+            const slot = slots[+slotId];
+            const plantIds: string[] = [];
+            if (slot.plant) {
+              plantIds.push(slot.plant);
+            }
 
-          if (slot.subSlot?.plant) {
-            plantIds.push(slot.subSlot.plant);
-          }
-          return plantIds;
+            if (slot.subSlot?.plant) {
+              plantIds.push(slot.subSlot.plant);
+            }
+            return plantIds;
+          });
+        })
+        .filter((value, index, self) => {
+          return self.indexOf(value) === index;
         });
-      }).filter((value, index, self) => {
-        return self.indexOf(value) === index;
-      });
 
       data = data.filter((plant) => uniquePlantsInContainers.includes(plant._id));
     }
@@ -187,21 +172,7 @@ export function usePlants(containersToFilter?: Container[]) {
   }, [plantDtos, containersToFilter]);
 
   useEffect(() => {
-    let alive = true;
-
-    const getPlantsCall = async () => {
-      const data = await getPlants();
-
-      if (data && alive) {
-        dispatch(updatePlants(data));
-      }
-    };
-
-    getPlantsCall();
-
-    return () => {
-      alive = false;
-    };
+    getPlants();
   }, [dispatch, getPlants]);
 
   return plants;

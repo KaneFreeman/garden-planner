@@ -1,3 +1,5 @@
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IdToken, useAuth0 } from '@auth0/auth0-react';
@@ -102,6 +104,14 @@ async function fetchRequest<T>(accessToken: IdToken, url: string, options: Fetch
   return response.json();
 }
 
+const getRequestsInProgress: Record<string, ((value: any | undefined) => void)[]> = {};
+const getDataCache: Record<string, { date: Date; data: any }> = {};
+const CACHE_TIME = 5000;
+
+export interface ExtraFetchOptions {
+  force?: boolean;
+}
+
 /**
  * @param endpoint string combination of the http method (in caps) colon and the url with params
  * @param request object with maps of all params
@@ -113,11 +123,14 @@ async function fetchRequest<T>(accessToken: IdToken, url: string, options: Fetch
 function fetchEndpoint(accessToken?: IdToken) {
   return async <T extends keyof Rest>(
     endpoint: T,
-    options: Rest[T]['request']
+    options: Rest[T]['request'],
+    extraOptions?: ExtraFetchOptions
   ): Promise<Rest[T]['response'] | undefined> => {
     if (!accessToken) {
       return Promise.resolve(undefined);
     }
+
+    const { force = false } = extraOptions ?? {};
 
     const { body = undefined, params = {}, query = undefined } = options as any;
     // eslint-disable-next-line prefer-const
@@ -130,6 +143,32 @@ function fetchEndpoint(accessToken?: IdToken) {
     }
     if (query) {
       url += getQueryString(query);
+    }
+
+    if (method.toLowerCase() === 'get') {
+      if (!force && url in getDataCache && new Date().getTime() - getDataCache[url].date.getTime() < CACHE_TIME) {
+        return Promise.resolve(undefined);
+      }
+
+      if (url in getRequestsInProgress) {
+        return Promise.resolve(undefined);
+      }
+
+      const p = new Promise<Rest[T]['response'] | undefined>((resolve) => {
+        getRequestsInProgress[url] = [resolve];
+      });
+
+      fetchRequest<Rest[T]['response'] | undefined>(accessToken, url, { body, method }).then((response) => {
+        getDataCache[url] = {
+          date: new Date(),
+          data: response
+        };
+        const resolveFunctions = getRequestsInProgress[url];
+        resolveFunctions.forEach((resolveFunction) => resolveFunction(response));
+        delete getRequestsInProgress[url];
+      });
+
+      return p;
     }
 
     return fetchRequest(accessToken, url, { body, method });

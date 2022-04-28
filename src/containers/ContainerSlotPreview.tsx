@@ -148,6 +148,7 @@ const ContainerSlotPreview = React.memo(
       >
         {badgeCount ? (
           <Box
+            key="plant-badge"
             sx={{
               position: 'absolute',
               width: '100%',
@@ -169,9 +170,14 @@ const ContainerSlotPreview = React.memo(
             </Badge>
           </Box>
         ) : null}
-        {plant ? <PlantAvatar plant={plant} size={76} variant="square" /> : <GrassIcon color="disabled" />}
+        {plant ? (
+          <PlantAvatar key="plant-avatar" plant={plant} size={76} variant="square" faded={slot?.status === 'Transplanted'} />
+        ) : (
+          <GrassIcon key="plant-icon" color="disabled" />
+        )}
         {subSlot && subPlant ? (
           <Box
+            key="sub-plant"
             sx={{
               position: 'absolute',
               width: '37.5%',
@@ -186,6 +192,7 @@ const ContainerSlotPreview = React.memo(
           >
             {subPlantBadgeCount ? (
               <Box
+                key="sub-plant-badge"
                 sx={{
                   position: 'absolute',
                   width: '100%',
@@ -208,7 +215,7 @@ const ContainerSlotPreview = React.memo(
                 </Badge>
               </Box>
             ) : null}
-            <PlantAvatar plant={subPlant} size={29} variant="square" />
+            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subSlot.status === 'Transplanted'} />
           </Box>
         ) : null}
       </IconButton>

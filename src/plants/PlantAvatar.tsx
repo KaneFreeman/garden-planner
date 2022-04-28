@@ -11,9 +11,10 @@ interface PlantAvatarProperties {
   variant?: 'square' | 'circular' | 'rounded' | undefined;
   slot?: Slot;
   sx?: SxProps<Theme> | undefined;
+  faded?: boolean;
 }
 
-const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx }: PlantAvatarProperties) => {
+const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx, faded = false }: PlantAvatarProperties) => {
   const statusColor = useStatusColor(slot, plant, 'transparent');
   const borderSx: SxProps<Theme> | undefined = useMemo(() => {
     if (slot === undefined || statusColor === 'transparent') {
@@ -25,12 +26,14 @@ const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx }: PlantAvatarPr
     };
   }, [slot, statusColor]);
 
+  const extraSx: SxProps<Theme> = { opacity: faded ? 0.25 : 1 };
+
   if (!plant) {
     return (
       <Avatar
         variant={variant}
         alt="Empty"
-        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
+        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
       >
         <GrassIcon />
       </Avatar>
@@ -42,7 +45,7 @@ const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx }: PlantAvatarPr
       <Avatar
         variant={variant}
         alt={plant.name}
-        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
+        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
       >
         <GrassIcon color="primary" />
       </Avatar>
@@ -54,7 +57,7 @@ const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx }: PlantAvatarPr
       variant={variant}
       src={plant.pictures[0].thumbnail}
       alt={plant.name}
-      sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...sx }}
+      sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
     />
   );
 });

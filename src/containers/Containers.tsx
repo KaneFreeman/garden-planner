@@ -40,16 +40,18 @@ const Containers = () => {
       data[container._id] = Object.keys(slots).reduce(
         (countData, slotId) => {
           const slot = slots[+slotId];
-          switch (slot.status) {
-            case 'Planted':
-              countData.planted += 1;
-              break;
-            case 'Transplanted':
-              countData.transplanted += 1;
-              break;
-            default:
-              countData.notPlanted += 1;
-              break;
+          if (slot.plant) {
+            switch (slot.status) {
+              case 'Planted':
+                countData.planted += 1;
+                break;
+              case 'Transplanted':
+                countData.transplanted += 1;
+                break;
+              default:
+                countData.notPlanted += 1;
+                break;
+            }
           }
 
           if (slot.subSlot && slot.subSlot.plant) {

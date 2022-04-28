@@ -13,7 +13,7 @@ export default function useGetTaskText(task: Task | undefined, today: number, sh
 
     const completedOnDate = setToMidnight(task.completedOn);
     if (completedOnDate !== null) {
-      text += `Completed ${format(completedOnDate, 'MMM d')}`;
+      text += `Completed ${format(completedOnDate, 'MMMM d')}`;
       if (completedOnDate.getTime() < today) {
         text += ` (${formatDistance(today, completedOnDate)} ago)`;
       } else if (completedOnDate.getTime() === today) {
@@ -22,16 +22,16 @@ export default function useGetTaskText(task: Task | undefined, today: number, sh
     } else {
       if (showStart) {
         if (task.start.getTime() > today) {
-          text += `Starts ${format(task.start, 'MMM d')} (in ${formatDistance(task.start, today)})`;
+          text += `Starts ${format(task.start, 'MMMM d')} (in ${formatDistance(task.start, today)})`;
         } else if (task.start.getTime() === today) {
-          text += `Started ${format(task.start, 'MMM d')} (today)`;
+          text += `Started ${format(task.start, 'MMMM d')} (today)`;
         } else {
-          text += `Started ${format(task.start, 'MMM d')} (${formatDistance(task.start, today)} ago)`;
+          text += `Started ${format(task.start, 'MMMM d')} (${formatDistance(task.start, today)} ago)`;
         }
         text += ', ';
       }
 
-      text += `Due ${format(task.due, 'MMM d')}`;
+      text += `Due ${format(task.due, 'MMMM d')}`;
       if (task.due.getTime() < today) {
         text += ` (${formatDistance(today, task.due)} ago)`;
       } else if (task.due.getTime() === today) {
