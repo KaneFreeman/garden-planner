@@ -4,10 +4,10 @@ import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useTasks } from './hooks/useTasks';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
+import AutoSizer from '../components/AutoSizer';
 import { Task } from '../interface';
 import './Tasks.css';
 import TaskListItem from './TaskListItem';
@@ -153,7 +153,7 @@ const Tasks = () => {
               </Alert>
             )}
           </TabPanel>
-          <TabPanel value={tab} index={1} sx={{ overflow: 'hidden', height: 'calc(100vh - 113px)' }}>
+          <TabPanel value={tab} index={1} sx={{ overflow: 'hidden', height: 'calc(100vh - 106px)' }}>
             {completed.length > 0 ? (
               <Box sx={{ pl: 2, pr: 2, boxSizing: 'border-box', height: '100%' }}>
                 <Box
