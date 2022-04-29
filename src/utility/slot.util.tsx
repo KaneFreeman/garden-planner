@@ -28,7 +28,12 @@ export function getSlotTitle(index: number, rows?: number) {
   return formatSlotTitle(row, column);
 }
 
-export function useStatusColor(slot: Slot | undefined, plant: Plant | undefined, emptyColor = '#2c2c2c') {
+export function useStatusColor(
+  slot: Slot | undefined,
+  plant: Plant | undefined,
+  emptyColor = '#2c2c2c',
+  defaultColor = emptyColor
+) {
   return useMemo(() => {
     if (!plant) {
       return emptyColor;
@@ -42,6 +47,6 @@ export function useStatusColor(slot: Slot | undefined, plant: Plant | undefined,
       return red[300];
     }
 
-    return emptyColor;
-  }, [emptyColor, plant, slot?.status]);
+    return defaultColor;
+  }, [defaultColor, emptyColor, plant, slot?.status]);
 }

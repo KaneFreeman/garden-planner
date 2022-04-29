@@ -9,13 +9,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useContainer } from '../../containers/hooks/useContainers';
 import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
 import { selectContainer } from '../../store/slices/containers';
 import { getSlotTitle } from '../../utility/slot.util';
-import useSlotOptions from '../../containers/hooks/useSlotOptions';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
 
 interface ContainerSlotSelectInlineFieldProps {
@@ -88,10 +86,7 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
   const transplantContainerSelector = useMemo(() => selectContainer(value?.containerId), [value?.containerId]);
   const transplantContainer = useAppSelector(transplantContainerSelector);
 
-  const internalTransplantContainer = useContainer(internalValue?.containerId);
-
   const containerOptions = useContainerOptions();
-  const slotOptions = useSlotOptions(internalTransplantContainer);
 
   return (
     <>
@@ -128,13 +123,6 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
                 value={internalValue?.containerId}
                 onChange={onContainerChange}
                 options={containerOptions}
-              />
-              <Select
-                label="Slot"
-                value={internalValue?.slotId}
-                onChange={(slotId) => handleOnChange({ slotId })}
-                disabled={slotOptions.length === 0}
-                options={slotOptions}
               />
             </Box>
           </form>
