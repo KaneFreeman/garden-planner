@@ -7,11 +7,12 @@ import Header from './Header';
 import Plants from './plants/Plants';
 import PlantView from './plants/PlantView';
 import Containers from './containers/Containers';
-import ContainerView from './containers/ContainerView';
+import ContainerViewRoute from './containers/ContainerViewRoute';
 import Tasks from './tasks/Tasks';
 import ContainerSlotRoute from './containers/ContainerSlotRoute';
 import ContainerSubSlotRoute from './containers/ContainerSubSlotRoute';
 import TaskViewRoute from './tasks/TaskViewRoute';
+import ContainerSelectViewRoute from './containers/ContainerSelectViewRoute';
 
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
@@ -94,9 +95,13 @@ const Main = () => {
           <Routes>
             <Route path="/" element={<Tasks />} />
             <Route path="/containers" element={<Containers />} />
-            <Route path="/container/:id" element={<ContainerView />} />
+            <Route path="/container/:id" element={<ContainerViewRoute />} />
             <Route path="/container/:id/slot/:index" element={<ContainerSlotRoute />} />
             <Route path="/container/:id/slot/:index/sub-slot" element={<ContainerSubSlotRoute />} />
+            <Route
+              path="/container/:id/slot/:index/transplant/:otherContainerId"
+              element={<ContainerSelectViewRoute />}
+            />
             <Route path="/plants" element={<Plants />} />
             <Route path="/plant/:id" element={<PlantView />} />
             <Route path="/task/:id" element={<TaskViewRoute />} />

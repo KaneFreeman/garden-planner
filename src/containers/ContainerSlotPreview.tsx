@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -12,19 +11,17 @@ import { useTasksByPath } from '../tasks/hooks/useTasks';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 
 interface ContainerSlotPreviewProps {
-  id: string;
   index: number;
   container: Container;
   slot?: Slot;
   plant?: Plant;
   subSlot?: BaseSlot;
   subPlant?: Plant;
+  onSlotClick: (slot: Slot | undefined, index: number) => void;
 }
 
 const ContainerSlotPreview = React.memo(
-  ({ id, index, container, slot, plant, subSlot, subPlant }: ContainerSlotPreviewProps) => {
-    const navigate = useNavigate();
-
+  ({ index, container, slot, plant, subSlot, subPlant, onSlotClick }: ContainerSlotPreviewProps) => {
     const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
     const tasks = useTasksByPath(path);
 
@@ -83,7 +80,7 @@ const ContainerSlotPreview = React.memo(
     return (
       <IconButton
         sx={{ p: 2, width: 80, height: 80, border: `2px solid ${borderColor}`, borderRadius: 0 }}
-        onClick={() => navigate(`/container/${id}/slot/${index}`)}
+        onClick={() => onSlotClick(slot, index)}
         title={title}
       >
         {badgeCount ? (

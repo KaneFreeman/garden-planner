@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -23,16 +23,19 @@ import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
 import ContainerSlotPreview from './ContainerSlotPreview';
-import { FERTILIZE, Plant } from '../interface';
+import { Container, FERTILIZE, Plant, Slot } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
-import Loading from '../components/Loading';
-import { useContainer, useFertilizeContainer, useRemoveContainer } from './hooks/useContainers';
+import { useFertilizeContainer, useRemoveContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
 
-const ContainerView = () => {
-  const { id } = useParams();
+interface ContainerViewProperties {
+  container: Container;
+  onSlotClick: (slot: Slot | undefined, index: number) => void;
+}
+
+const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
   const navigate = useNavigate();
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
@@ -52,16 +55,15 @@ const ContainerView = () => {
   }, [isSmallScreen]);
 
   useEffect(() => {
-    const storedOrientation = window.localStorage.getItem(`container-${id}-orientation`);
+    const storedOrientation = window.localStorage.getItem(`container-${container._id}-orientation`);
     if (storedOrientation && (storedOrientation === 'portrait' || storedOrientation === 'landscape')) {
       setOrientation(storedOrientation);
     }
-  }, [id]);
+  }, [container._id]);
 
   const removeContainer = useRemoveContainer();
-  const fertilizeContainer = useFertilizeContainer(id);
+  const fertilizeContainer = useFertilizeContainer(container._id);
 
-  const container = useContainer(id);
   const plants = usePlants();
   const plantsById = useMemo(
     () =>
@@ -85,18 +87,18 @@ const ContainerView = () => {
   }, []);
   const handleOnDeleteConfirm = useCallback(() => {
     setDeleting(false);
-    if (id) {
-      removeContainer(id);
+    if (container._id) {
+      removeContainer(container._id);
       navigate('/containers');
     }
-  }, [id, navigate, removeContainer]);
+  }, [container._id, navigate, removeContainer]);
   const handleDeleteOnClose = useCallback(() => setDeleting(false), []);
 
   const [editing, setEditing] = useState(false);
   const handleEditOpen = useCallback(() => setEditing(true), []);
   const handleEditClose = useCallback(() => setEditing(false), []);
 
-  const tasks = useTasksByContainer(id);
+  const tasks = useTasksByContainer(container._id);
   const hasActiveFertilizeTasks = useMemo(() => {
     if (tasks.overdue.length > 0) {
       return Boolean(tasks.overdue.find((task) => task.type === FERTILIZE));
@@ -129,11 +131,11 @@ const ContainerView = () => {
   const handleRotate = useCallback(() => {
     const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
     setOrientation(newOrientation);
-    window.localStorage.setItem(`container-${id}-orientation`, newOrientation);
-  }, [id, orientation]);
+    window.localStorage.setItem(`container-${container._id}-orientation`, newOrientation);
+  }, [container._id, orientation]);
 
   const slots = useMemo(() => {
-    if (!id || !container) {
+    if (!container._id) {
       return [];
     }
 
@@ -164,18 +166,14 @@ const ContainerView = () => {
           plant={plant}
           slot={slot}
           container={container}
-          id={id}
           index={finalIndex}
           subSlot={slot?.subSlot}
           subPlant={subPlant}
+          onSlotClick={onSlotClick}
         />
       );
     });
-  }, [container, id, isPortrait, plantsById]);
-
-  if (!container || container._id !== id) {
-    return <Loading />;
-  }
+  }, [container, isPortrait, onSlotClick, plantsById]);
 
   return (
     <>

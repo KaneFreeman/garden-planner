@@ -88,11 +88,9 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(
     slot.transplantedTo?.containerId ?? null
   );
-  const [transplantedToSlotId, setTransplantedToSlotId] = useState<number | null>(slot.transplantedTo?.slotId ?? null);
 
   useEffect(() => {
     setTransplantedToContainerId(slot.transplantedTo?.containerId ?? null);
-    setTransplantedToSlotId(slot.transplantedTo?.slotId ?? null);
   }, [slot]);
 
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
@@ -293,28 +291,25 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   }, [plantedCount, plantedDate, updateSlot]);
 
   const finishUpdateStatusTransplanted = useCallback(() => {
-    if (transplantedToContainerId !== null && transplantedToSlotId !== null) {
-      updateSlot({
-        status: 'Transplanted',
-        transplantedDate,
-        transplantedTo: {
-          containerId: transplantedToContainerId,
-          slotId: transplantedToSlotId
-        }
-      });
+    if (transplantedToContainerId !== null) {
+      navigate(
+        `/container/${
+          container?._id
+        }/slot/${index}/transplant/${transplantedToContainerId}?date=${transplantedDate.getTime()}&subSlot=${
+          type === 'sub-slot'
+        }&updateStatus=true`
+      );
     } else {
       updateSlot({ status: 'Transplanted', transplantedDate, transplantedTo: null });
     }
     setShowTransplantedModal(false);
     setTransplantedToContainerId(null);
-    setTransplantedToSlotId(null);
-  }, [transplantedDate, transplantedToContainerId, transplantedToSlotId, updateSlot]);
+  }, [container?._id, index, navigate, transplantedDate, transplantedToContainerId, type, updateSlot]);
 
   const onTransplantContainerChange = useCallback(
     (newValue: string | undefined) => {
       if (transplantedToContainerId !== newValue) {
         setTransplantedToContainerId(newValue ?? null);
-        setTransplantedToSlotId(null);
       }
     },
     [transplantedToContainerId]
@@ -498,7 +493,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
         <DialogActions>
           <Button onClick={() => setShowTransplantedModal(false)}>Cancel</Button>
           <Button onClick={finishUpdateStatusTransplanted} variant="contained">
-            Save
+            Next
           </Button>
         </DialogActions>
       </Dialog>
