@@ -121,9 +121,9 @@ export const useRemovePlant = () => {
   return removePlant;
 };
 
-export function usePlant(plantId: string | undefined) {
+export function usePlant(plantId: string | undefined | null) {
   const getPlants = useGetPlants();
-  const selector = useMemo(() => selectPlant(plantId), [plantId]);
+  const selector = useMemo(() => selectPlant(plantId ?? undefined), [plantId]);
   const plantDto = useAppSelector(selector);
   const plant = useMemo(() => (plantDto ? fromPlantDTO(plantDto) : undefined), [plantDto]);
 

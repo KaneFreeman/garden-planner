@@ -5,10 +5,13 @@ import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
 import { BaseSlot, Slot, TRANSPLANTED } from '../interface';
 import Loading from '../components/Loading';
 import { useContainer, useUpdateContainer } from './hooks/useContainers';
 import ContainerView from './ContainerView';
+import PlantAvatar from '../plants/PlantAvatar';
+import { usePlant } from '../plants/usePlants';
 
 const ContainerSelectViewRoute = () => {
   const { id, index, otherContainerId } = useParams();
@@ -92,8 +95,6 @@ const ContainerSelectViewRoute = () => {
         extra.status = TRANSPLANTED;
       }
 
-      console.log(extra);
-
       if (sourceIsSubSlot) {
         updateSlot({
           subSlot: {
@@ -134,6 +135,13 @@ const ContainerSelectViewRoute = () => {
     ]
   );
 
+  const otherSlot = useMemo(
+    () => (otherSlotIndex ? otherContainer?.slots?.[otherSlotIndex] : undefined),
+    [otherContainer?.slots, otherSlotIndex]
+  );
+  const plant = usePlant(otherSlot?.plant);
+  const subPlant = usePlant(otherSlot?.subSlot?.plant);
+
   if (!container || !otherContainer || container._id !== id) {
     return <Loading key="container-view-loading" />;
   }
@@ -146,8 +154,14 @@ const ContainerSelectViewRoute = () => {
           <DialogTitle>Transplant To</DialogTitle>
           <DialogContent>
             <List>
-              <ListItemButton onClick={onSlotSelectConfirm(false)}>Slot</ListItemButton>
-              <ListItemButton onClick={onSlotSelectConfirm(true)}>Sub Slot</ListItemButton>
+              <ListItemButton onClick={onSlotSelectConfirm(false)}>
+                <PlantAvatar plant={plant} slot={slot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <ListItemText secondary="Slot" primary={plant?.name ?? 'Empty'} />
+              </ListItemButton>
+              <ListItemButton onClick={onSlotSelectConfirm(true)}>
+                <PlantAvatar plant={subPlant} slot={slot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <ListItemText secondary="Sub Slot" primary={subPlant?.name ?? 'Empty'} />
+              </ListItemButton>
             </List>
           </DialogContent>
         </Dialog>

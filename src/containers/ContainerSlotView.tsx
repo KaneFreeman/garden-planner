@@ -42,7 +42,6 @@ import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { useTasksByPath } from '../tasks/hooks/useTasks';
 import Breadcrumbs from '../components/Breadcrumbs';
-import Loading from '../components/Loading';
 import useContainerOptions from './hooks/useContainerOptions';
 import StatusChip from './StatusChip';
 
@@ -63,10 +62,10 @@ const Circle = styled(Box)<CircleProps>(({ backgroundColor }) => ({
 }));
 
 interface ContainerSlotViewProps {
-  id: string | undefined;
+  id: string;
   index: number;
   type: 'slot' | 'sub-slot';
-  container: Container | undefined;
+  container: Container;
   slot: BaseSlot;
   subSlot?: BaseSlot;
   onChange: (slot: BaseSlot) => Promise<Container | undefined>;
@@ -317,10 +316,6 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const containerOptions = useContainerOptions();
 
-  if (!container) {
-    return <Loading />;
-  }
-
   return (
     <>
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
@@ -402,6 +397,9 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
             <ContainerSlotSelectInlineField
               label="Transplanted To"
               value={slot.transplantedTo}
+              containerId={id}
+              slotId={index}
+              isSubSlot={type === 'sub-slot'}
               onChange={(transplantedTo) => updateSlot({ transplantedTo })}
             />
           </>
@@ -416,6 +414,9 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
             <ContainerSlotSelectInlineField
               label="Transplanted From"
               value={slot.transplantedFrom}
+              containerId={id}
+              slotId={index}
+              isSubSlot={type === 'sub-slot'}
               onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
             />
           </>
