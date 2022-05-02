@@ -148,7 +148,13 @@ const ContainerSelectViewRoute = () => {
 
   return (
     <>
-      <ContainerView key="container-view" container={otherContainer} onSlotClick={onSlotClick} />
+      <ContainerView
+        key="container-view"
+        container={otherContainer}
+        readonly
+        titleRenderer={(title) => `Transplant to ${title}`}
+        onSlotClick={onSlotClick}
+      />
       {otherSlotIndex !== null ? (
         <Dialog open onClose={onSlotSelectClose} maxWidth="xs" fullWidth>
           <DialogTitle>Transplant To</DialogTitle>

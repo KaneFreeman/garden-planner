@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -22,24 +22,32 @@ import ParkIcon from '@mui/icons-material/Park';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { Container, FERTILIZE, Plant, Slot } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { useFertilizeContainer, useRemoveContainer } from './hooks/useContainers';
+import { useFertilizeContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
 
 interface ContainerViewProperties {
   container: Container;
+  readonly?: boolean;
+  titleRenderer?: (defaultTitle: string) => ReactNode;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
 }
 
-const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
+const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: ContainerViewProperties) => {
   const navigate = useNavigate();
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
   const isSmallScreen = useMediaQuery('(max-width:600px)');
+
+  const [searchParams] = useSearchParams();
+  const backLabel = searchParams.get('backLabel');
+  const backPath = searchParams.get('backPath');
 
   const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
@@ -61,6 +69,7 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
     }
   }, [container._id]);
 
+  const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
   const fertilizeContainer = useFertilizeContainer(container._id);
 
@@ -128,6 +137,16 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
     setIsFertilizeModalOpen(true);
   }, []);
 
+  const handleOnArchiveUnarchiveClick = useCallback(
+    (archived: boolean) => () => {
+      updateContainer({
+        ...container,
+        archived
+      });
+    },
+    [container, updateContainer]
+  );
+
   const handleRotate = useCallback(() => {
     const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
     setOrientation(newOrientation);
@@ -181,23 +200,33 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
           <Breadcrumbs
             trail={[
-              {
-                to: `/containers`,
-                label: 'Containers'
-              }
+              backLabel && backPath
+                ? {
+                    to: backPath,
+                    label: backLabel
+                  }
+                : {
+                    to: `/containers`,
+                    label: 'Containers'
+                  }
             ]}
           >
             {{
               current: (
                 <Box
-                  sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: '100%' }}
-                  onClick={handleEditOpen}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: readonly ? 'default' : 'pointer',
+                    width: '100%'
+                  }}
+                  onClick={!readonly ? handleEditOpen : undefined}
                 >
                   <Box
                     sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
                     title={container.name}
                   >
-                    {container.name}
+                    {titleRenderer ? titleRenderer(container.name) : container.name}
                   </Box>
                   <Typography
                     variant="subtitle1"
@@ -214,7 +243,7 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
                   </Typography>
                 </Box>
               ),
-              actions: (
+              actions: !readonly ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                   {isSmallScreen ? (
                     <Box key="small-screen-actions" sx={{ display: 'flex' }}>
@@ -250,6 +279,16 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
                           'aria-labelledby': 'basic-button'
                         }}
                       >
+                        <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                          <ListItemIcon>
+                            {container.archived ? (
+                              <UnarchiveIcon color="warning" fontSize="small" />
+                            ) : (
+                              <ArchiveIcon color="warning" fontSize="small" />
+                            )}
+                          </ListItemIcon>
+                          <Typography color="warning.main">{container.archived ? 'Unarchive' : 'Archive'}</Typography>
+                        </MenuItem>
                         {hasActiveFertilizeTasks ? (
                           <MenuItem color="primary" onClick={handleOnFertilizeClick}>
                             <ListItemIcon>
@@ -279,6 +318,40 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
                           Fertilze
                         </Button>
                       ) : null}
+                      <Button
+                        variant="outlined"
+                        color="warning"
+                        onClick={handleOnArchiveUnarchiveClick(!container.archived)}
+                        title={`${container.archived ? 'Archive' : 'Unarchive'} container`}
+                      >
+                        {container.archived ? (
+                          <Box
+                            key="unarchive"
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              gap: 1
+                            }}
+                          >
+                            <UnarchiveIcon color="warning" fontSize="small" />
+                            Unarchive
+                          </Box>
+                        ) : (
+                          <Box
+                            key="archive"
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              gap: 1
+                            }}
+                          >
+                            <ArchiveIcon color="warning" fontSize="small" />
+                            Archive
+                          </Box>
+                        )}
+                      </Button>
                       <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
                         <RotateLeftIcon
                           sx={{
@@ -297,7 +370,7 @@ const ContainerView = ({ container, onSlotClick }: ContainerViewProperties) => {
                     </Box>
                   )}
                 </Box>
-              )
+              ) : null
             }}
           </Breadcrumbs>
           <Box

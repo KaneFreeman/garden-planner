@@ -38,6 +38,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [searchParams] = useSearchParams();
+  const backLabel = searchParams.get('backLabel');
   const backPath = searchParams.get('backPath');
 
   const updateTask = useUpdateTask();
@@ -247,10 +248,15 @@ const TaskView = ({ task }: TaskViewProperties) => {
       <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
         <Breadcrumbs
           trail={[
-            {
-              to: `/`,
-              label: 'Tasks'
-            }
+            backLabel && backPath
+              ? {
+                  to: backPath,
+                  label: backLabel
+                }
+              : {
+                  to: `/`,
+                  label: 'Tasks'
+                }
           ]}
         >
           {current}
@@ -283,13 +289,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
             dateOnly
           />
           {task.completedOn !== null ? (
-            <DateInlineField
-              label="Completed Date"
-              value={task.completedOn}
-              renderer={formatDate}
-              readOnly
-              dateOnly
-            />
+            <DateInlineField label="Completed Date" value={task.completedOn} renderer={formatDate} readOnly dateOnly />
           ) : null}
         </Box>
       </Box>

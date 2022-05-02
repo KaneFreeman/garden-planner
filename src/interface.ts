@@ -445,6 +445,7 @@ export interface Container {
   columns: number;
   slots?: Record<number, Slot>;
   startedFrom?: StartedFromType;
+  archived?: boolean;
 }
 
 export interface ContainerDTO {

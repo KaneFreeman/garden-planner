@@ -13,7 +13,6 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
-import { blue, red, yellow } from '@mui/material/colors';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -216,11 +215,11 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
     let badge: ReactNode = null;
     if (overdue.length > 0) {
-      badge = <Circle backgroundColor={red[500]}>{overdue.length}</Circle>;
+      badge = <Circle backgroundColor="error.main">{overdue.length}</Circle>;
     } else if (thisWeek.length > 0) {
-      badge = <Circle backgroundColor={yellow[500]}>{thisWeek.length}</Circle>;
+      badge = <Circle backgroundColor="warning.main">{thisWeek.length}</Circle>;
     } else if (active.length > 0) {
-      badge = <Circle backgroundColor={blue[500]}>{active.length}</Circle>;
+      badge = <Circle backgroundColor="primary.main">{active.length}</Circle>;
     }
 
     return (
@@ -296,14 +295,16 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           container?._id
         }/slot/${index}/transplant/${transplantedToContainerId}?date=${transplantedDate.getTime()}&subSlot=${
           type === 'sub-slot'
-        }&updateStatus=true`
+        }&updateStatus=true&backPath=${path}${type === 'sub-slot' ? '/sub-slot' : ''}&backLabel=${
+          type === 'sub-slot' ? `${title} - Sub Plant` : title
+        }`
       );
     } else {
       updateSlot({ status: 'Transplanted', transplantedDate, transplantedTo: null });
     }
     setShowTransplantedModal(false);
     setTransplantedToContainerId(null);
-  }, [container?._id, index, navigate, transplantedDate, transplantedToContainerId, type, updateSlot]);
+  }, [container?._id, index, navigate, path, title, transplantedDate, transplantedToContainerId, type, updateSlot]);
 
   const onTransplantContainerChange = useCallback(
     (newValue: string | undefined) => {

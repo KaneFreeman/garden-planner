@@ -51,7 +51,7 @@ const ContainerEditModal = ({ open, container, onClose }: ContainerEditModalProp
   return (
     <Dialog open={open} onClose={handleOnClose} maxWidth="sm" fullWidth>
       <form name="container-modal-form" onSubmit={onSubmit} noValidate>
-        <DialogTitle>Add Container</DialogTitle>
+        <DialogTitle>Edit Container</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -60,6 +60,7 @@ const ContainerEditModal = ({ open, container, onClose }: ContainerEditModalProp
             onChange={(name) => update({ name })}
             required
             variant="outlined"
+            sx={{ mt: 1.5, mb: 1 }}
           />
           <Select
             label="Type"
