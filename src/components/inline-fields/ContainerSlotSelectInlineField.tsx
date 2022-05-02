@@ -9,30 +9,39 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useContainer } from '../../containers/hooks/useContainers';
 import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
 import { selectContainer } from '../../store/slices/containers';
 import { getSlotTitle } from '../../utility/slot.util';
-import useSlotOptions from '../../containers/hooks/useSlotOptions';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
+import { isNullish } from '../../utility/null.util';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;
   value: ContainerSlotIdentifier | null;
+  containerId: string;
+  slotId: number;
+  isSubSlot: boolean;
   onChange(value: ContainerSlotIdentifier | null): void;
 }
 
-const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlotSelectInlineFieldProps) => {
+const ContainerSlotSelectInlineField = ({
+  label,
+  value,
+  containerId,
+  slotId,
+  isSubSlot,
+  onChange
+}: ContainerSlotSelectInlineFieldProps) => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [internalValue, setInternalValue] = useState<Partial<ContainerSlotIdentifier> | null>(value);
+  const [internalValue, setInternalValue] = useState<string | null | undefined>(value?.containerId ?? null);
 
   useEffect(() => {
-    if (value !== internalValue) {
-      setInternalValue(value);
+    if (value?.containerId !== internalValue) {
+      setInternalValue(value?.containerId ?? null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -46,52 +55,33 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
       setOpen(false);
       if (internalValue !== value) {
         if (save) {
-          onChange(
-            internalValue?.containerId !== undefined && internalValue?.slotId !== undefined
-              ? (internalValue as ContainerSlotIdentifier)
-              : null
-          );
+          if (isNullish(internalValue)) {
+            onChange(null);
+          } else {
+            navigate(`/container/${containerId}/slot/${slotId}/transplant/${internalValue}?subSlot=${isSubSlot}`);
+          }
         } else {
-          setInternalValue(value);
+          setInternalValue(value?.containerId ?? null);
         }
       }
     },
-    [internalValue, onChange, value]
-  );
-
-  const handleOnChange = useCallback(
-    (newValue: Partial<ContainerSlotIdentifier>) => {
-      setInternalValue({ ...internalValue, ...newValue });
-    },
-    [internalValue]
+    [containerId, internalValue, isSubSlot, navigate, onChange, slotId, value]
   );
 
   const onClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       if (value) {
         event.stopPropagation();
-        navigate(`/container/${value.containerId}/slot/${value.slotId}`);
+        navigate(`/container/${value.containerId}/slot/${value.slotId}${value.subSlot === true ? '/sub-slot' : ''}`);
       }
     },
     [navigate, value]
   );
 
-  const onContainerChange = useCallback(
-    (containerId: string | undefined) => {
-      if (internalValue?.containerId !== containerId) {
-        handleOnChange({ containerId, slotId: undefined });
-      }
-    },
-    [handleOnChange, internalValue?.containerId]
-  );
-
   const transplantContainerSelector = useMemo(() => selectContainer(value?.containerId), [value?.containerId]);
   const transplantContainer = useAppSelector(transplantContainerSelector);
 
-  const internalTransplantContainer = useContainer(internalValue?.containerId);
-
   const containerOptions = useContainerOptions();
-  const slotOptions = useSlotOptions(internalTransplantContainer);
 
   return (
     <>
@@ -110,6 +100,7 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
               <Button variant="text" onClick={onClick} sx={{ ml: -1 }}>
                 <Box component="span">
                   {transplantContainer.name} - {getSlotTitle(value.slotId, transplantContainer.rows)}
+                  {value.subSlot === true ? ' - Sub Slot' : ''}
                 </Box>
               </Button>
             ) : (
@@ -125,16 +116,9 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
             <Box sx={{ display: 'flex', mt: 1, mb: 2, gap: 1 }}>
               <Select
                 label="Container"
-                value={internalValue?.containerId}
-                onChange={onContainerChange}
+                value={internalValue ?? undefined}
+                onChange={(otherContainerId) => setInternalValue(otherContainerId)}
                 options={containerOptions}
-              />
-              <Select
-                label="Slot"
-                value={internalValue?.slotId}
-                onChange={(slotId) => handleOnChange({ slotId })}
-                disabled={slotOptions.length === 0}
-                options={slotOptions}
               />
             </Box>
           </form>
@@ -142,7 +126,7 @@ const ContainerSlotSelectInlineField = ({ label, value, onChange }: ContainerSlo
         <DialogActions>
           <Button onClick={handleClose(false)}>Cancel</Button>
           <Button onClick={handleClose(true)} variant="contained">
-            OK
+            Next
           </Button>
         </DialogActions>
       </Dialog>

@@ -348,6 +348,7 @@ export interface ContainerFertilizeDTO {
 export interface ContainerSlotIdentifier {
   containerId: string;
   slotId: number;
+  subSlot?: boolean;
 }
 
 export interface BaseSlot {

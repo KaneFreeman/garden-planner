@@ -1,101 +1,38 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-import { green, red } from '@mui/material/colors';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
 import { getSlotTitle, useStatusColor } from '../utility/slot.util';
 import { useTasksByPath } from '../tasks/hooks/useTasks';
+import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 
 interface ContainerSlotPreviewProps {
-  id: string;
   index: number;
   container: Container;
   slot?: Slot;
   plant?: Plant;
   subSlot?: BaseSlot;
   subPlant?: Plant;
+  onSlotClick: (slot: Slot | undefined, index: number) => void;
 }
 
 const ContainerSlotPreview = React.memo(
-  ({ id, index, container, slot, plant, subSlot, subPlant }: ContainerSlotPreviewProps) => {
-    const navigate = useNavigate();
-
+  ({ index, container, slot, plant, subSlot, subPlant, onSlotClick }: ContainerSlotPreviewProps) => {
     const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
     const tasks = useTasksByPath(path);
 
     const subPlantPath = useMemo(() => `${path}/sub-slot`, [path]);
     const subPlantTasks = useTasksByPath(subPlantPath);
 
-    const { badgeColor, badgeCount } = useMemo(() => {
-      const { thisWeek, active, overdue } = tasks;
-
-      let color: 'success' | 'default' | 'primary' | 'error' | 'warning';
-
-      if (overdue.length > 0) {
-        color = 'error';
-        return { badgeColor: color, badgeCount: overdue.length };
-      }
-
-      if (thisWeek.length > 0) {
-        color = 'warning';
-        return { badgeColor: color, badgeCount: thisWeek.length };
-      }
-
-      if (active.length > 0) {
-        color = 'primary';
-        return { badgeColor: color, badgeCount: active.length };
-      }
-
-      color = 'default';
-      return { badgeColor: color, badgeCount: 0 };
-    }, [tasks]);
-
+    const { badgeColor, badgeCount } = useSlotPreviewBadgeColor(tasks);
     const borderColor = useStatusColor(slot, plant);
 
-    const { subPlantBadgeColor, subPlantBadgeCount } = useMemo(() => {
-      const { thisWeek, active, overdue } = subPlantTasks;
-
-      let color: 'success' | 'default' | 'primary' | 'error' | 'warning';
-
-      if (overdue.length > 0) {
-        color = 'error';
-        return { subPlantBadgeColor: color, subPlantBadgeCount: overdue.length };
-      }
-
-      if (thisWeek.length > 0) {
-        color = 'warning';
-        return { subPlantBadgeColor: color, subPlantBadgeCount: thisWeek.length };
-      }
-
-      if (active.length > 0) {
-        color = 'primary';
-        return { subPlantBadgeColor: color, subPlantBadgeCount: active.length };
-      }
-
-      color = 'default';
-      return { subPlantBadgeColor: color, subPlantBadgeCount: 0 };
-    }, [subPlantTasks]);
-
-    const subPlantBorderColor = useMemo(() => {
-      if (!subPlant) {
-        return '#2c2c2c';
-      }
-
-      if (subSlot?.status === 'Planted') {
-        return green[300];
-      }
-
-      if (subSlot?.status === 'Transplanted') {
-        return red[300];
-      }
-
-      return '#1f1f1f';
-    }, [subPlant, subSlot?.status]);
+    const { badgeColor: subPlantBadgeColor, badgeCount: subPlantBadgeCount } = useSlotPreviewBadgeColor(subPlantTasks);
+    const subPlantBorderColor = useStatusColor(slot, plant, '#2c2c2c', '#1f1f1f');
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;
@@ -143,7 +80,7 @@ const ContainerSlotPreview = React.memo(
     return (
       <IconButton
         sx={{ p: 2, width: 80, height: 80, border: `2px solid ${borderColor}`, borderRadius: 0 }}
-        onClick={() => navigate(`/container/${id}/slot/${index}`)}
+        onClick={() => onSlotClick(slot, index)}
         title={title}
       >
         {badgeCount ? (
@@ -171,7 +108,13 @@ const ContainerSlotPreview = React.memo(
           </Box>
         ) : null}
         {plant ? (
-          <PlantAvatar key="plant-avatar" plant={plant} size={76} variant="square" faded={slot?.status === 'Transplanted'} />
+          <PlantAvatar
+            key="plant-avatar"
+            plant={plant}
+            size={76}
+            variant="square"
+            faded={slot?.status === 'Transplanted'}
+          />
         ) : (
           <GrassIcon key="plant-icon" color="disabled" />
         )}
