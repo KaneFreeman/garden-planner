@@ -72,10 +72,10 @@ const ContainerSelectViewRoute = () => {
         ...container,
         slots: newSlots
       }).finally(() => {
-        navigate(`/container/${id}/slot/${index}`);
+        navigate(`/container/${id}/slot/${index}${sourceIsSubSlot ? `/sub-slot` : ''}`);
       });
     },
-    [container, id, index, indexNumber, navigate, slot, updateContainer]
+    [container, id, index, indexNumber, navigate, slot, sourceIsSubSlot, updateContainer]
   );
 
   const onSlotSelectConfirm = useCallback(
