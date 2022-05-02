@@ -279,6 +279,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           'aria-labelledby': 'basic-button'
                         }}
                       >
+                        {hasActiveFertilizeTasks ? (
+                          <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                            <ListItemIcon>
+                              <YardIcon color="primary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="primary">Fertilze</Typography>
+                          </MenuItem>
+                        ) : null}
                         <MenuItem color="primary" onClick={handleOnFertilizeClick}>
                           <ListItemIcon>
                             {container.archived ? (
@@ -289,14 +297,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           </ListItemIcon>
                           <Typography color="warning.main">{container.archived ? 'Unarchive' : 'Archive'}</Typography>
                         </MenuItem>
-                        {hasActiveFertilizeTasks ? (
-                          <MenuItem color="primary" onClick={handleOnFertilizeClick}>
-                            <ListItemIcon>
-                              <YardIcon color="primary" fontSize="small" />
-                            </ListItemIcon>
-                            <Typography color="primary">Fertilze</Typography>
-                          </MenuItem>
-                        ) : null}
                         <MenuItem onClick={handleOnDelete}>
                           <ListItemIcon>
                             <DeleteIcon color="error" fontSize="small" />
@@ -318,6 +318,17 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           Fertilze
                         </Button>
                       ) : null}
+                      <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
+                        <RotateLeftIcon
+                          sx={{
+                            mr: 1,
+                            transition: 'transform 333ms ease-out',
+                            transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                          }}
+                          fontSize="small"
+                        />
+                        Rotate
+                      </Button>
                       <Button
                         variant="outlined"
                         color="warning"
@@ -351,17 +362,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                             Archive
                           </Box>
                         )}
-                      </Button>
-                      <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
-                        <RotateLeftIcon
-                          sx={{
-                            mr: 1,
-                            transition: 'transform 333ms ease-out',
-                            transform: `scaleX(${isPortrait ? '-1' : '1'})`
-                          }}
-                          fontSize="small"
-                        />
-                        Rotate
                       </Button>
                       <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete container">
                         <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
