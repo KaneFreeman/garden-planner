@@ -9,6 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import MuiTextField from '@mui/material/TextField';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import TextField from '../components/TextField';
+import { getMidnight, setToMidnight } from '../utility/date.util';
 import { Task } from '../interface';
 import { useAddTask } from './hooks/useTasks';
 
@@ -24,16 +25,16 @@ function isValidTask(task: Partial<Task> | null): task is Omit<Task, 'id' | 'typ
 
 const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
   const [editData, setEditData] = useState<Partial<Task> | null>({
-    start: new Date(),
-    due: new Date()
+    start: getMidnight(),
+    due: getMidnight()
   });
 
   const addTask = useAddTask();
 
   const handleOnClose = useCallback(() => {
     setEditData({
-      start: new Date(),
-      due: new Date()
+      start: getMidnight(),
+      due: getMidnight()
     });
     onClose();
   }, [onClose]);
@@ -94,7 +95,7 @@ const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
             <MobileDatePicker
               label="Start"
               value={editData?.start}
-              onChange={(start: Date | null) => start && update({ start })}
+              onChange={(start: Date | null) => start && update({ start: setToMidnight(start) })}
               renderInput={(params) => (
                 <MuiTextField {...params} className="start-dateTimeInput" sx={{ flexGrow: 1 }} />
               )}
@@ -102,7 +103,7 @@ const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
             <MobileDatePicker
               label="Due"
               value={editData?.due}
-              onChange={(due: Date | null) => due && update({ due })}
+              onChange={(due: Date | null) => due && update({ due: setToMidnight(due) })}
               renderInput={(params) => (
                 <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1, ml: 2 }} />
               )}

@@ -20,10 +20,10 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { useRemoveTask, useUpdateTask } from './hooks/useTasks';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import DateInlineField from '../components/inline-fields/DateInlineField';
-import { setToMidnight } from '../utility/date.util';
+import { getMidnight, setToMidnight } from '../utility/date.util';
+import { useRemoveTask, useUpdateTask } from './hooks/useTasks';
 
 interface TaskViewProperties {
   task: Task;
@@ -34,7 +34,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
 
   const [isMarkingAsCompleted, setIsMarkingAsCompleted] = useState(false);
   const [isMarkingAsOpen, setIsMarkingAsOpen] = useState(false);
-  const [completedOn, setCompletedOn] = useState<Date>(new Date());
+  const [completedOn, setCompletedOn] = useState<Date>(getMidnight());
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [searchParams] = useSearchParams();
@@ -46,11 +46,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
 
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }, []);
+  const today = useMemo(() => getMidnight().getTime(), []);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
   const canComplete = useMemo(() => task.type === 'Custom' || task.type === 'Fertilize', [task.type]);
@@ -91,7 +87,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   }, []);
 
   const handleOnMarkAsComplete = useCallback(() => {
-    setCompletedOn(new Date());
+    setCompletedOn(getMidnight());
     setIsMarkingAsCompleted(true);
   }, []);
 
@@ -278,7 +274,6 @@ const TaskView = ({ task }: TaskViewProperties) => {
             onChange={(start) => handleOnChange({ start })}
             renderer={formatDate}
             readOnly={task.type !== 'Custom'}
-            dateOnly
           />
           <DateInlineField
             label="Due Date"
@@ -286,10 +281,9 @@ const TaskView = ({ task }: TaskViewProperties) => {
             onChange={(due) => handleOnChange({ due })}
             renderer={formatDate}
             readOnly={task.type !== 'Custom'}
-            dateOnly
           />
           {task.completedOn !== null ? (
-            <DateInlineField label="Completed Date" value={task.completedOn} renderer={formatDate} readOnly dateOnly />
+            <DateInlineField label="Completed Date" value={task.completedOn} renderer={formatDate} readOnly />
           ) : null}
         </Box>
       </Box>
@@ -302,7 +296,9 @@ const TaskView = ({ task }: TaskViewProperties) => {
                 <MobileDatePicker
                   label="Completed On"
                   value={completedOn}
-                  onChange={(newCompletedOn: Date | null) => newCompletedOn && setCompletedOn(newCompletedOn)}
+                  onChange={(newCompletedOn: Date | null) =>
+                    newCompletedOn && setCompletedOn(setToMidnight(newCompletedOn))
+                  }
                   renderInput={(params) => (
                     <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
                   )}

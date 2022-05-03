@@ -14,7 +14,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import MuiTextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
@@ -24,13 +24,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import ContainerSlotPreview from './ContainerSlotPreview';
 import { Container, FERTILIZE, Plant, Slot } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { useTasksByContainer } from '../tasks/hooks/useTasks';
+import { getMidnight, setToMidnight } from '../utility/date.util';
+import ContainerSlotPreview from './ContainerSlotPreview';
 import { useFertilizeContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 import ContainerEditModal from './ContainerEditModal';
-import { useTasksByContainer } from '../tasks/hooks/useTasks';
 
 interface ContainerViewProperties {
   container: Container;
@@ -125,7 +126,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   }, [tasks]);
 
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
-  const [fertilizeDate, setFertilizeDate] = useState<Date>(new Date());
+  const [fertilizeDate, setFertilizeDate] = useState<Date>(getMidnight());
   const handleFertilizeClose = useCallback(() => setIsFertilizeModalOpen(false), []);
   const handleFertilizeConfirm = useCallback(() => {
     fertilizeContainer(fertilizeDate);
@@ -133,7 +134,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   }, [fertilizeContainer, fertilizeDate]);
   const handleOnFertilizeClick = useCallback(() => {
     handleMoreMenuClose();
-    setFertilizeDate(new Date());
+    setFertilizeDate(getMidnight());
     setIsFertilizeModalOpen(true);
   }, []);
 
@@ -434,10 +435,12 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           <DialogContent>
             <form name="plant-modal-form" onSubmit={handleFertilizeConfirm} noValidate>
               <Box sx={{ display: 'flex', pt: 2, pb: 2 }}>
-                <MobileDateTimePicker
+                <MobileDatePicker
                   label="Fertilized On"
                   value={fertilizeDate}
-                  onChange={(newFertilizeDate: Date | null) => newFertilizeDate && setFertilizeDate(newFertilizeDate)}
+                  onChange={(newFertilizeDate: Date | null) =>
+                    newFertilizeDate && setFertilizeDate(setToMidnight(newFertilizeDate))
+                  }
                   renderInput={(params) => (
                     <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
                   )}

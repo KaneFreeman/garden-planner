@@ -14,6 +14,7 @@ import {
   selectTasksByPath,
   updateTasks
 } from '../../store/slices/tasks';
+import { getMidnight } from '../../utility/date.util';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -174,23 +175,17 @@ function sortTasks(
 }
 
 function useSortDates(daysLimit = 30) {
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }, []);
+  const today = useMemo(() => getMidnight().getTime(), []);
 
   const oneWeekFromNow = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
+    const d = new Date(today);
     return addDays(d, 7).getTime();
-  }, []);
+  }, [today]);
 
   const daysFromNow = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
+    const d = new Date(today);
     return addDays(d, daysLimit).getTime();
-  }, [daysLimit]);
+  }, [daysLimit, today]);
 
   return { today, oneWeekFromNow, daysFromNow, daysLimit };
 }

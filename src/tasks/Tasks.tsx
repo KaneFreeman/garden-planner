@@ -8,6 +8,7 @@ import { useTasks } from './hooks/useTasks';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
 import AutoSizer from '../components/AutoSizer';
+import { getMidnight } from '../utility/date.util';
 import { Task } from '../interface';
 import './Tasks.css';
 import TaskListItem from './TaskListItem';
@@ -17,11 +18,7 @@ const Tasks = () => {
 
   const { tasks, completed, overdue, next, active, thisWeek } = useTasks();
 
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }, []);
+  const today = useMemo(() => getMidnight().getTime(), []);
 
   const renderTask = useCallback(
     (

@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AddIcon from '@mui/icons-material/Add';
 import { Task } from '../../interface';
+import { getMidnight } from '../../utility/date.util';
 import { useTasksByPath } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
 import TaskModal from '../TaskModal';
@@ -42,11 +43,7 @@ const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: Contai
     reverseSortCompleted: false
   });
 
-  const today = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  }, []);
+  const today = useMemo(() => getMidnight().getTime(), []);
 
   const renderTask = useCallback(
     (

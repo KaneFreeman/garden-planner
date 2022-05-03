@@ -13,7 +13,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
-import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
@@ -43,6 +43,7 @@ import { useTasksByPath } from '../tasks/hooks/useTasks';
 import Breadcrumbs from '../components/Breadcrumbs';
 import useContainerOptions from './hooks/useContainerOptions';
 import StatusChip from './StatusChip';
+import { getMidnight, setToMidnight } from '../utility/date.util';
 
 interface CircleProps {
   backgroundColor: string;
@@ -75,7 +76,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const [version, setVersion] = useState(0);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
-  const [transplantedDate, setTransplantedDate] = useState<Date>(new Date());
+  const [transplantedDate, setTransplantedDate] = useState<Date>(getMidnight());
 
   const plants = usePlants();
 
@@ -93,7 +94,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
   const [plantedCount, setPlantedCount] = useState(1);
-  const [plantedDate, setPlantedDate] = useState<Date>(new Date());
+  const [plantedDate, setPlantedDate] = useState<Date>(getMidnight());
 
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
@@ -248,12 +249,12 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     (value: Status) => {
       if (value) {
         if (value === 'Planted') {
-          setPlantedDate(slot.plantedDate ?? new Date());
+          setPlantedDate(slot.plantedDate ?? getMidnight());
           setShowHowManyPlanted(true);
           return;
         }
         if (value === 'Transplanted') {
-          setTransplantedDate(slot.transplantedDate ?? new Date());
+          setTransplantedDate(slot.transplantedDate ?? getMidnight());
           setShowTransplantedModal(true);
           return;
         }
@@ -450,10 +451,12 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
               variant="outlined"
             />
             <Box sx={{ display: 'flex', pt: 2 }}>
-              <MobileDateTimePicker
+              <MobileDatePicker
                 label="Planted On"
                 value={plantedDate}
-                onChange={(newPlantedDate: Date | null) => newPlantedDate && setPlantedDate(newPlantedDate)}
+                onChange={(newPlantedDate: Date | null) =>
+                  newPlantedDate && setPlantedDate(setToMidnight(newPlantedDate))
+                }
                 renderInput={(params) => (
                   <MuiTextField {...params} className="planted-dateTimeInput" sx={{ flexGrow: 1 }} />
                 )}
@@ -481,10 +484,12 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
               />
             </Box>
             <Box sx={{ display: 'flex', mt: 1, mb: 0.5 }}>
-              <MobileDateTimePicker
+              <MobileDatePicker
                 label="Transplanted On"
                 value={transplantedDate}
-                onChange={(newPlantedDate: Date | null) => newPlantedDate && setTransplantedDate(newPlantedDate)}
+                onChange={(newPlantedDate: Date | null) =>
+                  newPlantedDate && setTransplantedDate(setToMidnight(newPlantedDate))
+                }
                 renderInput={(params) => (
                   <MuiTextField {...params} className="transplanted-dateTimeInput" sx={{ flexGrow: 1 }} />
                 )}
