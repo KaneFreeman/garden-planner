@@ -23,7 +23,7 @@ const useGetContainers = (options?: ExtraFetchOptions) => {
 
 const useContainerOperation = (options?: ExtraFetchOptions) => {
   const getContainers = useGetContainers(options);
-  const getTasks = useGetTasks();
+  const getTasks = useGetTasks(options);
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {

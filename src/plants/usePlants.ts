@@ -23,7 +23,7 @@ export const useGetPlants = (options?: ExtraFetchOptions) => {
 
 const usePlantOperation = (options?: ExtraFetchOptions) => {
   const getPlants = useGetPlants(options);
-  const getTasks = useGetTasks();
+  const getTasks = useGetTasks(options);
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
