@@ -10,8 +10,8 @@ const ContainerViewRoute = () => {
   const navigate = useNavigate();
   const container = useContainer(id);
 
-  const onSlotClick = useCallback((slot: Slot | undefined, index: number) => {
-    if (container?._id && slot) {
+  const onSlotClick = useCallback((_: Slot | undefined, index: number) => {
+    if (container?._id) {
       navigate(`/container/${container._id}/slot/${index}`);
     }
   }, [container?._id, navigate]);
