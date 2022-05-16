@@ -1,0 +1,10 @@
+.slot .textRoot {
+  flex: unset;
+}
+
+.slot .textPrimary,
+.slot .textSecondary {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

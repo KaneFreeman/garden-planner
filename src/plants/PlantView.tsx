@@ -14,12 +14,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PicturesView from '../pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import PlantDataView from './PlantDataView';
 import CommentsView from '../components/comments/CommentsView';
 import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
 import { Plant, Comment, PictureData, PlantType, PLANT_TYPES } from '../interface';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
+import PlantSlotsView from '../containers/plants/PlantSlotsView';
+import PlantDataView from './PlantDataView';
 import { useRemovePlant, usePlant, useUpdatePlant } from './usePlants';
 
 const PlantView = () => {
@@ -178,6 +179,7 @@ const PlantView = () => {
           value={plant.daysToMaturity}
           onChange={(daysToMaturity) => handleUpdatePlant({ daysToMaturity })}
         />
+        <PlantSlotsView plantId={id} />
         <PlantDataView type={plant.type} />
         <PicturesView pictures={plant.pictures} comments={plant.comments} alt={plant.name} onChange={updatePictures} />
         <CommentsView

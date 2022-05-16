@@ -370,6 +370,8 @@ export interface Slot extends BaseSlot {
   subSlot?: BaseSlot;
 }
 
+export type BaseSlotWithIdentifier = BaseSlot & ContainerSlotIdentifier;
+
 export interface BaseSlotDTO {
   plant?: string | null;
   status?: Status;

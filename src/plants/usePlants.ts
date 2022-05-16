@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
+import { BaseSlotWithIdentifier, Container, fromPlantDTO, Plant, toPlantDTO, TRANSPLANTED } from '../interface';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectPlant, selectPlants, updatePlants } from '../store/slices/plants';
 import { useGetTasks } from '../tasks/hooks/useTasks';
+import { useContainers } from '../containers/hooks/useContainers';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -177,3 +178,42 @@ export function usePlants(containersToFilter?: Container[]) {
 
   return plants;
 }
+
+export const useGetPlantSlots = (plantId: string | undefined) => {
+  const containers = useContainers();
+
+  return useMemo(() => {
+    if (plantId === undefined) {
+      return [];
+    }
+
+    return containers
+      .filter((container) => !container.archived)
+      .flatMap((container) => {
+        const slots = container.slots ?? {};
+        return Object.keys(slots).reduce((slotsWithIdentifer, slotIndex) => {
+          const slot = slots[+slotIndex];
+
+          if (slot?.plant === plantId && slot.status !== TRANSPLANTED) {
+            slotsWithIdentifer.push({
+              ...slot,
+              containerId: container._id,
+              slotId: +slotIndex,
+              subSlot: false
+            });
+          }
+
+          if (slot?.subSlot?.plant === plantId && slot.subSlot.status !== TRANSPLANTED) {
+            slotsWithIdentifer.push({
+              ...slot.subSlot,
+              containerId: container._id,
+              slotId: +slotIndex,
+              subSlot: true
+            });
+          }
+
+          return slotsWithIdentifer;
+        }, [] as BaseSlotWithIdentifier[]);
+      });
+  }, [plantId, containers]);
+};
