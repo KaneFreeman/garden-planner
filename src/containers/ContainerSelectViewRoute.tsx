@@ -42,7 +42,7 @@ const ContainerSelectViewRoute = () => {
 
   const onSlotClick = useCallback(
     (_: Slot | undefined, otherIndex: number) => {
-      if (container?._id && otherIndex) {
+      if (container?._id && otherIndex >= 0) {
         setOtherSlotIndex(otherIndex);
       }
     },
@@ -55,6 +55,7 @@ const ContainerSelectViewRoute = () => {
 
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
+      console.log(id, index, indexNumber);
       if (!container || !id || !index || indexNumber < 0) {
         return;
       }
@@ -136,7 +137,7 @@ const ContainerSelectViewRoute = () => {
   );
 
   const otherSlot = useMemo(
-    () => (otherSlotIndex ? otherContainer?.slots?.[otherSlotIndex] : undefined),
+    () => (otherSlotIndex != null ? otherContainer?.slots?.[otherSlotIndex] : undefined),
     [otherContainer?.slots, otherSlotIndex]
   );
   const plant = usePlant(otherSlot?.plant);
