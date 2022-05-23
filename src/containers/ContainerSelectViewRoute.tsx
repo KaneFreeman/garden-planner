@@ -55,7 +55,6 @@ const ContainerSelectViewRoute = () => {
 
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
-      console.log(id, index, indexNumber);
       if (!container || !id || !index || indexNumber < 0) {
         return;
       }
@@ -162,11 +161,11 @@ const ContainerSelectViewRoute = () => {
           <DialogContent>
             <List>
               <ListItemButton onClick={onSlotSelectConfirm(false)}>
-                <PlantAvatar plant={plant} slot={slot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <PlantAvatar plant={plant} slot={otherSlot} variant="circular" size={28} sx={{ mr: 1.5 }} />
                 <ListItemText secondary="Slot" primary={plant?.name ?? 'Empty'} />
               </ListItemButton>
               <ListItemButton onClick={onSlotSelectConfirm(true)}>
-                <PlantAvatar plant={subPlant} slot={slot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <PlantAvatar plant={subPlant} slot={otherSlot} variant="circular" size={28} sx={{ mr: 1.5 }} />
                 <ListItemText secondary="Sub Slot" primary={subPlant?.name ?? 'Empty'} />
               </ListItemButton>
             </List>
