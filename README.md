@@ -8,7 +8,7 @@
 
 # Garden Planner
 
-A simple garden planning app. Plan out your garden beds or indoor seed trays. Track when you planted, transplanted and harvested your plants. Get suggested next steps for your plants.
+A simple garden planning app. Plan out your garden beds or indoor seed trays. Track when you planted, transplanted, fertilized and harvested your plants. Get suggested next steps for your plants.
 
 Runs as a [Proressive Web App](https://web.dev/progressive-web-apps/).
 
