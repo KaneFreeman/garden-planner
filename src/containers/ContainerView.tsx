@@ -288,7 +288,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                             <Typography color="primary">Fertilze</Typography>
                           </MenuItem>
                         ) : null}
-                        <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                        <MenuItem color="primary" onClick={handleOnArchiveUnarchiveClick(!container.archived)}>
                           <ListItemIcon>
                             {container.archived ? (
                               <UnarchiveIcon color="warning" fontSize="small" />
