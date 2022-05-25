@@ -32,7 +32,7 @@ const ContainerSlotPreview = React.memo(
     const borderColor = useStatusColor(slot, plant);
 
     const { badgeColor: subPlantBadgeColor, badgeCount: subPlantBadgeCount } = useSlotPreviewBadgeColor(subPlantTasks);
-    const subPlantBorderColor = useStatusColor(slot, plant, '#2c2c2c', '#1f1f1f');
+    const subPlantBorderColor = useStatusColor(subSlot, subPlant, '#2c2c2c', '#1f1f1f');
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;
