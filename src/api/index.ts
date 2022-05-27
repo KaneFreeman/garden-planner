@@ -6,7 +6,8 @@ import {
   PictureDTO,
   PlantType,
   PlantDataDTO,
-  ContainerFertilizeDTO
+  ContainerFertilizeDTO,
+  PlantInstanceDTO
 } from '../interface';
 
 interface Rest {
@@ -182,6 +183,46 @@ interface Rest {
       };
     };
     response: PlantDataDTO | null;
+  };
+  'GET:/plant-instance': {
+    method: 'GET';
+    request: {};
+    response: PlantInstanceDTO[];
+  };
+  'POST:/plant-instance': {
+    method: 'POST';
+    request: {
+      body: Omit<PlantInstanceDTO, '_id'>;
+    };
+    response: PlantInstanceDTO;
+  };
+  'GET:/plant-instance/{plantInstanceId}': {
+    method: 'GET';
+    request: {
+      params: {
+        plantInstanceId: string;
+      };
+    };
+    response: PlantInstanceDTO;
+  };
+  'PUT:/plant-instance/{plantInstanceId}': {
+    method: 'PUT';
+    request: {
+      params: {
+        plantInstanceId: string;
+      };
+      body: Omit<PlantInstanceDTO, '_id'>;
+    };
+    response: PlantInstanceDTO;
+  };
+  'DELETE:/plant-instance/{plantInstanceId}': {
+    method: 'DELETE';
+    request: {
+      params: {
+        plantInstanceId: string;
+      };
+    };
+    response: PlantInstanceDTO;
   };
 }
 

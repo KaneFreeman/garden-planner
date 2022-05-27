@@ -50,7 +50,7 @@ const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
         text,
         start,
         due,
-        containerId: null,
+        plantInstanceId: null,
         type: 'Custom',
         path,
         completedOn: null

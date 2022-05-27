@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '..';
-import { TaskDTO } from '../../interface';
+import { PlantInstanceDTO, TaskDTO } from '../../interface';
 
 // Define a type for the slice state
 export interface TasksState {
@@ -23,11 +23,14 @@ export const TasksSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    updateTasks: (state, action: PayloadAction<TaskDTO[]>) => {
+    updateTasks: (
+      state,
+      action: PayloadAction<{ tasks: TaskDTO[]; plantInstancesByIds: Record<string, PlantInstanceDTO> }>
+    ) => {
       const tasksById: Record<string, TaskDTO> = {};
       const tasksByPath: Record<string, TaskDTO[]> = {};
       const tasksByContainer: Record<string, TaskDTO[]> = {};
-      action.payload.forEach((task) => {
+      action.payload.tasks.forEach((task) => {
         if (task.path) {
           if (!(task.path in tasksByPath)) {
             tasksByPath[task.path] = [];
@@ -36,18 +39,21 @@ export const TasksSlice = createSlice({
           tasksByPath[task.path].push(task);
         }
 
-        if (task.containerId) {
-          if (!(task.containerId in tasksByContainer)) {
-            tasksByContainer[task.containerId] = [];
-          }
+        if (task.plantInstanceId) {
+          const plantInstance = action.payload.plantInstancesByIds[task.plantInstanceId];
+          if (plantInstance && plantInstance.containerId) {
+            if (!(plantInstance.containerId in tasksByContainer)) {
+              tasksByContainer[plantInstance.containerId] = [];
+            }
 
-          tasksByContainer[task.containerId].push(task);
+            tasksByContainer[plantInstance.containerId].push(task);
+          }
         }
 
         tasksById[task._id] = task;
       });
 
-      return { ...state, tasks: action.payload, tasksById, tasksByPath, tasksByContainer };
+      return { ...state, tasks: action.payload.tasks, tasksById, tasksByPath, tasksByContainer };
     }
   }
 });

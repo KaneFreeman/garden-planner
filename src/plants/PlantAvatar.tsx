@@ -3,28 +3,28 @@ import Avatar from '@mui/material/Avatar';
 import { SxProps, Theme } from '@mui/material/styles';
 import GrassIcon from '@mui/icons-material/Grass';
 import { useStatusColor } from '../utility/slot.util';
-import { Plant, Slot } from '../interface';
+import { Plant, PlantInstance } from '../interface';
 
 interface PlantAvatarProperties {
   plant?: Plant;
   size?: number;
   variant?: 'square' | 'circular' | 'rounded' | undefined;
-  slot?: Slot;
+  plantInstance?: PlantInstance;
   sx?: SxProps<Theme> | undefined;
   faded?: boolean;
 }
 
-const PlantAvatar = memo(({ plant, size = 40, variant, slot, sx, faded = false }: PlantAvatarProperties) => {
-  const statusColor = useStatusColor(slot, plant, 'transparent');
+const PlantAvatar = memo(({ plant, size = 40, variant, plantInstance, sx, faded = false }: PlantAvatarProperties) => {
+  const statusColor = useStatusColor(plantInstance, plant, 'transparent');
   const borderSx: SxProps<Theme> | undefined = useMemo(() => {
-    if (slot === undefined || statusColor === 'transparent') {
+    if (plantInstance === undefined || statusColor === 'transparent') {
       return {};
     }
 
     return {
       border: `3px solid ${statusColor}`
     };
-  }, [slot, statusColor]);
+  }, [plantInstance, statusColor]);
 
   const extraSx: SxProps<Theme> = { opacity: faded ? 0.25 : 1 };
 

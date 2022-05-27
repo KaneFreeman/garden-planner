@@ -14,6 +14,12 @@ const enum Api {
   plant_Post = 'POST:/plant',
   plant_IdDelete = 'DELETE:/plant/{plantId}',
 
+  plantInstance_Get = 'GET:/plant-instance',
+  plantInstance_IdGet = 'GET:/plant-instance/{plantInstanceId}',
+  plantInstance_IdPut = 'PUT:/plant-instance/{plantInstanceId}',
+  plantInstance_Post = 'POST:/plant-instance',
+  plantInstance_IdDelete = 'DELETE:/plant-instance/{plantInstanceId}',
+
   container_Get = 'GET:/container',
   container_IdGet = 'GET:/container/{containerId}',
   container_IdPut = 'PUT:/container/{containerId}',

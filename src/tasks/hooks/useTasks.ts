@@ -15,20 +15,22 @@ import {
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
+import { selectPlantInstancesByIds } from '../../store/slices/plant-instances';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
+  const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
 
   const getTasks = useCallback(async () => {
     const response = await fetch(Api.task_Get, {}, options);
 
     if (response) {
-      dispatch(updateTasks(response));
+      dispatch(updateTasks({ tasks: response, plantInstancesByIds } ));
     }
 
     return response;
-  }, [dispatch, fetch, options]);
+  }, [dispatch, fetch, options, plantInstancesByIds]);
 
   return getTasks;
 };

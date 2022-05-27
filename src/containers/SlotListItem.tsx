@@ -4,30 +4,33 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { BaseSlotWithIdentifier, NOT_PLANTED } from '../interface';
+import { NOT_PLANTED, PlantInstance } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
+import { usePlantInstanceStatus } from '../utility/plantInstance.util';
 import { useContainer } from './hooks/useContainers';
 import StatusChip from './StatusChip';
 import './SlotListItem.css';
 
 interface SlotListItemProps {
-  slot: BaseSlotWithIdentifier;
+  instance: PlantInstance;
   style?: React.CSSProperties;
 }
 
-const SlotListItem = ({ slot, style }: SlotListItemProps) => {
+const SlotListItem = ({ instance, style }: SlotListItemProps) => {
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   const navigate = useNavigate();
 
-  const onClickHandler = useCallback(() => {
-    navigate(`/container/${slot.containerId}/slot/${slot.slotId}${slot.subSlot ? '/sub-slot' : ''}`);
-  }, [navigate, slot]);
+  const status = usePlantInstanceStatus(instance);
 
-  const container = useContainer(slot.containerId);
+  const onClickHandler = useCallback(() => {
+    navigate(`/container/${instance.containerId}/slot/${instance.slotId}${instance.subSlot ? '/sub-slot' : ''}`);
+  }, [navigate, instance]);
+
+  const container = useContainer(instance.containerId);
   const title = useMemo(() => {
-    return `${getSlotTitle(slot.slotId, container?.rows)}${slot.subSlot ? ' - Sub-Slot' : ''}`;
-  }, [container?.rows, slot]);
+    return `${getSlotTitle(instance.slotId, container?.rows)}${instance.subSlot ? ' - Sub-Slot' : ''}`;
+  }, [container?.rows, instance]);
 
   return (
     <ListItem style={style} className="slot" disablePadding>
@@ -48,7 +51,7 @@ const SlotListItem = ({ slot, style }: SlotListItemProps) => {
             secondary: 'textSecondary'
           }}
         />
-        <StatusChip status={slot.status ?? NOT_PLANTED} />
+        <StatusChip status={status ?? NOT_PLANTED} />
       </ListItemButton>
     </ListItem>
   );

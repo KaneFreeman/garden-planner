@@ -2,7 +2,8 @@
 import { useMemo } from 'react';
 import green from '@mui/material/colors/green';
 import red from '@mui/material/colors/red';
-import { Plant, Slot } from '../interface';
+import { Plant, PlantInstance } from '../interface';
+import { usePlantInstanceStatus } from './plantInstance.util';
 
 export function getRowColumn(index: number, rows?: number) {
   const column = Math.floor(index / (rows ?? 1));
@@ -29,24 +30,26 @@ export function getSlotTitle(index: number, rows?: number) {
 }
 
 export function useStatusColor(
-  slot: Slot | undefined,
+  instance: PlantInstance | undefined,
   plant: Plant | undefined,
   emptyColor = '#2c2c2c',
   defaultColor = emptyColor
 ) {
+  const status = usePlantInstanceStatus(instance);
+
   return useMemo(() => {
     if (!plant) {
       return emptyColor;
     }
 
-    if (slot?.status === 'Planted') {
+    if (status === 'Planted') {
       return green[300];
     }
 
-    if (slot?.status === 'Transplanted') {
+    if (status === 'Transplanted') {
       return red[300];
     }
 
     return defaultColor;
-  }, [defaultColor, emptyColor, plant, slot?.status]);
+  }, [defaultColor, emptyColor, plant, status]);
 }

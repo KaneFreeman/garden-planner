@@ -23,7 +23,7 @@ export function fromPictureDataDTO(dto: PictureDataDTO): PictureData {
   };
 }
 
-export function toPictureDataDTO(dto: Omit<PictureData, '_id'>): Omit<PictureDataDTO, '_id'> {
+export function toPictureDataDTO(dto: PictureData): PictureDataDTO {
   return {
     ...dto,
     date: dto.date.toISOString()
@@ -327,7 +327,9 @@ export function fromPlantDTO(dto: PlantDTO): Plant {
   };
 }
 
-export function toPlantDTO(dto: Omit<Plant, '_id'>): Omit<PlantDTO, '_id'> {
+export function toPlantDTO(dto: Plant): PlantDTO;
+export function toPlantDTO(dto: Omit<Plant, '_id'>): Omit<PlantDTO, '_id'>;
+export function toPlantDTO(dto: Omit<Plant, '_id'> | Plant): Omit<PlantDTO, '_id'> | PlantDTO {
   return {
     ...dto,
     pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
@@ -352,18 +354,8 @@ export interface ContainerSlotIdentifier {
 }
 
 export interface BaseSlot {
-  plant?: string | null;
-  status?: Status;
-  plantedCount?: number;
-  plantedDate?: Date;
-  transplantedDate?: Date;
-  transplantedTo: ContainerSlotIdentifier | null;
-  transplantedFromDate?: Date;
-  transplantedFrom: ContainerSlotIdentifier | null;
-  firstHarvestDate?: Date;
-  startedFrom: StartedFromType;
-  comments?: Comment[];
-  pictures?: PictureData[];
+  plantInstanceId?: string;
+  plannedPlantId?: string;
 }
 
 export interface Slot extends BaseSlot {
@@ -373,18 +365,8 @@ export interface Slot extends BaseSlot {
 export type BaseSlotWithIdentifier = BaseSlot & ContainerSlotIdentifier;
 
 export interface BaseSlotDTO {
-  plant?: string | null;
-  status?: Status;
-  plantedCount?: number;
-  plantedDate?: string;
-  transplantedDate?: string;
-  transplantedTo: ContainerSlotIdentifier | null;
-  transplantedFromDate?: string;
-  transplantedFrom: ContainerSlotIdentifier | null;
-  firstHarvestDate?: string;
-  startedFrom: StartedFromType;
-  comments?: CommentDTO[];
-  pictures?: PictureDataDTO[];
+  plantInstanceId?: string;
+  plannedPlantId?: string;
 }
 
 export interface SlotDTO extends BaseSlotDTO {
@@ -393,13 +375,7 @@ export interface SlotDTO extends BaseSlotDTO {
 
 function fromBaseSlotDTO(dto: BaseSlotDTO): BaseSlot {
   return {
-    ...dto,
-    plantedDate: dto.plantedDate ? new Date(dto.plantedDate) : undefined,
-    transplantedDate: dto.transplantedDate ? new Date(dto.transplantedDate) : undefined,
-    transplantedFromDate: dto.transplantedFromDate ? new Date(dto.transplantedFromDate) : undefined,
-    firstHarvestDate: dto.firstHarvestDate ? new Date(dto.firstHarvestDate) : undefined,
-    pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
-    comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined
+    ...dto
   };
 }
 
@@ -412,13 +388,7 @@ export function fromSlotDTO(dto: SlotDTO): Slot {
 
 export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
   return {
-    ...dto,
-    plantedDate: dto.plantedDate ? dto.plantedDate.toISOString() : undefined,
-    transplantedDate: dto.transplantedDate ? dto.transplantedDate.toISOString() : undefined,
-    transplantedFromDate: dto.transplantedFromDate ? dto.transplantedFromDate.toISOString() : undefined,
-    firstHarvestDate: dto.firstHarvestDate ? dto.firstHarvestDate.toISOString() : undefined,
-    pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
-    comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined
+    ...dto
   };
 }
 
@@ -466,7 +436,9 @@ export function fromContainerDTO(dto: ContainerDTO): Container {
   };
 }
 
-export function toContainerDTO(dto: Omit<Container, '_id'>): Omit<ContainerDTO, '_id'> {
+export function toContainerDTO(dto: Container): ContainerDTO;
+export function toContainerDTO(dto: Omit<Container, '_id'>): Omit<ContainerDTO, '_id'>;
+export function toContainerDTO(dto: Omit<Container, '_id'> | Container): Omit<ContainerDTO, '_id'> | ContainerDTO {
   return {
     ...dto,
     slots: dto.slots ? mapRecord(dto.slots, toSlotDTO) : undefined
@@ -489,7 +461,9 @@ export function fromPictureDTO(dto: PictureDTO): Picture {
   };
 }
 
-export function toPictureDTO(dto: Omit<Picture, '_id'>): Omit<PictureDTO, '_id'> {
+export function toPictureDTO(dto: Picture): PictureDTO;
+export function toPictureDTO(dto: Omit<Picture, '_id'>): Omit<PictureDTO, '_id'>;
+export function toPictureDTO(dto: Omit<Picture, '_id'> | Picture): Omit<PictureDTO, '_id'> | PictureDTO {
   return {
     ...dto
   };
@@ -508,7 +482,7 @@ export interface Task {
   type: TaskType;
   start: Date;
   due: Date;
-  containerId: string | null;
+  plantInstanceId: string | null;
   path: string | null;
   completedOn: Date | null;
 }
@@ -519,7 +493,7 @@ export interface TaskDTO {
   type: TaskType;
   start: string;
   due: string;
-  containerId: string | null;
+  plantInstanceId: string | null;
   path: string | null;
   completedOn: string | null;
 }
@@ -533,7 +507,9 @@ export function fromTaskDTO(dto: TaskDTO): Task {
   };
 }
 
-export function toTaskDTO(dto: Omit<Task, '_id'>): Omit<TaskDTO, '_id'> {
+export function toTaskDTO(dto: Task): TaskDTO;
+export function toTaskDTO(dto: Omit<Task, '_id'>): Omit<TaskDTO, '_id'>;
+export function toTaskDTO(dto: Omit<Task, '_id'> | Task): Omit<TaskDTO, '_id'> | TaskDTO {
   return {
     ...dto,
     start: dto.start.toISOString(),
@@ -585,4 +561,92 @@ export interface SortedTasks {
   next: Task[];
   thisWeek: Task[];
   active: Task[];
+}
+
+export interface PlantInstanceHistory {
+  from: ContainerSlotIdentifier;
+  to?: ContainerSlotIdentifier;
+  status: Status;
+  date: Date;
+}
+
+export interface PlantInstanceHistoryDTO {
+  from: ContainerSlotIdentifier;
+  to?: ContainerSlotIdentifier;
+  status: string;
+  date: string;
+}
+
+export function toStatus(rawStatus: string): Status {
+  switch (rawStatus) {
+    case 'Planted':
+      return PLANTED;
+    case 'Transplanted':
+      return TRANSPLANTED;
+    default:
+      return NOT_PLANTED;
+  }
+}
+
+export function fromPlantInstanceHistoryDTO(dto: PlantInstanceHistoryDTO): PlantInstanceHistory {
+  return {
+    ...dto,
+    date: new Date(dto.date),
+    status: toStatus(dto.status)
+  };
+}
+
+export function toPlantInstanceHistoryDTO(dto: PlantInstanceHistory): PlantInstanceHistoryDTO {
+  return {
+    ...dto,
+    date: dto.date.toISOString()
+  };
+}
+
+export interface PlantInstance {
+  _id: string;
+  containerId: string;
+  slotId: number;
+  subSlot?: boolean;
+  plant?: string;
+  created: Date;
+  pictures?: PictureData[];
+  comments?: Comment[];
+  history?: PlantInstanceHistory[];
+  closed?: boolean;
+}
+
+export interface PlantInstanceDTO {
+  _id: string;
+  containerId: string;
+  slotId: number;
+  subSlot?: boolean;
+  plant?: string;
+  created: string;
+  pictures?: PictureDataDTO[];
+  comments?: CommentDTO[];
+  history?: PlantInstanceHistoryDTO[];
+  closed?: boolean;
+}
+
+export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {
+  return {
+    ...dto,
+    created: new Date(dto.created),
+    pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
+    comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined,
+    history: dto.history !== undefined ? dto.history.map(fromPlantInstanceHistoryDTO) : undefined
+  };
+}
+
+export function toPlantInstanceDTO(dto: PlantInstance): PlantInstanceDTO
+export function toPlantInstanceDTO(dto: Omit<PlantInstance, '_id'>): PlantInstanceDTO
+export function toPlantInstanceDTO(dto: Omit<PlantInstance, '_id'> | PlantInstance): Omit<PlantInstanceDTO, '_id'> | PlantInstanceDTO {
+  return {
+    ...dto,
+    created: dto.created.toISOString(),
+    pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
+    comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined,
+    history: dto.history !== undefined ? dto.history.map(toPlantInstanceHistoryDTO) : undefined
+  };
 }
