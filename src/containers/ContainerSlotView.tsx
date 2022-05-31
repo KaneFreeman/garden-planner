@@ -17,8 +17,13 @@ import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import GrassIcon from '@mui/icons-material/Grass';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
@@ -124,6 +129,19 @@ const ContainerSlotView = ({
   const [plantedDate, setPlantedDate] = useState<Date>(getMidnight());
 
   const plantedEvent = useMemo(() => plantInstance?.history?.[0], [plantInstance]);
+
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
 
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
@@ -321,27 +339,16 @@ const ContainerSlotView = ({
     );
   }, [subPlantInstance, id, index, renderStatus, subPlantTasks, onSubPlantClick, subPlant, onPlantClick]);
 
-  // const updateStatus = useCallback(
-  //   (value: Status) => {
-  //     switch (value) {
-  //       case PLANTED:
-  //         setPlantedDate(plantedEvent?.date ?? getMidnight());
-  //         setShowHowManyPlanted(true);
-  //         break;
-  //       case TRANSPLANTED:
-  //         setTransplantedDate(getMidnight());
-  //         setShowTransplantedModal(true);
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   },
-  //   [plantedEvent?.date]
-  // );
+  const onPlantedClick = useCallback(() => {
+    setPlantedDate(getMidnight());
+    setShowHowManyPlanted(true);
+    handleMoreMenuClose();
+  }, []);
 
   const onTransplantClick = useCallback(() => {
     setTransplantedDate(getMidnight());
     setShowTransplantedModal(true);
+    handleMoreMenuClose();
   }, []);
 
   const updateStartedFrom = useCallback(
@@ -463,20 +470,57 @@ const ContainerSlotView = ({
               <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 {isSmallScreen ? (
                   <Box key="small-screen-actions" sx={{ display: 'flex' }}>
-                    {plantedEvent ? (
-                      <IconButton
-                        aria-label="transplant"
-                        color="error"
-                        size="small"
-                        onClick={onTransplantClick}
-                        title="Transplant"
-                      >
-                        <MoveDownIcon fontSize="small" />
-                      </IconButton>
-                    ) : null}
+                    <IconButton
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                      aria-expanded={moreMenuOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleMoreMenuClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={moreMenuAnchorElement}
+                      open={moreMenuOpen}
+                      onClose={handleMoreMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
+                      }}
+                    >
+                      {plant && !plantedEvent ? (
+                        <MenuItem onClick={onPlantedClick}>
+                          <ListItemIcon>
+                            <GrassIcon color="success" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="success.main">Plant</Typography>
+                        </MenuItem>
+                      ) : null}
+                      {plantedEvent ? (
+                        <MenuItem onClick={onTransplantClick}>
+                          <ListItemIcon>
+                            <MoveDownIcon color="error" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="error.main">Transplant</Typography>
+                        </MenuItem>
+                      ) : null}
+                    </Menu>
                   </Box>
                 ) : (
                   <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    {plant && !plantedEvent ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="plant"
+                        color="success"
+                        onClick={onPlantedClick}
+                        title="Plant"
+                      >
+                        <GrassIcon sx={{ mr: 1 }} fontSize="small" />
+                        Plant
+                      </Button>
+                    ) : null}
                     {plantedEvent ? (
                       <Button
                         variant="outlined"

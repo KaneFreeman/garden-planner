@@ -2,10 +2,10 @@ import { ContainerSlotIdentifier, PlantInstance, HistoryStatus, TRANSPLANTED } f
 
 export function findHistoryFrom(
   plantInstance: PlantInstance | undefined | null,
-  from: ContainerSlotIdentifier,
+  from: ContainerSlotIdentifier | undefined | null,
   status?: HistoryStatus
 ) {
-  if (!plantInstance) {
+  if (!plantInstance || !from) {
     return undefined;
   }
 
@@ -28,7 +28,7 @@ export function findHistoryTo(
   from: ContainerSlotIdentifier,
   status?: HistoryStatus
 ) {
-  if (!plantInstance) {
+  if (!plantInstance || !from) {
     return undefined;
   }
 

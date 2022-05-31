@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import green from '@mui/material/colors/green';
 import red from '@mui/material/colors/red';
 import { DisplayStatusChipProps } from '../../containers/DisplayStatusChip';
-import { ContainerSlotIdentifier, Plant, PlantInstance } from '../../interface';
+import { ContainerSlotIdentifier, Plant, PlantInstance, TRANSPLANTED } from '../../interface';
 import { areContainerSlotLocationsEqual } from '../../utility/containerSlotLocation.util';
+import { findHistoryFrom } from '../../utility/history.util';
 
 export function getPlantInstanceStatus(
   instance: PlantInstance | undefined,
@@ -11,7 +12,7 @@ export function getPlantInstanceStatus(
   plantLocation: ContainerSlotIdentifier | null | undefined
 ): DisplayStatusChipProps['status'] {
   if (instance?.history?.[0]) {
-    if (!areContainerSlotLocationsEqual(slotLocation, plantLocation)) {
+    if (!areContainerSlotLocationsEqual(slotLocation, plantLocation) && findHistoryFrom(instance, slotLocation, TRANSPLANTED)) {
       return 'Transplanted';
     }
 
