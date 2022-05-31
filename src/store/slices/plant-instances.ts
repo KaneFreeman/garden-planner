@@ -58,10 +58,10 @@ export const selectPlantInstances = (state: RootState) => state.plantInstances.p
 export const selectPlantInstanceById = (id?: string) => (state: RootState) => id ? state.plantInstances.plantInstancesById[id] : undefined;
 export const selectPlantInstancesByIds = (state: RootState) => state.plantInstances.plantInstancesById;
 export const selectPlantInstancesByContainer = (containerId?: string) => (state: RootState) =>
-  containerId ? state.plantInstances.plantInstancesByContainer[containerId] : [];
+  containerId ? state.plantInstances.plantInstancesByContainer[containerId] ?? [] : [];
 export const selectPlantInstancesByContainers = (state: RootState) => state.plantInstances.plantInstancesByContainer;
 export const selectPlantInstancesByPlant = (plantId?: string) => (state: RootState) =>
-plantId ? state.plantInstances.plantInstancesByPlants[plantId] : [];
+plantId ? state.plantInstances.plantInstancesByPlants[plantId] ?? [] : [];
 export const selectPlantInstancesByPlants = (state: RootState) => state.plantInstances.plantInstancesByPlants;
 
 export default PlantInstanceSlice.reducer;

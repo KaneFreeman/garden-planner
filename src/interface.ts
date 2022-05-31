@@ -1,4 +1,4 @@
-import mapRecord from './utility/record.util';
+import { mapRecord } from './utility/record.util';
 
 export interface PictureData {
   date: Date;
@@ -340,8 +340,9 @@ export function toPlantDTO(dto: Omit<Plant, '_id'> | Plant): Omit<PlantDTO, '_id
 export const NOT_PLANTED = 'Not Planted';
 export const PLANTED = 'Planted';
 export const TRANSPLANTED = 'Transplanted';
-export type Status = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED;
-export const STATUSES: Status[] = [NOT_PLANTED, PLANTED, TRANSPLANTED];
+export const HARVESTED = 'Harvested';
+export type HistoryStatus = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED;
+export const STATUSES: HistoryStatus[] = [NOT_PLANTED, PLANTED, TRANSPLANTED, HARVESTED];
 
 export interface ContainerFertilizeDTO {
   readonly date: string;
@@ -564,20 +565,20 @@ export interface SortedTasks {
 }
 
 export interface PlantInstanceHistory {
-  from: ContainerSlotIdentifier;
+  from?: ContainerSlotIdentifier;
   to?: ContainerSlotIdentifier;
-  status: Status;
+  status: HistoryStatus;
   date: Date;
 }
 
 export interface PlantInstanceHistoryDTO {
-  from: ContainerSlotIdentifier;
+  from?: ContainerSlotIdentifier;
   to?: ContainerSlotIdentifier;
   status: string;
   date: string;
 }
 
-export function toStatus(rawStatus: string): Status {
+export function toStatus(rawStatus: string): HistoryStatus {
   switch (rawStatus) {
     case 'Planted':
       return PLANTED;
@@ -585,6 +586,15 @@ export function toStatus(rawStatus: string): Status {
       return TRANSPLANTED;
     default:
       return NOT_PLANTED;
+  }
+}
+
+export function toStartedFromType(rawStartedFrom: string): StartedFromType {
+  switch (rawStartedFrom) {
+    case 'Transplant':
+      return STARTED_FROM_TYPE_TRANSPLANT;
+    default:
+      return STARTED_FROM_TYPE_SEED;
   }
 }
 
@@ -614,6 +624,8 @@ export interface PlantInstance {
   comments?: Comment[];
   history?: PlantInstanceHistory[];
   closed?: boolean;
+  startedFrom: StartedFromType;
+  plantedCount: number;
 }
 
 export interface PlantInstanceDTO {
@@ -627,6 +639,8 @@ export interface PlantInstanceDTO {
   comments?: CommentDTO[];
   history?: PlantInstanceHistoryDTO[];
   closed?: boolean;
+  startedFrom: string;
+  plantedCount: number;
 }
 
 export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {
@@ -635,7 +649,8 @@ export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {
     created: new Date(dto.created),
     pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined,
-    history: dto.history !== undefined ? dto.history.map(fromPlantInstanceHistoryDTO) : undefined
+    history: dto.history !== undefined ? dto.history.map(fromPlantInstanceHistoryDTO) : undefined,
+    startedFrom: toStartedFromType(dto.startedFrom)
   };
 }
 

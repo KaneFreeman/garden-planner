@@ -8,17 +8,20 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Avatar from '@mui/material/Avatar';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
 import { useTasksByContainers } from '../tasks/hooks/useTasks';
 import TaskBadge from '../tasks/TaskBadge';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
-import { useContainers } from './hooks/useContainers';
-import StatusChip from './StatusChip';
-import './Containers.css';
 import { Container } from '../interface';
+import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
+import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import useSmallScreen from '../utility/smallScreen.util';
+import { useContainers } from './hooks/useContainers';
+import DisplayStatusChip from './DisplayStatusChip';
+import './Containers.css';
+import { getPlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 
 interface Counts {
   notPlanted: number;
@@ -29,8 +32,9 @@ interface Counts {
 const Containers = () => {
   const navigate = useNavigate();
   const containers = useContainers();
+  const plantInstancesById = usePlantInstancesById();
 
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const [tab, setTab] = useState(0);
 
@@ -45,31 +49,62 @@ const Containers = () => {
       data[container._id] = Object.keys(slots).reduce(
         (countData, slotId) => {
           const slot = slots[+slotId];
-          if (slot.plant) {
-            switch (slot.status) {
-              case 'Planted':
-                countData.planted += 1;
-                break;
-              case 'Transplanted':
-                countData.transplanted += 1;
-                break;
-              default:
-                countData.notPlanted += 1;
-                break;
+          if (slot.plantInstanceId) {
+            const plantInstance = plantInstancesById[slot.plantInstanceId];
+            if (plantInstance) {
+              const location = getPlantInstanceLocation(plantInstance);
+              const status = getPlantInstanceStatus(
+                plantInstance,
+                {
+                  containerId: container._id,
+                  slotId: +slotId,
+                  subSlot: false
+                },
+                location
+              );
+              switch (status) {
+                case 'Planted':
+                  countData.planted += 1;
+                  break;
+                case 'Transplanted':
+                  countData.transplanted += 1;
+                  break;
+                case 'Not Planted':
+                  countData.notPlanted += 1;
+                  break;
+                default:
+                  break;
+              }
             }
           }
 
-          if (slot.subSlot && slot.subSlot.plant) {
-            switch (slot.subSlot.status) {
-              case 'Planted':
-                countData.planted += 1;
-                break;
-              case 'Transplanted':
-                countData.transplanted += 1;
-                break;
-              default:
-                countData.notPlanted += 1;
-                break;
+          const subPlannedPlantId = slot.subSlot?.plannedPlantId;
+          if (subPlannedPlantId) {
+            const plantInstance = plantInstancesById[subPlannedPlantId];
+            if (plantInstance) {
+              const location = getPlantInstanceLocation(plantInstance);
+              const status = getPlantInstanceStatus(
+                plantInstance,
+                {
+                  containerId: container._id,
+                  slotId: +slotId,
+                  subSlot: true
+                },
+                location
+              );
+              switch (status) {
+                case 'Planted':
+                  countData.planted += 1;
+                  break;
+                case 'Transplanted':
+                  countData.transplanted += 1;
+                  break;
+                case 'Not Planted':
+                  countData.notPlanted += 1;
+                  break;
+                default:
+                  break;
+              }
             }
           }
 
@@ -84,7 +119,7 @@ const Containers = () => {
 
       return data;
     }, {} as Record<string, Counts>);
-  }, [containers]);
+  }, [containers, plantInstancesById]);
 
   const renderCounts = useCallback(
     (countData?: Counts) => {
@@ -95,13 +130,13 @@ const Containers = () => {
       return (
         <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
           {countData.notPlanted > 0 ? (
-            <StatusChip count={countData.notPlanted} status="Not Planted" shrink={isSmallScreen} />
+            <DisplayStatusChip count={countData.notPlanted} status="Not Planted" shrink={isSmallScreen} />
           ) : null}
           {countData.planted > 0 ? (
-            <StatusChip count={countData.planted} status="Planted" shrink={isSmallScreen} />
+            <DisplayStatusChip count={countData.planted} status="Planted" shrink={isSmallScreen} />
           ) : null}
           {countData.transplanted > 0 ? (
-            <StatusChip count={countData.transplanted} status="Transplanted" shrink={isSmallScreen} />
+            <DisplayStatusChip count={countData.transplanted} status="Transplanted" shrink={isSmallScreen} />
           ) : null}
         </Box>
       );

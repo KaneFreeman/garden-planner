@@ -13,12 +13,12 @@ import MuiTextField from '@mui/material/TextField';
 import DialogContentText from '@mui/material/DialogContentText';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import IconButton from '@mui/material/IconButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
+import useSmallScreen from '../utility/smallScreen.util';
 import Breadcrumbs from '../components/Breadcrumbs';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import DateInlineField from '../components/inline-fields/DateInlineField';
@@ -44,7 +44,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const updateTask = useUpdateTask();
   const removeTask = useRemoveTask();
 
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const today = useMemo(() => getMidnight().getTime(), []);
 

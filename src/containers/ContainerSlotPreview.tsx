@@ -6,11 +6,12 @@ import Badge from '@mui/material/Badge';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
-import { getSlotTitle, useStatusColor } from '../utility/slot.util';
+import { getSlotTitle } from '../utility/slot.util';
 import { useTasksByPath } from '../tasks/hooks/useTasks';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
-import { usePlantInstanceStatus } from '../utility/plantInstance.util';
+import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 
 interface ContainerSlotPreviewProps {
   index: number;
@@ -27,18 +28,55 @@ const ContainerSlotPreview = React.memo(
     const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
     const tasks = useTasksByPath(path);
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
-    const plantStatus = usePlantInstanceStatus(plantInstance);
+    const plantLocation = usePlantInstanceLocation(plantInstance);
+    const plantStatus = usePlantInstanceStatus(
+      plantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: false
+      },
+      plantLocation
+    );
 
     const subPlantPath = useMemo(() => `${path}/sub-slot`, [path]);
     const subPlantTasks = useTasksByPath(subPlantPath);
     const subPlantInstance = usePlantInstance(subSlot?.plantInstanceId);
-    const subPlantStatus = usePlantInstanceStatus(subPlantInstance);
+    const subPlantStatus = usePlantInstanceStatus(
+      subPlantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: true
+      },
+      plantLocation
+    );
 
     const { badgeColor, badgeCount } = useSlotPreviewBadgeColor(tasks);
-    const borderColor = useStatusColor(plantInstance, plant);
+    const borderColor = usePlantInstanceStatusColor(
+      plantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: false
+      },
+      plantLocation,
+      plant
+    );
 
     const { badgeColor: subPlantBadgeColor, badgeCount: subPlantBadgeCount } = useSlotPreviewBadgeColor(subPlantTasks);
-    const subPlantBorderColor = useStatusColor(subPlantInstance, subPlant, '#2c2c2c', '#1f1f1f');
+    const subPlantBorderColor = usePlantInstanceStatusColor(
+      subPlantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: true
+      },
+      plantLocation,
+      subPlant,
+      '#2c2c2c',
+      '#1f1f1f'
+    );
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;

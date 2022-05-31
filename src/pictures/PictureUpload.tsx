@@ -5,12 +5,12 @@
 import React, { useCallback } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import AddIcon from '@mui/icons-material/Add';
 import generateThumbnail from '../utility/thumbnail.util';
+import useSmallScreen from '../utility/smallScreen.util';
 import { PictureData } from '../interface';
 import { useAddPicture } from './usePictures';
 
@@ -24,7 +24,7 @@ interface PictureUploadProps {
 }
 
 const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const addPicture = useAddPicture();
 

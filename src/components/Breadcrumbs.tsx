@@ -2,13 +2,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { ReactNode, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { filterNullish } from '../utility/null.util';
+import useSmallScreen from '../utility/smallScreen.util';
 import './Breadcrumbs.css';
 
 interface TrailEntry {
@@ -30,7 +30,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
   const backPath = searchParams.get('backPath');
   const backLabel = searchParams.get('backLabel');
 
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const filteredTrail = useMemo(() => filterNullish(trail), [trail]);
 

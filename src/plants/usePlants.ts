@@ -3,10 +3,11 @@ import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectPlant, selectPlants, updatePlants } from '../store/slices/plants';
+import { selectPlant, selectPlants, selectPlantsById, updatePlants } from '../store/slices/plants';
 import { useGetTasks } from '../tasks/hooks/useTasks';
 import { selectPlantInstancesByContainers } from '../store/slices/plant-instances';
 import { isNotNullish } from '../utility/null.util';
+import { mapRecord } from '../utility/record.util';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -140,7 +141,6 @@ export function usePlant(plantId: string | undefined | null) {
 
 export function usePlants(containersToFilter?: Container[]) {
   const getPlants = useGetPlants();
-  const dispatch = useAppDispatch();
   const plantDtos = useAppSelector(selectPlants);
   const plantInstancesByContainer = useAppSelector(selectPlantInstancesByContainers);
   const plants = useMemo(() => {
@@ -166,7 +166,18 @@ export function usePlants(containersToFilter?: Container[]) {
 
   useEffect(() => {
     getPlants();
-  }, [dispatch, getPlants]);
+  }, [getPlants]);
 
   return plants;
+}
+
+export function usePlantsById() {
+  const getPlants = useGetPlants();
+  const plantsById = useAppSelector(selectPlantsById);
+
+  useEffect(() => {
+    getPlants();
+  }, [getPlants]);
+
+  return useMemo(() => mapRecord(plantsById, fromPlantDTO), [plantsById]);
 }

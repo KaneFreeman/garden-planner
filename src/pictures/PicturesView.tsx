@@ -2,8 +2,8 @@
 import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { PictureData, Comment } from '../interface';
+import useSmallScreen from '../utility/smallScreen.util';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
 import FullPictureView from './FullPictureView';
@@ -16,7 +16,7 @@ interface PicturesViewProps {
 }
 
 const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const [fullViewImageId, setFullViewImageId] = useState<string | null>(null);
 

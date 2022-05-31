@@ -3,8 +3,9 @@ import { fromPlantInstanceDTO, PlantInstance, toPlantInstanceDTO } from '../../i
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectPlantInstanceById, selectPlantInstances, updatePlantInstances } from '../../store/slices/plant-instances';
+import { selectPlantInstanceById, selectPlantInstances, selectPlantInstancesByIds, updatePlantInstances } from '../../store/slices/plant-instances';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
+import { mapRecord } from '../../utility/record.util';
 
 const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -138,11 +139,22 @@ export function usePlantInstance(plantInstanceId: string | undefined) {
 export function usePlantInstances() {
   const getPlantInstances = useGetPlantInstances();
   const plantInstancesDtos = useAppSelector(selectPlantInstances);
-  const plantinstances = useMemo(() => plantInstancesDtos.map(fromPlantInstanceDTO), [plantInstancesDtos]);
+  const plantInstances = useMemo(() => plantInstancesDtos.map(fromPlantInstanceDTO), [plantInstancesDtos]);
 
   useEffect(() => {
     getPlantInstances();
   }, [getPlantInstances]);
 
-  return plantinstances;
+  return plantInstances;
+}
+
+export function usePlantInstancesById() {
+  const getPlantInstances = useGetPlantInstances();
+  const plantInstancesById = useAppSelector(selectPlantInstancesByIds);
+
+  useEffect(() => {
+    getPlantInstances();
+  }, [getPlantInstances]);
+
+  return useMemo(() => mapRecord(plantInstancesById, fromPlantInstanceDTO), [plantInstancesById]);
 }

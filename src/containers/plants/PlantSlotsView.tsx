@@ -3,8 +3,8 @@ import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { PlantInstance } from '../../interface';
+import useSmallScreen from '../../utility/smallScreen.util';
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
 import SlotListItem from '../SlotListItem';
 
@@ -13,11 +13,11 @@ interface PlantSlotsViewProps {
 }
 
 const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const plantInstances = usePlantInstancesByPlant(plantId);
 
-  const renderTask = useCallback((key: string, instance: PlantInstance, index: number) => {
+  const renderPlantSlot = useCallback((key: string, instance: PlantInstance, index: number) => {
     return <SlotListItem key={`${key}-${index}`} instance={instance} />;
   }, []);
 
@@ -46,7 +46,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <List>
-              {plantInstances.map((plantInstance, index) => renderTask('active-instances', plantInstance, index))}
+              {plantInstances.map((plantInstance, index) => renderPlantSlot('active-instances', plantInstance, index))}
             </List>
           </Box>
         )}

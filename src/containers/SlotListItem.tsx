@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { NOT_PLANTED, PlantInstance } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
-import { usePlantInstanceStatus } from '../utility/plantInstance.util';
+import useSmallScreen from '../utility/smallScreen.util';
+import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useContainer } from './hooks/useContainers';
-import StatusChip from './StatusChip';
+import StatusChip from './DisplayStatusChip';
 import './SlotListItem.css';
 
 interface SlotListItemProps {
@@ -17,11 +17,11 @@ interface SlotListItemProps {
 }
 
 const SlotListItem = ({ instance, style }: SlotListItemProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const navigate = useNavigate();
 
-  const status = usePlantInstanceStatus(instance);
+  const status = usePlantInstanceStatus(instance, null, null);
 
   const onClickHandler = useCallback(() => {
     navigate(`/container/${instance.containerId}/slot/${instance.slotId}${instance.subSlot ? '/sub-slot' : ''}`);

@@ -15,7 +15,7 @@ import { useContainer, useUpdateContainer } from './hooks/useContainers';
 import ContainerView from './ContainerView';
 
 const ContainerSelectViewRoute = () => {
-  const { containerId, index, otherContainerId } = useParams();
+  const { id: containerId, index, otherContainerId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const date = searchParams.get('date');
@@ -31,14 +31,8 @@ const ContainerSelectViewRoute = () => {
   const [otherSlotIndex, setOtherSlotIndex] = useState<number | null>(null);
 
   const slot = useMemo(
-    () =>
-      container?.slots?.[indexNumber] ??
-      ({
-        transplantedFrom: null,
-        transplantedTo: null,
-        startedFrom: container?.startedFrom
-      } as Slot),
-    [container?.slots, container?.startedFrom, indexNumber]
+    () => container?.slots?.[indexNumber] ?? {},
+    [container?.slots, indexNumber]
   );
   const plantInstance = usePlantInstance(slot?.plantInstanceId);
 

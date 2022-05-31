@@ -3,8 +3,9 @@ import { fromContainerDTO, Container, toContainerDTO } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectContainer, selectContainers, updateContainers } from '../../store/slices/containers';
+import { selectContainer, selectContainers, selectContainersById, updateContainers } from '../../store/slices/containers';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
+import { mapRecord } from '../../utility/record.util';
 
 const useGetContainers = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -149,6 +150,18 @@ export function useContainers() {
   }, [getContainers]);
 
   return containers;
+}
+
+export function useContainersById() {
+  const getContainers = useGetContainers();
+  const containerDtos = useAppSelector(selectContainersById);
+  const containersById = useMemo(() => mapRecord(containerDtos, fromContainerDTO), [containerDtos]);
+
+  useEffect(() => {
+    getContainers();
+  }, [getContainers]);
+
+  return containersById;
 }
 
 export const useFertilizeContainer = (containerId: string | undefined) => {

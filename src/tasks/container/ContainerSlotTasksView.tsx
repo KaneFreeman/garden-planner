@@ -4,9 +4,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import AddIcon from '@mui/icons-material/Add';
 import { Task } from '../../interface';
+import useSmallScreen from '../../utility/smallScreen.util';
 import { getMidnight } from '../../utility/date.util';
 import { useTasksByPath } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
@@ -20,7 +20,7 @@ interface ContainerSlotTasksViewProps {
 }
 
 const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const openTaskModal = useCallback(() => {
