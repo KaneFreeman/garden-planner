@@ -56,11 +56,12 @@ import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryVie
 import { getMidnight, setToMidnight } from '../utility/date.util';
 import { useAddPlantInstance, useUpdatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import useSmallScreen from '../utility/smallScreen.util';
+import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
-import useSmallScreen from '../utility/smallScreen.util';
-import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 
 interface CircleProps {
   backgroundColor: string;
@@ -165,14 +166,17 @@ const ContainerSlotView = ({
 
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
+      console.log('data', data);
       if (!plantInstance) {
         const newPlantInstance: Omit<PlantInstance, '_id'> = {
           ...data,
           containerId: id,
           slotId: index,
+          subSlot: type === 'sub-slot',
           created: new Date(),
           plantedCount: 1,
-          startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED
+          startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
+          plant: slot.plannedPlantId
         };
 
         addPlantInstance(newPlantInstance).then((createdPlantInstance) => {
@@ -188,12 +192,24 @@ const ContainerSlotView = ({
         ...plantInstance,
         ...data
       };
+      console.log('newPlantInstance', newPlantInstance);
 
       updatePlantInstance(newPlantInstance).finally(() => {
         setVersion(version + 1);
       });
     },
-    [addPlantInstance, container.startedFrom, id, index, plantInstance, updatePlantInstance, updateSlot, version]
+    [
+      addPlantInstance,
+      container.startedFrom,
+      id,
+      index,
+      plantInstance,
+      slot.plannedPlantId,
+      type,
+      updatePlantInstance,
+      updateSlot,
+      version
+    ]
   );
 
   const updatePictures = useCallback(
@@ -227,10 +243,11 @@ const ContainerSlotView = ({
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
+      console.log(value, plantInstance);
       if (!plantInstance) {
-        updateSlot({ plannedPlantId: value?._id });
+        updateSlot({ plannedPlantId: value?._id ?? null });
       } else {
-        onPlantInstanceChange({ plant: value?._id });
+        onPlantInstanceChange({ plant: value?._id ?? null });
       }
     },
     [onPlantInstanceChange, plantInstance, updateSlot]
@@ -609,6 +626,15 @@ const ContainerSlotView = ({
         />
         {type === 'slot' && (plantInstance || slot.plannedPlantId || subPlantInstance || subSlot?.plannedPlantId) ? (
           <SimpleInlineField label="Sub Plant" value={renderedSubPlant} />
+        ) : null}
+        {plantedEvent ? (
+          <NumberInlineField
+            label="Planted Count"
+            value={plantInstance?.plantedCount}
+            onChange={(value) => onPlantInstanceChange({ plantedCount: value })}
+            wholeNumber
+            min={0}
+          />
         ) : null}
         <ContainerSlotTasksView
           plantInstance={plantInstance}

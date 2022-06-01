@@ -3,7 +3,12 @@ import { fromPlantInstanceDTO, PlantInstance, toPlantInstanceDTO } from '../../i
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectPlantInstanceById, selectPlantInstances, selectPlantInstancesByIds, updatePlantInstances } from '../../store/slices/plant-instances';
+import {
+  selectPlantInstanceById,
+  selectPlantInstances,
+  selectPlantInstancesByIds,
+  updatePlantInstances
+} from '../../store/slices/plant-instances';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 
@@ -73,14 +78,28 @@ export const useUpdatePlantInstance = () => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
 
-  const addPlantInstance = useCallback(
+  const updatePlantInstance = useCallback(
     async (data: PlantInstance) => {
+      const lastHistoryEvent =
+        data.history && data.history.length > 0 ? data.history[data.history.length - 1] : undefined;
+      const location = lastHistoryEvent?.to;
+
+      let newData = data;
+      if (location) {
+        newData = {
+          ...data,
+          containerId: location?.containerId,
+          slotId: location?.slotId,
+          subSlot: location?.subSlot
+        };
+      }
+
       const response = await runOperation(() =>
         fetch(Api.plantInstance_IdPut, {
           params: {
-            plantInstanceId: data._id
+            plantInstanceId: newData._id
           },
-          body: toPlantInstanceDTO(data)
+          body: toPlantInstanceDTO(newData)
         })
       );
 
@@ -93,7 +112,7 @@ export const useUpdatePlantInstance = () => {
     [fetch, runOperation]
   );
 
-  return addPlantInstance;
+  return updatePlantInstance;
 };
 
 export const useRemovePlantInstance = () => {

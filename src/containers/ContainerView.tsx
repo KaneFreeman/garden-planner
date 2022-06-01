@@ -164,7 +164,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
       let plant: Plant | undefined;
       if (plantId !== undefined && plantId !== null) {
         plant = plantsById[plantId];
-      } else if (slot?.plannedPlantId !== undefined) {
+      } else if (slot && slot.plannedPlantId !== null) {
         plant = plantsById[slot.plannedPlantId];
       }
 
@@ -175,7 +175,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
       const subPlantId = subPlantInstance?.plant;
       if (subPlantId !== undefined && subPlantId !== null) {
         subPlant = plantsById[subPlantId];
-      } else if (slot?.subSlot?.plannedPlantId !== undefined) {
+      } else if (slot?.subSlot && slot.subSlot.plannedPlantId !== null) {
         subPlant = plantsById[slot.subSlot.plannedPlantId];
       }
 

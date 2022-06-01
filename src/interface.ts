@@ -355,7 +355,7 @@ export interface ContainerSlotIdentifier {
 
 export interface BaseSlot {
   plantInstanceId?: string;
-  plannedPlantId?: string;
+  plannedPlantId: string | null;
 }
 
 export interface Slot extends BaseSlot {
@@ -366,7 +366,7 @@ export type BaseSlotWithIdentifier = BaseSlot & ContainerSlotIdentifier;
 
 export interface BaseSlotDTO {
   plantInstanceId?: string;
-  plannedPlantId?: string;
+  plannedPlantId: string | null;
 }
 
 export interface SlotDTO extends BaseSlotDTO {
@@ -617,7 +617,7 @@ export interface PlantInstance {
   containerId: string;
   slotId: number;
   subSlot?: boolean;
-  plant?: string;
+  plant: string | null;
   created: Date;
   pictures?: PictureData[];
   comments?: Comment[];
@@ -632,7 +632,7 @@ export interface PlantInstanceDTO {
   containerId: string;
   slotId: number;
   subSlot?: boolean;
-  plant?: string;
+  plant: string | null;
   created: string;
   pictures?: PictureDataDTO[];
   comments?: CommentDTO[];
