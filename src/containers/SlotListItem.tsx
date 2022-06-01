@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
-import { NOT_PLANTED, PlantInstance } from '../interface';
+import { PLANTED, PlantInstance } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -51,7 +51,7 @@ const SlotListItem = ({ instance, style }: SlotListItemProps) => {
             secondary: 'textSecondary'
           }}
         />
-        <StatusChip status={status ?? NOT_PLANTED} />
+        <StatusChip status={status ?? PLANTED} />
       </ListItemButton>
     </ListItem>
   );

@@ -76,11 +76,13 @@ const Containers = () => {
                   break;
               }
             }
+          } else if (slot.plannedPlantId) {
+            countData.notPlanted += 1;
           }
 
-          const subPlannedPlantId = slot.subSlot?.plannedPlantId;
-          if (subPlannedPlantId) {
-            const plantInstance = plantInstancesById[subPlannedPlantId];
+          const subPlantInstanceId = slot.subSlot?.plantInstanceId;
+          if (subPlantInstanceId) {
+            const plantInstance = plantInstancesById[subPlantInstanceId];
             if (plantInstance) {
               const location = getPlantInstanceLocation(plantInstance);
               const status = getPlantInstanceStatus(
@@ -106,6 +108,8 @@ const Containers = () => {
                   break;
               }
             }
+          } else if (slot.subSlot?.plannedPlantId) {
+            countData.notPlanted += 1;
           }
 
           return countData;

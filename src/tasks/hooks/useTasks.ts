@@ -12,6 +12,7 @@ import {
   selectTasksByContainer,
   selectTasksByContainers,
   selectTasksByPath,
+  selectTasksByPlantInstance,
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
@@ -231,6 +232,17 @@ export const useTasksByContainer = (
   options?: { reverseSortCompleted: boolean }
 ) => {
   const selector = useMemo(() => selectTasksByContainer(containerId), [containerId]);
+  const taskDtos = useAppSelector(selector);
+  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
+  return useSortTasks(tasks, limit, options);
+};
+
+export const useTasksByPlantInstance = (
+  plantInstanceId: string | undefined,
+  limit?: number,
+  options?: { reverseSortCompleted: boolean }
+) => {
+  const selector = useMemo(() => selectTasksByPlantInstance(plantInstanceId), [plantInstanceId]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
   return useSortTasks(tasks, limit, options);

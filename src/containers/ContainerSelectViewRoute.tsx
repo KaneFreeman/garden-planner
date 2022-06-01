@@ -30,11 +30,8 @@ const ContainerSelectViewRoute = () => {
 
   const [otherSlotIndex, setOtherSlotIndex] = useState<number | null>(null);
 
-  const slot = useMemo(
-    () => container?.slots?.[indexNumber] ?? {},
-    [container?.slots, indexNumber]
-  );
-  const plantInstance = usePlantInstance(slot?.plantInstanceId);
+  const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
+  const plantInstance = usePlantInstance(sourceIsSubSlot ? slot.subSlot?.plantInstanceId : slot?.plantInstanceId);
 
   const onSlotClick = useCallback(
     (_: Slot | undefined, otherIndex: number) => {
@@ -99,7 +96,7 @@ const ContainerSelectViewRoute = () => {
             from: {
               containerId,
               slotId: indexNumber,
-              subSlot
+              subSlot: sourceIsSubSlot
             },
             to: {
               containerId: otherContainerId,
@@ -112,7 +109,7 @@ const ContainerSelectViewRoute = () => {
         ]
       });
 
-      if (sourceIsSubSlot) {
+      if (subSlot) {
         updateOtherSlot({
           subSlot: {
             ...(slot.subSlot ?? {}),

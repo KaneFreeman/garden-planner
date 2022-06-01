@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import formatDistance from 'date-fns/formatDistance';
 import Box from '@mui/material/Box';
@@ -13,7 +14,14 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import GrassIcon from '@mui/icons-material/Grass';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
-import { ContainerSlotIdentifier, HARVESTED, PLANTED, PlantInstance, TRANSPLANTED } from '../interface';
+import {
+  ContainerSlotIdentifier,
+  HARVESTED,
+  PLANTED,
+  PlantInstance,
+  PlantInstanceHistory,
+  TRANSPLANTED
+} from '../interface';
 import { getMidnight } from '../utility/date.util';
 import { areContainerSlotLocationsEqual, getLocationTitle } from '../utility/containerSlotLocation.util';
 import { useContainersById } from '../containers/hooks/useContainers';
@@ -28,6 +36,37 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
   const history = useMemo(() => plantInstance?.history ?? [], [plantInstance]);
   const today = useMemo(() => getMidnight().getTime(), []);
   const containersById = useContainersById();
+  const navigate = useNavigate();
+
+  const navigateToLocation = useCallback(
+    (location: ContainerSlotIdentifier | undefined) => {
+      if (location) {
+        navigate(`/container/${location.containerId}/slot/${location.slotId}${location.subSlot ? '/sub-slot' : ''}`);
+        return true;
+      }
+
+      return false;
+    },
+    [navigate]
+  );
+
+  const onClick = useCallback(
+    (historyItem: PlantInstanceHistory) => () => {
+      if (historyItem.status === TRANSPLANTED || historyItem.status === PLANTED) {
+        if (navigateToLocation(historyItem.to)) {
+          return;
+        }
+
+        navigateToLocation(historyItem.from);
+        return;
+      }
+
+      if (historyItem.status === HARVESTED) {
+        navigateToLocation(historyItem.from);
+      }
+    },
+    [navigateToLocation]
+  );
 
   if (history.length === 0) {
     return null;
@@ -57,19 +96,23 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
           let extra = '';
           if (historyItem.status === TRANSPLANTED) {
             if (areContainerSlotLocationsEqual(historyItem.from, slotLocation)) {
-              extra = historyItem.to
-                ? ` to ${getLocationTitle(
-                    historyItem.to,
-                    historyItem.to ? containersById[historyItem.to.containerId] : undefined
-                  )}`
-                : '';
+              extra = ` from here${
+                historyItem.to
+                  ? ` to ${getLocationTitle(
+                      historyItem.to,
+                      historyItem.to ? containersById[historyItem.to.containerId] : undefined
+                    )}`
+                  : ''
+              }`;
             } else if (areContainerSlotLocationsEqual(historyItem.to, slotLocation)) {
-              extra = historyItem.from
-                ? ` from ${getLocationTitle(
-                    historyItem.from,
-                    historyItem.from ? containersById[historyItem.from.containerId] : undefined
-                  )}`
-                : '';
+              extra = `${
+                historyItem.from
+                  ? ` from ${getLocationTitle(
+                      historyItem.from,
+                      historyItem.from ? containersById[historyItem.from.containerId] : undefined
+                    )}`
+                  : ''
+              } to here`;
             } else {
               if (historyItem.from) {
                 extra = ` from ${getLocationTitle(
@@ -85,10 +128,29 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
                 )}`;
               }
             }
+          } else if (historyItem.status === PLANTED) {
+            if (historyItem.to) {
+              extra += ` in ${getLocationTitle(
+                historyItem.to,
+                historyItem.to ? containersById[historyItem.to.containerId] : undefined
+              )}`;
+            }
+          } else if (historyItem.status === HARVESTED) {
+            if (historyItem.from) {
+              extra = ` from ${getLocationTitle(
+                historyItem.from,
+                historyItem.from ? containersById[historyItem.from.containerId] : undefined
+              )}`;
+            }
           }
 
           return (
-            <TimelineItem key={`history-item-${historyItemIndex}`} classes={{ root: 'timelineItem-root' }}>
+            <TimelineItem
+              key={`history-item-${historyItemIndex}`}
+              classes={{ root: 'timelineItem-root' }}
+              onClick={onClick(historyItem)}
+              sx={{ cursor: 'pointer' }}
+            >
               <TimelineSeparator>
                 <TimelineConnector />
                 {historyItem.status === PLANTED ? (

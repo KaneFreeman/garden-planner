@@ -337,12 +337,11 @@ export function toPlantDTO(dto: Omit<Plant, '_id'> | Plant): Omit<PlantDTO, '_id
   };
 }
 
-export const NOT_PLANTED = 'Not Planted';
 export const PLANTED = 'Planted';
 export const TRANSPLANTED = 'Transplanted';
 export const HARVESTED = 'Harvested';
-export type HistoryStatus = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED;
-export const STATUSES: HistoryStatus[] = [NOT_PLANTED, PLANTED, TRANSPLANTED, HARVESTED];
+export type HistoryStatus = typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED;
+export const STATUSES: HistoryStatus[] = [PLANTED, TRANSPLANTED, HARVESTED];
 
 export interface ContainerFertilizeDTO {
   readonly date: string;
@@ -580,12 +579,12 @@ export interface PlantInstanceHistoryDTO {
 
 export function toStatus(rawStatus: string): HistoryStatus {
   switch (rawStatus) {
-    case 'Planted':
-      return PLANTED;
     case 'Transplanted':
       return TRANSPLANTED;
+    case 'Harvested':
+      return HARVESTED;
     default:
-      return NOT_PLANTED;
+      return PLANTED;
   }
 }
 
@@ -654,9 +653,11 @@ export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {
   };
 }
 
-export function toPlantInstanceDTO(dto: PlantInstance): PlantInstanceDTO
-export function toPlantInstanceDTO(dto: Omit<PlantInstance, '_id'>): PlantInstanceDTO
-export function toPlantInstanceDTO(dto: Omit<PlantInstance, '_id'> | PlantInstance): Omit<PlantInstanceDTO, '_id'> | PlantInstanceDTO {
+export function toPlantInstanceDTO(dto: PlantInstance): PlantInstanceDTO;
+export function toPlantInstanceDTO(dto: Omit<PlantInstance, '_id'>): PlantInstanceDTO;
+export function toPlantInstanceDTO(
+  dto: Omit<PlantInstance, '_id'> | PlantInstance
+): Omit<PlantInstanceDTO, '_id'> | PlantInstanceDTO {
   return {
     ...dto,
     created: dto.created.toISOString(),
