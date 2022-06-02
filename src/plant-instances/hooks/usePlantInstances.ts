@@ -177,3 +177,26 @@ export function usePlantInstancesById() {
 
   return useMemo(() => mapRecord(plantInstancesById, fromPlantInstanceDTO), [plantInstancesById]);
 }
+
+export const useFertilizePlantInstance = (plantInstanceId: string | undefined) => {
+  const fetch = useFetch();
+  const runOperation = usePlantInstanceOperation();
+
+  const getContainers = useCallback(
+    async (date: Date) => {
+      if (plantInstanceId === undefined) {
+        return;
+      }
+
+      await runOperation(() =>
+        fetch(Api.plantInstance_FertilizePost, {
+          params: { plantInstanceId },
+          body: { date: date.toISOString() }
+        })
+      );
+    },
+    [plantInstanceId, fetch, runOperation]
+  );
+
+  return getContainers;
+};

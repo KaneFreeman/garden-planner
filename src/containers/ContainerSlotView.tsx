@@ -25,6 +25,7 @@ import GrassIcon from '@mui/icons-material/Grass';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import YardIcon from '@mui/icons-material/Yard';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
@@ -53,7 +54,11 @@ import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import Breadcrumbs from '../components/Breadcrumbs';
 import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
 import { getMidnight, setToMidnight } from '../utility/date.util';
-import { useAddPlantInstance, useUpdatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
+import {
+  useAddPlantInstance,
+  useFertilizePlantInstance,
+  useUpdatePlantInstance
+} from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import useSmallScreen from '../utility/smallScreen.util';
 import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
@@ -116,6 +121,7 @@ const ContainerSlotView = ({
 
   const addPlantInstance = useAddPlantInstance();
   const updatePlantInstance = useUpdatePlantInstance();
+  const fertilizePlantInstance = useFertilizePlantInstance(plantInstance?._id);
 
   const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
   const subPlantTasks = useTasksByPlantInstance(subPlantInstance?._id);
@@ -134,6 +140,9 @@ const ContainerSlotView = ({
 
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [harvestedDate, setHarvestedDate] = useState<Date>(getMidnight());
+
+  const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
+  const [fertilizedDate, setFertilizedDate] = useState<Date>(getMidnight());
 
   const plantedEvent = useMemo(() => plantInstance?.history?.[0], [plantInstance]);
 
@@ -357,6 +366,12 @@ const ContainerSlotView = ({
     handleMoreMenuClose();
   }, []);
 
+  const onFertilizeClick = useCallback(() => {
+    setFertilizedDate(getMidnight());
+    setShowFertilizedDialogue(true);
+    handleMoreMenuClose();
+  }, []);
+
   const updateStartedFrom = useCallback(
     (value: StartedFromType) => {
       if (value) {
@@ -412,6 +427,13 @@ const ContainerSlotView = ({
     });
     setShowHarvestedDialogue(false);
   }, [id, index, onPlantInstanceChange, plantInstance?.history, transplantedDate, type]);
+
+  const finishUpdateStatusFertilized = useCallback(() => {
+    setShowFertilizedDialogue(false);
+    fertilizePlantInstance(fertilizedDate).finally(() => {
+      setVersion(version + 1);
+    });
+  }, [fertilizePlantInstance, fertilizedDate, version]);
 
   const finishUpdateStatusTransplanted = useCallback(() => {
     if (transplantedToContainerId !== null) {
@@ -529,6 +551,14 @@ const ContainerSlotView = ({
                           <Typography color="primary.main">Harvest</Typography>
                         </MenuItem>
                       ) : null}
+                      {plantedEvent && displayStatus !== 'Transplanted' ? (
+                        <MenuItem onClick={onFertilizeClick}>
+                          <ListItemIcon>
+                            <YardIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary.main">Fertilize</Typography>
+                        </MenuItem>
+                      ) : null}
                       {plantedEvent ? (
                         <MenuItem onClick={onTransplantClick}>
                           <ListItemIcon>
@@ -563,6 +593,18 @@ const ContainerSlotView = ({
                       >
                         <AgricultureIcon sx={{ mr: 1 }} fontSize="small" />
                         Harvest
+                      </Button>
+                    ) : null}
+                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="fertilize"
+                        color="primary"
+                        onClick={onFertilizeClick}
+                        title="Fertilize"
+                      >
+                        <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                        Fertilize
                       </Button>
                     ) : null}
                     {plantedEvent ? (
@@ -731,6 +773,31 @@ const ContainerSlotView = ({
         <DialogActions>
           <Button onClick={() => setShowHarvestedDialogue(false)}>Cancel</Button>
           <Button onClick={finishUpdateStatusHarvested} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showFertilizedDialogue} onClose={() => setShowFertilizedDialogue(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>When did you fertilize?</DialogTitle>
+        <DialogContent>
+          <form name="plant-modal-form" onSubmit={finishUpdateStatusFertilized} noValidate>
+            <Box sx={{ display: 'flex', pt: 2 }}>
+              <MobileDatePicker
+                label="Harvested On"
+                value={fertilizedDate}
+                onChange={(newHarvestedDate: Date | null) =>
+                  newHarvestedDate && setFertilizedDate(setToMidnight(newHarvestedDate))
+                }
+                renderInput={(params) => (
+                  <MuiTextField {...params} className="harvested-dateTimeInput" sx={{ flexGrow: 1 }} />
+                )}
+              />
+            </Box>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowFertilizedDialogue(false)}>Cancel</Button>
+          <Button onClick={finishUpdateStatusFertilized} variant="contained">
             Save
           </Button>
         </DialogActions>

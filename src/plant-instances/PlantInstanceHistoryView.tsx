@@ -14,8 +14,10 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import GrassIcon from '@mui/icons-material/Grass';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import YardIcon from '@mui/icons-material/Yard';
 import {
   ContainerSlotIdentifier,
+  FERTILIZED,
   HARVESTED,
   PLANTED,
   PlantInstance,
@@ -142,6 +144,13 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
                 historyItem.from ? containersById[historyItem.from.containerId] : undefined
               )}`;
             }
+          } else if (historyItem.status === FERTILIZED) {
+            if (historyItem.from) {
+              extra = ` in ${getLocationTitle(
+                historyItem.from,
+                historyItem.from ? containersById[historyItem.from.containerId] : undefined
+              )}`;
+            }
           }
 
           return (
@@ -166,6 +175,11 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
                 {historyItem.status === HARVESTED ? (
                   <TimelineDot key={`history-item-${historyItemIndex}-harvested`} color="info">
                     <AgricultureIcon />
+                  </TimelineDot>
+                ) : null}
+                {historyItem.status === FERTILIZED ? (
+                  <TimelineDot key={`history-item-${historyItemIndex}-fertilized`} color="info">
+                    <YardIcon />
                   </TimelineDot>
                 ) : null}
                 <TimelineConnector />

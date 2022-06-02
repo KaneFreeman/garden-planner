@@ -340,8 +340,9 @@ export function toPlantDTO(dto: Omit<Plant, '_id'> | Plant): Omit<PlantDTO, '_id
 export const PLANTED = 'Planted';
 export const TRANSPLANTED = 'Transplanted';
 export const HARVESTED = 'Harvested';
-export type HistoryStatus = typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED;
-export const STATUSES: HistoryStatus[] = [PLANTED, TRANSPLANTED, HARVESTED];
+export const FERTILIZED = 'Fertilized';
+export type HistoryStatus = typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED | typeof FERTILIZED;
+export const STATUSES: HistoryStatus[] = [PLANTED, TRANSPLANTED, HARVESTED, FERTILIZED];
 
 export interface ContainerFertilizeDTO {
   readonly date: string;
@@ -581,6 +582,8 @@ export function toStatus(rawStatus: string): HistoryStatus {
       return TRANSPLANTED;
     case 'Harvested':
       return HARVESTED;
+    case 'Fertilized':
+      return FERTILIZED;
     default:
       return PLANTED;
   }
@@ -663,4 +666,8 @@ export function toPlantInstanceDTO(
     comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined,
     history: dto.history !== undefined ? dto.history.map(toPlantInstanceHistoryDTO) : undefined
   };
+}
+
+export interface PlantInstanceFertilizeDTO {
+  readonly date: string;
 }

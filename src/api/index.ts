@@ -7,7 +7,8 @@ import {
   PlantType,
   PlantDataDTO,
   ContainerFertilizeDTO,
-  PlantInstanceDTO
+  PlantInstanceDTO,
+  PlantInstanceFertilizeDTO
 } from '../interface';
 
 interface Rest {
@@ -221,6 +222,16 @@ interface Rest {
       params: {
         plantInstanceId: string;
       };
+    };
+    response: PlantInstanceDTO;
+  };
+  'POST:/plant-instance/{plantInstanceId}/fertilize': {
+    method: 'POST';
+    request: {
+      params: {
+        plantInstanceId: string;
+      };
+      body: PlantInstanceFertilizeDTO;
     };
     response: PlantInstanceDTO;
   };

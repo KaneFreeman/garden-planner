@@ -49,7 +49,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const today = useMemo(() => getMidnight().getTime(), []);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
-  const canComplete = useMemo(() => task.type === 'Custom' || task.type === 'Fertilize', [task.type]);
+  const canComplete = useMemo(() => task.type === 'Custom', [task.type]);
   const canDelete = useMemo(() => task.type === 'Custom', [task.type]);
 
   const markTaskAsCompleted = useCallback(() => {
