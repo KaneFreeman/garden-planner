@@ -76,8 +76,6 @@ const Containers = () => {
                   break;
               }
             }
-          } else if (slot.plannedPlantId) {
-            countData.notPlanted += 1;
           }
 
           const subPlantInstanceId = slot.subSlot?.plantInstanceId;
@@ -108,8 +106,6 @@ const Containers = () => {
                   break;
               }
             }
-          } else if (slot.subSlot?.plannedPlantId) {
-            countData.notPlanted += 1;
           }
 
           return countData;

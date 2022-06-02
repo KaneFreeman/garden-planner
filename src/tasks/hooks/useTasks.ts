@@ -11,27 +11,24 @@ import {
   selectTasks,
   selectTasksByContainer,
   selectTasksByContainers,
-  selectTasksByPath,
   selectTasksByPlantInstance,
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
-import { selectPlantInstancesByIds } from '../../store/slices/plant-instances';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
-  const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
 
   const getTasks = useCallback(async () => {
     const response = await fetch(Api.task_Get, {}, options);
 
     if (response) {
-      dispatch(updateTasks({ tasks: response, plantInstancesByIds } ));
+      dispatch(updateTasks(response));
     }
 
     return response;
-  }, [dispatch, fetch, options, plantInstancesByIds]);
+  }, [dispatch, fetch, options]);
 
   return getTasks;
 };
@@ -215,17 +212,6 @@ export function useTasks() {
   return useSortTasks(tasks);
 }
 
-export const useTasksByPath = (
-  path: string | undefined,
-  limit?: number,
-  options?: { reverseSortCompleted: boolean }
-) => {
-  const selector = useMemo(() => selectTasksByPath(path), [path]);
-  const taskDtos = useAppSelector(selector);
-  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
-  return useSortTasks(tasks, limit, options);
-};
-
 export const useTasksByContainer = (
   containerId: string | undefined,
   limit?: number,
@@ -244,7 +230,6 @@ export const useTasksByPlantInstance = (
 ) => {
   const selector = useMemo(() => selectTasksByPlantInstance(plantInstanceId), [plantInstanceId]);
   const taskDtos = useAppSelector(selector);
-  console.log('tasks', taskDtos);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
   return useSortTasks(tasks, limit, options);
 };

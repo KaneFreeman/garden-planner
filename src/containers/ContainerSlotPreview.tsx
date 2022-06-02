@@ -7,11 +7,11 @@ import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
-import { useTasksByPath } from '../tasks/hooks/useTasks';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 
 interface ContainerSlotPreviewProps {
   index: number;
@@ -25,9 +25,8 @@ interface ContainerSlotPreviewProps {
 
 const ContainerSlotPreview = React.memo(
   ({ index, container, slot, plant, subSlot, subPlant, onSlotClick }: ContainerSlotPreviewProps) => {
-    const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
-    const tasks = useTasksByPath(path);
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
+    const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
     const plantStatus = usePlantInstanceStatus(
       plantInstance,
@@ -39,9 +38,8 @@ const ContainerSlotPreview = React.memo(
       plantLocation
     );
 
-    const subPlantPath = useMemo(() => `${path}/sub-slot`, [path]);
-    const subPlantTasks = useTasksByPath(subPlantPath);
     const subPlantInstance = usePlantInstance(subSlot?.plantInstanceId);
+    const subPlantTasks = useTasksByPlantInstance(subPlantInstance?._id);
     const subPlantStatus = usePlantInstanceStatus(
       subPlantInstance,
       {

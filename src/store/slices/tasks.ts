@@ -6,7 +6,6 @@ import { PlantInstanceDTO, TaskDTO } from '../../interface';
 export interface TasksState {
   tasks: TaskDTO[];
   tasksById: Record<string, TaskDTO>;
-  tasksByPath: Record<string, TaskDTO[]>;
   tasksByContainer: Record<string, TaskDTO[]>;
   tasksByPlantInstance: Record<string, TaskDTO[]>;
 }
@@ -15,7 +14,6 @@ export interface TasksState {
 const initialState: TasksState = {
   tasks: [],
   tasksById: {},
-  tasksByPath: {},
   tasksByContainer: {},
   tasksByPlantInstance: {}
 };
@@ -27,30 +25,33 @@ export const TasksSlice = createSlice({
   reducers: {
     updateTasks: (
       state,
-      action: PayloadAction<{ tasks: TaskDTO[]; plantInstancesByIds: Record<string, PlantInstanceDTO> }>
+      action: PayloadAction<TaskDTO[]>
     ) => {
       const tasksById: Record<string, TaskDTO> = {};
-      const tasksByPath: Record<string, TaskDTO[]> = {};
-      const tasksByContainer: Record<string, TaskDTO[]> = {};
       const tasksByPlantInstance: Record<string, TaskDTO[]> = {};
-      action.payload.tasks.forEach((task) => {
-        if (task.path) {
-          if (!(task.path in tasksByPath)) {
-            tasksByPath[task.path] = [];
+      action.payload.forEach((task) => {
+        if (task.plantInstanceId) {
+          if (!(task.plantInstanceId in tasksByPlantInstance)) {
+            tasksByPlantInstance[task.plantInstanceId] = [];
           }
 
-          tasksByPath[task.path].push(task);
+          tasksByPlantInstance[task.plantInstanceId].push(task);
         }
 
+        tasksById[task._id] = task;
+      });
+
+      return { ...state, tasks: action.payload, tasksById, tasksByPlantInstance };
+    },
+    buildTaskLookupByContainer: (
+      state,
+      action: PayloadAction<{ tasks: TaskDTO[]; plantInstancesByIds: Record<string, PlantInstanceDTO> }>
+    ) => {
+      const tasksByContainer: Record<string, TaskDTO[]> = {};
+      action.payload.tasks.forEach((task) => {
         if (task.plantInstanceId) {
           const plantInstance = action.payload.plantInstancesByIds[task.plantInstanceId];
           if (plantInstance) {
-            if (!(plantInstance._id in tasksByPlantInstance)) {
-              tasksByPlantInstance[plantInstance._id] = [];
-            }
-
-            tasksByPlantInstance[plantInstance._id].push(task);
-
             if (plantInstance.containerId) {
               if (!(plantInstance.containerId in tasksByContainer)) {
                 tasksByContainer[plantInstance.containerId] = [];
@@ -60,20 +61,17 @@ export const TasksSlice = createSlice({
             }
           }
         }
-
-        tasksById[task._id] = task;
       });
 
-      return { ...state, tasks: action.payload.tasks, tasksById, tasksByPath, tasksByContainer, tasksByPlantInstance };
+      return { ...state, tasksByContainer };
     }
   }
 });
 
-export const { updateTasks } = TasksSlice.actions;
+export const { updateTasks, buildTaskLookupByContainer } = TasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.tasks;
 export const selectTaskById = (id?: string) => (state: RootState) => id ? state.tasks.tasksById[id] : undefined;
-export const selectTasksByPath = (path?: string) => (state: RootState) => path ? state.tasks.tasksByPath[path] : [];
 export const selectTasksByContainer = (containerId?: string) => (state: RootState) =>
   containerId ? state.tasks.tasksByContainer[containerId] : [];
 export const selectTasksByContainers = (state: RootState) => state.tasks.tasksByContainer;

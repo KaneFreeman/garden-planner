@@ -14,7 +14,7 @@ const ContainerSlotRoute = () => {
   const updateContainer = useUpdateContainer();
 
   const slot = useMemo(
-    () => container?.slots?.[indexNumber] ?? { plannedPlantId: null },
+    () => container?.slots?.[indexNumber] ?? {},
     [container?.slots, indexNumber]
   );
 
@@ -50,7 +50,6 @@ const ContainerSlotRoute = () => {
       container={container}
       slot={slot}
       plantInstance={plantInstance}
-      subSlot={slot.subSlot}
       subPlantInstance={subPlantInstance}
       onSlotChange={handleOnChange}
     />

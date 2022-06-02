@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,9 +14,20 @@ import ContainerSlotRoute from './containers/ContainerSlotRoute';
 import ContainerSubSlotRoute from './containers/ContainerSubSlotRoute';
 import TaskViewRoute from './tasks/TaskViewRoute';
 import ContainerSelectViewRoute from './containers/ContainerSelectViewRoute';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { selectPlantInstancesByIds } from './store/slices/plant-instances';
+import { buildTaskLookupByContainer, selectTasks } from './store/slices/tasks';
 
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
+
+  const dispatch = useAppDispatch();
+  const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
+  const tasks = useAppSelector(selectTasks);
+
+  useEffect(() => {
+    dispatch(buildTaskLookupByContainer({ tasks, plantInstancesByIds }));
+  }, [dispatch, plantInstancesByIds, tasks]);
 
   if (isLoading || error) {
     return (

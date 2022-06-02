@@ -14,7 +14,7 @@ const ContainerSubSlotRoute = () => {
   const updateContainer = useUpdateContainer();
 
   const subSlot = useMemo(
-    () => container?.slots?.[indexNumber]?.subSlot ?? { plannedPlantId: null },
+    () => container?.slots?.[indexNumber]?.subSlot ?? {},
     [container?.slots, indexNumber]
   );
 
@@ -25,7 +25,7 @@ const ContainerSubSlotRoute = () => {
       if (id && container) {
         const newSlots = { ...(container.slots ?? {}) };
 
-        const newSlot = newSlots[indexNumber] !== undefined ? { ...newSlots[indexNumber] } : { plannedPlantId: null };
+        const newSlot = newSlots[indexNumber] !== undefined ? { ...newSlots[indexNumber] } : {};
 
         newSlot.subSlot = newSubSlot;
 

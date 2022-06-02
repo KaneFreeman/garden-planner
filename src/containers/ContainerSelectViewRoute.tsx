@@ -31,7 +31,7 @@ const ContainerSelectViewRoute = () => {
   const [otherSlotIndex, setOtherSlotIndex] = useState<number | null>(null);
 
   const slot = useMemo(
-    () => container?.slots?.[indexNumber] ?? { plannedPlantId: null },
+    () => container?.slots?.[indexNumber] ?? {},
     [container?.slots, indexNumber]
   );
   const plantInstance = usePlantInstance(sourceIsSubSlot ? slot.subSlot?.plantInstanceId : slot?.plantInstanceId);
@@ -56,7 +56,7 @@ const ContainerSelectViewRoute = () => {
       }
 
       const newSlot: Slot = {
-        ...(otherContainer.slots?.[otherSlotIndex] ?? { plannedPlantId: null }),
+        ...(otherContainer.slots?.[otherSlotIndex] ?? {}),
         ...data
       };
 
@@ -115,7 +115,7 @@ const ContainerSelectViewRoute = () => {
       if (subSlot) {
         updateOtherSlot({
           subSlot: {
-            ...(slot.subSlot ?? { plannedPlantId: null }),
+            ...(slot.subSlot ?? {}),
             plantInstanceId: plantInstance._id
           }
         });
