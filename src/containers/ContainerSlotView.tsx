@@ -166,7 +166,6 @@ const ContainerSlotView = ({
 
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
-      console.log('data', data);
       if (!plantInstance) {
         const newPlantInstance: Omit<PlantInstance, '_id'> = {
           ...data,
@@ -192,7 +191,6 @@ const ContainerSlotView = ({
         ...plantInstance,
         ...data
       };
-      console.log('newPlantInstance', newPlantInstance);
 
       updatePlantInstance(newPlantInstance).finally(() => {
         setVersion(version + 1);
@@ -243,7 +241,6 @@ const ContainerSlotView = ({
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
-      console.log(value, plantInstance);
       if (!plantInstance) {
         updateSlot({ plannedPlantId: value?._id ?? null });
       } else {

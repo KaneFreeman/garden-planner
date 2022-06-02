@@ -244,6 +244,7 @@ export const useTasksByPlantInstance = (
 ) => {
   const selector = useMemo(() => selectTasksByPlantInstance(plantInstanceId), [plantInstanceId]);
   const taskDtos = useAppSelector(selector);
+  console.log('tasks', taskDtos);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
   return useSortTasks(tasks, limit, options);
 };
