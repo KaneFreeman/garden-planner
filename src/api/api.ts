@@ -20,6 +20,7 @@ const enum Api {
   plantInstance_Post = 'POST:/plant-instance',
   plantInstance_IdDelete = 'DELETE:/plant-instance/{plantInstanceId}',
   plantInstance_FertilizePost = 'POST:/plant-instance/{plantInstanceId}/fertilize',
+  plantInstance_HarvestPost = 'POST:/plant-instance/{plantInstanceId}/harvest',
 
   container_Get = 'GET:/container',
   container_IdGet = 'GET:/container/{containerId}',

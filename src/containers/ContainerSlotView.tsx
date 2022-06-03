@@ -44,8 +44,7 @@ import {
   PlantInstance,
   PLANTED,
   TRANSPLANTED,
-  STARTED_FROM_TYPE_SEED,
-  HARVESTED
+  STARTED_FROM_TYPE_SEED
 } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Select from '../components/Select';
@@ -57,6 +56,7 @@ import { getMidnight, setToMidnight } from '../utility/date.util';
 import {
   useAddPlantInstance,
   useFertilizePlantInstance,
+  useHarvestPlantInstance,
   useUpdatePlantInstance
 } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -122,6 +122,7 @@ const ContainerSlotView = ({
   const addPlantInstance = useAddPlantInstance();
   const updatePlantInstance = useUpdatePlantInstance();
   const fertilizePlantInstance = useFertilizePlantInstance(plantInstance?._id);
+  const harvestPlantInstance = useHarvestPlantInstance(plantInstance?._id);
 
   const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
   const subPlantTasks = useTasksByPlantInstance(subPlantInstance?._id);
@@ -411,22 +412,11 @@ const ContainerSlotView = ({
   }, [id, index, onPlantInstanceChange, plantedCount, plantedDate, type]);
 
   const finishUpdateStatusHarvested = useCallback(() => {
-    onPlantInstanceChange({
-      history: [
-        ...(plantInstance?.history ?? []),
-        {
-          status: HARVESTED,
-          date: transplantedDate,
-          from: {
-            containerId: id,
-            slotId: index,
-            subSlot: type === 'sub-slot'
-          }
-        }
-      ]
-    });
     setShowHarvestedDialogue(false);
-  }, [id, index, onPlantInstanceChange, plantInstance?.history, transplantedDate, type]);
+    harvestPlantInstance(fertilizedDate).finally(() => {
+      setVersion(version + 1);
+    });
+  }, [harvestPlantInstance, fertilizedDate, version]);
 
   const finishUpdateStatusFertilized = useCallback(() => {
     setShowFertilizedDialogue(false);

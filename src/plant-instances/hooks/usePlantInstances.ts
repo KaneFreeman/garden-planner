@@ -182,7 +182,7 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined) =
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
 
-  const getContainers = useCallback(
+  const fertilizePlantInstance = useCallback(
     async (date: Date) => {
       if (plantInstanceId === undefined) {
         return;
@@ -198,5 +198,28 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined) =
     [plantInstanceId, fetch, runOperation]
   );
 
-  return getContainers;
+  return fertilizePlantInstance;
+};
+
+export const useHarvestPlantInstance = (plantInstanceId: string | undefined) => {
+  const fetch = useFetch();
+  const runOperation = usePlantInstanceOperation();
+
+  const harvestPlantInstance = useCallback(
+    async (date: Date) => {
+      if (plantInstanceId === undefined) {
+        return;
+      }
+
+      await runOperation(() =>
+        fetch(Api.plantInstance_HarvestPost, {
+          params: { plantInstanceId },
+          body: { date: date.toISOString() }
+        })
+      );
+    },
+    [plantInstanceId, fetch, runOperation]
+  );
+
+  return harvestPlantInstance;
 };

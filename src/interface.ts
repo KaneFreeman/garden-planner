@@ -668,6 +668,6 @@ export function toPlantInstanceDTO(
   };
 }
 
-export interface PlantInstanceFertilizeDTO {
+export interface PlantInstanceAddHistoryAndUpdateTaskDTO {
   readonly date: string;
 }
