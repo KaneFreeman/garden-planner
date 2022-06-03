@@ -4,23 +4,24 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import AddIcon from '@mui/icons-material/Add';
-import { Task } from '../../interface';
+import { PlantInstance, Task } from '../../interface';
+import useSmallScreen from '../../utility/smallScreen.util';
 import { getMidnight } from '../../utility/date.util';
-import { useTasksByPath } from '../hooks/useTasks';
+import { useTasksByPlantInstance } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
 import TaskModal from '../TaskModal';
 
 interface ContainerSlotTasksViewProps {
+  plantInstance: PlantInstance | undefined;
   containerId: string | undefined;
   slotId: number;
   slotTitle: string;
   type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
+  const isSmallScreen = useSmallScreen();
 
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
   const openTaskModal = useCallback(() => {
@@ -39,7 +40,7 @@ const ContainerSlotTasksView = ({ containerId, slotId, slotTitle, type }: Contai
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPath(path, -1, {
+  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1, {
     reverseSortCompleted: false
   });
 

@@ -10,7 +10,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -25,12 +24,14 @@ import YardIcon from '@mui/icons-material/Yard';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Container, FERTILIZE, Plant, Slot } from '../interface';
-import { usePlants } from '../plants/usePlants';
+import { usePlantsById } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
+import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
 import { getMidnight, setToMidnight } from '../utility/date.util';
-import ContainerSlotPreview from './ContainerSlotPreview';
+import useSmallScreen from '../utility/smallScreen.util';
 import { useFertilizeContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
+import ContainerSlotPreview from './ContainerSlotPreview';
 import ContainerEditModal from './ContainerEditModal';
 
 interface ContainerViewProperties {
@@ -44,7 +45,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const navigate = useNavigate();
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const [searchParams] = useSearchParams();
   const backLabel = searchParams.get('backLabel');
@@ -74,18 +75,8 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const removeContainer = useRemoveContainer();
   const fertilizeContainer = useFertilizeContainer(container._id);
 
-  const plants = usePlants();
-  const plantsById = useMemo(
-    () =>
-      plants.reduce((plantsLookup, plant) => {
-        const newPlantsLookup = plantsLookup;
-        if (plant._id !== undefined) {
-          newPlantsLookup[plant._id] = plant;
-        }
-        return newPlantsLookup;
-      }, {} as Record<string, Plant>),
-    [plants]
-  );
+  const plantsById = usePlantsById();
+  const plantInstancesById = usePlantInstancesById();
 
   const isPortrait = useMemo(() => orientation === 'portrait', [orientation]);
 
@@ -168,14 +159,18 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
       }
 
       const slot = container.slots?.[finalIndex];
-      const plantId = slot?.plant;
+      const plantInstance = slot?.plantInstanceId ? plantInstancesById[slot?.plantInstanceId] : undefined;
+      const plantId = plantInstance?.plant;
       let plant: Plant | undefined;
       if (plantId !== undefined && plantId !== null) {
         plant = plantsById[plantId];
       }
 
       let subPlant: Plant | undefined;
-      const subPlantId = slot?.subSlot?.plant;
+      const subPlantInstance = slot?.subSlot?.plantInstanceId
+        ? plantInstancesById[slot?.subSlot?.plantInstanceId]
+        : undefined;
+      const subPlantId = subPlantInstance?.plant;
       if (subPlantId !== undefined && subPlantId !== null) {
         subPlant = plantsById[subPlantId];
       }
@@ -193,7 +188,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         />
       );
     });
-  }, [container, isPortrait, onSlotClick, plantsById]);
+  }, [container, isPortrait, onSlotClick, plantInstancesById, plantsById]);
 
   return (
     <>

@@ -1,6 +1,8 @@
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,37 +15,58 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import GrassIcon from '@mui/icons-material/Grass';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import YardIcon from '@mui/icons-material/Yard';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
 import NumberTextField from '../components/NumberTextField';
-import DateInlineField from '../components/inline-fields/DateInlineField';
 import CommentsView from '../components/comments/CommentsView';
-import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import { getSlotTitle } from '../utility/slot.util';
 import {
   PictureData,
   Plant,
   Slot,
   Comment,
-  Status,
-  STATUSES,
   Container,
   BaseSlot,
   STARTED_FROM_TYPES,
-  StartedFromType
+  StartedFromType,
+  PlantInstance,
+  PLANTED,
+  TRANSPLANTED,
+  STARTED_FROM_TYPE_SEED
 } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Select from '../components/Select';
-import ContainerSlotSelectInlineField from '../components/inline-fields/ContainerSlotSelectInlineField';
 import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
-import { useTasksByPath } from '../tasks/hooks/useTasks';
 import Breadcrumbs from '../components/Breadcrumbs';
-import useContainerOptions from './hooks/useContainerOptions';
-import StatusChip from './StatusChip';
+import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
 import { getMidnight, setToMidnight } from '../utility/date.util';
+import {
+  useAddPlantInstance,
+  useFertilizePlantInstance,
+  useHarvestPlantInstance,
+  useUpdatePlantInstance
+} from '../plant-instances/hooks/usePlantInstances';
+import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import useSmallScreen from '../utility/smallScreen.util';
+import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import useContainerOptions from './hooks/useContainerOptions';
+import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
+import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
+import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 
 interface CircleProps {
   backgroundColor: string;
@@ -67,12 +90,28 @@ interface ContainerSlotViewProps {
   type: 'slot' | 'sub-slot';
   container: Container;
   slot: BaseSlot;
-  subSlot?: BaseSlot;
-  onChange: (slot: BaseSlot) => Promise<Container | undefined>;
+  plantInstance: PlantInstance | undefined;
+  subPlantInstance?: PlantInstance;
+  onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
 }
 
-const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange }: ContainerSlotViewProps) => {
+function hasPlant(data: Partial<PlantInstance>): data is Partial<PlantInstance> & { plant: PlantInstance['plant'] } {
+  return data.plant !== undefined;
+}
+
+const ContainerSlotView = ({
+  id,
+  index,
+  type,
+  container,
+  slot,
+  plantInstance,
+  subPlantInstance,
+  onSlotChange
+}: ContainerSlotViewProps) => {
   const navigate = useNavigate();
+
+  const isSmallScreen = useSmallScreen();
 
   const [version, setVersion] = useState(0);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
@@ -80,21 +119,46 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const plants = usePlants();
 
-  const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
-  const subPlantPath = useMemo(() => (path ? `${path}/sub-slot` : undefined), [path]);
-  const subPlantTasks = useTasksByPath(subPlantPath);
+  const addPlantInstance = useAddPlantInstance();
+  const updatePlantInstance = useUpdatePlantInstance();
+  const fertilizePlantInstance = useFertilizePlantInstance(plantInstance?._id);
+  const harvestPlantInstance = useHarvestPlantInstance(plantInstance?._id);
 
-  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(
-    slot.transplantedTo?.containerId ?? null
-  );
+  const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
+  const subPlantTasks = useTasksByPlantInstance(subPlantInstance?._id);
+
+  const slotLocation = useContainerSlotLocation(id, index, type === 'sub-slot');
+
+  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(null);
 
   useEffect(() => {
-    setTransplantedToContainerId(slot.transplantedTo?.containerId ?? null);
+    setTransplantedToContainerId(null);
   }, [slot]);
 
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
   const [plantedCount, setPlantedCount] = useState(1);
   const [plantedDate, setPlantedDate] = useState<Date>(getMidnight());
+
+  const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
+  const [harvestedDate, setHarvestedDate] = useState<Date>(getMidnight());
+
+  const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
+  const [fertilizedDate, setFertilizedDate] = useState<Date>(getMidnight());
+
+  const plantedEvent = useMemo(() => plantInstance?.history?.[0], [plantInstance]);
+
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
 
   const updateSlot = useCallback(
     (data: Partial<Slot>) => {
@@ -104,48 +168,85 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
       };
 
       // eslint-disable-next-line promise/catch-or-return
-      onChange(newSlot).finally(() => {
+      onSlotChange(newSlot).finally(() => {
         setVersion(version + 1);
       });
     },
-    [onChange, slot, version]
+    [onSlotChange, slot, version]
+  );
+
+  const onPlantInstanceChange = useCallback(
+    (data: Partial<PlantInstance>) => {
+      if (!plantInstance) {
+        if (!hasPlant(data)) {
+          return;
+        }
+
+        const newPlantInstance: Omit<PlantInstance, '_id'> = {
+          ...data,
+          containerId: id,
+          slotId: index,
+          subSlot: type === 'sub-slot',
+          created: new Date(),
+          plantedCount: 1,
+          startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED
+        };
+
+        addPlantInstance(newPlantInstance).then((createdPlantInstance) => {
+          setVersion(version + 1);
+          if (createdPlantInstance) {
+            updateSlot({ plantInstanceId: createdPlantInstance._id });
+          }
+        });
+        return;
+      }
+
+      const newPlantInstance: PlantInstance = {
+        ...plantInstance,
+        ...data
+      };
+
+      updatePlantInstance(newPlantInstance).finally(() => {
+        setVersion(version + 1);
+      });
+    },
+    [addPlantInstance, container.startedFrom, id, index, plantInstance, type, updatePlantInstance, updateSlot, version]
   );
 
   const updatePictures = useCallback(
     (pictures: PictureData[]) => {
-      if (id && container) {
-        updateSlot({ pictures });
-      }
+      onPlantInstanceChange({ pictures });
     },
-    [id, container, updateSlot]
+    [onPlantInstanceChange]
   );
 
   const updateComments = useCallback(
     (comments: Comment[], pictures?: PictureData[]) => {
-      if (id && container) {
-        if (pictures) {
-          updateSlot({ comments, pictures });
-          return;
-        }
-        updateSlot({ comments });
+      if (pictures) {
+        onPlantInstanceChange({ comments, pictures });
+        return;
       }
+      onPlantInstanceChange({ comments });
     },
-    [id, container, updateSlot]
+    [onPlantInstanceChange]
   );
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
 
-  const plant = useMemo(() => plants.find((otherPlant) => otherPlant._id === slot.plant), [plants, slot]);
+  const plant = useMemo(
+    () => plants.find((otherPlant) => otherPlant._id === plantInstance?.plant),
+    [plants, plantInstance?.plant]
+  );
   const subPlant = useMemo(
-    () => plants.find((otherPlant) => otherPlant._id === subSlot?.plant),
-    [plants, subSlot?.plant]
+    () => plants.find((otherPlant) => otherPlant._id === subPlantInstance?.plant),
+    [plants, subPlantInstance?.plant]
   );
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
-      updateSlot({ plant: value?._id });
+      onPlantInstanceChange({ plant: value?._id ?? null });
     },
-    [updateSlot]
+    [onPlantInstanceChange]
   );
 
   const onPlantClick = useCallback(
@@ -160,12 +261,12 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
 
   const onSubPlantClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (slot.plant && path) {
+      if ((plantInstance || subPlantInstance) && path) {
         event.stopPropagation();
         navigate(`${path}/sub-slot`);
       }
     },
-    [navigate, path, slot.plant]
+    [navigate, path, plantInstance, subPlantInstance]
   );
 
   const renderPlant = useCallback(
@@ -195,22 +296,25 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
     [onPlantClick]
   );
 
-  const renderStatus = useCallback((value: Status | null | undefined) => {
-    if (!value) {
-      return undefined;
-    }
-
-    return {
-      raw: <StatusChip status={value} size="large" />
-    };
-  }, []);
+  const plantInstanceLocation = usePlantInstanceLocation(plantInstance);
+  const displayStatus = usePlantInstanceStatus(plantInstance, slotLocation, plantInstanceLocation);
+  const renderStatus = useCallback(
+    (status: DisplayStatusChipProps['status']) => <DisplayStatusChip status={status} size="large" />,
+    []
+  );
 
   const renderedSubPlant = useMemo(() => {
-    if (!subSlot) {
-      return 'None';
-    }
-
-    const { raw } = renderStatus(subSlot?.status ?? 'Not Planted') ?? {};
+    const subLocation = getPlantInstanceLocation(subPlantInstance);
+    const subStatus = getPlantInstanceStatus(
+      subPlantInstance,
+      {
+        containerId: id,
+        slotId: index,
+        subSlot: true
+      },
+      subLocation
+    );
+    const subDisplayStatus = renderStatus(subStatus);
 
     const { active, thisWeek, overdue } = subPlantTasks;
 
@@ -235,7 +339,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
                 {subPlant.name}
               </Box>
             </Button>
-            {raw ?? null}
+            {subPlantInstance ? subDisplayStatus : null}
             {badge}
           </>
         ) : (
@@ -243,34 +347,39 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
         )}
       </ListItemButton>
     );
-  }, [subSlot, renderStatus, subPlantTasks, onSubPlantClick, subPlant, onPlantClick]);
+  }, [subPlantInstance, id, index, renderStatus, subPlantTasks, onSubPlantClick, subPlant, onPlantClick]);
 
-  const updateStatus = useCallback(
-    (value: Status) => {
-      if (value) {
-        if (value === 'Planted') {
-          setPlantedDate(slot.plantedDate ?? getMidnight());
-          setShowHowManyPlanted(true);
-          return;
-        }
-        if (value === 'Transplanted') {
-          setTransplantedDate(slot.transplantedDate ?? getMidnight());
-          setShowTransplantedModal(true);
-          return;
-        }
-        updateSlot({ status: value });
-      }
-    },
-    [slot.plantedDate, slot.transplantedDate, updateSlot]
-  );
+  const onPlantedClick = useCallback(() => {
+    setPlantedDate(getMidnight());
+    setShowHowManyPlanted(true);
+    handleMoreMenuClose();
+  }, []);
+
+  const onTransplantClick = useCallback(() => {
+    setTransplantedDate(getMidnight());
+    setShowTransplantedModal(true);
+    handleMoreMenuClose();
+  }, []);
+
+  const onHarvestClick = useCallback(() => {
+    setHarvestedDate(getMidnight());
+    setShowHarvestedDialogue(true);
+    handleMoreMenuClose();
+  }, []);
+
+  const onFertilizeClick = useCallback(() => {
+    setFertilizedDate(getMidnight());
+    setShowFertilizedDialogue(true);
+    handleMoreMenuClose();
+  }, []);
 
   const updateStartedFrom = useCallback(
     (value: StartedFromType) => {
       if (value) {
-        updateSlot({ startedFrom: value });
+        onPlantInstanceChange({ startedFrom: value });
       }
     },
-    [updateSlot]
+    [onPlantInstanceChange]
   );
 
   const renderStartedFrom = useCallback((value: StartedFromType | null | undefined) => {
@@ -284,10 +393,37 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
   }, []);
 
   const finishUpdateStatusPlanted = useCallback(() => {
-    updateSlot({ status: 'Planted', plantedCount, plantedDate });
+    onPlantInstanceChange({
+      history: [
+        {
+          status: PLANTED,
+          date: plantedDate,
+          to: {
+            containerId: id,
+            slotId: index,
+            subSlot: type === 'sub-slot'
+          }
+        }
+      ],
+      plantedCount
+    });
     setShowHowManyPlanted(false);
     setPlantedCount(1);
-  }, [plantedCount, plantedDate, updateSlot]);
+  }, [id, index, onPlantInstanceChange, plantedCount, plantedDate, type]);
+
+  const finishUpdateStatusHarvested = useCallback(() => {
+    setShowHarvestedDialogue(false);
+    harvestPlantInstance(fertilizedDate).finally(() => {
+      setVersion(version + 1);
+    });
+  }, [harvestPlantInstance, fertilizedDate, version]);
+
+  const finishUpdateStatusFertilized = useCallback(() => {
+    setShowFertilizedDialogue(false);
+    fertilizePlantInstance(fertilizedDate).finally(() => {
+      setVersion(version + 1);
+    });
+  }, [fertilizePlantInstance, fertilizedDate, version]);
 
   const finishUpdateStatusTransplanted = useCallback(() => {
     if (transplantedToContainerId !== null) {
@@ -296,16 +432,41 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           container?._id
         }/slot/${index}/transplant/${transplantedToContainerId}?date=${transplantedDate.getTime()}&subSlot=${
           type === 'sub-slot'
-        }&updateStatus=true&backPath=${path}${type === 'sub-slot' ? '/sub-slot' : ''}&backLabel=${
+        }&backPath=${path}${type === 'sub-slot' ? '/sub-slot' : ''}&backLabel=${
           type === 'sub-slot' ? `${title} - Sub Plant` : title
         }`
       );
     } else {
-      updateSlot({ status: 'Transplanted', transplantedDate, transplantedTo: null });
+      onPlantInstanceChange({
+        history: [
+          ...(plantInstance?.history ?? []),
+          {
+            status: TRANSPLANTED,
+            date: transplantedDate,
+            from: {
+              containerId: id,
+              slotId: index,
+              subSlot: type === 'sub-slot'
+            }
+          }
+        ]
+      });
     }
     setShowTransplantedModal(false);
     setTransplantedToContainerId(null);
-  }, [container?._id, index, navigate, path, title, transplantedDate, transplantedToContainerId, type, updateSlot]);
+  }, [
+    container?._id,
+    id,
+    index,
+    navigate,
+    onPlantInstanceChange,
+    path,
+    plantInstance?.history,
+    title,
+    transplantedDate,
+    transplantedToContainerId,
+    type
+  ]);
 
   const onTransplantContainerChange = useCallback(
     (newValue: string | undefined) => {
@@ -340,19 +501,128 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           ]}
         >
           {{
-            current: type === 'sub-slot' ? 'Sub Plant' : title
+            current: type === 'sub-slot' ? 'Sub Plant' : title,
+            actions: (
+              <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                {isSmallScreen ? (
+                  <Box key="small-screen-actions" sx={{ display: 'flex' }}>
+                    <IconButton
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                      aria-expanded={moreMenuOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleMoreMenuClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={moreMenuAnchorElement}
+                      open={moreMenuOpen}
+                      onClose={handleMoreMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
+                      }}
+                    >
+                      {plant && !plantedEvent ? (
+                        <MenuItem onClick={onPlantedClick}>
+                          <ListItemIcon>
+                            <GrassIcon color="success" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="success.main">Plant</Typography>
+                        </MenuItem>
+                      ) : null}
+                      {plantedEvent && displayStatus !== 'Transplanted' ? (
+                        <MenuItem onClick={onHarvestClick}>
+                          <ListItemIcon>
+                            <AgricultureIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary.main">Harvest</Typography>
+                        </MenuItem>
+                      ) : null}
+                      {plantedEvent && displayStatus !== 'Transplanted' ? (
+                        <MenuItem onClick={onFertilizeClick}>
+                          <ListItemIcon>
+                            <YardIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary.main">Fertilize</Typography>
+                        </MenuItem>
+                      ) : null}
+                      {plantedEvent ? (
+                        <MenuItem onClick={onTransplantClick}>
+                          <ListItemIcon>
+                            <MoveDownIcon color="error" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="error.main">Transplant</Typography>
+                        </MenuItem>
+                      ) : null}
+                    </Menu>
+                  </Box>
+                ) : (
+                  <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    {plant && !plantedEvent ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="plant"
+                        color="success"
+                        onClick={onPlantedClick}
+                        title="Plant"
+                      >
+                        <GrassIcon sx={{ mr: 1 }} fontSize="small" />
+                        Plant
+                      </Button>
+                    ) : null}
+                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="harvest"
+                        color="primary"
+                        onClick={onHarvestClick}
+                        title="Harvest"
+                      >
+                        <AgricultureIcon sx={{ mr: 1 }} fontSize="small" />
+                        Harvest
+                      </Button>
+                    ) : null}
+                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="fertilize"
+                        color="primary"
+                        onClick={onFertilizeClick}
+                        title="Fertilize"
+                      >
+                        <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                        Fertilize
+                      </Button>
+                    ) : null}
+                    {plantedEvent ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="transplant"
+                        color="error"
+                        onClick={onTransplantClick}
+                        title="Transplant"
+                      >
+                        <MoveDownIcon sx={{ mr: 1 }} fontSize="small" />
+                        Transplant
+                      </Button>
+                    ) : null}
+                  </Box>
+                )}
+              </Box>
+            )
           }}
         </Breadcrumbs>
-        <DrawerInlineSelect
-          label="Status"
-          value={slot.status}
-          defaultValue="Not Planted"
-          required
-          options={STATUSES}
-          onChange={updateStatus}
-          renderer={renderStatus}
-          sx={{ mt: 1 }}
-        />
+        <Box>
+          <Typography variant="subtitle1" component="div" color="GrayText">
+            Status
+          </Typography>
+          <Typography variant="body1" component="div" sx={{ mt: 1, mb: 1 }}>
+            {renderStatus(displayStatus)}
+          </Typography>
+        </Box>
         <DrawerInlineSelect
           label="Plant"
           value={plant}
@@ -364,7 +634,7 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
         />
         <DrawerInlineSelect
           label="Started From"
-          value={slot.startedFrom}
+          value={plantInstance?.startedFrom}
           defaultValue="Seed"
           required
           options={STARTED_FROM_TYPES}
@@ -372,70 +642,38 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           renderer={renderStartedFrom}
           sx={{ mt: 1 }}
         />
-        {type === 'slot' ? <SimpleInlineField label="Sub Plant" value={renderedSubPlant} /> : null}
-        {slot.status && slot.status !== 'Not Planted' ? (
-          <>
-            <DateInlineField
-              label="Planted Date"
-              value={slot.plantedDate}
-              onChange={(value) => updateSlot({ plantedDate: value })}
-            />
-            <NumberInlineField
-              label="Planted Count"
-              value={slot.plantedCount}
-              onChange={(value) => updateSlot({ plantedCount: value })}
-              wholeNumber
-              min={0}
-            />
-          </>
+        {type === 'slot' && (plantInstance || subPlantInstance) ? (
+          <SimpleInlineField label="Sub Plant" value={renderedSubPlant} />
         ) : null}
-        {slot.status === 'Transplanted' ? (
-          <>
-            <DateInlineField
-              label="Transplanted Date"
-              value={slot.transplantedDate}
-              onChange={(newTransplantedDate) => updateSlot({ transplantedDate: newTransplantedDate })}
-            />
-            <ContainerSlotSelectInlineField
-              label="Transplanted To"
-              value={slot.transplantedTo}
-              containerId={id}
-              slotId={index}
-              isSubSlot={type === 'sub-slot'}
-              onChange={(transplantedTo) => updateSlot({ transplantedTo })}
-            />
-          </>
+        {plantedEvent ? (
+          <NumberInlineField
+            label="Planted Count"
+            value={plantInstance?.plantedCount}
+            onChange={(value) => onPlantInstanceChange({ plantedCount: value })}
+            wholeNumber
+            min={0}
+          />
         ) : null}
-        {slot.status !== 'Not Planted' ? (
-          <>
-            <DateInlineField
-              label="Transplanted From Date"
-              value={slot.transplantedFromDate}
-              onChange={(newTransplantedFromDate) => updateSlot({ transplantedFromDate: newTransplantedFromDate })}
-            />
-            <ContainerSlotSelectInlineField
-              label="Transplanted From"
-              value={slot.transplantedFrom}
-              containerId={id}
-              slotId={index}
-              isSubSlot={type === 'sub-slot'}
-              onChange={(transplantedFrom) => updateSlot({ transplantedFrom })}
-            />
-          </>
-        ) : null}
-        <ContainerSlotTasksView containerId={id} slotId={index} slotTitle={title} type={type} />
+        <ContainerSlotTasksView
+          plantInstance={plantInstance}
+          containerId={id}
+          slotId={index}
+          slotTitle={title}
+          type={type}
+        />
+        <PlantInstanceHistoryView plantInstance={plantInstance} slotLocation={slotLocation} />
         <PicturesView
           key="container-slot-view-pictures"
-          pictures={slot.pictures}
-          comments={slot.comments}
+          pictures={plantInstance?.pictures}
+          comments={plantInstance?.comments}
           alt={title}
           onChange={updatePictures}
         />
         <CommentsView
           id={`container-${id}-slot-${index}`}
-          comments={slot.comments}
+          comments={plantInstance?.comments}
           alt={title}
-          pictures={slot.pictures}
+          pictures={plantInstance?.pictures}
           onChange={updateComments}
         />
       </Box>
@@ -501,6 +739,56 @@ const ContainerSlotView = ({ id, index, type, container, slot, subSlot, onChange
           <Button onClick={() => setShowTransplantedModal(false)}>Cancel</Button>
           <Button onClick={finishUpdateStatusTransplanted} variant="contained">
             Next
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showHarvestedDialogue} onClose={() => setShowHarvestedDialogue(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>When did you harvest?</DialogTitle>
+        <DialogContent>
+          <form name="plant-modal-form" onSubmit={finishUpdateStatusHarvested} noValidate>
+            <Box sx={{ display: 'flex', pt: 2 }}>
+              <MobileDatePicker
+                label="Harvested On"
+                value={harvestedDate}
+                onChange={(newHarvestedDate: Date | null) =>
+                  newHarvestedDate && setHarvestedDate(setToMidnight(newHarvestedDate))
+                }
+                renderInput={(params) => (
+                  <MuiTextField {...params} className="harvested-dateTimeInput" sx={{ flexGrow: 1 }} />
+                )}
+              />
+            </Box>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowHarvestedDialogue(false)}>Cancel</Button>
+          <Button onClick={finishUpdateStatusHarvested} variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showFertilizedDialogue} onClose={() => setShowFertilizedDialogue(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>When did you fertilize?</DialogTitle>
+        <DialogContent>
+          <form name="plant-modal-form" onSubmit={finishUpdateStatusFertilized} noValidate>
+            <Box sx={{ display: 'flex', pt: 2 }}>
+              <MobileDatePicker
+                label="Harvested On"
+                value={fertilizedDate}
+                onChange={(newHarvestedDate: Date | null) =>
+                  newHarvestedDate && setFertilizedDate(setToMidnight(newHarvestedDate))
+                }
+                renderInput={(params) => (
+                  <MuiTextField {...params} className="harvested-dateTimeInput" sx={{ flexGrow: 1 }} />
+                )}
+              />
+            </Box>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowFertilizedDialogue(false)}>Cancel</Button>
+          <Button onClick={finishUpdateStatusFertilized} variant="contained">
+            Save
           </Button>
         </DialogActions>
       </Dialog>

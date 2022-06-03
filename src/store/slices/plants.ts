@@ -36,6 +36,7 @@ export const PlantsSlice = createSlice({
 export const { updatePlants, toggleFilterPlants } = PlantsSlice.actions;
 
 export const selectPlants = (state: RootState) => state.plants.plants;
+export const selectPlantsById = (state: RootState) => state.plants.plantsById;
 export const selectPlant = (plantId: string | undefined) => (state: RootState) =>
   plantId ? state.plants.plantsById[plantId] : undefined;
 export const selectFilterPlants = (state: RootState) => state.plants.filterPlants;

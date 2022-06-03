@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { BaseSlotWithIdentifier, Container, fromPlantDTO, Plant, toPlantDTO, TRANSPLANTED } from '../interface';
+import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectPlant, selectPlants, updatePlants } from '../store/slices/plants';
+import { selectPlant, selectPlants, selectPlantsById, updatePlants } from '../store/slices/plants';
 import { useGetTasks } from '../tasks/hooks/useTasks';
-import { useContainers } from '../containers/hooks/useContainers';
+import { selectPlantInstancesByContainers } from '../store/slices/plant-instances';
+import { isNotNullish } from '../utility/null.util';
+import { mapRecord } from '../utility/record.util';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -139,8 +141,8 @@ export function usePlant(plantId: string | undefined | null) {
 
 export function usePlants(containersToFilter?: Container[]) {
   const getPlants = useGetPlants();
-  const dispatch = useAppDispatch();
   const plantDtos = useAppSelector(selectPlants);
+  const plantInstancesByContainer = useAppSelector(selectPlantInstancesByContainers);
   const plants = useMemo(() => {
     let data = plantDtos.map(fromPlantDTO);
     data.sort((a, b) => a.name.localeCompare(b.name));
@@ -148,19 +150,9 @@ export function usePlants(containersToFilter?: Container[]) {
     if (containersToFilter) {
       const uniquePlantsInContainers = containersToFilter
         .flatMap((container) => {
-          const slots = container.slots ?? {};
-          return Object.keys(slots).flatMap((slotId) => {
-            const slot = slots[+slotId];
-            const plantIds: string[] = [];
-            if (slot.plant) {
-              plantIds.push(slot.plant);
-            }
-
-            if (slot.subSlot?.plant) {
-              plantIds.push(slot.subSlot.plant);
-            }
-            return plantIds;
-          });
+          return (plantInstancesByContainer[container._id]?.map((plantInstance) => plantInstance.plant) ?? []).filter(
+            isNotNullish
+          );
         })
         .filter((value, index, self) => {
           return self.indexOf(value) === index;
@@ -170,50 +162,22 @@ export function usePlants(containersToFilter?: Container[]) {
     }
 
     return data;
-  }, [plantDtos, containersToFilter]);
+  }, [plantDtos, containersToFilter, plantInstancesByContainer]);
 
   useEffect(() => {
     getPlants();
-  }, [dispatch, getPlants]);
+  }, [getPlants]);
 
   return plants;
 }
 
-export const useGetPlantSlots = (plantId: string | undefined) => {
-  const containers = useContainers();
+export function usePlantsById() {
+  const getPlants = useGetPlants();
+  const plantsById = useAppSelector(selectPlantsById);
 
-  return useMemo(() => {
-    if (plantId === undefined) {
-      return [];
-    }
+  useEffect(() => {
+    getPlants();
+  }, [getPlants]);
 
-    return containers
-      .filter((container) => !container.archived)
-      .flatMap((container) => {
-        const slots = container.slots ?? {};
-        return Object.keys(slots).reduce((slotsWithIdentifer, slotIndex) => {
-          const slot = slots[+slotIndex];
-
-          if (slot?.plant === plantId && slot.status !== TRANSPLANTED) {
-            slotsWithIdentifer.push({
-              ...slot,
-              containerId: container._id,
-              slotId: +slotIndex,
-              subSlot: false
-            });
-          }
-
-          if (slot?.subSlot?.plant === plantId && slot.subSlot.status !== TRANSPLANTED) {
-            slotsWithIdentifer.push({
-              ...slot.subSlot,
-              containerId: container._id,
-              slotId: +slotIndex,
-              subSlot: true
-            });
-          }
-
-          return slotsWithIdentifer;
-        }, [] as BaseSlotWithIdentifier[]);
-      });
-  }, [plantId, containers]);
-};
+  return useMemo(() => mapRecord(plantsById, fromPlantDTO), [plantsById]);
+}

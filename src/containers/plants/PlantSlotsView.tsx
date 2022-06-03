@@ -3,9 +3,9 @@ import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { BaseSlotWithIdentifier } from '../../interface';
-import { useGetPlantSlots } from '../../plants/usePlants';
+import { PlantInstance } from '../../interface';
+import useSmallScreen from '../../utility/smallScreen.util';
+import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
 import SlotListItem from '../SlotListItem';
 
 interface PlantSlotsViewProps {
@@ -13,12 +13,12 @@ interface PlantSlotsViewProps {
 }
 
 const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
-  const plantSlots = useGetPlantSlots(plantId);
+  const plantInstances = usePlantInstancesByPlant(plantId);
 
-  const renderTask = useCallback((key: string, slot: BaseSlotWithIdentifier, index: number) => {
-    return <SlotListItem key={`${key}-${index}`} slot={slot} />;
+  const renderPlantSlot = useCallback((key: string, instance: PlantInstance, index: number) => {
+    return <SlotListItem key={`${key}-${index}`} instance={instance} />;
   }, []);
 
   return (
@@ -39,13 +39,15 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         Active Slots
       </Typography>
       <Box sx={{ width: '100%' }}>
-        {plantSlots.length === 0 ? (
+        {plantInstances.length === 0 ? (
           <Alert severity="info" sx={{ m: 2 }}>
             No active slots at this time!
           </Alert>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <List>{plantSlots.map((slot, index) => renderTask('active-slots', slot, index))}</List>
+            <List>
+              {plantInstances.map((plantInstance, index) => renderPlantSlot('active-instances', plantInstance, index))}
+            </List>
           </Box>
         )}
       </Box>

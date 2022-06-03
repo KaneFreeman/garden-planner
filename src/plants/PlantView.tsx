@@ -9,7 +9,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PicturesView from '../pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
@@ -20,6 +19,7 @@ import { Plant, Comment, PictureData, PlantType, PLANT_TYPES } from '../interfac
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
 import PlantSlotsView from '../containers/plants/PlantSlotsView';
+import useSmallScreen from '../utility/smallScreen.util';
 import PlantDataView from './PlantDataView';
 import { useRemovePlant, usePlant, useUpdatePlant } from './usePlants';
 
@@ -27,7 +27,7 @@ const PlantView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const plant = usePlant(id);
   const updatePlant = useUpdatePlant();

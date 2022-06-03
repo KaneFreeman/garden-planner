@@ -6,39 +6,35 @@ import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { BaseSlot, Slot, TRANSPLANTED } from '../interface';
+import { Slot, TRANSPLANTED } from '../interface';
 import Loading from '../components/Loading';
-import { useContainer, useUpdateContainer } from './hooks/useContainers';
-import ContainerView from './ContainerView';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlant } from '../plants/usePlants';
+import { usePlantInstance, useUpdatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
+import { useContainer, useUpdateContainer } from './hooks/useContainers';
+import ContainerView from './ContainerView';
 
 const ContainerSelectViewRoute = () => {
-  const { id, index, otherContainerId } = useParams();
+  const { id: containerId, index, otherContainerId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const date = searchParams.get('date');
   const sourceIsSubSlot = (searchParams.get('subSlot') ?? 'false') === 'true';
-  const updateStatus = (searchParams.get('updateStatus') ?? 'false') === 'true';
 
-  const container = useContainer(id);
+  const container = useContainer(containerId);
   const otherContainer = useContainer(otherContainerId);
   const updateContainer = useUpdateContainer();
+  const updatePlantInstance = useUpdatePlantInstance();
 
   const indexNumber = +(index ?? '-1');
 
   const [otherSlotIndex, setOtherSlotIndex] = useState<number | null>(null);
 
   const slot = useMemo(
-    () =>
-      container?.slots?.[indexNumber] ??
-      ({
-        transplantedFrom: null,
-        transplantedTo: null,
-        startedFrom: container?.startedFrom
-      } as Slot),
-    [container?.slots, container?.startedFrom, indexNumber]
+    () => container?.slots?.[indexNumber] ?? {},
+    [container?.slots, indexNumber]
   );
+  const plantInstance = usePlantInstance(sourceIsSubSlot ? slot.subSlot?.plantInstanceId : slot?.plantInstanceId);
 
   const onSlotClick = useCallback(
     (_: Slot | undefined, otherIndex: number) => {
@@ -53,85 +49,93 @@ const ContainerSelectViewRoute = () => {
     setOtherSlotIndex(null);
   }, []);
 
-  const updateSlot = useCallback(
+  const updateOtherSlot = useCallback(
     (data: Partial<Slot>) => {
-      if (!container || !id || !index || indexNumber < 0) {
+      if (!otherContainer || !otherContainerId || !otherSlotIndex || otherSlotIndex < 0) {
         return;
       }
 
       const newSlot: Slot = {
-        ...slot,
+        ...(otherContainer.slots?.[otherSlotIndex] ?? {}),
         ...data
       };
 
-      const newSlots = { ...(container.slots ?? {}) };
-      newSlots[indexNumber] = newSlot;
+      const newSlots = { ...(otherContainer.slots ?? {}) };
+      newSlots[otherSlotIndex] = newSlot;
 
       // eslint-disable-next-line promise/catch-or-return
       updateContainer({
-        ...container,
+        ...otherContainer,
         slots: newSlots
       }).finally(() => {
-        navigate(`/container/${id}/slot/${index}${sourceIsSubSlot ? `/sub-slot` : ''}`);
+        navigate(`/container/${containerId}/slot/${index}${sourceIsSubSlot ? `/sub-slot` : ''}`);
       });
     },
-    [container, id, index, indexNumber, navigate, slot, sourceIsSubSlot, updateContainer]
+    [containerId, index, navigate, otherContainer, otherContainerId, otherSlotIndex, sourceIsSubSlot, updateContainer]
   );
 
   const onSlotSelectConfirm = useCallback(
     (subSlot: boolean) => () => {
       setOtherSlotIndex(null);
 
-      if (!otherContainerId || otherSlotIndex == null) {
+      if (!containerId || !plantInstance || !otherContainerId || otherSlotIndex == null) {
         return;
       }
 
-      const extra: Partial<BaseSlot> = {};
+      let transplantedDate: Date | undefined;
       if (date) {
-        extra.transplantedDate = new Date(+date);
+        transplantedDate = new Date(+date);
       }
 
-      if (updateStatus) {
-        extra.status = TRANSPLANTED;
+      if (!transplantedDate) {
+        return;
       }
 
-      if (sourceIsSubSlot) {
-        updateSlot({
-          subSlot: {
-            ...(slot.subSlot ??
-              ({
-                transplantedFrom: null,
-                transplantedTo: null,
-                startedFrom: container?.startedFrom
-              } as BaseSlot)),
-            ...extra,
-            transplantedTo: {
+      updatePlantInstance({
+        ...plantInstance,
+        history: [
+          ...(plantInstance.history ?? []),
+          {
+            from: {
+              containerId,
+              slotId: indexNumber,
+              subSlot: sourceIsSubSlot
+            },
+            to: {
               containerId: otherContainerId,
               slotId: otherSlotIndex,
               subSlot
-            }
+            },
+            date: transplantedDate,
+            status: TRANSPLANTED
+          }
+        ]
+      });
+
+      if (subSlot) {
+        updateOtherSlot({
+          subSlot: {
+            ...(slot.subSlot ?? {}),
+            plantInstanceId: plantInstance._id
           }
         });
       } else {
-        updateSlot({
-          ...extra,
-          transplantedTo: {
-            containerId: otherContainerId,
-            slotId: otherSlotIndex,
-            subSlot
-          }
+        updateOtherSlot({
+          plantInstanceId: plantInstance._id
         });
       }
     },
     [
+      containerId,
+      plantInstance,
       otherContainerId,
       otherSlotIndex,
       date,
-      updateStatus,
+      updatePlantInstance,
+      indexNumber,
       sourceIsSubSlot,
-      updateSlot,
-      slot.subSlot,
-      container?.startedFrom
+      updateOtherSlot,
+      slot.subSlot
     ]
   );
 
@@ -139,10 +143,13 @@ const ContainerSelectViewRoute = () => {
     () => (otherSlotIndex != null ? otherContainer?.slots?.[otherSlotIndex] : undefined),
     [otherContainer?.slots, otherSlotIndex]
   );
-  const plant = usePlant(otherSlot?.plant);
-  const subPlant = usePlant(otherSlot?.subSlot?.plant);
+  const otherPlantInstance = usePlantInstance(otherSlot?.plantInstanceId);
+  const otherSubPlantInstance = usePlantInstance(otherSlot?.subSlot?.plantInstanceId);
 
-  if (!container || !otherContainer || container._id !== id) {
+  const plant = usePlant(otherPlantInstance?.plant);
+  const subPlant = usePlant(otherSubPlantInstance?.plant);
+
+  if (!container || !otherContainer || container._id !== containerId) {
     return <Loading key="container-view-loading" />;
   }
 
@@ -161,11 +168,23 @@ const ContainerSelectViewRoute = () => {
           <DialogContent>
             <List>
               <ListItemButton onClick={onSlotSelectConfirm(false)}>
-                <PlantAvatar plant={plant} slot={otherSlot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <PlantAvatar
+                  plant={plant}
+                  plantInstance={otherPlantInstance}
+                  variant="circular"
+                  size={28}
+                  sx={{ mr: 1.5 }}
+                />
                 <ListItemText secondary="Slot" primary={plant?.name ?? 'Empty'} />
               </ListItemButton>
               <ListItemButton onClick={onSlotSelectConfirm(true)}>
-                <PlantAvatar plant={subPlant} slot={otherSlot} variant="circular" size={28} sx={{ mr: 1.5 }} />
+                <PlantAvatar
+                  plant={subPlant}
+                  plantInstance={otherSubPlantInstance}
+                  variant="circular"
+                  size={28}
+                  sx={{ mr: 1.5 }}
+                />
                 <ListItemText secondary="Sub Slot" primary={subPlant?.name ?? 'Empty'} />
               </ListItemButton>
             </List>

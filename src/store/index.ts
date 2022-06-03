@@ -5,6 +5,7 @@ import tasksReducer from './slices/tasks';
 import plantsReducer from './slices/plants';
 import containersReducer from './slices/containers';
 import picturesReducer from './slices/pictures';
+import plantInstancesReducer from './slices/plant-instances';
 import loggerMiddleware from '../middleware/logger';
 import monitorReducersEnhancer from '../middleware/monitorReducer';
 
@@ -14,7 +15,8 @@ export const store = configureStore({
     tasks: tasksReducer,
     plants: plantsReducer,
     containers: containersReducer,
-    pictures: picturesReducer
+    pictures: picturesReducer,
+    plantInstances: plantInstancesReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware).concat(loggerMiddleware),
   enhancers: [monitorReducersEnhancer]

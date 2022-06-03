@@ -1,14 +1,17 @@
 import React, { useMemo } from 'react';
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
 import { BaseSlot, Container, Plant, Slot } from '../interface';
-import { getSlotTitle, useStatusColor } from '../utility/slot.util';
-import { useTasksByPath } from '../tasks/hooks/useTasks';
+import { getSlotTitle } from '../utility/slot.util';
+import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
+import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 
 interface ContainerSlotPreviewProps {
   index: number;
@@ -22,60 +25,97 @@ interface ContainerSlotPreviewProps {
 
 const ContainerSlotPreview = React.memo(
   ({ index, container, slot, plant, subSlot, subPlant, onSlotClick }: ContainerSlotPreviewProps) => {
-    const path = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
-    const tasks = useTasksByPath(path);
+    const plantInstance = usePlantInstance(slot?.plantInstanceId);
+    const tasks = useTasksByPlantInstance(plantInstance?._id);
+    const plantLocation = usePlantInstanceLocation(plantInstance);
+    const plantStatus = usePlantInstanceStatus(
+      plantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: false
+      },
+      plantLocation
+    );
 
-    const subPlantPath = useMemo(() => `${path}/sub-slot`, [path]);
-    const subPlantTasks = useTasksByPath(subPlantPath);
+    const subPlantInstance = usePlantInstance(subSlot?.plantInstanceId);
+    const subPlantTasks = useTasksByPlantInstance(subPlantInstance?._id);
+    const subPlantStatus = usePlantInstanceStatus(
+      subPlantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: true
+      },
+      plantLocation
+    );
 
     const { badgeColor, badgeCount } = useSlotPreviewBadgeColor(tasks);
-    const borderColor = useStatusColor(slot, plant);
+    const borderColor = usePlantInstanceStatusColor(
+      plantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: false
+      },
+      plantLocation,
+      plant
+    );
 
     const { badgeColor: subPlantBadgeColor, badgeCount: subPlantBadgeCount } = useSlotPreviewBadgeColor(subPlantTasks);
-    const subPlantBorderColor = useStatusColor(subSlot, subPlant, '#2c2c2c', '#1f1f1f');
+    const subPlantBorderColor = usePlantInstanceStatusColor(
+      subPlantInstance,
+      {
+        containerId: container._id,
+        slotId: index,
+        subSlot: true
+      },
+      plantLocation,
+      subPlant,
+      '#2c2c2c',
+      '#1f1f1f'
+    );
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;
-      if (!slot || slot.status === 'Not Planted') {
-        return `${slotTitle} - Not Planted`;
-      }
-
-      if (plant) {
+      if (!slot || plantStatus === 'Not Planted') {
+        slotTitle += ` - Not Planted`;
+      } else if (plant) {
         slotTitle += ` - ${plant.name}`;
 
-        if (slot.status === 'Planted') {
+        if (plantStatus === 'Planted') {
           slotTitle += `, Planted`;
-          if (slot.plantedDate) {
-            slotTitle += ` on ${format(slot.plantedDate, 'MMM d, yyyy')}`;
-          }
-        } else if (slot.status === 'Transplanted') {
+          // TODO if (slot.plantedDate) {
+          //   slotTitle += ` on ${format(slot.plantedDate, 'MMM d, yyyy')}`;
+          // }
+        } else if (plantStatus === 'Transplanted') {
           slotTitle += `, Transplanted`;
-          if (slot.transplantedDate) {
-            slotTitle += ` on ${format(slot.transplantedDate, 'MMM d, yyyy')}`;
-          }
+          // TODO if (slot.transplantedDate) {
+          //   slotTitle += ` on ${format(slot.transplantedDate, 'MMM d, yyyy')}`;
+          // }
         }
       }
 
-      if (slot.subSlot) {
+      if (slot?.subSlot) {
         if (subPlant) {
           slotTitle += ` and ${subPlant.name}`;
 
-          if (slot.subSlot.status === 'Planted') {
+          if (subPlantStatus === 'Planted') {
             slotTitle += `, Planted`;
-            if (slot.subSlot.plantedDate) {
-              slotTitle += ` on ${format(slot.subSlot.plantedDate, 'MMM d, yyyy')}`;
-            }
-          } else if (slot.subSlot.status === 'Transplanted') {
+            // TODO if (slot.subSlot.plantedDate) {
+            //   slotTitle += ` on ${format(slot.subSlot.plantedDate, 'MMM d, yyyy')}`;
+            // }
+          } else if (subPlantStatus === 'Transplanted') {
             slotTitle += `, Transplanted`;
-            if (slot.subSlot.transplantedDate) {
-              slotTitle += ` on ${format(slot.subSlot.transplantedDate, 'MMM d, yyyy')}`;
-            }
+            // TODO if (slot.subSlot.transplantedDate) {
+            //   slotTitle += ` on ${format(slot.subSlot.transplantedDate, 'MMM d, yyyy')}`;
+            // }
           }
         }
       }
 
       return slotTitle;
-    }, [container.rows, index, plant, slot, subPlant]);
+    }, [container.rows, index, plant, plantStatus, slot, subPlant, subPlantStatus]);
 
     return (
       <IconButton
@@ -113,7 +153,7 @@ const ContainerSlotPreview = React.memo(
             plant={plant}
             size={76}
             variant="square"
-            faded={slot?.status === 'Transplanted'}
+            faded={plantStatus === 'Transplanted'}
           />
         ) : (
           <GrassIcon key="plant-icon" color="disabled" />
@@ -158,7 +198,7 @@ const ContainerSlotPreview = React.memo(
                 </Badge>
               </Box>
             ) : null}
-            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subSlot.status === 'Transplanted'} />
+            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subPlantStatus === 'Transplanted'} />
           </Box>
         ) : null}
       </IconButton>

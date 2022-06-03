@@ -13,9 +13,9 @@ import Select from '../Select';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
 import { selectContainer } from '../../store/slices/containers';
-import { getSlotTitle } from '../../utility/slot.util';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
 import { isNullish } from '../../utility/null.util';
+import { useLocationTitle } from '../../utility/containerSlotLocation.util';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;
@@ -83,6 +83,8 @@ const ContainerSlotSelectInlineField = ({
 
   const containerOptions = useContainerOptions();
 
+  const title = useLocationTitle(value, transplantContainer);
+
   return (
     <>
       <Box onClick={open ? undefined : handleOpen}>
@@ -98,10 +100,7 @@ const ContainerSlotSelectInlineField = ({
           <ListItem button key="container-slot-select-display" onClick={open ? undefined : handleOpen}>
             {transplantContainer && value ? (
               <Button variant="text" onClick={onClick} sx={{ ml: -1 }}>
-                <Box component="span">
-                  {transplantContainer.name} - {getSlotTitle(value.slotId, transplantContainer.rows)}
-                  {value.subSlot === true ? ' - Sub Slot' : ''}
-                </Box>
+                <Box component="span">{title}</Box>
               </Button>
             ) : (
               'N/A'

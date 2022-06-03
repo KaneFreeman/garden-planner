@@ -11,7 +11,7 @@ import {
   selectTasks,
   selectTasksByContainer,
   selectTasksByContainers,
-  selectTasksByPath,
+  selectTasksByPlantInstance,
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
@@ -212,23 +212,23 @@ export function useTasks() {
   return useSortTasks(tasks);
 }
 
-export const useTasksByPath = (
-  path: string | undefined,
-  limit?: number,
-  options?: { reverseSortCompleted: boolean }
-) => {
-  const selector = useMemo(() => selectTasksByPath(path), [path]);
-  const taskDtos = useAppSelector(selector);
-  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
-  return useSortTasks(tasks, limit, options);
-};
-
 export const useTasksByContainer = (
   containerId: string | undefined,
   limit?: number,
   options?: { reverseSortCompleted: boolean }
 ) => {
   const selector = useMemo(() => selectTasksByContainer(containerId), [containerId]);
+  const taskDtos = useAppSelector(selector);
+  const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
+  return useSortTasks(tasks, limit, options);
+};
+
+export const useTasksByPlantInstance = (
+  plantInstanceId: string | undefined,
+  limit?: number,
+  options?: { reverseSortCompleted: boolean }
+) => {
+  const selector = useMemo(() => selectTasksByPlantInstance(plantInstanceId), [plantInstanceId]);
   const taskDtos = useAppSelector(selector);
   const tasks = useMemo(() => taskDtos?.map(fromTaskDTO) ?? [], [taskDtos]);
   return useSortTasks(tasks, limit, options);

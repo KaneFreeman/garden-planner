@@ -4,10 +4,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
 import { PictureData, Comment } from '../../interface';
+import useSmallScreen from '../../utility/smallScreen.util';
 import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 
@@ -20,7 +20,7 @@ interface CommentsViewProps {
 }
 
 const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewProps) => {
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useSmallScreen();
 
   const [showCommentBox, setShowCommentBox] = useState(false);
 

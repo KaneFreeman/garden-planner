@@ -2,27 +2,28 @@
 import { useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
-import { Status } from '../interface';
 
 const StyledChip = styled(Chip)({
   height: 24,
   fontSize: 12
 });
 
-interface StatusChipProps {
-  status: Status;
+export interface DisplayStatusChipProps {
+  status: 'Not Planted' | 'Planted' | 'Transplanted' | 'Done';
   count?: number;
   shrink?: boolean;
   size?: 'small' | 'large';
 }
 
-const StatusChip = ({ status, count, shrink, size = 'small' }: StatusChipProps) => {
-  const color: 'default' | 'success' | 'error' = useMemo(() => {
+const DisplayStatusChip = ({ status, count, shrink, size = 'small' }: DisplayStatusChipProps) => {
+  const color: 'default' | 'success' | 'error' | 'info' = useMemo(() => {
     switch (status) {
       case 'Planted':
         return 'success';
       case 'Transplanted':
         return 'error';
+      case 'Done':
+        return 'info';
       default:
         return 'default';
     }
@@ -48,4 +49,4 @@ const StatusChip = ({ status, count, shrink, size = 'small' }: StatusChipProps) 
   return <Chip label={label} color={color} title={title} />;
 };
 
-export default StatusChip;
+export default DisplayStatusChip;
