@@ -56,9 +56,23 @@ export const useAddPlantInstance = () => {
 
   const addPlantInstance = useCallback(
     async (data: Omit<PlantInstance, '_id'>) => {
+      const lastHistoryEvent =
+        data.history && data.history.length > 0 ? data.history[data.history.length - 1] : undefined;
+      const location = lastHistoryEvent?.to;
+
+      let newData = data;
+      if (location) {
+        newData = {
+          ...data,
+          containerId: location?.containerId,
+          slotId: location?.slotId,
+          subSlot: location?.subSlot
+        };
+      }
+
       const response = await runOperation(() =>
         fetch(Api.plantInstance_Post, {
-          body: toPlantInstanceDTO(data)
+          body: toPlantInstanceDTO(newData)
         })
       );
 

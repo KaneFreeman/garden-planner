@@ -6,13 +6,21 @@ import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { Slot, TRANSPLANTED } from '../interface';
+import { PlantInstance, Slot, TRANSPLANTED } from '../interface';
 import Loading from '../components/Loading';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlant } from '../plants/usePlants';
-import { usePlantInstance, useUpdatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
-import { useContainer, useUpdateContainer } from './hooks/useContainers';
+import {
+  useAddPlantInstance,
+  usePlantInstance,
+  useUpdatePlantInstance
+} from '../plant-instances/hooks/usePlantInstances';
+import { useContainer } from './hooks/useContainers';
 import ContainerView from './ContainerView';
+import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
+import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import { findHistoryFromIndex } from '../utility/history.util';
 
 const ContainerSelectViewRoute = () => {
   const { id: containerId, index, otherContainerId } = useParams();
@@ -23,17 +31,14 @@ const ContainerSelectViewRoute = () => {
 
   const container = useContainer(containerId);
   const otherContainer = useContainer(otherContainerId);
-  const updateContainer = useUpdateContainer();
+  const addPlantInstance = useAddPlantInstance();
   const updatePlantInstance = useUpdatePlantInstance();
 
   const indexNumber = +(index ?? '-1');
 
   const [otherSlotIndex, setOtherSlotIndex] = useState<number | null>(null);
 
-  const slot = useMemo(
-    () => container?.slots?.[indexNumber] ?? {},
-    [container?.slots, indexNumber]
-  );
+  const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
   const plantInstance = usePlantInstance(sourceIsSubSlot ? slot.subSlot?.plantInstanceId : slot?.plantInstanceId);
 
   const onSlotClick = useCallback(
@@ -49,33 +54,12 @@ const ContainerSelectViewRoute = () => {
     setOtherSlotIndex(null);
   }, []);
 
-  const updateOtherSlot = useCallback(
-    (data: Partial<Slot>) => {
-      if (!otherContainer || !otherContainerId || !otherSlotIndex || otherSlotIndex < 0) {
-        return;
-      }
-
-      const newSlot: Slot = {
-        ...(otherContainer.slots?.[otherSlotIndex] ?? {}),
-        ...data
-      };
-
-      const newSlots = { ...(otherContainer.slots ?? {}) };
-      newSlots[otherSlotIndex] = newSlot;
-
-      // eslint-disable-next-line promise/catch-or-return
-      updateContainer({
-        ...otherContainer,
-        slots: newSlots
-      }).finally(() => {
-        navigate(`/container/${containerId}/slot/${index}${sourceIsSubSlot ? `/sub-slot` : ''}`);
-      });
-    },
-    [containerId, index, navigate, otherContainer, otherContainerId, otherSlotIndex, sourceIsSubSlot, updateContainer]
-  );
+  const slotLocation = useContainerSlotLocation(containerId, indexNumber, sourceIsSubSlot);
+  const plantInstanceLocation = usePlantInstanceLocation(plantInstance);
+  const displayStatus = usePlantInstanceStatus(plantInstance, slotLocation, plantInstanceLocation);
 
   const onSlotSelectConfirm = useCallback(
-    (subSlot: boolean) => () => {
+    (subSlot: boolean) => async () => {
       setOtherSlotIndex(null);
 
       if (!containerId || !plantInstance || !otherContainerId || otherSlotIndex == null) {
@@ -91,39 +75,70 @@ const ContainerSelectViewRoute = () => {
         return;
       }
 
-      updatePlantInstance({
-        ...plantInstance,
-        history: [
-          ...(plantInstance.history ?? []),
-          {
-            from: {
-              containerId,
-              slotId: indexNumber,
-              subSlot: sourceIsSubSlot
-            },
-            to: {
-              containerId: otherContainerId,
-              slotId: otherSlotIndex,
-              subSlot
-            },
-            date: transplantedDate,
-            status: TRANSPLANTED
-          }
-        ]
-      });
+      let promise: Promise<PlantInstance | undefined>;
 
-      if (subSlot) {
-        updateOtherSlot({
-          subSlot: {
-            ...(slot.subSlot ?? {}),
-            plantInstanceId: plantInstance._id
-          }
+      if (displayStatus === TRANSPLANTED) {
+        const historyIndex = findHistoryFromIndex(
+          plantInstance,
+          {
+            containerId,
+            slotId: indexNumber,
+            subSlot: sourceIsSubSlot
+          },
+          TRANSPLANTED
+        );
+
+        let history = [...(plantInstance.history ?? [])];
+        if (historyIndex) {
+          history = history.slice(0, historyIndex);
+        }
+
+        promise = addPlantInstance({
+          ...plantInstance,
+          history: [
+            ...history,
+            {
+              from: {
+                containerId,
+                slotId: indexNumber,
+                subSlot: sourceIsSubSlot
+              },
+              to: {
+                containerId: otherContainerId,
+                slotId: otherSlotIndex,
+                subSlot
+              },
+              date: transplantedDate,
+              status: TRANSPLANTED
+            }
+          ]
         });
       } else {
-        updateOtherSlot({
-          plantInstanceId: plantInstance._id
+        promise = updatePlantInstance({
+          ...plantInstance,
+          history: [
+            ...(plantInstance.history ?? []),
+            {
+              from: {
+                containerId,
+                slotId: indexNumber,
+                subSlot: sourceIsSubSlot
+              },
+              to: {
+                containerId: otherContainerId,
+                slotId: otherSlotIndex,
+                subSlot
+              },
+              date: transplantedDate,
+              status: TRANSPLANTED
+            }
+          ]
         });
       }
+
+      await promise.finally(() => {
+        navigate(`/container/${otherContainerId}/slot/${otherSlotIndex}${subSlot ? `/sub-slot` : ''}`);
+      });
     },
     [
       containerId,
@@ -131,11 +146,12 @@ const ContainerSelectViewRoute = () => {
       otherContainerId,
       otherSlotIndex,
       date,
-      updatePlantInstance,
+      displayStatus,
       indexNumber,
       sourceIsSubSlot,
-      updateOtherSlot,
-      slot.subSlot
+      addPlantInstance,
+      updatePlantInstance,
+      navigate
     ]
   );
 

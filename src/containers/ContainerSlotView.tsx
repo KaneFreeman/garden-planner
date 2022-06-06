@@ -443,7 +443,7 @@ const ContainerSlotView = ({
           type === 'sub-slot' ? `${title} - Sub Plant` : title
         }`
       );
-    } else {
+    } else if (displayStatus !== TRANSPLANTED) {
       onPlantInstanceChange({
         history: [
           ...(plantInstance?.history ?? []),
@@ -463,6 +463,7 @@ const ContainerSlotView = ({
     setTransplantedToContainerId(null);
   }, [
     container?._id,
+    displayStatus,
     id,
     index,
     navigate,

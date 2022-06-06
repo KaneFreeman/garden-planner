@@ -29,8 +29,10 @@ const SlotListItem = ({ instance, style }: SlotListItemProps) => {
 
   const container = useContainer(instance.containerId);
   const title = useMemo(() => {
-    return `${getSlotTitle(instance.slotId, container?.rows)}${instance.subSlot ? ' - Sub-Slot' : ''}`;
-  }, [container?.rows, instance]);
+    return `${Object.keys(container?.slots ?? {}).length > 1 ? getSlotTitle(instance.slotId, container?.rows) : ''}${
+      instance.subSlot ? ' - Sub-Slot' : ''
+    }`;
+  }, [container?.rows, container?.slots, instance.slotId, instance.subSlot]);
 
   return (
     <ListItem style={style} className="slot" disablePadding>
