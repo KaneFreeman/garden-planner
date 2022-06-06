@@ -93,6 +93,8 @@ const ContainerSlotPreview = React.memo(
           // TODO if (slot.transplantedDate) {
           //   slotTitle += ` on ${format(slot.transplantedDate, 'MMM d, yyyy')}`;
           // }
+        } else if (plantStatus === 'Closed') {
+          slotTitle += `, Closed`;
         }
       }
 
@@ -110,6 +112,8 @@ const ContainerSlotPreview = React.memo(
             // TODO if (slot.subSlot.transplantedDate) {
             //   slotTitle += ` on ${format(slot.subSlot.transplantedDate, 'MMM d, yyyy')}`;
             // }
+          } else if (subPlantStatus === 'Closed') {
+            slotTitle += `, Closed`;
           }
         }
       }
@@ -153,7 +157,7 @@ const ContainerSlotPreview = React.memo(
             plant={plant}
             size={76}
             variant="square"
-            faded={plantStatus === 'Transplanted'}
+            faded={plantStatus === 'Transplanted' || plantStatus === 'Closed'}
           />
         ) : (
           <GrassIcon key="plant-icon" color="disabled" />
@@ -198,7 +202,7 @@ const ContainerSlotPreview = React.memo(
                 </Badge>
               </Box>
             ) : null}
-            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subPlantStatus === 'Transplanted'} />
+            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subPlantStatus === 'Transplanted' || subPlantStatus === 'Closed'} />
           </Box>
         ) : null}
       </IconButton>
