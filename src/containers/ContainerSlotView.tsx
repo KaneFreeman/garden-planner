@@ -26,6 +26,8 @@ import MoveDownIcon from '@mui/icons-material/MoveDown';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import YardIcon from '@mui/icons-material/Yard';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
@@ -373,6 +375,11 @@ const ContainerSlotView = ({
     handleMoreMenuClose();
   }, []);
 
+  const onCloseReopen = useCallback(() => {
+    onPlantInstanceChange({ closed: !plantInstance?.closed });
+    handleMoreMenuClose();
+  }, [onPlantInstanceChange, plantInstance?.closed]);
+
   const updateStartedFrom = useCallback(
     (value: StartedFromType) => {
       if (value) {
@@ -549,6 +556,20 @@ const ContainerSlotView = ({
                           <Typography color="primary.main">Fertilize</Typography>
                         </MenuItem>
                       ) : null}
+                      {plantInstance ? (
+                        <MenuItem onClick={onCloseReopen}>
+                          <ListItemIcon>
+                            {plantInstance.closed ? (
+                              <LockOpenIcon color="success" fontSize="small" />
+                            ) : (
+                              <LockIcon color="warning" fontSize="small" />
+                            )}
+                          </ListItemIcon>
+                          <Typography color={plantInstance.closed ? 'success.main' : 'warning.main'}>
+                            {plantInstance.closed ? 'Reopen' : 'Close'}
+                          </Typography>
+                        </MenuItem>
+                      ) : null}
                       {plantedEvent ? (
                         <MenuItem onClick={onTransplantClick}>
                           <ListItemIcon>
@@ -595,6 +616,22 @@ const ContainerSlotView = ({
                       >
                         <YardIcon sx={{ mr: 1 }} fontSize="small" />
                         Fertilize
+                      </Button>
+                    ) : null}
+                    {plantInstance ? (
+                      <Button
+                        variant="outlined"
+                        aria-label={plantInstance.closed ? 'reopen' : 'close'}
+                        color={plantInstance.closed ? 'success' : 'warning'}
+                        onClick={onCloseReopen}
+                        title={plantInstance.closed ? 'Reopen' : 'Close'}
+                      >
+                        {plantInstance.closed ? (
+                          <LockOpenIcon sx={{ mr: 1 }} color="success" fontSize="small" />
+                        ) : (
+                          <LockIcon sx={{ mr: 1 }} color="warning" fontSize="small" />
+                        )}
+                        {plantInstance.closed ? 'Reopen' : 'Close'}
                       </Button>
                     ) : null}
                     {plantedEvent ? (
