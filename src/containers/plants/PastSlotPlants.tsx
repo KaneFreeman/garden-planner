@@ -45,6 +45,7 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
           onClick={plantInstanceClick}
           primary={plant.name}
           showStatus={false}
+          showAvatar
         />
       );
     },
@@ -82,7 +83,11 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
           </Box>
         </Box>
       ) : null}
-      <PlantInstanceDialog open={Boolean(plantInstanceToView)} plantInstance={plantInstanceToView} onClose={plantInstanceViewClose} />
+      <PlantInstanceDialog
+        open={Boolean(plantInstanceToView)}
+        plantInstance={plantInstanceToView}
+        onClose={plantInstanceViewClose}
+      />
     </>
   );
 };

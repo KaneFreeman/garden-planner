@@ -1,5 +1,15 @@
+/* eslint-disable promise/always-return */
+/* eslint-disable promise/catch-or-return */
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromPlantInstanceDTO, PlantInstance, Slot, toPlantInstanceDTO } from '../../interface';
+import {
+  Container,
+  ContainerSlotIdentifier,
+  fromPlantInstanceDTO,
+  PlantInstance,
+  Slot,
+  STARTED_FROM_TYPE_SEED,
+  toPlantInstanceDTO
+} from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -248,4 +258,47 @@ export const useHarvestPlantInstance = (plantInstanceId: string | undefined | nu
   );
 
   return harvestPlantInstance;
+};
+
+function hasPlant(data: Partial<PlantInstance>): data is Partial<PlantInstance> & { plant: PlantInstance['plant'] } {
+  return data.plant !== undefined;
+}
+
+export const useUpdateCreatePlantInstance = (
+  plantInstance: PlantInstance | undefined,
+  location: ContainerSlotIdentifier,
+  container?: Container
+) => {
+  const addPlantInstance = useAddPlantInstance();
+  const updatePlantInstance = useUpdatePlantInstance();
+
+  const updateCreatePlantInstance = useCallback(
+    (data: Partial<PlantInstance>): Promise<PlantInstance | undefined> => {
+      if (!plantInstance) {
+        if (!hasPlant(data)) {
+          return Promise.resolve(undefined);
+        }
+
+        const newPlantInstance: Omit<PlantInstance, '_id'> = {
+          ...data,
+          ...location,
+          created: new Date(),
+          plantedCount: 1,
+          startedFrom: container?.startedFrom ?? STARTED_FROM_TYPE_SEED
+        };
+
+        return addPlantInstance(newPlantInstance);
+      }
+
+      const newPlantInstance: PlantInstance = {
+        ...plantInstance,
+        ...data
+      };
+
+      return updatePlantInstance(newPlantInstance);
+    },
+    [addPlantInstance, container?.startedFrom, location, plantInstance, updatePlantInstance]
+  );
+
+  return updateCreatePlantInstance;
 };

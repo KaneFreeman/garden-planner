@@ -44,8 +44,7 @@ import {
   StartedFromType,
   PlantInstance,
   PLANTED,
-  TRANSPLANTED,
-  STARTED_FROM_TYPE_SEED
+  TRANSPLANTED
 } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Select from '../components/Select';
@@ -55,10 +54,9 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 import {
-  useAddPlantInstance,
   useFertilizePlantInstance,
   useHarvestPlantInstance,
-  useUpdatePlantInstance
+  useUpdateCreatePlantInstance
 } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import useSmallScreen from '../utility/smallScreen.util';
@@ -98,10 +96,6 @@ interface ContainerSlotViewProps {
   onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
 }
 
-function hasPlant(data: Partial<PlantInstance>): data is Partial<PlantInstance> & { plant: PlantInstance['plant'] } {
-  return data.plant !== undefined;
-}
-
 const ContainerSlotView = ({
   id,
   index,
@@ -122,8 +116,6 @@ const ContainerSlotView = ({
 
   const plants = usePlants();
 
-  const addPlantInstance = useAddPlantInstance();
-  const updatePlantInstance = useUpdatePlantInstance();
   const fertilizePlantInstance = useFertilizePlantInstance(plantInstance?._id);
   const harvestPlantInstance = useHarvestPlantInstance(plantInstance?._id);
 
@@ -174,42 +166,19 @@ const ContainerSlotView = ({
     [onSlotChange, slot, version]
   );
 
+  const location = useMemo(() => ({ containerId: id, slotId: index, subSlot: type === 'sub-slot' }), [id, index, type]);
+  const updateCreatePlantInstance = useUpdateCreatePlantInstance(plantInstance, location, container);
+
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
-      if (!plantInstance) {
-        if (!hasPlant(data)) {
-          return;
-        }
-
-        const newPlantInstance: Omit<PlantInstance, '_id'> = {
-          ...data,
-          containerId: id,
-          slotId: index,
-          subSlot: type === 'sub-slot',
-          created: new Date(),
-          plantedCount: 1,
-          startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED
-        };
-
-        addPlantInstance(newPlantInstance).then((createdPlantInstance) => {
-          setVersion(version + 1);
-          if (createdPlantInstance) {
-            updateSlot({ plantInstanceId: createdPlantInstance._id });
-          }
-        });
-        return;
-      }
-
-      const newPlantInstance: PlantInstance = {
-        ...plantInstance,
-        ...data
-      };
-
-      updatePlantInstance(newPlantInstance).finally(() => {
+      updateCreatePlantInstance(data).then((result) => {
         setVersion(version + 1);
+        if (result && slot.plantInstanceId !== result._id) {
+          updateSlot({ plantInstanceId: result._id });
+        }
       });
     },
-    [addPlantInstance, container.startedFrom, id, index, plantInstance, type, updatePlantInstance, updateSlot, version]
+    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot, version]
   );
 
   const updatePictures = useCallback(

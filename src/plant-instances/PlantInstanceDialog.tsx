@@ -6,6 +6,8 @@ import DialogContent from '@mui/material/DialogContent';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { PlantInstance } from '../interface';
 import { usePlant } from '../plants/usePlants';
 import { isNullish } from '../utility/null.util';
@@ -40,19 +42,24 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{plant.name}</DialogTitle>
+      <DialogTitle>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {plant.name}
+          <IconButton aria-label="close" onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </DialogTitle>
       <DialogContent>
         <SimpleInlineField
           label="Plant"
           value={
-            <ListItemButton onClick={onPlantClick}>
+            <ListItemButton onClick={onPlantClick} sx={{ gap: 0 }}>
               <ListItemAvatar sx={{ display: 'flex' }}>
                 <PlantAvatar plant={plant} />
               </ListItemAvatar>
-              <Box sx={{ ml: -1 }}>
-                <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                  {plant.name}
-                </Box>
+              <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {plant.name}
               </Box>
             </ListItemButton>
           }

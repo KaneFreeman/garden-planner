@@ -37,7 +37,7 @@ const PlantAvatar = memo(
         <Avatar
           variant={variant}
           alt="Empty"
-          sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
+          sx={{ width: size, height: size, minWidth: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
         >
           <GrassIcon />
         </Avatar>
@@ -49,7 +49,7 @@ const PlantAvatar = memo(
         <Avatar
           variant={variant}
           alt={plant.name}
-          sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
+          sx={{ width: size, height: size, minWidth: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
         >
           <GrassIcon color="primary" />
         </Avatar>
@@ -61,7 +61,7 @@ const PlantAvatar = memo(
         variant={variant}
         src={plant.pictures[0].thumbnail}
         alt={plant.name}
-        sx={{ width: size, height: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
+        sx={{ width: size, height: size, minWidth: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
       />
     );
   }
