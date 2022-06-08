@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromPlantInstanceDTO, PlantInstance, toPlantInstanceDTO } from '../../interface';
+import { fromPlantInstanceDTO, PlantInstance, Slot, toPlantInstanceDTO } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -11,6 +11,7 @@ import {
 } from '../../store/slices/plant-instances';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
+import { isNotNullish, isNullish } from '../../utility/null.util';
 
 const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -155,7 +156,7 @@ export const useRemovePlantInstance = () => {
   return removePlantInstance;
 };
 
-export function usePlantInstance(plantInstanceId: string | undefined) {
+export function usePlantInstance(plantInstanceId: string | undefined | null) {
   const getPlantInstances = useGetPlantInstances();
   const selector = useMemo(() => selectPlantInstanceById(plantInstanceId), [plantInstanceId]);
   const plantInstancesDto = useAppSelector(selector);
@@ -192,13 +193,24 @@ export function usePlantInstancesById() {
   return useMemo(() => mapRecord(plantInstancesById, fromPlantInstanceDTO), [plantInstancesById]);
 }
 
-export const useFertilizePlantInstance = (plantInstanceId: string | undefined) => {
+export function usePlantInstancesFromSlot(slot: Slot | undefined | null) {
+  const plantInstancesById = usePlantInstancesById();
+  return useMemo(
+    () =>
+      slot?.plantInstanceHistory
+        ?.map((id) => plantInstancesById[id])
+        .filter((plantInstance) => isNotNullish(plantInstance)) ?? [],
+    [plantInstancesById, slot?.plantInstanceHistory]
+  );
+}
+
+export const useFertilizePlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
 
   const fertilizePlantInstance = useCallback(
     async (date: Date) => {
-      if (plantInstanceId === undefined) {
+      if (isNullish(plantInstanceId)) {
         return;
       }
 
@@ -215,13 +227,13 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined) =
   return fertilizePlantInstance;
 };
 
-export const useHarvestPlantInstance = (plantInstanceId: string | undefined) => {
+export const useHarvestPlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
 
   const harvestPlantInstance = useCallback(
     async (date: Date) => {
-      if (plantInstanceId === undefined) {
+      if (isNullish(plantInstanceId)) {
         return;
       }
 

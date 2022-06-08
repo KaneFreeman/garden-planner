@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '..';
 import { PlantInstanceDTO } from '../../interface';
+import { isNotNullish } from '../../utility/null.util';
 
 // Define a type for the slice state
 export interface PlantInstanceState {
@@ -55,7 +56,7 @@ export const PlantInstanceSlice = createSlice({
 export const { updatePlantInstances } = PlantInstanceSlice.actions;
 
 export const selectPlantInstances = (state: RootState) => state.plantInstances.plantInstances;
-export const selectPlantInstanceById = (id?: string) => (state: RootState) => id ? state.plantInstances.plantInstancesById[id] : undefined;
+export const selectPlantInstanceById = (id?: string | null) => (state: RootState) => isNotNullish(id) ? state.plantInstances.plantInstancesById[id] : undefined;
 export const selectPlantInstancesByIds = (state: RootState) => state.plantInstances.plantInstancesById;
 export const selectPlantInstancesByContainer = (containerId?: string) => (state: RootState) =>
   containerId ? state.plantInstances.plantInstancesByContainer[containerId] ?? [] : [];

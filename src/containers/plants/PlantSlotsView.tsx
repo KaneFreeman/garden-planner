@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import { PlantInstance } from '../../interface';
 import useSmallScreen from '../../utility/smallScreen.util';
+import { getSlotTitle } from '../../utility/slot.util';
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
+import { useContainersById } from '../hooks/useContainers';
 import SlotListItem from '../SlotListItem';
 
 interface PlantSlotsViewProps {
@@ -14,12 +17,38 @@ interface PlantSlotsViewProps {
 
 const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
   const isSmallScreen = useSmallScreen();
+  const navigate = useNavigate();
 
   const plantInstances = usePlantInstancesByPlant(plantId);
+  const containersById = useContainersById();
 
-  const renderPlantSlot = useCallback((key: string, instance: PlantInstance, index: number) => {
-    return <SlotListItem key={`${key}-${index}`} instance={instance} />;
-  }, []);
+  const onClickHandler = useCallback(
+    (instance: PlantInstance) => {
+      navigate(`/container/${instance.containerId}/slot/${instance.slotId}${instance.subSlot ? '/sub-slot' : ''}`);
+    },
+    [navigate]
+  );
+
+  const renderPlantSlot = useCallback(
+    (key: string, instance: PlantInstance, index: number) => {
+      const container = containersById[instance.containerId];
+
+      const secondary = `${
+        Object.keys(container?.slots ?? {}).length > 1 ? getSlotTitle(instance.slotId, container?.rows) : ''
+      }${instance.subSlot ? ' - Sub-Slot' : ''}`;
+
+      return (
+        <SlotListItem
+          key={`${key}-${index}`}
+          instance={instance}
+          onClick={onClickHandler}
+          primary={container.name}
+          secondary={secondary}
+        />
+      );
+    },
+    [containersById, onClickHandler]
+  );
 
   return (
     <Box sx={{ width: '100%' }}>

@@ -8,7 +8,8 @@ import {
   PlantDataDTO,
   ContainerFertilizeDTO,
   PlantInstanceDTO,
-  PlantInstanceAddHistoryAndUpdateTaskDTO
+  PlantInstanceAddHistoryAndUpdateTaskDTO,
+  BulkCompleteTaskDTO
 } from '../interface';
 
 interface Rest {
@@ -55,6 +56,13 @@ interface Rest {
       };
     };
     response: TaskDTO;
+  };
+  'PUT:/task/bulk-complete': {
+    method: 'PUT';
+    request: {
+      body: BulkCompleteTaskDTO;
+    };
+    response: number;
   };
   'GET:/plant': {
     method: 'GET';

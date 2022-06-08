@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';
+import { BulkCompleteTaskDTO, fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -258,4 +258,22 @@ export const useTask = (id: string | undefined) => {
   const selector = useMemo(() => selectTaskById(id), [id]);
   const taskDto = useAppSelector(selector);
   return useMemo(() => (taskDto ? fromTaskDTO(taskDto) : undefined), [taskDto]);
+};
+
+export const useBulkCompleteTasks = () => {
+  const fetch = useFetch();
+  const runOperation = useTasksOperation({ force: true });
+
+  const bulkCompleteTasks = useCallback(
+    async (data: BulkCompleteTaskDTO) => {
+      return runOperation(() =>
+        fetch(Api.task_PutBulkComplete, {
+          body: data
+        })
+      );
+    },
+    [fetch, runOperation]
+  );
+
+  return bulkCompleteTasks;
 };

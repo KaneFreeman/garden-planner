@@ -31,7 +31,6 @@ import LockIcon from '@mui/icons-material/Lock';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
-import NumberTextField from '../components/NumberTextField';
 import CommentsView from '../components/comments/CommentsView';
 import { getSlotTitle } from '../utility/slot.util';
 import {
@@ -65,10 +64,12 @@ import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instanc
 import useSmallScreen from '../utility/smallScreen.util';
 import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
+import DateDialog from '../components/DateDialog';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
-import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
+import PastSlotPlants from './plants/PastSlotPlants';
 
 interface CircleProps {
   backgroundColor: string;
@@ -139,13 +140,9 @@ const ContainerSlotView = ({
 
   const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
   const [plantedCount, setPlantedCount] = useState(1);
-  const [plantedDate, setPlantedDate] = useState<Date>(getMidnight());
 
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
-  const [harvestedDate, setHarvestedDate] = useState<Date>(getMidnight());
-
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
-  const [fertilizedDate, setFertilizedDate] = useState<Date>(getMidnight());
 
   const plantedEvent = useMemo(() => plantInstance?.history?.[0], [plantInstance]);
 
@@ -352,7 +349,6 @@ const ContainerSlotView = ({
   }, [subPlantInstance, id, index, renderStatus, subPlantTasks, onSubPlantClick, subPlant, onPlantClick]);
 
   const onPlantedClick = useCallback(() => {
-    setPlantedDate(getMidnight());
     setShowHowManyPlanted(true);
     handleMoreMenuClose();
   }, []);
@@ -364,13 +360,11 @@ const ContainerSlotView = ({
   }, []);
 
   const onHarvestClick = useCallback(() => {
-    setHarvestedDate(getMidnight());
     setShowHarvestedDialogue(true);
     handleMoreMenuClose();
   }, []);
 
   const onFertilizeClick = useCallback(() => {
-    setFertilizedDate(getMidnight());
     setShowFertilizedDialogue(true);
     handleMoreMenuClose();
   }, []);
@@ -399,38 +393,47 @@ const ContainerSlotView = ({
     };
   }, []);
 
-  const finishUpdateStatusPlanted = useCallback(() => {
-    onPlantInstanceChange({
-      history: [
-        {
-          status: PLANTED,
-          date: plantedDate,
-          to: {
-            containerId: id,
-            slotId: index,
-            subSlot: type === 'sub-slot'
+  const finishUpdateStatusPlanted = useCallback(
+    (date: Date) => {
+      onPlantInstanceChange({
+        history: [
+          {
+            status: PLANTED,
+            date,
+            to: {
+              containerId: id,
+              slotId: index,
+              subSlot: type === 'sub-slot'
+            }
           }
-        }
-      ],
-      plantedCount
-    });
-    setShowHowManyPlanted(false);
-    setPlantedCount(1);
-  }, [id, index, onPlantInstanceChange, plantedCount, plantedDate, type]);
+        ],
+        plantedCount
+      });
+      setShowHowManyPlanted(false);
+      setPlantedCount(1);
+    },
+    [id, index, onPlantInstanceChange, plantedCount, type]
+  );
 
-  const finishUpdateStatusHarvested = useCallback(() => {
-    setShowHarvestedDialogue(false);
-    harvestPlantInstance(fertilizedDate).finally(() => {
-      setVersion(version + 1);
-    });
-  }, [harvestPlantInstance, fertilizedDate, version]);
+  const finishUpdateStatusHarvested = useCallback(
+    (date: Date) => {
+      setShowHarvestedDialogue(false);
+      harvestPlantInstance(date).finally(() => {
+        setVersion(version + 1);
+      });
+    },
+    [harvestPlantInstance, version]
+  );
 
-  const finishUpdateStatusFertilized = useCallback(() => {
-    setShowFertilizedDialogue(false);
-    fertilizePlantInstance(fertilizedDate).finally(() => {
-      setVersion(version + 1);
-    });
-  }, [fertilizePlantInstance, fertilizedDate, version]);
+  const finishUpdateStatusFertilized = useCallback(
+    (date: Date) => {
+      setShowFertilizedDialogue(false);
+      fertilizePlantInstance(date).finally(() => {
+        setVersion(version + 1);
+      });
+    },
+    [fertilizePlantInstance, version]
+  );
 
   const finishUpdateStatusTransplanted = useCallback(() => {
     if (transplantedToContainerId !== null) {
@@ -700,6 +703,7 @@ const ContainerSlotView = ({
           type={type}
         />
         <PlantInstanceHistoryView plantInstance={plantInstance} slotLocation={slotLocation} />
+        <PastSlotPlants slot={slot} />
         <PicturesView
           key="container-slot-view-pictures"
           pictures={plantInstance?.pictures}
@@ -715,38 +719,13 @@ const ContainerSlotView = ({
           onChange={updateComments}
         />
       </Box>
-      <Dialog open={showHowManyPlanted} onClose={() => setShowHowManyPlanted(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>How many did you plant?</DialogTitle>
-        <DialogContent>
-          <form name="plant-modal-form" onSubmit={finishUpdateStatusPlanted} noValidate>
-            <NumberTextField
-              label="Count"
-              value={plantedCount}
-              onChange={setPlantedCount}
-              required
-              variant="outlined"
-            />
-            <Box sx={{ display: 'flex', pt: 2 }}>
-              <MobileDatePicker
-                label="Planted On"
-                value={plantedDate}
-                onChange={(newPlantedDate: Date | null) =>
-                  newPlantedDate && setPlantedDate(setToMidnight(newPlantedDate))
-                }
-                renderInput={(params) => (
-                  <MuiTextField {...params} className="planted-dateTimeInput" sx={{ flexGrow: 1 }} />
-                )}
-              />
-            </Box>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowHowManyPlanted(false)}>Cancel</Button>
-          <Button onClick={finishUpdateStatusPlanted} variant="contained">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DateDialog
+        open={showHowManyPlanted}
+        question="How many did you plant?"
+        label="Planted On"
+        onClose={() => setShowHowManyPlanted(false)}
+        onConfirm={finishUpdateStatusPlanted}
+      />
       <Dialog open={showTransplantedModal} onClose={() => setShowHowManyPlanted(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Transplant</DialogTitle>
         <DialogContent>
@@ -780,56 +759,20 @@ const ContainerSlotView = ({
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={showHarvestedDialogue} onClose={() => setShowHarvestedDialogue(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>When did you harvest?</DialogTitle>
-        <DialogContent>
-          <form name="plant-modal-form" onSubmit={finishUpdateStatusHarvested} noValidate>
-            <Box sx={{ display: 'flex', pt: 2 }}>
-              <MobileDatePicker
-                label="Harvested On"
-                value={harvestedDate}
-                onChange={(newHarvestedDate: Date | null) =>
-                  newHarvestedDate && setHarvestedDate(setToMidnight(newHarvestedDate))
-                }
-                renderInput={(params) => (
-                  <MuiTextField {...params} className="harvested-dateTimeInput" sx={{ flexGrow: 1 }} />
-                )}
-              />
-            </Box>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowHarvestedDialogue(false)}>Cancel</Button>
-          <Button onClick={finishUpdateStatusHarvested} variant="contained">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={showFertilizedDialogue} onClose={() => setShowFertilizedDialogue(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>When did you fertilize?</DialogTitle>
-        <DialogContent>
-          <form name="plant-modal-form" onSubmit={finishUpdateStatusFertilized} noValidate>
-            <Box sx={{ display: 'flex', pt: 2 }}>
-              <MobileDatePicker
-                label="Harvested On"
-                value={fertilizedDate}
-                onChange={(newHarvestedDate: Date | null) =>
-                  newHarvestedDate && setFertilizedDate(setToMidnight(newHarvestedDate))
-                }
-                renderInput={(params) => (
-                  <MuiTextField {...params} className="harvested-dateTimeInput" sx={{ flexGrow: 1 }} />
-                )}
-              />
-            </Box>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowFertilizedDialogue(false)}>Cancel</Button>
-          <Button onClick={finishUpdateStatusFertilized} variant="contained">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DateDialog
+        open={showHarvestedDialogue}
+        question="When did you harvest?"
+        label="Harvested On"
+        onClose={() => setShowHarvestedDialogue(false)}
+        onConfirm={finishUpdateStatusHarvested}
+      />
+      <DateDialog
+        open={showFertilizedDialogue}
+        question="When did you fertilize?"
+        label="Fertilized On"
+        onClose={() => setShowFertilizedDialogue(false)}
+        onConfirm={finishUpdateStatusFertilized}
+      />
     </>
   );
 };
