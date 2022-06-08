@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import { PlantInstance, Task } from '../../interface';
+import { PlantInstance, Task, CUSTOM } from '../../interface';
 import useSmallScreen from '../../utility/smallScreen.util';
 import { getMidnight } from '../../utility/date.util';
 import { useTasksByPlantInstance } from '../hooks/useTasks';
@@ -20,7 +20,13 @@ interface ContainerSlotTasksViewProps {
   type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({
+  plantInstance,
+  containerId,
+  slotId,
+  slotTitle,
+  type
+}: ContainerSlotTasksViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -40,9 +46,7 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1, {
-    reverseSortCompleted: false
-  });
+  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1);
 
   const today = useMemo(() => getMidnight().getTime(), []);
 
@@ -105,7 +109,9 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <List>
-                {completed.map((task, index) => renderTask('completed', task, index))}
+                {completed
+                  .filter((task) => task.type === CUSTOM)
+                  .map((task, index) => renderTask('completed', task, index))}
                 {overdue.map((task, index) => renderTask('overdue', task, index, { isOverdue: true }))}
                 {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
                 {active.map((task, index) => renderTask('active', task, index))}
