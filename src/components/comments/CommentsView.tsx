@@ -6,37 +6,67 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
-import { PictureData, Comment } from '../../interface';
+import { PictureData, Comment, PlantInstance, ContainerSlotIdentifier, Container, Plant } from '../../interface';
 import useSmallScreen from '../../utility/smallScreen.util';
+import { useUpdateCreatePlantInstance } from '../../plant-instances/hooks/usePlantInstances';
+import { useUpdatePlant } from '../../plants/usePlants';
 import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 
 interface CommentsViewProps {
   id: string;
-  comments?: Comment[];
-  pictures?: PictureData[];
+  data?: PlantInstance | Plant;
+  location?: ContainerSlotIdentifier | null;
+  container?: Container;
   alt: string;
-  onChange: (comments: Comment[], pictures?: PictureData[]) => void;
 }
 
-const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewProps) => {
+function isPlantInstance(data?: PlantInstance | Plant): data is PlantInstance {
+  return !!data && 'plant' in data;
+}
+
+const CommentsView = ({ id, data, location, container, alt }: CommentsViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [showCommentBox, setShowCommentBox] = useState(false);
 
+  const updateCreatePlantInstance = useUpdateCreatePlantInstance(
+    isPlantInstance(data) ? data : undefined,
+    location,
+    container
+  );
+  const updatePlant = useUpdatePlant();
+
+  const onPlantInstanceChange = useCallback(
+    (newData: Partial<PlantInstance>) => {
+      if (isPlantInstance(data)) {
+        updateCreatePlantInstance({
+          ...data,
+          ...newData
+        });
+      } else if (data) {
+        updatePlant({
+          ...data,
+          ...newData
+        });
+      }
+    },
+    [data, updateCreatePlantInstance, updatePlant]
+  );
+
   const addComment = useCallback(
     (comment: Comment) => {
-      onChange([...(comments ?? []), comment]);
+      onPlantInstanceChange({ comments: [...(data?.comments ?? []), comment] });
     },
-    [onChange, comments]
+    [onPlantInstanceChange, data?.comments]
   );
 
   const removeComment = useCallback(
     (commentIndex: number) => {
-      const newComments = [...(comments ?? [])];
+      const newComments = [...(data?.comments ?? [])];
       newComments.splice(commentIndex, 1);
 
-      const newPictures = pictures?.reduce((cleanedUpPictures, picture) => {
+      const newPictures = data?.pictures?.reduce((cleanedUpPictures, picture) => {
         if (!picture.deleted) {
           cleanedUpPictures.push(picture);
           return cleanedUpPictures;
@@ -55,9 +85,9 @@ const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewPro
         return cleanedUpPictures;
       }, [] as PictureData[]);
 
-      onChange(newComments, newPictures);
+      onPlantInstanceChange({ comments: newComments, pictures: newPictures });
     },
-    [comments, onChange, pictures]
+    [data?.comments, data?.pictures, onPlantInstanceChange]
   );
 
   return (
@@ -80,10 +110,10 @@ const CommentsView = ({ id, comments, pictures, alt, onChange }: CommentsViewPro
           <AddIcon />
         </IconButton>
       </Typography>
-      {comments?.map((comment, commentIndex) => (
+      {data?.comments?.map((comment, commentIndex) => (
         <CommentView
           id={id}
-          pictures={pictures}
+          pictures={data?.pictures}
           alt={alt}
           key={`commentView-${id}-${commentIndex}`}
           comment={comment}

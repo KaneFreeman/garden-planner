@@ -34,10 +34,8 @@ import PlantAvatar from '../plants/PlantAvatar';
 import CommentsView from '../components/comments/CommentsView';
 import { getSlotTitle } from '../utility/slot.util';
 import {
-  PictureData,
   Plant,
   Slot,
-  Comment,
   Container,
   BaseSlot,
   STARTED_FROM_TYPES,
@@ -179,24 +177,6 @@ const ContainerSlotView = ({
       });
     },
     [slot.plantInstanceId, updateCreatePlantInstance, updateSlot, version]
-  );
-
-  const updatePictures = useCallback(
-    (pictures: PictureData[]) => {
-      onPlantInstanceChange({ pictures });
-    },
-    [onPlantInstanceChange]
-  );
-
-  const updateComments = useCallback(
-    (comments: Comment[], pictures?: PictureData[]) => {
-      if (pictures) {
-        onPlantInstanceChange({ comments, pictures });
-        return;
-      }
-      onPlantInstanceChange({ comments });
-    },
-    [onPlantInstanceChange]
   );
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
@@ -675,17 +655,17 @@ const ContainerSlotView = ({
         <PastSlotPlants slot={slot} />
         <PicturesView
           key="container-slot-view-pictures"
-          pictures={plantInstance?.pictures}
-          comments={plantInstance?.comments}
+          data={plantInstance}
+          location={slotLocation}
+          container={container}
           alt={title}
-          onChange={updatePictures}
         />
         <CommentsView
           id={`container-${id}-slot-${index}`}
-          comments={plantInstance?.comments}
+          data={plantInstance}
+          location={slotLocation}
+          container={container}
           alt={title}
-          pictures={plantInstance?.pictures}
-          onChange={updateComments}
         />
       </Box>
       <DateDialog

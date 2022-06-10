@@ -266,7 +266,7 @@ function hasPlant(data: Partial<PlantInstance>): data is Partial<PlantInstance> 
 
 export const useUpdateCreatePlantInstance = (
   plantInstance: PlantInstance | undefined,
-  location: ContainerSlotIdentifier,
+  location?: ContainerSlotIdentifier | null,
   container?: Container
 ) => {
   const addPlantInstance = useAddPlantInstance();
@@ -275,7 +275,7 @@ export const useUpdateCreatePlantInstance = (
   const updateCreatePlantInstance = useCallback(
     (data: Partial<PlantInstance>): Promise<PlantInstance | undefined> => {
       if (!plantInstance) {
-        if (!hasPlant(data)) {
+        if (!hasPlant(data) || !location) {
           return Promise.resolve(undefined);
         }
 

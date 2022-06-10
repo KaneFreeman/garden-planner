@@ -2,51 +2,82 @@
 import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { PictureData, Comment } from '../interface';
+import { PictureData, ContainerSlotIdentifier, Container, PlantInstance, Plant, Comment } from '../interface';
 import useSmallScreen from '../utility/smallScreen.util';
+import { useUpdateCreatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
+import { useUpdatePlant } from '../plants/usePlants';
 import PictureUpload from './PictureUpload';
 import PictureView from './PictureView';
 import FullPictureView from './FullPictureView';
 
 interface PicturesViewProps {
-  pictures?: PictureData[];
-  comments?: Comment[];
+  data?: PlantInstance | Plant;
   alt: string;
-  onChange: (pictures: PictureData[]) => void;
+  location?: ContainerSlotIdentifier | null;
+  container?: Container;
 }
 
-const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) => {
+function isPlantInstance(data?: PlantInstance | Plant): data is PlantInstance {
+  return !!data && 'plant' in data;
+}
+
+const PicturesView = ({ data, alt, location, container }: PicturesViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [fullViewImageId, setFullViewImageId] = useState<string | null>(null);
+  const updateCreatePlantInstance = useUpdateCreatePlantInstance(
+    isPlantInstance(data) ? data : undefined,
+    location,
+    container
+  );
+  const updatePlant = useUpdatePlant();
+
+  const onPlantInstanceChange = useCallback(
+    (newData: { pictures?: PictureData[]; comments?: Comment[] }) => {
+      if (isPlantInstance(data)) {
+        updateCreatePlantInstance({
+          ...data,
+          ...newData
+        });
+      } else if (data) {
+        updatePlant({
+          ...data,
+          ...newData
+        });
+      }
+    },
+    [data, updateCreatePlantInstance, updatePlant]
+  );
 
   const addPicture = useCallback(
     (picture: Omit<PictureData, 'id'>) => {
-      const oldPictures = pictures ?? [];
-      onChange([
-        ...oldPictures,
-        {
-          ...picture,
-          id: oldPictures.reduce((lastId, oldPicture) => {
-            if (oldPicture.id >= lastId) {
-              return oldPicture.id + 1;
-            }
+      const oldPictures = data?.pictures ?? [];
+      onPlantInstanceChange({
+        pictures: [
+          ...oldPictures,
+          {
+            ...picture,
+            id: oldPictures.reduce((lastId, oldPicture) => {
+              if (oldPicture.id >= lastId) {
+                return oldPicture.id + 1;
+              }
 
-            return lastId;
-          }, 0)
-        }
-      ]);
+              return lastId;
+            }, 0)
+          }
+        ]
+      });
     },
-    [pictures, onChange]
+    [data?.pictures, onPlantInstanceChange]
   );
 
   const removePicture = useCallback(
     (pictureIndex: number) => {
-      const newPictures = [...(pictures ?? [])];
+      const newPictures = [...(data?.pictures ?? [])];
       const picture = newPictures[pictureIndex];
 
       let imageInUse = false;
-      comments?.forEach((comment) => {
+      data?.comments?.forEach((comment) => {
         if (new RegExp(`\\[[iI][mM][gG][ ]*${picture.id}\\]`).test(comment.text)) {
           imageInUse = true;
         }
@@ -58,14 +89,14 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
         newPictures.splice(pictureIndex, 1);
       }
 
-      onChange(newPictures);
+      onPlantInstanceChange({ pictures: newPictures });
     },
-    [pictures, comments, onChange]
+    [data?.pictures, data?.comments, onPlantInstanceChange]
   );
 
   const onSetDefault = useCallback(
     (picture: PictureData) => {
-      const newPictures = [...(pictures ?? [])];
+      const newPictures = [...(data?.pictures ?? [])];
       newPictures.sort(function (x, y) {
         if (x === picture) {
           return -1;
@@ -73,9 +104,9 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
 
         return y === picture ? 1 : 0;
       });
-      onChange(newPictures);
+      onPlantInstanceChange({ pictures: newPictures });
     },
-    [pictures, onChange]
+    [data?.pictures, onPlantInstanceChange]
   );
 
   const onFullViewImageClose = useCallback(() => {
@@ -104,7 +135,7 @@ const PicturesView = ({ pictures, comments, alt, onChange }: PicturesViewProps) 
         <PictureUpload id="pictures-view-upload" onChange={addPicture} />
       </Typography>
       <Box sx={{ display: 'inline-grid', gridTemplateColumns: `repeat(3, minmax(0, 1fr))` }}>
-        {pictures?.map((picture, pictureIndex) => {
+        {data?.pictures?.map((picture, pictureIndex) => {
           if (picture.deleted) {
             return null;
           }

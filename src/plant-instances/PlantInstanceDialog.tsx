@@ -13,6 +13,8 @@ import { usePlant } from '../plants/usePlants';
 import { isNullish } from '../utility/null.util';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import PlantAvatar from '../plants/PlantAvatar';
+import PicturesView from '../pictures/PicturesView';
+import CommentsView from '../components/comments/CommentsView';
 import PlantInstanceHistoryView from './PlantInstanceHistoryView';
 
 interface PlantInstanceDialogProps {
@@ -67,6 +69,8 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
         <SimpleInlineField label="Started From" value={plantInstance.startedFrom} />
         <SimpleInlineField label="Planted Count" value={plantInstance.plantedCount} />
         <PlantInstanceHistoryView plantInstance={plantInstance} />
+        <PicturesView data={plantInstance} alt={plant.name} />
+        <CommentsView id={`plant-${plantInstance._id}`} data={plantInstance} alt={plant.name} />
       </DialogContent>
     </Dialog>
   );
