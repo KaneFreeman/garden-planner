@@ -26,6 +26,8 @@ interface PlantInstanceDialogProps {
 const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDialogProps) => {
   const navigate = useNavigate();
 
+  console.log(plantInstance);
+
   const plant = usePlant(plantInstance?.plant);
 
   const onPlantClick = useCallback(

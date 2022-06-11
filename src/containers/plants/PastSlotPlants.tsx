@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -19,11 +19,26 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
   const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
 
   const plantInstances = usePlantInstancesFromSlot(slot);
+  const plantInstancesById = useMemo(
+    () =>
+      plantInstances.reduce((acc, plantInstance) => {
+        acc[plantInstance._id] = plantInstance;
+        return acc;
+      }, {} as Record<string, PlantInstance>),
+    [plantInstances]
+  );
   const plantsById = usePlantsById();
 
   const plantInstanceClick = useCallback((instance: PlantInstance) => {
     setPlantInstanceToView(instance);
   }, []);
+
+  useEffect(() => {
+    if (plantInstanceToView) {
+      setPlantInstanceToView(plantInstancesById[plantInstanceToView._id]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plantInstancesById]);
 
   const plantInstanceViewClose = useCallback(() => setPlantInstanceToView(null), []);
 
