@@ -156,8 +156,6 @@ const ContainerSlotView = ({
         ...data
       };
 
-      console.log('updating slot', newSlot);
-
       // eslint-disable-next-line promise/catch-or-return
       onSlotChange(newSlot).finally(() => {
         setVersion(version + 1);

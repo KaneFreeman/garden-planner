@@ -22,6 +22,7 @@ import {
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 import { isNotNullish, isNullish } from '../../utility/null.util';
+import { useGetContainers } from '../../containers/hooks/useContainers';
 
 const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -41,6 +42,7 @@ const useGetPlantInstances = (options?: ExtraFetchOptions) => {
 const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
   const getPlantInstances = useGetPlantInstances(options);
   const getTasks = useGetTasks(options);
+  const getContainers = useGetContainers(options);
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -51,11 +53,12 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
       }
 
       await getPlantInstances();
+      await getContainers();
       await getTasks();
 
       return response;
     },
-    [getPlantInstances, getTasks]
+    [getContainers, getPlantInstances, getTasks]
   );
 
   return runOperation;
