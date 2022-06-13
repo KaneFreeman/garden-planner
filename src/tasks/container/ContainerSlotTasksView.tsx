@@ -46,7 +46,7 @@ const ContainerSlotTasksView = ({
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1);
+  const { completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1);
 
   const today = useMemo(() => getMidnight().getTime(), []);
 
@@ -80,6 +80,17 @@ const ContainerSlotTasksView = ({
     [path, slotTitle, today, type]
   );
 
+  const completedCustomTasks = useMemo(() => completed.filter((task) => task.type === CUSTOM), [completed]);
+  const hasNoTasks = useMemo(
+    () =>
+      completedCustomTasks.length === 0 &&
+      overdue.length === 0 &&
+      thisWeek.length === 0 &&
+      active.length === 0 &&
+      next.length === 0,
+    [active.length, completedCustomTasks.length, next.length, overdue.length, thisWeek.length]
+  );
+
   return (
     <>
       <Box sx={{ width: '100%' }}>
@@ -102,16 +113,14 @@ const ContainerSlotTasksView = ({
           </IconButton>
         </Typography>
         <Box sx={{ width: '100%' }}>
-          {tasks.length === 0 ? (
+          {hasNoTasks ? (
             <Alert severity="info" sx={{ m: 2 }}>
               No tasks at this time!
             </Alert>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <List>
-                {completed
-                  .filter((task) => task.type === CUSTOM)
-                  .map((task, index) => renderTask('completed', task, index))}
+                {completedCustomTasks.map((task, index) => renderTask('completed', task, index))}
                 {overdue.map((task, index) => renderTask('overdue', task, index, { isOverdue: true }))}
                 {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
                 {active.map((task, index) => renderTask('active', task, index))}
