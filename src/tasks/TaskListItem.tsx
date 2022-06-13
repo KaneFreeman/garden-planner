@@ -12,6 +12,8 @@ import WarningIcon from '@mui/icons-material/Warning';
 import GrassIcon from '@mui/icons-material/Grass';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import TaskIcon from '@mui/icons-material/Task';
 import YardIcon from '@mui/icons-material/Yard';
 import { FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
 import useGetTaskText from './hooks/useGetTaskText';
@@ -55,19 +57,22 @@ const TaskListItem = ({
 
   const { primary, secondary } = useGetTaskText(task, today, showStart);
 
-  const avatarBgColor = useMemo(() => {
+  const [avatarBgColor, avatarIcon] = useMemo(() => {
     switch (task.type) {
       case FERTILIZE:
+        return [blue[500], <YardIcon key="fertilize task icon" />];
       case HARVEST:
-        return blue[500];
+        return [blue[500], <AgricultureIcon key="harvest task icon" />];
       case PLANT:
-        return green[500];
+        return [green[500], <GrassIcon key="plant task icon" />];
       case TRANSPLANT:
-        return red[500];
+        return [red[500], <MoveDownIcon key="transplatn task icon" />];
       default:
-        return undefined;
+        return task.completedOn !== null
+          ? [green[500], <TaskIcon key="completed custom task icon" />]
+          : [undefined, <AssignmentIcon key="custom task icon" />];
     }
-  }, [task.type]);
+  }, [task.completedOn, task.type]);
 
   return (
     <ListItem style={style} className="task" disablePadding>
@@ -78,12 +83,7 @@ const TaskListItem = ({
         }}
       >
         <ListItemAvatar>
-          <Avatar sx={{ bgcolor: avatarBgColor }}>
-            {task.type === PLANT ? <GrassIcon key="plant task icon" /> : null}
-            {task.type === TRANSPLANT ? <MoveDownIcon key="transplatn task icon" /> : null}
-            {task.type === HARVEST ? <AgricultureIcon key="harvest task icon" /> : null}
-            {task.type === FERTILIZE ? <YardIcon key="fertilize task icon" /> : null}
-          </Avatar>
+          <Avatar sx={{ bgcolor: avatarBgColor }}>{avatarIcon}</Avatar>
         </ListItemAvatar>
         {isThisWeek ? <WarningIcon sx={{ mr: 2 }} color="warning" /> : null}
         {isOverdue ? <ErrorIcon sx={{ mr: 2 }} color="error" /> : null}

@@ -130,7 +130,7 @@ const ContainerSlotTasksView = ({
           )}
         </Box>
       </Box>
-      <TaskModal open={isCreateTaskModalOpen} path={path} onClose={closeModals} />
+      <TaskModal open={isCreateTaskModalOpen} path={path} plantInstanceId={plantInstance?._id} onClose={closeModals} />
     </>
   );
 };

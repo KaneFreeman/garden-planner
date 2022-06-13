@@ -16,6 +16,7 @@ import { useAddTask } from './hooks/useTasks';
 interface TaskModalProperties {
   open: boolean;
   path?: string | null;
+  plantInstanceId?: string | null;
   onClose: () => void;
 }
 
@@ -23,7 +24,7 @@ function isValidTask(task: Partial<Task> | null): task is Omit<Task, 'id' | 'typ
   return task?.text !== undefined && task?.start !== undefined && task?.due !== undefined;
 }
 
-const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
+const TaskModal = ({ open, path = null, plantInstanceId, onClose }: TaskModalProperties) => {
   const [editData, setEditData] = useState<Partial<Task> | null>({
     start: getMidnight(),
     due: getMidnight()
@@ -50,7 +51,7 @@ const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
         text,
         start,
         due,
-        plantInstanceId: null,
+        plantInstanceId: plantInstanceId ?? null,
         type: 'Custom',
         path,
         completedOn: null
@@ -58,7 +59,7 @@ const TaskModal = ({ open, path = null, onClose }: TaskModalProperties) => {
 
       handleOnClose();
     }
-  }, [addTask, editData, handleOnClose, path]);
+  }, [addTask, editData, handleOnClose, path, plantInstanceId]);
 
   const onSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
