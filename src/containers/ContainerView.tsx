@@ -13,7 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import MuiTextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';

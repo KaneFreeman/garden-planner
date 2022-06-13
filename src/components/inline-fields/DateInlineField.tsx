@@ -5,10 +5,10 @@ import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import TextField from '@mui/material/TextField';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import format from 'date-fns/format';
-import './DateInlineField.css';
 import { setToMidnight } from '../../utility/date.util';
+import './DateInlineField.css';
 
 interface DateInlineFieldProps {
   label: React.ReactNode;
@@ -78,7 +78,8 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
         open={open}
         value={value}
         onChange={(date: Date | null) => setInternalValue(date ? setToMidnight(date) : undefined)}
-        renderInput={(params) => <TextField {...params} className="dateInlineField-dateTimeInput" />}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        renderInput={(params: any) => <TextField {...params} className="dateInlineField-dateTimeInput" />}
         onClose={handleClose}
       />
     </Box>

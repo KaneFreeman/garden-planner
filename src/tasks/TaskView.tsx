@@ -11,7 +11,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import MuiTextField from '@mui/material/TextField';
 import DialogContentText from '@mui/material/DialogContentText';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -299,7 +299,8 @@ const TaskView = ({ task }: TaskViewProperties) => {
                   onChange={(newCompletedOn: Date | null) =>
                     newCompletedOn && setCompletedOn(setToMidnight(newCompletedOn))
                   }
-                  renderInput={(params) => (
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  renderInput={(params: any) => (
                     <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
                   )}
                 />

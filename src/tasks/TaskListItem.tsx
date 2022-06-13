@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -7,6 +7,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItem from '@mui/material/ListItem';
 import Avatar from '@mui/material/Avatar';
 import { blue, green, red } from '@mui/material/colors';
+import Checkbox from '@mui/material/Checkbox';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
 import GrassIcon from '@mui/icons-material/Grass';
@@ -15,7 +16,9 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import TaskIcon from '@mui/icons-material/Task';
 import YardIcon from '@mui/icons-material/Yard';
+import CheckIcon from '@mui/icons-material/Check';
 import { FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
+import useSmallScreen from '../utility/smallScreen.util';
 import useGetTaskText from './hooks/useGetTaskText';
 import './Tasks.css';
 
@@ -30,6 +33,8 @@ interface TaskListItemProps {
     path: string;
     title: string;
   };
+  selectedTaskIds?: string[];
+  onSelect?: (selected: boolean) => void;
 }
 
 const TaskListItem = ({
@@ -39,9 +44,12 @@ const TaskListItem = ({
   isThisWeek = false,
   isOverdue = false,
   style,
-  back
+  back,
+  selectedTaskIds = [],
+  onSelect
 }: TaskListItemProps) => {
   const navigate = useNavigate();
+  const isSmallScreen = useSmallScreen();
 
   const queryString = useMemo(() => {
     if (!back) {
@@ -50,6 +58,19 @@ const TaskListItem = ({
 
     return `?backPath=${back.path}&backLabel=${back.title}`;
   }, [back]);
+
+  const isSelected = useMemo(() => selectedTaskIds.includes(task._id), [selectedTaskIds, task._id]);
+
+  const onSelectHandler = useCallback(
+    (event: React.MouseEvent) => {
+      event.stopPropagation();
+
+      if (onSelect) {
+        onSelect(!isSelected);
+      }
+    },
+    [isSelected, onSelect]
+  );
 
   const onClickHandler = useCallback(() => {
     navigate(`/task/${task._id}${queryString}`);
@@ -74,20 +95,36 @@ const TaskListItem = ({
     }
   }, [task.completedOn, task.type]);
 
+  const labelId = useMemo(() => `task-checkbox-list-label-${task._id}`, [task._id]);
+
   return (
     <ListItem style={style} className="task" disablePadding>
       <ListItemButton
         onClick={onClickHandler}
+        onContextMenu={isSmallScreen ? onSelectHandler : undefined}
         sx={{
           width: '100%'
         }}
       >
+        {!isSmallScreen && task.completedOn === null ? (
+          <Checkbox
+            edge="start"
+            checked={isSelected}
+            tabIndex={-1}
+            disableRipple
+            inputProps={{ 'aria-labelledby': labelId }}
+            onClick={onSelectHandler}
+          />
+        ) : null}
         <ListItemAvatar>
-          <Avatar sx={{ bgcolor: avatarBgColor }}>{avatarIcon}</Avatar>
+          <Avatar sx={{ bgcolor: isSmallScreen && isSelected ? green[500] : avatarBgColor }}>
+            {isSmallScreen && isSelected ? <CheckIcon key="selected task icon" /> : avatarIcon}
+          </Avatar>
         </ListItemAvatar>
         {isThisWeek ? <WarningIcon sx={{ mr: 2 }} color="warning" /> : null}
         {isOverdue ? <ErrorIcon sx={{ mr: 2 }} color="error" /> : null}
         <ListItemText
+          id={labelId}
           primary={primary}
           secondary={secondary}
           classes={{

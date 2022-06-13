@@ -1,13 +1,19 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import YardIcon from '@mui/icons-material/Yard';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getMidnight } from '../utility/date.util';
 import { FERTILIZE, HARVEST, Task } from '../interface';
 import DateDialog from '../components/DateDialog';
+import useSmallScreen from '../utility/smallScreen.util';
 import TaskListItem from './TaskListItem';
 import { useBulkCompleteTasks } from './hooks/useTasks';
 import './Tasks.css';
@@ -33,6 +39,24 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
 
+  const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
+  const selectedTaskIds = useMemo(() => selectedTasks.map((task) => task._id), [selectedTasks]);
+
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  const isSmallScreen = useSmallScreen();
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
+
   const renderTask = useCallback(
     (task: Task, index: number) => {
       const { showStart = false, isThisWeek = false, isOverdue = false, style } = options || {};
@@ -45,28 +69,49 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
           isThisWeek={isThisWeek}
           isOverdue={isOverdue}
           style={style}
+          selectedTaskIds={selectedTaskIds}
+          onSelect={(selected) => {
+            if (selected) {
+              setSelectedTasks([...selectedTasks, task]);
+            } else {
+              const selectedIndex = selectedTaskIds.indexOf(task._id);
+              if (selectedIndex > -1) {
+                const newSelectedTasks = [...selectedTasks];
+                newSelectedTasks.splice(selectedIndex, 1);
+                setSelectedTasks(newSelectedTasks);
+              }
+            }
+          }}
         />
       );
     },
-    [options, title, today]
+    [options, selectedTaskIds, selectedTasks, title, today]
   );
 
   const harvestTasks = useMemo(
-    () => tasks.filter((task) => task.type === HARVEST && today >= task.start.getTime()).map((task) => task._id),
-    [tasks, today]
+    () =>
+      (selectedTasks?.length > 0 ? selectedTasks : tasks)
+        .filter((task) => task.type === HARVEST && today >= task.start.getTime())
+        .map((task) => task._id),
+    [selectedTasks, tasks, today]
   );
 
   const fertilizeTasks = useMemo(
-    () => tasks.filter((task) => task.type === FERTILIZE && today >= task.start.getTime()).map((task) => task._id),
-    [tasks, today]
+    () =>
+      (selectedTasks?.length > 0 ? selectedTasks : tasks)
+        .filter((task) => task.type === FERTILIZE && today >= task.start.getTime())
+        .map((task) => task._id),
+    [selectedTasks, tasks, today]
   );
 
   const onHarvestClick = useCallback(() => {
     setShowHarvestedDialogue(true);
+    setMoreMenuAnchorElement(null);
   }, []);
 
   const onFertilizeClick = useCallback(() => {
     setShowFertilizedDialogue(true);
+    setMoreMenuAnchorElement(null);
   }, []);
 
   const finishUpdateStatusHarvested = useCallback(
@@ -76,8 +121,11 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
         taskIds: harvestTasks,
         date: date.toISOString()
       });
+      if (selectedTasks?.length > 0) {
+        setSelectedTasks(selectedTasks.filter((task) => !harvestTasks.includes(task._id)));
+      }
     },
-    [bulkCompleteTasks, harvestTasks]
+    [bulkCompleteTasks, harvestTasks, selectedTasks]
   );
 
   const finishUpdateStatusFertilized = useCallback(
@@ -87,8 +135,11 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
         taskIds: fertilizeTasks,
         date: date.toISOString()
       });
+      if (selectedTasks?.length > 0) {
+        setSelectedTasks(selectedTasks.filter((task) => !fertilizeTasks.includes(task._id)));
+      }
     },
-    [bulkCompleteTasks, fertilizeTasks]
+    [bulkCompleteTasks, fertilizeTasks, selectedTasks]
   );
 
   return (
@@ -103,34 +154,81 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
               overflow: 'hidden'
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: isSmallScreen ? 'space-between' : undefined
+              }}
+            >
               <Box>{title}</Box>
-              <Box sx={{ display: 'flex', ml: 3, gap: 2 }}>
-                {harvestTasks.length > 0 ? (
-                  <Button
-                    variant="outlined"
-                    aria-label="harvest"
-                    color="primary"
-                    onClick={onHarvestClick}
-                    title="Harvest"
+              {isSmallScreen ? (
+                <Box key="small-screen-actions" sx={{ display: 'flex' }}>
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                    aria-expanded={moreMenuOpen ? 'true' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleMoreMenuClick}
                   >
-                    <AgricultureIcon sx={{ mr: 1 }} fontSize="small" />
-                    Harvest
-                  </Button>
-                ) : null}
-                {fertilizeTasks.length > 0 ? (
-                  <Button
-                    variant="outlined"
-                    aria-label="fertilize"
-                    color="primary"
-                    onClick={onFertilizeClick}
-                    title="Fertilize"
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={moreMenuAnchorElement}
+                    open={moreMenuOpen}
+                    onClose={handleMoreMenuClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button'
+                    }}
                   >
-                    <YardIcon sx={{ mr: 1 }} fontSize="small" />
-                    Fertilize
-                  </Button>
-                ) : null}
-              </Box>
+                    {harvestTasks.length > 0 ? (
+                      <MenuItem onClick={onHarvestClick}>
+                        <ListItemIcon>
+                          <AgricultureIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="primary.main">Harvest</Typography>
+                      </MenuItem>
+                    ) : null}
+                    {fertilizeTasks.length > 0 ? (
+                      <MenuItem onClick={onFertilizeClick}>
+                        <ListItemIcon>
+                          <YardIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="primary.main">Fertilize</Typography>
+                      </MenuItem>
+                    ) : null}
+                  </Menu>
+                </Box>
+              ) : (
+                <Box key="large-screen-actions" sx={{ display: 'flex', ml: 3, gap: 2 }}>
+                  {harvestTasks.length > 0 ? (
+                    <Button
+                      variant="outlined"
+                      aria-label="harvest"
+                      color="primary"
+                      onClick={onHarvestClick}
+                      title="Harvest"
+                    >
+                      <AgricultureIcon sx={{ mr: 1 }} fontSize="small" />
+                      Harvest
+                    </Button>
+                  ) : null}
+                  {fertilizeTasks.length > 0 ? (
+                    <Button
+                      variant="outlined"
+                      aria-label="fertilize"
+                      color="primary"
+                      onClick={onFertilizeClick}
+                      title="Fertilize"
+                    >
+                      <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                      Fertilize
+                    </Button>
+                  ) : null}
+                </Box>
+              )}
             </Box>
           </Typography>
           <Box component="nav" aria-label={`main tasks-${title}`}>

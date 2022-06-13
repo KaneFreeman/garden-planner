@@ -7,7 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import MuiTextField from '@mui/material/TextField';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 
 interface DateDialogProps {
