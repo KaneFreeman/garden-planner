@@ -48,7 +48,7 @@ export const PlantInstanceSlice = createSlice({
         plantInstancesById[plantInstance._id] = plantInstance;
       });
 
-      return { ...state, plantInstances: action.payload, plantInstancesById, plantInstancesByContainer };
+      return { ...state, plantInstances: action.payload, plantInstancesById, plantInstancesByContainer, plantInstancesByPlants };
     }
   }
 });

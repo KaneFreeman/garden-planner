@@ -24,7 +24,7 @@ import { mapRecord } from '../../utility/record.util';
 import { isNotNullish, isNullish } from '../../utility/null.util';
 import { useGetContainers } from '../../containers/hooks/useContainers';
 
-const useGetPlantInstances = (options?: ExtraFetchOptions) => {
+export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 

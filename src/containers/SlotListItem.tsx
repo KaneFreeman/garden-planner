@@ -64,7 +64,7 @@ const SlotListItem = ({
             secondary: 'textSecondary'
           }}
         />
-        {showStatus ? <StatusChip status={status ?? PLANTED} /> : null}
+        {showStatus ? <StatusChip sx={{ ml: 2 }} status={status ?? PLANTED} /> : null}
       </ListItemButton>
     </ListItem>
   );

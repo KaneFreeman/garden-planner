@@ -42,7 +42,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
           key={`${key}-${index}`}
           instance={instance}
           onClick={onClickHandler}
-          primary={container.name}
+          primary={container?.name}
           secondary={secondary}
         />
       );
