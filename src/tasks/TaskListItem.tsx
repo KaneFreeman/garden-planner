@@ -3,13 +3,17 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItem from '@mui/material/ListItem';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import Avatar from '@mui/material/Avatar';
+import { blue, green, red } from '@mui/material/colors';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { Task } from '../interface';
+import GrassIcon from '@mui/icons-material/Grass';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import YardIcon from '@mui/icons-material/Yard';
+import { FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
 import useGetTaskText from './hooks/useGetTaskText';
 import './Tasks.css';
 
@@ -51,6 +55,20 @@ const TaskListItem = ({
 
   const { primary, secondary } = useGetTaskText(task, today, showStart);
 
+  const avatarBgColor = useMemo(() => {
+    switch (task.type) {
+      case FERTILIZE:
+      case HARVEST:
+        return blue[500];
+      case PLANT:
+        return green[500];
+      case TRANSPLANT:
+        return red[500];
+      default:
+        return undefined;
+    }
+  }, [task.type]);
+
   return (
     <ListItem style={style} className="task" disablePadding>
       <ListItemButton
@@ -59,11 +77,16 @@ const TaskListItem = ({
           width: '100%'
         }}
       >
-        <ListItemIcon>
-          {task.completedOn !== null ? <CheckBoxIcon color="success" /> : <CheckBoxOutlineBlankIcon />}
-        </ListItemIcon>
-        {isThisWeek ? <WarningIcon sx={{ mr: 1 }} color="warning" /> : null}
-        {isOverdue ? <ErrorIcon sx={{ mr: 1 }} color="error" /> : null}
+        <ListItemAvatar>
+          <Avatar sx={{ bgcolor: avatarBgColor }}>
+            {task.type === PLANT ? <GrassIcon key="plant task icon" /> : null}
+            {task.type === TRANSPLANT ? <MoveDownIcon key="transplatn task icon" /> : null}
+            {task.type === HARVEST ? <AgricultureIcon key="harvest task icon" /> : null}
+            {task.type === FERTILIZE ? <YardIcon key="fertilize task icon" /> : null}
+          </Avatar>
+        </ListItemAvatar>
+        {isThisWeek ? <WarningIcon sx={{ mr: 2 }} color="warning" /> : null}
+        {isOverdue ? <ErrorIcon sx={{ mr: 2 }} color="error" /> : null}
         <ListItemText
           primary={primary}
           secondary={secondary}
