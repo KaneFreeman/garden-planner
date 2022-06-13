@@ -1,17 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import Alert from '@mui/material/Alert';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import { useTasks } from './hooks/useTasks';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
 import AutoSizer from '../components/AutoSizer';
 import { getMidnight } from '../utility/date.util';
 import { Task } from '../interface';
-import './Tasks.css';
+import { useTasks } from './hooks/useTasks';
 import TaskListItem from './TaskListItem';
+import TasksSection from './TasksSection';
+import './Tasks.css';
 
 const Tasks = () => {
   const [tab, setTab] = useState(0);
@@ -69,80 +68,10 @@ const Tasks = () => {
           <TabPanel value={tab} index={0}>
             {overdue.length > 0 || thisWeek.length > 0 || active.length > 0 || next.length > 0 ? (
               <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {overdue.length > 0 ? (
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      Overdue
-                    </Typography>
-                    <Box component="nav" aria-label="main tasks-overdue">
-                      <List>
-                        {overdue.map((task, index) => renderTask('overdue', task, index, { isOverdue: true }))}
-                      </List>
-                    </Box>
-                  </Box>
-                ) : null}
-                {thisWeek.length > 0 ? (
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      This Week
-                    </Typography>
-                    <Box component="nav" aria-label="main tasks-thisWeek">
-                      <List>
-                        {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
-                      </List>
-                    </Box>
-                  </Box>
-                ) : null}
-                {active.length > 0 ? (
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      Active
-                    </Typography>
-                    <Box component="nav" aria-label="main tasks-active">
-                      <List>{active.map((task, index) => renderTask('active', task, index))}</List>
-                    </Box>
-                  </Box>
-                ) : null}
-                {next.length > 0 ? (
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      Next 30 Days
-                    </Typography>
-                    <Box component="nav" aria-label="main tasks-future">
-                      <List>
-                        {next.map((task, index) => renderTask('next-30-days', task, index, { showStart: true }))}
-                      </List>
-                    </Box>
-                  </Box>
-                ) : null}
+                <TasksSection title="Overdue" tasks={overdue} options={{ isOverdue: true }} />
+                <TasksSection title="This Week" tasks={thisWeek} options={{ isThisWeek: true }} />
+                <TasksSection title="Active" tasks={active} />
+                <TasksSection title="Next 30 Days" tasks={next} options={{ showStart: true }} />
               </Box>
             ) : (
               <Alert severity="info" sx={{ m: 2 }}>

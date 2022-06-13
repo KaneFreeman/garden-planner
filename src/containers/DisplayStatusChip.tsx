@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { useMemo } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, SxProps, Theme } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 
 const StyledChip = styled(Chip)({
@@ -13,9 +13,10 @@ export interface DisplayStatusChipProps {
   count?: number;
   shrink?: boolean;
   size?: 'small' | 'large';
+  sx?: SxProps<Theme> | undefined;
 }
 
-const DisplayStatusChip = ({ status, count, shrink, size = 'small' }: DisplayStatusChipProps) => {
+const DisplayStatusChip = ({ status, count, shrink, size = 'small', sx }: DisplayStatusChipProps) => {
   const color: 'default' | 'success' | 'error' | 'warning' = useMemo(() => {
     switch (status) {
       case 'Planted':
@@ -43,10 +44,10 @@ const DisplayStatusChip = ({ status, count, shrink, size = 'small' }: DisplaySta
   const title = useMemo(() => `${count ? `${count} ` : ''}${status}`, [count, status]);
 
   if (size === 'small') {
-    return <StyledChip label={label} color={color} title={title} />;
+    return <StyledChip sx={sx} label={label} color={color} title={title} />;
   }
 
-  return <Chip label={label} color={color} title={title} />;
+  return <Chip sx={sx} label={label} color={color} title={title} />;
 };
 
 export default DisplayStatusChip;

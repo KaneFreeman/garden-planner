@@ -15,7 +15,7 @@ import TextInlineField from '../components/inline-fields/TextInlineField';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import CommentsView from '../components/comments/CommentsView';
 import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
-import { Plant, Comment, PictureData, PlantType, PLANT_TYPES } from '../interface';
+import { Plant, PlantType, PLANT_TYPES } from '../interface';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
 import PlantSlotsView from '../containers/plants/PlantSlotsView';
@@ -56,19 +56,6 @@ const PlantView = () => {
     }
   }, [removePlant, id, navigate]);
   const handleOnClose = useCallback(() => setDeleting(false), []);
-
-  const updatePictures = useCallback((pictures: PictureData[]) => handleUpdatePlant({ pictures }), [handleUpdatePlant]);
-
-  const updateComments = useCallback(
-    (comments: Comment[], pictures?: PictureData[]) => {
-      if (pictures) {
-        handleUpdatePlant({ comments, pictures });
-        return;
-      }
-      handleUpdatePlant({ comments });
-    },
-    [handleUpdatePlant]
-  );
 
   const onUrlClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -181,14 +168,8 @@ const PlantView = () => {
         />
         <PlantSlotsView plantId={id} />
         <PlantDataView type={plant.type} />
-        <PicturesView pictures={plant.pictures} comments={plant.comments} alt={plant.name} onChange={updatePictures} />
-        <CommentsView
-          id={`plant-${id}`}
-          comments={plant.comments}
-          alt={plant.name}
-          pictures={plant.pictures}
-          onChange={updateComments}
-        />
+        <PicturesView data={plant} alt={plant.name} />
+        <CommentsView id={`plant-${id}`} data={plant} alt={plant.name} />
       </Box>
       <Dialog
         open={deleting}

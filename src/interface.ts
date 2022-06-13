@@ -355,7 +355,8 @@ export interface ContainerSlotIdentifier {
 }
 
 export interface BaseSlot {
-  plantInstanceId?: string;
+  plantInstanceId?: string | null;
+  plantInstanceHistory?: string[];
 }
 
 export interface Slot extends BaseSlot {
@@ -365,7 +366,7 @@ export interface Slot extends BaseSlot {
 export type BaseSlotWithIdentifier = BaseSlot & ContainerSlotIdentifier;
 
 export interface BaseSlotDTO {
-  plantInstanceId?: string;
+  plantInstanceId?: string | null;
 }
 
 export interface SlotDTO extends BaseSlotDTO {
@@ -470,10 +471,11 @@ export function toPictureDTO(dto: Omit<Picture, '_id'> | Picture): Omit<PictureD
 
 export const PLANT = 'Plant';
 export const TRANSPLANT = 'Transplant';
+export const HARVEST = 'Harvest';
 export const FERTILIZE = 'Fertilize';
 export const CUSTOM = 'Custom';
-export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof FERTILIZE | typeof CUSTOM;
-export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, FERTILIZE, CUSTOM];
+export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof HARVEST | typeof FERTILIZE | typeof CUSTOM;
+export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, HARVEST, FERTILIZE, CUSTOM];
 
 export interface Task {
   _id: string;
@@ -515,6 +517,12 @@ export function toTaskDTO(dto: Omit<Task, '_id'> | Task): Omit<TaskDTO, '_id'> |
     due: dto.due.toISOString(),
     completedOn: dto.completedOn !== null ? dto.completedOn.toISOString() : null
   };
+}
+
+export interface BulkCompleteTaskDTO {
+  taskIds: string[];
+  date: string;
+  type: TaskType;
 }
 
 export interface FertilizerApplication {

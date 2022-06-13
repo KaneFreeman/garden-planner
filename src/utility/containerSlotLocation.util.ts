@@ -60,22 +60,14 @@ export function getLocationTitle(
     return 'None';
   }
 
-  return `${container.name} - ${getSlotTitle(value.slotId, container.rows)}${
-    value.subSlot === true ? ' - Sub Slot' : ''
-  }`;
+  return `${container.name}${
+    Object.keys(container?.slots ?? {}).length > 1 ? ` - ${getSlotTitle(value.slotId, container.rows)}` : ''
+  }${value.subSlot === true ? ' - Sub Slot' : ''}`;
 }
 
 export function useLocationTitle(
   value: ContainerSlotIdentifier | undefined | null,
   container: Container | undefined | null
 ): string {
-  return useMemo(() => {
-    if (!value || !container) {
-      return 'None';
-    }
-
-    return `${container.name} - ${getSlotTitle(value.slotId, container.rows)}${
-      value.subSlot === true ? ' - Sub Slot' : ''
-    }`;
-  }, [value, container]);
+  return useMemo(() => getLocationTitle(value, container), [value, container]);
 }

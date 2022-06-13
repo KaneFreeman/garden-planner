@@ -1,5 +1,15 @@
+/* eslint-disable promise/always-return */
+/* eslint-disable promise/catch-or-return */
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromPlantInstanceDTO, PlantInstance, toPlantInstanceDTO } from '../../interface';
+import {
+  Container,
+  ContainerSlotIdentifier,
+  fromPlantInstanceDTO,
+  PlantInstance,
+  Slot,
+  STARTED_FROM_TYPE_SEED,
+  toPlantInstanceDTO
+} from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -11,8 +21,10 @@ import {
 } from '../../store/slices/plant-instances';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
+import { isNotNullish, isNullish } from '../../utility/null.util';
+import { useGetContainers } from '../../containers/hooks/useContainers';
 
-const useGetPlantInstances = (options?: ExtraFetchOptions) => {
+export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 
@@ -30,6 +42,7 @@ const useGetPlantInstances = (options?: ExtraFetchOptions) => {
 const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
   const getPlantInstances = useGetPlantInstances(options);
   const getTasks = useGetTasks(options);
+  const getContainers = useGetContainers(options);
 
   const runOperation = useCallback(
     async <T>(operation: () => Promise<T | undefined>) => {
@@ -40,11 +53,12 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
       }
 
       await getPlantInstances();
+      await getContainers();
       await getTasks();
 
       return response;
     },
-    [getPlantInstances, getTasks]
+    [getContainers, getPlantInstances, getTasks]
   );
 
   return runOperation;
@@ -56,9 +70,23 @@ export const useAddPlantInstance = () => {
 
   const addPlantInstance = useCallback(
     async (data: Omit<PlantInstance, '_id'>) => {
+      const lastHistoryEvent =
+        data.history && data.history.length > 0 ? data.history[data.history.length - 1] : undefined;
+      const location = lastHistoryEvent?.to;
+
+      let newData = data;
+      if (location) {
+        newData = {
+          ...data,
+          containerId: location?.containerId,
+          slotId: location?.slotId,
+          subSlot: location?.subSlot
+        };
+      }
+
       const response = await runOperation(() =>
         fetch(Api.plantInstance_Post, {
-          body: toPlantInstanceDTO(data)
+          body: toPlantInstanceDTO(newData)
         })
       );
 
@@ -141,7 +169,7 @@ export const useRemovePlantInstance = () => {
   return removePlantInstance;
 };
 
-export function usePlantInstance(plantInstanceId: string | undefined) {
+export function usePlantInstance(plantInstanceId: string | undefined | null) {
   const getPlantInstances = useGetPlantInstances();
   const selector = useMemo(() => selectPlantInstanceById(plantInstanceId), [plantInstanceId]);
   const plantInstancesDto = useAppSelector(selector);
@@ -178,13 +206,24 @@ export function usePlantInstancesById() {
   return useMemo(() => mapRecord(plantInstancesById, fromPlantInstanceDTO), [plantInstancesById]);
 }
 
-export const useFertilizePlantInstance = (plantInstanceId: string | undefined) => {
+export function usePlantInstancesFromSlot(slot: Slot | undefined | null) {
+  const plantInstancesById = usePlantInstancesById();
+  return useMemo(
+    () =>
+      slot?.plantInstanceHistory
+        ?.map((id) => plantInstancesById[id])
+        .filter((plantInstance) => isNotNullish(plantInstance)) ?? [],
+    [plantInstancesById, slot?.plantInstanceHistory]
+  );
+}
+
+export const useFertilizePlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
 
   const fertilizePlantInstance = useCallback(
     async (date: Date) => {
-      if (plantInstanceId === undefined) {
+      if (isNullish(plantInstanceId)) {
         return;
       }
 
@@ -201,13 +240,13 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined) =
   return fertilizePlantInstance;
 };
 
-export const useHarvestPlantInstance = (plantInstanceId: string | undefined) => {
+export const useHarvestPlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
 
   const harvestPlantInstance = useCallback(
     async (date: Date) => {
-      if (plantInstanceId === undefined) {
+      if (isNullish(plantInstanceId)) {
         return;
       }
 
@@ -222,4 +261,47 @@ export const useHarvestPlantInstance = (plantInstanceId: string | undefined) => 
   );
 
   return harvestPlantInstance;
+};
+
+function hasPlant(data: Partial<PlantInstance>): data is Partial<PlantInstance> & { plant: PlantInstance['plant'] } {
+  return data.plant !== undefined;
+}
+
+export const useUpdateCreatePlantInstance = (
+  plantInstance: PlantInstance | undefined,
+  location?: ContainerSlotIdentifier | null,
+  container?: Container
+) => {
+  const addPlantInstance = useAddPlantInstance();
+  const updatePlantInstance = useUpdatePlantInstance();
+
+  const updateCreatePlantInstance = useCallback(
+    (data: Partial<PlantInstance>): Promise<PlantInstance | undefined> => {
+      if (!plantInstance) {
+        if (!hasPlant(data) || !location) {
+          return Promise.resolve(undefined);
+        }
+
+        const newPlantInstance: Omit<PlantInstance, '_id'> = {
+          ...data,
+          ...location,
+          created: new Date(),
+          plantedCount: 1,
+          startedFrom: container?.startedFrom ?? STARTED_FROM_TYPE_SEED
+        };
+
+        return addPlantInstance(newPlantInstance);
+      }
+
+      const newPlantInstance: PlantInstance = {
+        ...plantInstance,
+        ...data
+      };
+
+      return updatePlantInstance(newPlantInstance);
+    },
+    [addPlantInstance, container?.startedFrom, location, plantInstance, updatePlantInstance]
+  );
+
+  return updateCreatePlantInstance;
 };

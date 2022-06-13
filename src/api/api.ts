@@ -7,6 +7,7 @@ const enum Api {
   task_IdPut = 'PUT:/task/{taskId}',
   task_Post = 'POST:/task',
   task_IdDelete = 'DELETE:/task/{taskId}',
+  task_PutBulkComplete = 'PUT:/task/bulk-complete',
 
   plant_Get = 'GET:/plant',
   plant_IdGet = 'GET:/plant/{plantId}',

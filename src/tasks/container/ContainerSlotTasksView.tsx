@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import { PlantInstance, Task } from '../../interface';
+import { PlantInstance, Task, CUSTOM } from '../../interface';
 import useSmallScreen from '../../utility/smallScreen.util';
 import { getMidnight } from '../../utility/date.util';
 import { useTasksByPlantInstance } from '../hooks/useTasks';
@@ -20,7 +20,13 @@ interface ContainerSlotTasksViewProps {
   type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle, type }: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({
+  plantInstance,
+  containerId,
+  slotId,
+  slotTitle,
+  type
+}: ContainerSlotTasksViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -40,9 +46,7 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
     return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
   }, [containerId, slotId, type]);
 
-  const { tasks, completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1, {
-    reverseSortCompleted: false
-  });
+  const { completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1);
 
   const today = useMemo(() => getMidnight().getTime(), []);
 
@@ -76,6 +80,17 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
     [path, slotTitle, today, type]
   );
 
+  const completedCustomTasks = useMemo(() => completed.filter((task) => task.type === CUSTOM), [completed]);
+  const hasNoTasks = useMemo(
+    () =>
+      completedCustomTasks.length === 0 &&
+      overdue.length === 0 &&
+      thisWeek.length === 0 &&
+      active.length === 0 &&
+      next.length === 0,
+    [active.length, completedCustomTasks.length, next.length, overdue.length, thisWeek.length]
+  );
+
   return (
     <>
       <Box sx={{ width: '100%' }}>
@@ -98,14 +113,14 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
           </IconButton>
         </Typography>
         <Box sx={{ width: '100%' }}>
-          {tasks.length === 0 ? (
+          {hasNoTasks ? (
             <Alert severity="info" sx={{ m: 2 }}>
               No tasks at this time!
             </Alert>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <List>
-                {completed.map((task, index) => renderTask('completed', task, index))}
+                {completedCustomTasks.map((task, index) => renderTask('completed', task, index))}
                 {overdue.map((task, index) => renderTask('overdue', task, index, { isOverdue: true }))}
                 {thisWeek.map((task, index) => renderTask('thisWeek', task, index, { isThisWeek: true }))}
                 {active.map((task, index) => renderTask('active', task, index))}
@@ -115,7 +130,7 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle,
           )}
         </Box>
       </Box>
-      <TaskModal open={isCreateTaskModalOpen} path={path} onClose={closeModals} />
+      <TaskModal open={isCreateTaskModalOpen} path={path} plantInstanceId={plantInstance?._id} onClose={closeModals} />
     </>
   );
 };

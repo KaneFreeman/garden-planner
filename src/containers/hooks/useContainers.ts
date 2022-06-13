@@ -7,7 +7,7 @@ import { selectContainer, selectContainers, selectContainersById, updateContaine
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 
-const useGetContainers = (options?: ExtraFetchOptions) => {
+export const useGetContainers = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
 
