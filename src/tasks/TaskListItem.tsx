@@ -105,6 +105,7 @@ const TaskListItem = ({
         sx={{
           width: '100%'
         }}
+        selected={isSelected}
       >
         {!isSmallScreen && task.completedOn === null ? (
           <Checkbox
