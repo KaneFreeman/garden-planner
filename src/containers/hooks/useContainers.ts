@@ -30,12 +30,12 @@ const useContainerOperation = (options?: ExtraFetchOptions) => {
     async <T>(operation: () => Promise<T | undefined>) => {
       const response = await operation();
 
+      await getContainers();
+      await getTasks();
+
       if (!response) {
         return undefined;
       }
-
-      await getContainers();
-      await getTasks();
 
       return response;
     },
@@ -166,7 +166,7 @@ export function useContainersById() {
 
 export const useFertilizeContainer = (containerId: string | undefined) => {
   const fetch = useFetch();
-  const runOperation = useContainerOperation();
+  const runOperation = useContainerOperation({ force: true });
 
   const getContainers = useCallback(
     async (date: Date) => {
