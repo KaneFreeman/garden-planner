@@ -4,17 +4,17 @@ export function isNotEmpty(value: string | null | undefined): value is string {
   return isNotNullish(value) && value !== '';
 }
 
+export function toTitleCase(str: string): string {
+  return str.charAt(0).toUpperCase() + str.substr(1).toLowerCase();
+}
+
 export function toTitleCaseFromKey(str: string) {
-  return str.replace(/_/g, ' ').replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
+  return str.replace(/_/g, ' ').replace(/\w\S*/g, toTitleCase);
 }
 
 export function toTitleCaseFromVariableName(str: string) {
   return str
     .split(/(?=[A-Z])/)
     .join(' ')
-    .replace(/\w\S*/g, function (txt) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
+    .replace(/\w\S*/g, toTitleCase);
 }

@@ -404,6 +404,11 @@ export const STARTED_FROM_TYPE_TRANSPLANT = 'Transplant';
 export type StartedFromType = typeof STARTED_FROM_TYPE_SEED | typeof STARTED_FROM_TYPE_TRANSPLANT;
 export const STARTED_FROM_TYPES: StartedFromType[] = [STARTED_FROM_TYPE_SEED, STARTED_FROM_TYPE_TRANSPLANT];
 
+export const SPRING = 'spring';
+export const FALL = 'fall';
+export type Season = typeof SPRING | typeof FALL;
+export const SEASONS: Season[] = [SPRING, FALL];
+
 export const CONTAINER_TYPE_INSIDE = 'Inside';
 export const CONTAINER_TYPE_OUTSIDE = 'Outside';
 export type ContainerType = typeof CONTAINER_TYPE_INSIDE | typeof CONTAINER_TYPE_OUTSIDE;
@@ -606,6 +611,19 @@ export function toStartedFromType(rawStartedFrom: string): StartedFromType {
   }
 }
 
+export function toSeason(raw: unknown): Season {
+  if (typeof raw !== 'string') {
+    return SPRING;
+  }
+
+  switch (raw) {
+    case FALL:
+      return FALL;
+    default:
+      return SPRING;
+  }
+}
+
 export function fromPlantInstanceHistoryDTO(dto: PlantInstanceHistoryDTO): PlantInstanceHistory {
   return {
     ...dto,
@@ -633,6 +651,7 @@ export interface PlantInstance {
   history?: PlantInstanceHistory[];
   closed?: boolean;
   startedFrom: StartedFromType;
+  season: Season;
   plantedCount: number;
 }
 
@@ -648,6 +667,7 @@ export interface PlantInstanceDTO {
   history?: PlantInstanceHistoryDTO[];
   closed?: boolean;
   startedFrom: string;
+  season: string;
   plantedCount: number;
 }
 
@@ -658,7 +678,8 @@ export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {
     pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
     comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined,
     history: dto.history !== undefined ? dto.history.map(fromPlantInstanceHistoryDTO) : undefined,
-    startedFrom: toStartedFromType(dto.startedFrom)
+    startedFrom: toStartedFromType(dto.startedFrom),
+    season: toSeason(dto.season)
   };
 }
 

@@ -23,6 +23,7 @@ import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 import { isNotNullish, isNullish } from '../../utility/null.util';
 import { useGetContainers } from '../../containers/hooks/useContainers';
+import computeSeason from '../../utility/season.util';
 
 export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -287,7 +288,8 @@ export const useUpdateCreatePlantInstance = (
           ...location,
           created: new Date(),
           plantedCount: 1,
-          startedFrom: container?.startedFrom ?? STARTED_FROM_TYPE_SEED
+          startedFrom: container?.startedFrom ?? STARTED_FROM_TYPE_SEED,
+          season: computeSeason()
         };
 
         return addPlantInstance(newPlantInstance);

@@ -28,6 +28,7 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import YardIcon from '@mui/icons-material/Yard';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LockIcon from '@mui/icons-material/Lock';
+import AddIcon from '@mui/icons-material/Add';
 import PicturesView from '../pictures/PicturesView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import PlantAvatar from '../plants/PlantAvatar';
@@ -42,7 +43,11 @@ import {
   StartedFromType,
   PlantInstance,
   PLANTED,
-  TRANSPLANTED
+  TRANSPLANTED,
+  STARTED_FROM_TYPE_SEED,
+  SEASONS,
+  SPRING,
+  Season
 } from '../interface';
 import { usePlants } from '../plants/usePlants';
 import Select from '../components/Select';
@@ -52,6 +57,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 import {
+  useAddPlantInstance,
   useFertilizePlantInstance,
   useHarvestPlantInstance,
   useUpdateCreatePlantInstance
@@ -62,6 +68,8 @@ import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-ins
 import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import DateDialog from '../components/DateDialog';
+import { toTitleCase } from '../utility/string.util';
+import computeSeason from '../utility/season.util';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
@@ -166,6 +174,24 @@ const ContainerSlotView = ({
 
   const location = useMemo(() => ({ containerId: id, slotId: index, subSlot: type === 'sub-slot' }), [id, index, type]);
   const updateCreatePlantInstance = useUpdateCreatePlantInstance(plantInstance, location, container);
+  const addPlantInstance = useAddPlantInstance();
+
+  const createNewPlantInstance = useCallback(() => {
+    if (plantInstance && !plantInstance.closed) {
+      return;
+    }
+
+    addPlantInstance({
+      containerId: id,
+      slotId: index,
+      subSlot: type === 'sub-slot',
+      plant: null,
+      created: new Date(),
+      startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
+      season: computeSeason(),
+      plantedCount: 1
+    });
+  }, [addPlantInstance, container.startedFrom, id, index, plantInstance, type]);
 
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
@@ -339,6 +365,25 @@ const ContainerSlotView = ({
 
     return {
       primary: value
+    };
+  }, []);
+
+  const updateSeason = useCallback(
+    (value: Season) => {
+      if (value) {
+        onPlantInstanceChange({ season: value });
+      }
+    },
+    [onPlantInstanceChange]
+  );
+
+  const renderSeason = useCallback((value: Season | null | undefined) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return {
+      primary: toTitleCase(value)
     };
   }, []);
 
@@ -531,6 +576,14 @@ const ContainerSlotView = ({
                           <Typography color="error.main">Transplant</Typography>
                         </MenuItem>
                       ) : null}
+                      {plantInstance?.closed === true ? (
+                        <MenuItem onClick={createNewPlantInstance}>
+                          <ListItemIcon>
+                            <AddIcon color="success" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="success.main">New Plant</Typography>
+                        </MenuItem>
+                      ) : null}
                     </Menu>
                   </Box>
                 ) : (
@@ -599,6 +652,18 @@ const ContainerSlotView = ({
                         Transplant
                       </Button>
                     ) : null}
+                    {plantInstance?.closed === true ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="new plant"
+                        color="success"
+                        onClick={createNewPlantInstance}
+                        title="New Plant"
+                      >
+                        <AddIcon sx={{ mr: 1 }} fontSize="small" />
+                        New Plant
+                      </Button>
+                    ) : null}
                   </Box>
                 )}
               </Box>
@@ -625,11 +690,21 @@ const ContainerSlotView = ({
         <DrawerInlineSelect
           label="Started From"
           value={plantInstance?.startedFrom}
-          defaultValue="Seed"
+          defaultValue={STARTED_FROM_TYPE_SEED}
           required
           options={STARTED_FROM_TYPES}
           onChange={updateStartedFrom}
           renderer={renderStartedFrom}
+          sx={{ mt: 1 }}
+        />
+        <DrawerInlineSelect
+          label="Season"
+          value={plantInstance?.season}
+          defaultValue={SPRING}
+          required
+          options={SEASONS}
+          onChange={updateSeason}
+          renderer={renderSeason}
           sx={{ mt: 1 }}
         />
         {type === 'slot' && (plantInstance || subPlantInstance) ? (
