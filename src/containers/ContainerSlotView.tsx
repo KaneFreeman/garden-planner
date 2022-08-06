@@ -546,9 +546,9 @@ const ContainerSlotView = ({
                       {plantedEvent && displayStatus !== 'Transplanted' ? (
                         <MenuItem onClick={onHarvestClick}>
                           <ListItemIcon>
-                            <AgricultureIcon color="primary" fontSize="small" />
+                            <AgricultureIcon color="secondary" fontSize="small" />
                           </ListItemIcon>
-                          <Typography color="primary.main">Harvest</Typography>
+                          <Typography color="secondary.main">Harvest</Typography>
                         </MenuItem>
                       ) : null}
                       {plantedEvent && displayStatus !== 'Transplanted' ? (
@@ -609,7 +609,7 @@ const ContainerSlotView = ({
                       <Button
                         variant="outlined"
                         aria-label="harvest"
-                        color="primary"
+                        color="secondary"
                         onClick={onHarvestClick}
                         title="Harvest"
                       >

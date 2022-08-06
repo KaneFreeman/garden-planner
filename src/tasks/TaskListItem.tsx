@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItem from '@mui/material/ListItem';
 import Avatar from '@mui/material/Avatar';
-import { blue, green, red } from '@mui/material/colors';
+import { blue, green, purple, red } from '@mui/material/colors';
 import Checkbox from '@mui/material/Checkbox';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -83,7 +83,7 @@ const TaskListItem = ({
       case FERTILIZE:
         return [blue[500], <YardIcon key="fertilize task icon" />];
       case HARVEST:
-        return [blue[500], <AgricultureIcon key="harvest task icon" />];
+        return [purple[300], <AgricultureIcon key="harvest task icon" />];
       case PLANT:
         return [green[500], <GrassIcon key="plant task icon" />];
       case TRANSPLANT:
