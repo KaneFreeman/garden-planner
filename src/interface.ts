@@ -307,6 +307,7 @@ export interface Plant {
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureData[];
   comments?: Comment[];
+  retired?: boolean;
 }
 
 export interface PlantDTO {
@@ -317,6 +318,7 @@ export interface PlantDTO {
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureDataDTO[];
   comments?: CommentDTO[];
+  retired?: boolean;
 }
 
 export function fromPlantDTO(dto: PlantDTO): Plant {

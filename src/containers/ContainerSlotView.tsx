@@ -216,6 +216,11 @@ const ContainerSlotView = ({
     [plants, subPlantInstance?.plant]
   );
 
+  const filteredPlants = useMemo(
+    () => plants.filter((aPlant) => aPlant.retired !== true || aPlant._id === plantInstance?.plant),
+    [plantInstance?.plant, plants]
+  );
+
   const updatePlant = useCallback(
     (value: Plant | null) => {
       onPlantInstanceChange({ plant: value?._id ?? null });
@@ -682,7 +687,7 @@ const ContainerSlotView = ({
           label="Plant"
           value={plant}
           noValueLabel="No plant"
-          options={plants}
+          options={filteredPlants}
           onChange={updatePlant}
           renderer={renderPlant}
           sx={{ mt: 1 }}

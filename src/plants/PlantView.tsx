@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DialogContentText from '@mui/material/DialogContentText';
 import Box from '@mui/material/Box';
@@ -9,7 +9,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LockIcon from '@mui/icons-material/Lock';
 import PicturesView from '../pictures/PicturesView';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -44,6 +51,24 @@ const PlantView = () => {
     },
     [id, plant, updatePlant]
   );
+
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
+
+  const onRetireChange = useCallback(() => {
+    handleUpdatePlant({ retired: !plant?.retired });
+    handleMoreMenuClose();
+  }, [handleUpdatePlant, plant?.retired]);
 
   const [deleting, setDeleting] = useState(false);
 
@@ -115,20 +140,69 @@ const PlantView = () => {
             actions: (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 {isSmallScreen ? (
-                  <Box sx={{ display: 'flex' }}>
+                  <Box key="small-screen-actions" sx={{ display: 'flex' }}>
                     <IconButton
-                      aria-label="delete"
-                      color="error"
-                      size="small"
-                      onClick={handleOnDelete}
-                      title="Delete container"
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                      aria-expanded={moreMenuOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleMoreMenuClick}
                     >
-                      <DeleteIcon fontSize="small" />
+                      <MoreVertIcon />
                     </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={moreMenuAnchorElement}
+                      open={moreMenuOpen}
+                      onClose={handleMoreMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
+                      }}
+                    >
+                      <MenuItem onClick={onRetireChange}>
+                        <ListItemIcon>
+                          {plant.retired === true ? (
+                            <LockOpenIcon color="success" fontSize="small" />
+                          ) : (
+                            <LockIcon color="warning" fontSize="small" />
+                          )}
+                        </ListItemIcon>
+                        <Typography color={plant.retired === true ? 'success.main' : 'warning.main'}>
+                          {plant.retired === true ? 'Unretire' : 'Retire'}
+                        </Typography>
+                      </MenuItem>
+                      <MenuItem onClick={handleOnDelete}>
+                        <ListItemIcon>
+                          <DeleteIcon color="error" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="error.main">Delete</Typography>
+                      </MenuItem>
+                    </Menu>
                   </Box>
                 ) : (
-                  <Box sx={{ display: 'flex' }}>
-                    <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete plant">
+                  <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    <Button
+                      variant="outlined"
+                      aria-label={plant.retired === true ? 'unretire' : 'retire'}
+                      color={plant.retired === true ? 'success' : 'warning'}
+                      onClick={onRetireChange}
+                      title={plant.retired === true ? 'Unretire' : 'Retire'}
+                    >
+                      {plant.retired === true ? (
+                        <LockOpenIcon sx={{ mr: 1 }} color="success" fontSize="small" />
+                      ) : (
+                        <LockIcon sx={{ mr: 1 }} color="warning" fontSize="small" />
+                      )}
+                      {plant.retired === true ? 'Unretire' : 'Retire'}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      aria-label="delete plant"
+                      color="error"
+                      onClick={handleOnDelete}
+                      title="Delete plant"
+                    >
                       <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
                       Delete
                     </Button>
