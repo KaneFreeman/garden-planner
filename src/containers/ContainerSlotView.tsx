@@ -191,6 +191,8 @@ const ContainerSlotView = ({
       season: computeSeason(),
       plantedCount: 1
     });
+
+    handleMoreMenuClose();
   }, [addPlantInstance, container.startedFrom, id, index, plantInstance, type]);
 
   const onPlantInstanceChange = useCallback(
