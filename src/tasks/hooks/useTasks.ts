@@ -40,11 +40,11 @@ const useTasksOperation = (options?: ExtraFetchOptions) => {
     async <T>(operation: () => Promise<T | undefined>) => {
       const response = await operation();
 
+      await getTasks();
+
       if (!response) {
         return undefined;
       }
-
-      await getTasks();
 
       return response;
     },

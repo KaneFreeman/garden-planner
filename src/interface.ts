@@ -128,6 +128,7 @@ export const THYME = 'Thyme';
 export const PARSLEY = 'Parsley';
 export const ROSEMARY = 'Rosemary';
 export const SAGE = 'Sage';
+export const SAVORY = 'Savory';
 export const STEVIA = 'Stevia';
 export const SWEET_MARIGOLD = 'Sweet Marigold';
 export const VERBENA = 'Verbena';
@@ -210,6 +211,7 @@ export type PlantType =
   | typeof PARSLEY
   | typeof ROSEMARY
   | typeof SAGE
+  | typeof SAVORY
   | typeof STEVIA
   | typeof SWEET_MARIGOLD
   | typeof VERBENA
@@ -291,6 +293,7 @@ export const PLANT_TYPES: PlantType[] = [
   PARSLEY,
   ROSEMARY,
   SAGE,
+  SAVORY,
   STEVIA,
   SWEET_MARIGOLD,
   VERBENA,

@@ -9,9 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import YardIcon from '@mui/icons-material/Yard';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import GrassIcon from '@mui/icons-material/Grass';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getMidnight } from '../utility/date.util';
-import { FERTILIZE, HARVEST, Task } from '../interface';
+import { FERTILIZE, HARVEST, PLANT, Task } from '../interface';
 import DateDialog from '../components/DateDialog';
 import useSmallScreen from '../utility/smallScreen.util';
 import TaskListItem from './TaskListItem';
@@ -36,6 +37,7 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
 
   const bulkCompleteTasks = useBulkCompleteTasks();
 
+  const [showPlantedDialogue, setShowPlantedDialogue] = useState(false);
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
 
@@ -88,6 +90,14 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
     [options, selectedTaskIds, selectedTasks, title, today]
   );
 
+  const plantTasks = useMemo(
+    () =>
+      (selectedTasks?.length > 0 ? selectedTasks : tasks)
+        .filter((task) => task.type === PLANT && today >= task.start.getTime())
+        .map((task) => task._id),
+    [selectedTasks, tasks, today]
+  );
+
   const harvestTasks = useMemo(
     () =>
       (selectedTasks?.length > 0 ? selectedTasks : tasks)
@@ -104,6 +114,11 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
     [selectedTasks, tasks, today]
   );
 
+  const onPlantClick = useCallback(() => {
+    setShowPlantedDialogue(true);
+    setMoreMenuAnchorElement(null);
+  }, []);
+
   const onHarvestClick = useCallback(() => {
     setShowHarvestedDialogue(true);
     setMoreMenuAnchorElement(null);
@@ -113,6 +128,20 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
     setShowFertilizedDialogue(true);
     setMoreMenuAnchorElement(null);
   }, []);
+
+  const finishUpdateStatusPlanted = useCallback(
+    (date: Date) => {
+      bulkCompleteTasks({
+        type: PLANT,
+        taskIds: plantTasks,
+        date: date.toISOString()
+      });
+      if (selectedTasks?.length > 0) {
+        setSelectedTasks(selectedTasks.filter((task) => !plantTasks.includes(task._id)));
+      }
+    },
+    [bulkCompleteTasks, plantTasks, selectedTasks]
+  );
 
   const finishUpdateStatusHarvested = useCallback(
     (date: Date) => {
@@ -161,7 +190,16 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
                 justifyContent: isSmallScreen ? 'space-between' : undefined
               }}
             >
-              <Box>{title}</Box>
+              <Box
+                sx={{
+                  height: 36.5,
+                  justifyContent: 'center',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                {title}
+              </Box>
               {isSmallScreen ? (
                 <Box key="small-screen-actions" sx={{ display: 'flex' }}>
                   <IconButton
@@ -183,6 +221,14 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
                       'aria-labelledby': 'basic-button'
                     }}
                   >
+                    {plantTasks.length > 0 ? (
+                      <MenuItem onClick={onPlantClick}>
+                        <ListItemIcon>
+                          <GrassIcon color="success" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="success.main">Plant</Typography>
+                      </MenuItem>
+                    ) : null}
                     {harvestTasks.length > 0 ? (
                       <MenuItem onClick={onHarvestClick}>
                         <ListItemIcon>
@@ -203,6 +249,18 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
                 </Box>
               ) : (
                 <Box key="large-screen-actions" sx={{ display: 'flex', ml: 3, gap: 2 }}>
+                  {plantTasks.length > 0 ? (
+                    <Button
+                      variant="outlined"
+                      aria-label="plant"
+                      color="success"
+                      onClick={onPlantClick}
+                      title="Plant"
+                    >
+                      <GrassIcon sx={{ mr: 1 }} fontSize="small" />
+                      Plant
+                    </Button>
+                  ) : null}
                   {harvestTasks.length > 0 ? (
                     <Button
                       variant="outlined"
@@ -236,6 +294,13 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
           </Box>
         </Box>
       ) : null}
+      <DateDialog
+        open={showPlantedDialogue}
+        question="When did you plant?"
+        label="Planted On"
+        onClose={() => setShowPlantedDialogue(false)}
+        onConfirm={finishUpdateStatusPlanted}
+      />
       <DateDialog
         open={showHarvestedDialogue}
         question="When did you harvest?"

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -91,6 +91,11 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
     [editData?.pictures, update]
   );
 
+  const sortedPlantTypes = useMemo(() => {
+    const newPlantTypes = [...PLANT_TYPES];
+    return newPlantTypes.sort((a, b) => a.localeCompare(b));
+  }, []);
+
   return (
     <Dialog
       classes={{
@@ -116,7 +121,7 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
           <Autocomplete
             disablePortal
             id="plant-type"
-            options={PLANT_TYPES}
+            options={sortedPlantTypes}
             fullWidth
             renderInput={(params) => <MuiTextField {...params} label="Type" />}
             sx={{ mt: 1.5, mb: 1 }}
