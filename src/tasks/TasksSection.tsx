@@ -44,6 +44,8 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
   const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
   const selectedTaskIds = useMemo(() => selectedTasks.map((task) => task._id), [selectedTasks]);
 
+  const selecting = useMemo(() => selectedTasks.length > 0, [selectedTasks]);
+
   const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,6 +57,34 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
 
   const isSmallScreen = useSmallScreen();
 
+  const handleOnSelect = useCallback(
+    (task: Task, selected: boolean) => {
+      if (selected) {
+        setSelectedTasks([...selectedTasks, task]);
+      } else {
+        const selectedIndex = selectedTaskIds.indexOf(task._id);
+        if (selectedIndex > -1) {
+          const newSelectedTasks = [...selectedTasks];
+          newSelectedTasks.splice(selectedIndex, 1);
+          setSelectedTasks(newSelectedTasks);
+        }
+      }
+    },
+    [selectedTaskIds, selectedTasks]
+  );
+
+  const handleOnClick = useCallback(
+    (task: Task, selected: boolean) => {
+      if (selecting) {
+        handleOnSelect(task, selected);
+        return true;
+      }
+
+      return false;
+    },
+    [handleOnSelect, selecting]
+  );
+
   useEffect(() => {
     handleMoreMenuClose();
   }, [isSmallScreen]);
@@ -62,6 +92,7 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
   const renderTask = useCallback(
     (task: Task, index: number) => {
       const { showStart = false, isThisWeek = false, isOverdue = false, style } = options || {};
+      const isSelected = selectedTaskIds.includes(task._id);
       return (
         <TaskListItem
           key={`${title}-${index}`}
@@ -71,23 +102,13 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
           isThisWeek={isThisWeek}
           isOverdue={isOverdue}
           style={style}
-          selectedTaskIds={selectedTaskIds}
-          onSelect={(selected) => {
-            if (selected) {
-              setSelectedTasks([...selectedTasks, task]);
-            } else {
-              const selectedIndex = selectedTaskIds.indexOf(task._id);
-              if (selectedIndex > -1) {
-                const newSelectedTasks = [...selectedTasks];
-                newSelectedTasks.splice(selectedIndex, 1);
-                setSelectedTasks(newSelectedTasks);
-              }
-            }
-          }}
+          isSelected={isSelected}
+          onClick={() => handleOnClick(task, !isSelected)}
+          onSelect={() => handleOnSelect(task, !isSelected)}
         />
       );
     },
-    [options, selectedTaskIds, selectedTasks, title, today]
+    [handleOnClick, handleOnSelect, options, selectedTaskIds, title, today]
   );
 
   const plantTasks = useMemo(
@@ -250,13 +271,7 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
               ) : (
                 <Box key="large-screen-actions" sx={{ display: 'flex', ml: 3, gap: 2 }}>
                   {plantTasks.length > 0 ? (
-                    <Button
-                      variant="outlined"
-                      aria-label="plant"
-                      color="success"
-                      onClick={onPlantClick}
-                      title="Plant"
-                    >
+                    <Button variant="outlined" aria-label="plant" color="success" onClick={onPlantClick} title="Plant">
                       <GrassIcon sx={{ mr: 1 }} fontSize="small" />
                       Plant
                     </Button>

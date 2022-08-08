@@ -33,8 +33,9 @@ interface TaskListItemProps {
     path: string;
     title: string;
   };
-  selectedTaskIds?: string[];
-  onSelect?: (selected: boolean) => void;
+  isSelected?: boolean;
+  onClick?: () => boolean;
+  onSelect?: () => void;
 }
 
 const TaskListItem = ({
@@ -45,7 +46,8 @@ const TaskListItem = ({
   isOverdue = false,
   style,
   back,
-  selectedTaskIds = [],
+  isSelected = false,
+  onClick,
   onSelect
 }: TaskListItemProps) => {
   const navigate = useNavigate();
@@ -59,22 +61,25 @@ const TaskListItem = ({
     return `?backPath=${back.path}&backLabel=${back.title}`;
   }, [back]);
 
-  const isSelected = useMemo(() => selectedTaskIds.includes(task._id), [selectedTaskIds, task._id]);
-
   const onSelectHandler = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
 
       if (onSelect) {
-        onSelect(!isSelected);
+        onSelect();
       }
     },
-    [isSelected, onSelect]
+    [onSelect]
   );
 
   const onClickHandler = useCallback(() => {
+    if (onClick) {
+      if (onClick()) {
+        return;
+      }
+    }
     navigate(`/task/${task._id}${queryString}`);
-  }, [navigate, task._id, queryString]);
+  }, [onClick, navigate, task._id, queryString]);
 
   const { primary, secondary } = useGetTaskText(task, today, showStart);
 
