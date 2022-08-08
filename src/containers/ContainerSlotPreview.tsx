@@ -1,17 +1,18 @@
 import React, { useMemo } from 'react';
-// import format from 'date-fns/format';
+import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
-import { BaseSlot, Container, Plant, Slot } from '../interface';
+import { BaseSlot, Container, Plant, Slot, TRANSPLANTED } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
+import { findHistoryFrom, getPlantedEvent } from '../utility/history.util';
 
 interface ContainerSlotPreviewProps {
   index: number;
@@ -78,48 +79,81 @@ const ContainerSlotPreview = React.memo(
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;
-      if (!slot || plantStatus === 'Not Planted') {
+      if (!slot) {
         slotTitle += ` - Not Planted`;
       } else if (plant) {
         slotTitle += ` - ${plant.name}`;
 
-        if (plantStatus === 'Planted') {
+        if (plantStatus === 'Not Planted') {
+          slotTitle += `, Not Planted`;
+        } else if (plantStatus === 'Planted') {
           slotTitle += `, Planted`;
-          // TODO if (slot.plantedDate) {
-          //   slotTitle += ` on ${format(slot.plantedDate, 'MMM d, yyyy')}`;
-          // }
+          const plantedEvent = getPlantedEvent(plantInstance);
+          if (plantedEvent) {
+            slotTitle += ` on ${format(plantedEvent.date, 'MMM d, yyyy')}`;
+          }
         } else if (plantStatus === 'Transplanted') {
           slotTitle += `, Transplanted`;
-          // TODO if (slot.transplantedDate) {
-          //   slotTitle += ` on ${format(slot.transplantedDate, 'MMM d, yyyy')}`;
-          // }
+          const tranplantedEvent = findHistoryFrom(
+            plantInstance,
+            {
+              containerId: container._id,
+              slotId: index,
+              subSlot: false
+            },
+            TRANSPLANTED
+          );
+
+          if (tranplantedEvent) {
+            slotTitle += ` on ${format(tranplantedEvent.date, 'MMM d, yyyy')}`;
+          }
         } else if (plantStatus === 'Closed') {
           slotTitle += `, Closed`;
         }
       }
 
-      if (slot?.subSlot) {
-        if (subPlant) {
-          slotTitle += ` and ${subPlant.name}`;
+      if (slot?.subSlot && subPlantInstance?.closed !== true && subPlant) {
+        slotTitle += ` and ${subPlant.name}`;
 
-          if (subPlantStatus === 'Planted') {
-            slotTitle += `, Planted`;
-            // TODO if (slot.subSlot.plantedDate) {
-            //   slotTitle += ` on ${format(slot.subSlot.plantedDate, 'MMM d, yyyy')}`;
-            // }
-          } else if (subPlantStatus === 'Transplanted') {
-            slotTitle += `, Transplanted`;
-            // TODO if (slot.subSlot.transplantedDate) {
-            //   slotTitle += ` on ${format(slot.subSlot.transplantedDate, 'MMM d, yyyy')}`;
-            // }
-          } else if (subPlantStatus === 'Closed') {
-            slotTitle += `, Closed`;
+        if (subPlantStatus === 'Not Planted') {
+          slotTitle += `, Not Planted`;
+        } else if (subPlantStatus === 'Planted') {
+          slotTitle += `, Planted`;
+          const subPlantedEvent = getPlantedEvent(subPlantInstance);
+          if (subPlantedEvent) {
+            slotTitle += ` on ${format(subPlantedEvent.date, 'MMM d, yyyy')}`;
+          }
+        } else if (subPlantStatus === 'Transplanted') {
+          slotTitle += `, Transplanted`;
+          const subTranplantedEvent = findHistoryFrom(
+            plantInstance,
+            {
+              containerId: container._id,
+              slotId: index,
+              subSlot: true
+            },
+            TRANSPLANTED
+          );
+
+          if (subTranplantedEvent) {
+            slotTitle += ` on ${format(subTranplantedEvent.date, 'MMM d, yyyy')}`;
           }
         }
       }
 
       return slotTitle;
-    }, [container.rows, index, plant, plantStatus, slot, subPlant, subPlantStatus]);
+    }, [
+      container._id,
+      container.rows,
+      index,
+      plant,
+      plantInstance,
+      plantStatus,
+      slot,
+      subPlant,
+      subPlantInstance,
+      subPlantStatus
+    ]);
 
     return (
       <IconButton
@@ -202,7 +236,12 @@ const ContainerSlotPreview = React.memo(
                 </Badge>
               </Box>
             ) : null}
-            <PlantAvatar plant={subPlant} size={29} variant="square" faded={subPlantStatus === 'Transplanted' || subPlantStatus === 'Closed'} />
+            <PlantAvatar
+              plant={subPlant}
+              size={29}
+              variant="square"
+              faded={subPlantStatus === 'Transplanted' || subPlantStatus === 'Closed'}
+            />
           </Box>
         ) : null}
       </IconButton>

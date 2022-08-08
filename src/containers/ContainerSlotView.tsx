@@ -74,6 +74,7 @@ import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import PastSlotPlants from './plants/PastSlotPlants';
+import { getPlantedEvent } from '../utility/history.util';
 
 interface CircleProps {
   backgroundColor: string;
@@ -142,7 +143,7 @@ const ContainerSlotView = ({
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
 
-  const plantedEvent = useMemo(() => plantInstance?.history?.[0], [plantInstance]);
+  const plantedEvent = useMemo(() => getPlantedEvent(plantInstance), [plantInstance]);
 
   const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);

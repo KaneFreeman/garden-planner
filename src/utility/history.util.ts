@@ -3,7 +3,8 @@ import {
   PlantInstance,
   HistoryStatus,
   TRANSPLANTED,
-  PlantInstanceHistory
+  PlantInstanceHistory,
+  PLANTED
 } from '../interface';
 
 export function findHistoryFromIndex(
@@ -71,7 +72,7 @@ export function findHistoryTo(
 }
 
 export function getPlantedEvent(plantInstance: PlantInstance | undefined | null) {
-  return plantInstance?.history?.[0];
+  return plantInstance?.history?.find((entry) => entry.status === PLANTED);
 }
 
 export function getPlantedDate(plantInstance: PlantInstance | undefined | null) {
