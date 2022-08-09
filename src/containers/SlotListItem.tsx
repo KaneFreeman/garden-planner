@@ -35,11 +35,15 @@ const SlotListItem = ({
   const status = usePlantInstanceStatus(instance, null, null);
   const plant = usePlant(instance?.plant);
 
-  const onClickHandler = useCallback(() => {
-    if (onClick) {
-      onClick(instance);
-    }
-  }, [onClick, instance]);
+  const onClickHandler = useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      event.stopPropagation();
+      if (onClick) {
+        onClick(instance);
+      }
+    },
+    [onClick, instance]
+  );
 
   return (
     <ListItem style={style} className="slot" disablePadding>

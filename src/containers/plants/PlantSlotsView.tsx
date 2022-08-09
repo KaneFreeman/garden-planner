@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import format from 'date-fns/format';
 import List from '@mui/material/List';
@@ -12,6 +12,8 @@ import { getSlotTitle } from '../../utility/slot.util';
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
 import CollapsableSimpleInlineField from '../../components/inline-fields/CollapsableSimpleInlineField';
 import { getFirstEventAt, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
+import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
+import { usePlantInstancesById } from '../../plant-instances/hooks/usePlantInstances';
 import { useContainersById } from '../hooks/useContainers';
 import SlotListItem from '../SlotListItem';
 
@@ -21,6 +23,7 @@ interface PlantSlotsViewProps {
 
 interface RenderPlantSlotOptions {
   showStatus?: boolean;
+  openDialog?: boolean;
 }
 
 const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
@@ -28,7 +31,23 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
   const navigate = useNavigate();
 
   const plantInstances = usePlantInstancesByPlant(plantId);
+  const plantInstancesById = usePlantInstancesById();
   const containersById = useContainersById();
+
+  const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
+
+  const openPlantInstanceDialog = useCallback((instance: PlantInstance) => {
+    setPlantInstanceToView(instance);
+  }, []);
+
+  useEffect(() => {
+    if (plantInstanceToView) {
+      setPlantInstanceToView(plantInstancesById[plantInstanceToView._id]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plantInstancesById]);
+
+  const plantInstanceViewClose = useCallback(() => setPlantInstanceToView(null), []);
 
   const secondaryCompare = useCallback(
     (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
@@ -102,7 +121,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
 
   const renderPlantSlot = useCallback(
     (key: string, instance: PlantInstance, index: number, options?: RenderPlantSlotOptions) => {
-      const { showStatus = true } = options || {};
+      const { showStatus = true, openDialog = false } = options || {};
       const container = containersById[instance.containerId];
 
       const primary = `${container?.name} - ${
@@ -119,72 +138,79 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         <SlotListItem
           key={`${key}-${index}`}
           instance={instance}
-          onClick={onClickHandler}
+          onClick={openDialog ? openPlantInstanceDialog : onClickHandler}
           primary={primary}
           secondary={secondary}
           showStatus={showStatus}
         />
       );
     },
-    [containersById, onClickHandler]
+    [containersById, onClickHandler, openPlantInstanceDialog]
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography
-        variant="subtitle1"
-        component="div"
-        sx={{
-          flexGrow: 1,
-          mt: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          justifyContent: isSmallScreen ? 'space-between' : undefined
-        }}
-        color="GrayText"
-      >
-        Active Slots
-      </Typography>
+    <>
       <Box sx={{ width: '100%' }}>
-        {activePlantInstances.length === 0 ? (
-          <Alert severity="info" sx={{ m: 2 }}>
-            No active slots at this time!
-          </Alert>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <List>
-              {activePlantInstances.map((plantInstance, index) =>
-                renderPlantSlot('active-instances', plantInstance, index)
-              )}
-            </List>
-          </Box>
-        )}
-      </Box>
-      {inactivePlantInstances.length > 0 ? (
-        <CollapsableSimpleInlineField
-          key="inactive-slots"
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Box>Inactive Slots</Box>
-              <Chip label={inactivePlantInstances.length} color="secondary" variant="outlined" />
+        <Typography
+          variant="subtitle1"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            mt: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            justifyContent: isSmallScreen ? 'space-between' : undefined
+          }}
+          color="GrayText"
+        >
+          Active Slots
+        </Typography>
+        <Box sx={{ width: '100%' }}>
+          {activePlantInstances.length === 0 ? (
+            <Alert severity="info" sx={{ m: 2 }}>
+              No active slots at this time!
+            </Alert>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <List>
+                {activePlantInstances.map((plantInstance, index) =>
+                  renderPlantSlot('active-instances', plantInstance, index)
+                )}
+              </List>
             </Box>
-          }
-          value={
-            <Box sx={{ width: '100%' }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <List>
-                  {inactivePlantInstances.map((plantInstance, index) =>
-                    renderPlantSlot('inactive-instances', plantInstance, index, { showStatus: false })
-                  )}
-                </List>
+          )}
+        </Box>
+        {inactivePlantInstances.length > 0 ? (
+          <CollapsableSimpleInlineField
+            key="inactive-slots"
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box>Inactive Slots</Box>
+                <Chip label={inactivePlantInstances.length} color="secondary" variant="outlined" />
               </Box>
-            </Box>
-          }
-          startCollapsed
-        />
-      ) : null}
-    </Box>
+            }
+            value={
+              <Box sx={{ width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <List>
+                    {inactivePlantInstances.map((plantInstance, index) =>
+                      renderPlantSlot('inactive-instances', plantInstance, index, { showStatus: false, openDialog: true })
+                    )}
+                  </List>
+                </Box>
+              </Box>
+            }
+            startCollapsed
+          />
+        ) : null}
+      </Box>
+      <PlantInstanceDialog
+        open={Boolean(plantInstanceToView)}
+        plantInstance={plantInstanceToView}
+        onClose={plantInstanceViewClose}
+      />
+    </>
   );
 };
 
