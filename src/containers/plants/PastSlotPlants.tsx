@@ -1,24 +1,35 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import format from 'date-fns/format';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { PlantInstance, Slot } from '../../interface';
+import { ContainerSlotIdentifier, PlantInstance, Slot } from '../../interface';
 import useSmallScreen from '../../utility/smallScreen.util';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
-import SlotListItem from '../SlotListItem';
 import { usePlantsById } from '../../plants/usePlants';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
+import { getFirstEventAt, useFirstEventStaticLocationComparator } from '../../utility/history.util';
+import SlotListItem from '../SlotListItem';
 
 interface PastSlotPlantsProps {
+  location: ContainerSlotIdentifier | null;
   slot: Slot;
 }
 
-const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
+const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
 
+  const firstEventStaticLocationComparator = useFirstEventStaticLocationComparator(location);
+
   const plantInstances = usePlantInstancesFromSlot(slot);
+  const sortedPlantInstances = useMemo(() => {
+    const newPlantInstances = [...plantInstances];
+    newPlantInstances.sort(firstEventStaticLocationComparator);
+    return newPlantInstances;
+  }, [firstEventStaticLocationComparator, plantInstances]);
+
   const plantInstancesById = useMemo(
     () =>
       plantInstances.reduce((acc, plantInstance) => {
@@ -53,24 +64,31 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
         return null;
       }
 
+      let secondary: string | undefined;
+      const firstEvent = getFirstEventAt(instance, location);
+      if (firstEvent) {
+        secondary = `${firstEvent.status} on ${format(firstEvent.date, 'MMM d, yyyy')}`;
+      }
+
       return (
         <SlotListItem
           key={`${key}-${index}`}
           instance={instance}
           onClick={plantInstanceClick}
           primary={plant.name}
+          secondary={secondary}
           showStatus={false}
           showAvatar
         />
       );
     },
-    [plantInstanceClick, plantsById]
+    [location, plantInstanceClick, plantsById]
   );
 
   return (
     <>
       {' '}
-      {plantInstances.length > 0 ? (
+      {sortedPlantInstances.length > 0 ? (
         <Box sx={{ width: '100%' }}>
           <Typography
             variant="subtitle1"
@@ -90,7 +108,7 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <List>
-                {plantInstances.map((plantInstance, index) =>
+                {sortedPlantInstances.map((plantInstance, index) =>
                   renderPlantSlot('active-instances', plantInstance, index)
                 )}
               </List>

@@ -735,7 +735,7 @@ const ContainerSlotView = ({
           type={type}
         />
         <PlantInstanceHistoryView plantInstance={plantInstance} slotLocation={slotLocation} />
-        <PastSlotPlants slot={slot} />
+        <PastSlotPlants slot={slot} location={slotLocation} />
         <PicturesView
           key="container-slot-view-pictures"
           data={plantInstance}
