@@ -34,6 +34,7 @@ interface TaskListItemProps {
     title: string;
   };
   isSelected?: boolean;
+  disableSelect?: boolean;
   onClick?: () => boolean;
   onSelect?: () => void;
 }
@@ -47,6 +48,7 @@ const TaskListItem = ({
   style,
   back,
   isSelected = false,
+  disableSelect = false,
   onClick,
   onSelect
 }: TaskListItemProps) => {
@@ -65,11 +67,15 @@ const TaskListItem = ({
     (event: React.MouseEvent) => {
       event.stopPropagation();
 
+      if (disableSelect) {
+        return;
+      }
+
       if (onSelect) {
         onSelect();
       }
     },
-    [onSelect]
+    [disableSelect, onSelect]
   );
 
   const onClickHandler = useCallback(() => {
@@ -112,7 +118,7 @@ const TaskListItem = ({
         }}
         selected={isSelected}
       >
-        {!isSmallScreen && task.completedOn === null ? (
+        {!isSmallScreen && task.completedOn === null && !disableSelect ? (
           <Checkbox
             edge="start"
             checked={isSelected}

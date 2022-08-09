@@ -30,9 +30,10 @@ interface TasksSectionProps {
   title: string;
   tasks: Task[];
   options?: TasksSettings;
+  disableSelect?: boolean;
 }
 
-const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
+const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSectionProps) => {
   const today = useMemo(() => getMidnight().getTime(), []);
 
   const bulkCompleteTasks = useBulkCompleteTasks();
@@ -59,6 +60,10 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
 
   const handleOnSelect = useCallback(
     (task: Task, selected: boolean) => {
+      if (disableSelect) {
+        return;
+      }
+
       if (selected) {
         setSelectedTasks([...selectedTasks, task]);
       } else {
@@ -70,19 +75,19 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
         }
       }
     },
-    [selectedTaskIds, selectedTasks]
+    [disableSelect, selectedTaskIds, selectedTasks]
   );
 
   const handleOnClick = useCallback(
     (task: Task, selected: boolean) => {
-      if (selecting) {
+      if (selecting && !disableSelect) {
         handleOnSelect(task, selected);
         return true;
       }
 
       return false;
     },
-    [handleOnSelect, selecting]
+    [disableSelect, handleOnSelect, selecting]
   );
 
   useEffect(() => {
@@ -105,10 +110,11 @@ const TasksSection = ({ title, tasks, options }: TasksSectionProps) => {
           isSelected={isSelected}
           onClick={() => handleOnClick(task, !isSelected)}
           onSelect={() => handleOnSelect(task, !isSelected)}
+          disableSelect={disableSelect}
         />
       );
     },
-    [handleOnClick, handleOnSelect, options, selectedTaskIds, title, today]
+    [disableSelect, handleOnClick, handleOnSelect, options, selectedTaskIds, title, today]
   );
 
   const plantTasks = useMemo(

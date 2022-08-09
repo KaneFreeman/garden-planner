@@ -71,7 +71,7 @@ const Tasks = () => {
                 <TasksSection title="Overdue" tasks={overdue} options={{ isOverdue: true }} />
                 <TasksSection title="This Week" tasks={thisWeek} options={{ isThisWeek: true }} />
                 <TasksSection title="Active" tasks={active} />
-                <TasksSection title="Next 30 Days" tasks={next} options={{ showStart: true }} />
+                <TasksSection title="Next 30 Days" tasks={next} options={{ showStart: true }} disableSelect />
               </Box>
             ) : (
               <Alert severity="info" sx={{ m: 2 }}>
