@@ -129,7 +129,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
         ? {
             current: 'Task',
             actions: (
-              <Box key="actions" sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
+              <Box key="actions" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {shouldLinkTo ? (
                   <IconButton
                     key="go-to-button"
