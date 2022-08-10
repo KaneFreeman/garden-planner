@@ -347,7 +347,12 @@ export const TRANSPLANTED = 'Transplanted';
 export const HARVESTED = 'Harvested';
 export const FERTILIZED = 'Fertilized';
 export type HistoryStatus = typeof PLANTED | typeof TRANSPLANTED | typeof HARVESTED | typeof FERTILIZED;
-export const STATUSES: HistoryStatus[] = [PLANTED, TRANSPLANTED, HARVESTED, FERTILIZED];
+export const HISTORY_STATUSES: HistoryStatus[] = [PLANTED, TRANSPLANTED, HARVESTED, FERTILIZED];
+
+export const NOT_PLANTED = 'Not Planted';
+export const CLOSED = 'Closed';
+export type PlantStatus = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED | typeof CLOSED;
+export const PLANT_STATUSES: PlantStatus[] = [NOT_PLANTED, PLANTED, TRANSPLANTED, CLOSED];
 
 export interface ContainerFertilizeDTO {
   readonly date: string;

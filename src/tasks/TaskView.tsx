@@ -22,7 +22,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { Task } from '../interface';
+import { CUSTOM, Task } from '../interface';
 import useSmallScreen from '../utility/smallScreen.util';
 import Breadcrumbs from '../components/Breadcrumbs';
 import TextInlineField from '../components/inline-fields/TextInlineField';
@@ -63,7 +63,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const today = useMemo(() => getMidnight().getTime(), []);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
-  const isCustom = useMemo(() => task.type === 'Custom', [task.type]);
+  const isCustom = useMemo(() => task.type === CUSTOM, [task.type]);
 
   const markTaskAsCompleted = useCallback(() => {
     updateTask({

@@ -23,7 +23,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Container, FERTILIZE, Plant, Slot } from '../interface';
+import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, Plant, Slot } from '../interface';
 import { usePlantsById } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
@@ -235,7 +235,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                     sx={{ ml: 1, display: 'flex', alignItems: 'center', gap: 1, whiteSpace: 'nowrap' }}
                     color="GrayText"
                   >
-                    {container.type === 'Inside' ? (
+                    {container.type === CONTAINER_TYPE_INSIDE ? (
                       <HomeIcon titleAccess="Inside" />
                     ) : (
                       <ParkIcon titleAccess="Inside" />

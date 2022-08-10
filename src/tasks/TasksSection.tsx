@@ -12,7 +12,7 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import GrassIcon from '@mui/icons-material/Grass';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getMidnight } from '../utility/date.util';
-import { FERTILIZE, HARVEST, PLANT, Task } from '../interface';
+import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task } from '../interface';
 import DateDialog from '../components/DateDialog';
 import useSmallScreen from '../utility/smallScreen.util';
 import TaskListItem from './TaskListItem';
@@ -60,7 +60,7 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
 
   const handleOnSelect = useCallback(
     (task: Task, selected: boolean) => {
-      if (disableSelect) {
+      if (disableSelect || task.type === CUSTOM) {
         return;
       }
 

@@ -17,7 +17,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import TaskIcon from '@mui/icons-material/Task';
 import YardIcon from '@mui/icons-material/Yard';
 import CheckIcon from '@mui/icons-material/Check';
-import { FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
+import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
 import useSmallScreen from '../utility/smallScreen.util';
 import useGetTaskText from './hooks/useGetTaskText';
 import './Tasks.css';
@@ -118,7 +118,7 @@ const TaskListItem = ({
         }}
         selected={isSelected}
       >
-        {!isSmallScreen && task.completedOn === null && !disableSelect ? (
+        {!isSmallScreen && task.completedOn === null && task.type !== CUSTOM && !disableSelect ? (
           <Checkbox
             edge="start"
             checked={isSelected}

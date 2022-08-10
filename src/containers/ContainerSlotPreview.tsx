@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import GrassIcon from '@mui/icons-material/Grass';
 import PlantAvatar from '../plants/PlantAvatar';
-import { BaseSlot, Container, Plant, Slot, TRANSPLANTED } from '../interface';
+import { BaseSlot, CLOSED, Container, Plant, PLANTED, Slot, TRANSPLANTED } from '../interface';
 import { getSlotTitle } from '../utility/slot.util';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
@@ -82,18 +82,13 @@ const ContainerSlotPreview = React.memo(
       if (!slot) {
         slotTitle += ` - Not Planted`;
       } else if (plant) {
-        slotTitle += ` - ${plant.name}`;
-
-        if (plantStatus === 'Not Planted') {
-          slotTitle += `, Not Planted`;
-        } else if (plantStatus === 'Planted') {
-          slotTitle += `, Planted`;
+        slotTitle += ` - ${plant.name}, ${plantStatus}`;
+        if (plantStatus === PLANTED) {
           const plantedEvent = getPlantedEvent(plantInstance);
           if (plantedEvent) {
             slotTitle += ` on ${format(plantedEvent.date, 'MMM d, yyyy')}`;
           }
-        } else if (plantStatus === 'Transplanted') {
-          slotTitle += `, Transplanted`;
+        } else if (plantStatus === TRANSPLANTED) {
           const tranplantedEvent = findHistoryFrom(
             plantInstance,
             {
@@ -107,23 +102,19 @@ const ContainerSlotPreview = React.memo(
           if (tranplantedEvent) {
             slotTitle += ` on ${format(tranplantedEvent.date, 'MMM d, yyyy')}`;
           }
-        } else if (plantStatus === 'Closed') {
-          slotTitle += `, Closed`;
         }
       }
 
       if (slot?.subSlot && subPlantInstance?.closed !== true && subPlant) {
-        slotTitle += ` and ${subPlant.name}`;
+        slotTitle += ` and ${subPlant.name}, ${subPlantStatus}`;
 
-        if (subPlantStatus === 'Not Planted') {
-          slotTitle += `, Not Planted`;
-        } else if (subPlantStatus === 'Planted') {
+        if (subPlantStatus === PLANTED) {
           slotTitle += `, Planted`;
           const subPlantedEvent = getPlantedEvent(subPlantInstance);
           if (subPlantedEvent) {
             slotTitle += ` on ${format(subPlantedEvent.date, 'MMM d, yyyy')}`;
           }
-        } else if (subPlantStatus === 'Transplanted') {
+        } else if (subPlantStatus === TRANSPLANTED) {
           slotTitle += `, Transplanted`;
           const subTranplantedEvent = findHistoryFrom(
             plantInstance,
@@ -191,7 +182,7 @@ const ContainerSlotPreview = React.memo(
             plant={plant}
             size={76}
             variant="square"
-            faded={plantStatus === 'Transplanted' || plantStatus === 'Closed'}
+            faded={plantStatus === TRANSPLANTED || plantStatus === CLOSED}
           />
         ) : (
           <GrassIcon key="plant-icon" color="disabled" />
@@ -240,7 +231,7 @@ const ContainerSlotPreview = React.memo(
               plant={subPlant}
               size={29}
               variant="square"
-              faded={subPlantStatus === 'Transplanted' || subPlantStatus === 'Closed'}
+              faded={subPlantStatus === TRANSPLANTED || subPlantStatus === CLOSED}
             />
           </Box>
         ) : null}
