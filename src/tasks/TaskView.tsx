@@ -11,11 +11,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import MuiTextField from '@mui/material/TextField';
 import DialogContentText from '@mui/material/DialogContentText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Typography from '@mui/material/Typography';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { Task } from '../interface';
 import useSmallScreen from '../utility/smallScreen.util';
@@ -44,13 +49,21 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const updateTask = useUpdateTask();
   const removeTask = useRemoveTask();
 
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
   const isSmallScreen = useSmallScreen();
 
   const today = useMemo(() => getMidnight().getTime(), []);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
-  const canComplete = useMemo(() => task.type === 'Custom', [task.type]);
-  const canDelete = useMemo(() => task.type === 'Custom', [task.type]);
+  const isCustom = useMemo(() => task.type === 'Custom', [task.type]);
 
   const markTaskAsCompleted = useCallback(() => {
     updateTask({
@@ -68,7 +81,10 @@ const TaskView = ({ task }: TaskViewProperties) => {
     setIsMarkingAsOpen(false);
   }, [task, updateTask]);
 
-  const handleOnDelete = useCallback(() => setIsDeleting(true), []);
+  const handleOnDelete = useCallback(() => {
+    setIsDeleting(true);
+    handleMoreMenuClose();
+  }, []);
   const handleOnDeleteConfirm = useCallback(() => {
     removeTask(task._id);
     navigate(backPath ?? '/');
@@ -84,11 +100,13 @@ const TaskView = ({ task }: TaskViewProperties) => {
 
   const handleOnMarkAsOpen = useCallback(() => {
     setIsMarkingAsOpen(true);
+    handleMoreMenuClose();
   }, []);
 
   const handleOnMarkAsComplete = useCallback(() => {
     setCompletedOn(getMidnight());
     setIsMarkingAsCompleted(true);
+    handleMoreMenuClose();
   }, []);
 
   const handleOnChange = useCallback(
@@ -124,33 +142,45 @@ const TaskView = ({ task }: TaskViewProperties) => {
                     <OpenInNewIcon fontSize="small" />
                   </IconButton>
                 ) : null}
-                {canComplete ? (
-                  <IconButton
-                    key="mark-complete-button"
-                    aria-label={task.completedOn ? 'reopen' : 'mark as complete'}
-                    color={task.completedOn ? 'success' : 'primary'}
-                    size="small"
-                    onClick={task.completedOn ? handleOnMarkAsOpen : handleOnMarkAsComplete}
-                    title={task.completedOn ? 'Reopen' : 'Mark as complete'}
-                  >
-                    {task.completedOn ? (
-                      <CheckBoxIcon key="reopen-icon" fontSize="small" />
-                    ) : (
-                      <CheckBoxOutlineBlankIcon key="complete-icon" fontSize="small" />
-                    )}
-                  </IconButton>
-                ) : null}
-                {canDelete ? (
-                  <IconButton
-                    key="delete-button"
-                    aria-label="delete"
-                    color="error"
-                    size="small"
-                    onClick={handleOnDelete}
-                    title="Delete task"
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
+                {isCustom ? (
+                  <>
+                    <IconButton
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                      aria-expanded={moreMenuOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleMoreMenuClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={moreMenuAnchorElement}
+                      open={moreMenuOpen}
+                      onClose={handleMoreMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
+                      }}
+                    >
+                      <MenuItem onClick={task.completedOn ? handleOnMarkAsOpen : handleOnMarkAsComplete}>
+                        <ListItemIcon>
+                          {task.completedOn ? (
+                            <CheckBoxIcon color="success" key="reopen-icon" fontSize="small" />
+                          ) : (
+                            <CheckBoxOutlineBlankIcon color="primary" key="complete-icon" fontSize="small" />
+                          )}
+                        </ListItemIcon>
+                        <Typography color={task.completedOn ? 'success.main' : 'primary.main'}>{task.completedOn ? 'Reopen' : 'Mark as complete'}</Typography>
+                      </MenuItem>
+                      <MenuItem onClick={handleOnDelete}>
+                        <ListItemIcon>
+                          <DeleteIcon color="error" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="error.main">Delete task</Typography>
+                      </MenuItem>
+                    </Menu>
+                  </>
                 ) : null}
               </Box>
             )
@@ -166,54 +196,55 @@ const TaskView = ({ task }: TaskViewProperties) => {
                   </Button>
                 ) : null}
                 {/* eslint-disable-next-line no-nested-ternary */}
-                {canComplete ? (
-                  task.completedOn ? (
+                {isCustom ? (
+                  <>
+                    {task.completedOn ? (
+                      <Button
+                        key="reopen-button-desktop"
+                        variant="outlined"
+                        color="success"
+                        onClick={handleOnMarkAsOpen}
+                        title="Reopen"
+                      >
+                        <CheckBoxIcon sx={{ mr: 1 }} fontSize="small" />
+                        Reopen
+                      </Button>
+                    ) : (
+                      <Button
+                        key="mark-complete-button-desktop"
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleOnMarkAsComplete}
+                        title="Mark as complete"
+                      >
+                        <CheckBoxOutlineBlankIcon sx={{ mr: 1 }} fontSize="small" />
+                        Mark as complete
+                      </Button>
+                    )}
                     <Button
-                      key="reopen-button-desktop"
+                      key="delete-button-desktop"
                       variant="outlined"
-                      color="success"
-                      onClick={handleOnMarkAsOpen}
-                      title="Reopen"
+                      color="error"
+                      onClick={handleOnDelete}
+                      title="Delete task"
                     >
-                      <CheckBoxIcon sx={{ mr: 1 }} fontSize="small" />
-                      Reopen
+                      <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
+                      Delete
                     </Button>
-                  ) : (
-                    <Button
-                      key="mark-complete-button-desktop"
-                      variant="outlined"
-                      color="primary"
-                      onClick={handleOnMarkAsComplete}
-                      title="Mark as complete"
-                    >
-                      <CheckBoxOutlineBlankIcon sx={{ mr: 1 }} fontSize="small" />
-                      Mark as complete
-                    </Button>
-                  )
-                ) : null}
-                {canDelete ? (
-                  <Button
-                    key="delete-button-desktop"
-                    variant="outlined"
-                    color="error"
-                    onClick={handleOnDelete}
-                    title="Delete task"
-                  >
-                    <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-                    Delete
-                  </Button>
+                  </>
                 ) : null}
               </Box>
             )
           },
     [
-      canComplete,
-      canDelete,
       handleOnDelete,
       handleOnGoTo,
       handleOnMarkAsComplete,
       handleOnMarkAsOpen,
+      isCustom,
       isSmallScreen,
+      moreMenuAnchorElement,
+      moreMenuOpen,
       shouldLinkTo,
       task.completedOn
     ]

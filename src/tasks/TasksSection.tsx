@@ -228,51 +228,55 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
                 {title}
               </Box>
               {isSmallScreen ? (
-                <Box key="small-screen-actions" sx={{ display: 'flex' }}>
-                  <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-controls={moreMenuOpen ? 'long-menu' : undefined}
-                    aria-expanded={moreMenuOpen ? 'true' : undefined}
-                    aria-haspopup="true"
-                    onClick={handleMoreMenuClick}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    id="basic-menu"
-                    anchorEl={moreMenuAnchorElement}
-                    open={moreMenuOpen}
-                    onClose={handleMoreMenuClose}
-                    MenuListProps={{
-                      'aria-labelledby': 'basic-button'
-                    }}
-                  >
-                    {plantTasks.length > 0 ? (
-                      <MenuItem onClick={onPlantClick}>
-                        <ListItemIcon>
-                          <GrassIcon color="success" fontSize="small" />
-                        </ListItemIcon>
-                        <Typography color="success.main">Plant</Typography>
-                      </MenuItem>
-                    ) : null}
-                    {harvestTasks.length > 0 ? (
-                      <MenuItem onClick={onHarvestClick}>
-                        <ListItemIcon>
-                          <AgricultureIcon color="secondary" fontSize="small" />
-                        </ListItemIcon>
-                        <Typography color="secondary.main">Harvest</Typography>
-                      </MenuItem>
-                    ) : null}
-                    {fertilizeTasks.length > 0 ? (
-                      <MenuItem onClick={onFertilizeClick}>
-                        <ListItemIcon>
-                          <YardIcon color="primary" fontSize="small" />
-                        </ListItemIcon>
-                        <Typography color="primary.main">Fertilize</Typography>
-                      </MenuItem>
-                    ) : null}
-                  </Menu>
+                <Box key="small-screen-actions" sx={{ display: 'flex', height: 40 }}>
+                  {plantTasks.length > 0 || harvestTasks.length > 0 || fertilizeTasks.length > 0 ? (
+                    <>
+                      <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                        aria-expanded={moreMenuOpen ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleMoreMenuClick}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={moreMenuAnchorElement}
+                        open={moreMenuOpen}
+                        onClose={handleMoreMenuClose}
+                        MenuListProps={{
+                          'aria-labelledby': 'basic-button'
+                        }}
+                      >
+                        {plantTasks.length > 0 ? (
+                          <MenuItem onClick={onPlantClick}>
+                            <ListItemIcon>
+                              <GrassIcon color="success" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="success.main">Plant</Typography>
+                          </MenuItem>
+                        ) : null}
+                        {harvestTasks.length > 0 ? (
+                          <MenuItem onClick={onHarvestClick}>
+                            <ListItemIcon>
+                              <AgricultureIcon color="secondary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="secondary.main">Harvest</Typography>
+                          </MenuItem>
+                        ) : null}
+                        {fertilizeTasks.length > 0 ? (
+                          <MenuItem onClick={onFertilizeClick}>
+                            <ListItemIcon>
+                              <YardIcon color="primary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="primary.main">Fertilize</Typography>
+                          </MenuItem>
+                        ) : null}
+                      </Menu>
+                    </>
+                  ) : null}
                 </Box>
               ) : (
                 <Box key="large-screen-actions" sx={{ display: 'flex', ml: 3, gap: 2 }}>
