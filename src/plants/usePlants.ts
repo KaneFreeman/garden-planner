@@ -8,6 +8,7 @@ import { useGetTasks } from '../tasks/hooks/useTasks';
 import { selectPlantInstancesByContainers } from '../store/slices/plant-instances';
 import { isNotNullish } from '../utility/null.util';
 import { mapRecord } from '../utility/record.util';
+import { useGetPlantInstances } from '../plant-instances/hooks/usePlantInstances';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -141,6 +142,7 @@ export function usePlant(plantId: string | undefined | null) {
 
 export function usePlants(containersToFilter?: Container[]) {
   const getPlants = useGetPlants();
+  const getPlantInstances = useGetPlantInstances();
   const plantDtos = useAppSelector(selectPlants);
   const plantInstancesByContainer = useAppSelector(selectPlantInstancesByContainers);
   const plants = useMemo(() => {
@@ -150,8 +152,10 @@ export function usePlants(containersToFilter?: Container[]) {
     if (containersToFilter) {
       const uniquePlantsInContainers = containersToFilter
         .flatMap((container) => {
-          return (plantInstancesByContainer[container._id]?.map((plantInstance) => plantInstance.plant) ?? []).filter(
-            isNotNullish
+          return (
+            plantInstancesByContainer[container._id]
+              ?.filter((plantInstance) => plantInstance.closed !== true && isNotNullish(plantInstance.plant))
+              .map((plantInstance) => plantInstance.plant) ?? []
           );
         })
         .filter((value, index, self) => {
@@ -166,7 +170,8 @@ export function usePlants(containersToFilter?: Container[]) {
 
   useEffect(() => {
     getPlants();
-  }, [getPlants]);
+    getPlantInstances();
+  }, [getPlantInstances, getPlants]);
 
   return plants;
 }
