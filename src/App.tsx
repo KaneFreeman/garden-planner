@@ -59,8 +59,8 @@ const App = () => {
 
   return (
     <Auth0Provider
-      domain="https://dev-p70ch9rb.us.auth0.com"
-      clientId="zjr0Ek3kc2rzXewGTPCpVcYqb1Yex8QQ"
+      domain={process.env.AUTH0_DOMAIN ?? ''}
+      clientId={process.env.AUTH0_CLIENT_ID ?? ''}
       redirectUri={window.location.origin}
     >
       <ThemeProvider theme={theme}>
