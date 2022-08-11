@@ -155,16 +155,16 @@ const TextInlineField = ({
         >
           {readOnly ? (
             <ListItem
-              key="dateInlineField-display"
+              key="textInlineField-display"
               sx={{ ...(noPadding ? { p: 0 } : {}) }}
             >
               {displayValue}
             </ListItem>
           ) : (
             <ListItemButton
-              key="dateInlineField-display-button"
+              key="textInlineField-display-button"
               onClick={open ? undefined : handleOpen}
-              sx={{ ...(noPadding ? { p: 0 } : {}) }}
+              sx={{ ...(noPadding ? { p: 0 } : {}), minHeight: 40 }}
             >
               {displayValue}
             </ListItemButton>

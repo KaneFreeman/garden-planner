@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -112,10 +112,10 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
           component="div"
           sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
         >
-          <ListItem button key="dateInlineField-display" onClick={open ? undefined : handleOpen}>
+          <ListItemButton key="dateInlineField-display" onClick={open ? undefined : handleOpen} sx={{ minHeight: 40 }}>
             {value?.[0]}
             {value?.[1] ? <Box>&nbsp;-&nbsp;{value[1]}</Box> : null}
-          </ListItem>
+          </ListItemButton>
         </Typography>
       )}
     </Box>

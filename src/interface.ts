@@ -307,6 +307,7 @@ export interface Plant {
   name: string;
   type?: PlantType | null;
   url?: string;
+  daysToGerminate?: [number | undefined, number | undefined];
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureData[];
   comments?: Comment[];
@@ -318,6 +319,7 @@ export interface PlantDTO {
   name: string;
   type?: PlantType | null;
   url?: string;
+  daysToGerminate?: [number | undefined, number | undefined];
   daysToMaturity?: [number | undefined, number | undefined];
   pictures?: PictureDataDTO[];
   comments?: CommentDTO[];

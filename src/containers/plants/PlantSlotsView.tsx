@@ -97,7 +97,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
 
     plantInstances.forEach((instance) => {
       const container = containersById[instance.containerId];
-      const slot = container.slots?.[instance.slotId];
+      const slot = container?.slots?.[instance.slotId];
 
       if (instance.closed !== true && slot && slot.plantInstanceId === instance._id) {
         active.push(instance);

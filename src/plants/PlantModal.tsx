@@ -130,6 +130,32 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
           <TextField label="URL" value={editData?.url} onChange={(url) => update({ url })} variant="outlined" />
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1 }}>
             <NumberTextField
+              label="Days to Germinate"
+              value={editData?.daysToGerminate?.[0]}
+              onChange={(value) =>
+                update({
+                  daysToGerminate: [value, editData?.daysToGerminate?.[1]]
+                })
+              }
+              sx={{ mt: 0, mb: 0 }}
+              variant="outlined"
+              wholeNumber
+            />
+            &nbsp;-&nbsp;
+            <NumberTextField
+              value={editData?.daysToGerminate?.[1]}
+              onChange={(value) =>
+                update({
+                  daysToGerminate: [editData?.daysToGerminate?.[0], value]
+                })
+              }
+              sx={{ mt: 0, mb: 0 }}
+              variant="outlined"
+              wholeNumber
+            />
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1 }}>
+            <NumberTextField
               label="Days to Maturity"
               value={editData?.daysToMaturity?.[0]}
               onChange={(value) =>

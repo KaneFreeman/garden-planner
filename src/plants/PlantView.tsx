@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Menu from '@mui/material/Menu';
+import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
@@ -83,13 +84,10 @@ const PlantView = () => {
   const handleOnClose = useCallback(() => setDeleting(false), []);
 
   const onUrlClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
       event.stopPropagation();
-      if (plant?.url !== undefined) {
-        window.location.href = plant.url;
-      }
     },
-    [plant]
+    []
   );
 
   const renderPlantType = useCallback((value: PlantType | null | undefined) => {
@@ -227,13 +225,18 @@ const PlantView = () => {
           onChange={(url) => handleUpdatePlant({ url })}
           renderer={(value) =>
             value ? (
-              <Button variant="text" onClick={onUrlClick} sx={{ ml: -1 }}>
+              <Link href={plant.url} underline="none" onClick={onUrlClick} target="_blank" rel="noopener">
                 <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                   {value}
                 </Box>
-              </Button>
+              </Link>
             ) : null
           }
+        />
+        <NumberRangeInlineField
+          label="Days to Germinate"
+          value={plant.daysToGerminate}
+          onChange={(daysToGerminate) => handleUpdatePlant({ daysToGerminate })}
         />
         <NumberRangeInlineField
           label="Days to Maturity"

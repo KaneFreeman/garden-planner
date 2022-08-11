@@ -17,6 +17,7 @@ import ContainerSelectViewRoute from './containers/ContainerSelectViewRoute';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { selectPlantInstancesByIds } from './store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from './store/slices/tasks';
+import ScrollToTop from './components/ScrollToTop';
 
 const Main = () => {
   const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
@@ -85,6 +86,7 @@ const Main = () => {
   return (
     <>
       <Header />
+      <ScrollToTop />
       <Box
         sx={{
           display: 'flex',
