@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromContainerDTO, Container, toContainerDTO } from '../../interface';
+import { fromContainerDTO, Container, toContainerDTO, TaskType } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectContainer, selectContainers, selectContainersById, updateContainers } from '../../store/slices/containers';
+import {
+  selectContainer,
+  selectContainers,
+  selectContainersById,
+  updateContainers
+} from '../../store/slices/containers';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 
@@ -164,25 +169,25 @@ export function useContainersById() {
   return containersById;
 }
 
-export const useFertilizeContainer = (containerId: string | undefined) => {
+export const useUpdateContainerTasks = (containerId: string | undefined, taskType: TaskType) => {
   const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
 
-  const getContainers = useCallback(
+  const updateContainerTasks = useCallback(
     async (date: Date) => {
       if (containerId === undefined) {
         return;
       }
 
       await runOperation(() =>
-        fetch(Api.container_FertilizePost, {
-          params: { containerId },
+        fetch(Api.container_UpdateTasksPost, {
+          params: { containerId, taskType },
           body: { date: date.toISOString() }
         })
       );
     },
-    [containerId, fetch, runOperation]
+    [containerId, fetch, runOperation, taskType]
   );
 
-  return getContainers;
+  return updateContainerTasks;
 };

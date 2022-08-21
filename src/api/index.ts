@@ -6,10 +6,10 @@ import {
   PictureDTO,
   PlantType,
   PlantDataDTO,
-  ContainerFertilizeDTO,
   PlantInstanceDTO,
   PlantInstanceAddHistoryAndUpdateTaskDTO,
-  BulkCompleteTaskDTO
+  BulkCompleteTaskDTO,
+  ContainerTaskUpdateDTO
 } from '../interface';
 
 interface Rest {
@@ -116,13 +116,14 @@ interface Rest {
     };
     response: ContainerDTO;
   };
-  'POST:/container/{containerId}/fertilize': {
+  'POST:/container/{containerId}/{taskType}': {
     method: 'POST';
     request: {
       params: {
         containerId: string;
+        taskType: string;
       };
-      body: ContainerFertilizeDTO;
+      body: ContainerTaskUpdateDTO;
     };
     response: ContainerDTO;
   };

@@ -13,8 +13,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import MuiTextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
@@ -23,16 +21,18 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import YardIcon from '@mui/icons-material/Yard';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, Plant, Slot } from '../interface';
+import GrassIcon from '@mui/icons-material/Grass';
+import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, PLANT, Plant, Slot } from '../interface';
 import { usePlantsById } from '../plants/usePlants';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
 import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
-import { getMidnight, setToMidnight } from '../utility/date.util';
+import { getMidnight } from '../utility/date.util';
 import useSmallScreen from '../utility/smallScreen.util';
-import { useFertilizeContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
+import { useUpdateContainerTasks, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import ContainerEditModal from './ContainerEditModal';
+import DateDialog from '../components/DateDialog';
 
 interface ContainerViewProperties {
   container: Container;
@@ -73,7 +73,8 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
-  const fertilizeContainer = useFertilizeContainer(container._id);
+  const fertilizeContainer = useUpdateContainerTasks(container._id, FERTILIZE);
+  const plantContainer = useUpdateContainerTasks(container._id, PLANT);
 
   const plantsById = usePlantsById();
   const plantInstancesById = usePlantInstancesById();
@@ -116,6 +117,22 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     return false;
   }, [tasks]);
 
+  const hasActivePlantTasks = useMemo(() => {
+    if (tasks.overdue.length > 0) {
+      return Boolean(tasks.overdue.find((task) => task.type === PLANT));
+    }
+
+    if (tasks.thisWeek.length > 0) {
+      return Boolean(tasks.thisWeek.find((task) => task.type === PLANT));
+    }
+
+    if (tasks.active.length > 0) {
+      return Boolean(tasks.active.find((task) => task.type === PLANT));
+    }
+
+    return false;
+  }, [tasks]);
+
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
   const [fertilizeDate, setFertilizeDate] = useState<Date>(getMidnight());
   const handleFertilizeClose = useCallback(() => setIsFertilizeModalOpen(false), []);
@@ -127,6 +144,19 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     handleMoreMenuClose();
     setFertilizeDate(getMidnight());
     setIsFertilizeModalOpen(true);
+  }, []);
+
+  const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
+  const [plantDate, setPlantDate] = useState<Date>(getMidnight());
+  const handlePlantClose = useCallback(() => setIsPlantModalOpen(false), []);
+  const handlePlantConfirm = useCallback(() => {
+    plantContainer(plantDate);
+    setIsPlantModalOpen(false);
+  }, [plantContainer, plantDate]);
+  const handleOnPlantClick = useCallback(() => {
+    handleMoreMenuClose();
+    setPlantDate(getMidnight());
+    setIsPlantModalOpen(true);
   }, []);
 
   const handleOnArchiveUnarchiveClick = useCallback(
@@ -280,6 +310,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           'aria-labelledby': 'basic-button'
                         }}
                       >
+                        {hasActivePlantTasks ? (
+                          <MenuItem onClick={handleOnPlantClick}>
+                            <ListItemIcon>
+                              <GrassIcon color="success" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="success.main">Plant</Typography>
+                          </MenuItem>
+                        ) : null}
                         {hasActiveFertilizeTasks ? (
                           <MenuItem color="primary" onClick={handleOnFertilizeClick}>
                             <ListItemIcon>
@@ -308,6 +346,12 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                     </Box>
                   ) : (
                     <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                      {hasActivePlantTasks ? (
+                        <Button variant="outlined" color="success" onClick={handleOnPlantClick} title="Plant container">
+                          <GrassIcon sx={{ mr: 1 }} fontSize="small" />
+                          Plant
+                        </Button>
+                      ) : null}
                       {hasActiveFertilizeTasks ? (
                         <Button
                           variant="outlined"
@@ -429,33 +473,20 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         </DialogActions>
       </Dialog>
       <ContainerEditModal open={editing} container={container} onClose={handleEditClose} />
-      {isFertilizeModalOpen ? (
-        <Dialog open onClose={handleFertilizeClose} maxWidth="xs" fullWidth>
-          <DialogTitle>Fertilize</DialogTitle>
-          <DialogContent>
-            <form name="plant-modal-form" onSubmit={handleFertilizeConfirm} noValidate>
-              <Box sx={{ display: 'flex', pt: 2, pb: 2 }}>
-                <MobileDatePicker
-                  label="Fertilized On"
-                  value={fertilizeDate}
-                  onChange={(newFertilizeDate: Date | null) =>
-                    newFertilizeDate && setFertilizeDate(setToMidnight(newFertilizeDate))
-                  }
-                  renderInput={(params) => (
-                    <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
-                  )}
-                />
-              </Box>
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleFertilizeClose}>Cancel</Button>
-            <Button onClick={handleFertilizeConfirm} variant="contained">
-              Fertilize
-            </Button>
-          </DialogActions>
-        </Dialog>
-      ) : null}
+      <DateDialog
+        open={isPlantModalOpen}
+        question="When did you plant?"
+        label="Plantd On"
+        onClose={handlePlantClose}
+        onConfirm={handlePlantConfirm}
+      />
+      <DateDialog
+        open={isFertilizeModalOpen}
+        question="When did you fertilize?"
+        label="Fertilized On"
+        onClose={handleFertilizeClose}
+        onConfirm={handleFertilizeConfirm}
+      />
     </>
   );
 };

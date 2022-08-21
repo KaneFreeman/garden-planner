@@ -356,7 +356,7 @@ export const CLOSED = 'Closed';
 export type PlantStatus = typeof NOT_PLANTED | typeof PLANTED | typeof TRANSPLANTED | typeof CLOSED;
 export const PLANT_STATUSES: PlantStatus[] = [NOT_PLANTED, PLANTED, TRANSPLANTED, CLOSED];
 
-export interface ContainerFertilizeDTO {
+export interface ContainerTaskUpdateDTO {
   readonly date: string;
 }
 
