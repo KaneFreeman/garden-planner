@@ -48,7 +48,7 @@
     "workbox-streams": "6.5.4"
   },
   "devDependencies": {
-    "@types/jest": "28.1.8",
+    "@types/jest": "29.2.3",
     "@types/node": "16.18.3",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
