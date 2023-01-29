@@ -18,7 +18,7 @@
     "@mui/lab": "5.0.0-alpha.117",
     "@mui/material": "5.11.6",
     "@mui/x-date-pickers": "5.0.16",
-    "@reduxjs/toolkit": "1.9.1",
+    "@reduxjs/toolkit": "1.9.2",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "14.4.3",
