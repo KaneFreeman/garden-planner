@@ -307,3 +307,24 @@ export const useUpdateCreatePlantInstance = (
 
   return updateCreatePlantInstance;
 };
+
+export const useBulkReopenClosePlantInstances = () => {
+  const fetch = useFetch();
+  const runOperation = usePlantInstanceOperation({ force: true });
+
+  const bulkReopenClosePlantInstances = useCallback(
+    async (action: 'reopen' | 'close', plantInstanceIds: string[]) => {
+      await runOperation(() =>
+        fetch(Api.plantInstance_BulkReopenClose, {
+          body: {
+            action,
+            plantInstanceIds
+          }
+        })
+      );
+    },
+    [fetch, runOperation]
+  );
+
+  return bulkReopenClosePlantInstances;
+};

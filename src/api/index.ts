@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import {
-  TaskDTO,
-  PlantDTO,
-  ContainerDTO,
-  PictureDTO,
-  PlantType,
-  PlantDataDTO,
-  PlantInstanceDTO,
-  PlantInstanceAddHistoryAndUpdateTaskDTO,
   BulkCompleteTaskDTO,
-  ContainerTaskUpdateDTO
+  BulkReopenClosePlantInstanceDTO,
+  ContainerDTO,
+  ContainerTaskUpdateDTO,
+  PictureDTO,
+  PlantDataDTO,
+  PlantDTO,
+  PlantInstanceAddHistoryAndUpdateTaskDTO,
+  PlantInstanceDTO,
+  PlantType,
+  TaskDTO
 } from '../interface';
 
 interface Rest {
@@ -253,6 +254,13 @@ interface Rest {
       body: PlantInstanceAddHistoryAndUpdateTaskDTO;
     };
     response: PlantInstanceDTO;
+  };
+  'POST:/plant-instance/bulk-reopen-close': {
+    method: 'POST';
+    request: {
+      body: BulkReopenClosePlantInstanceDTO;
+    };
+    response: PlantInstanceDTO[];
   };
 }
 

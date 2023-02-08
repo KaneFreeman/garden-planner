@@ -358,6 +358,7 @@ export const PLANT_STATUSES: PlantStatus[] = [NOT_PLANTED, PLANTED, TRANSPLANTED
 
 export interface ContainerTaskUpdateDTO {
   readonly date: string;
+  readonly plantInstanceIds?: string[];
 }
 
 export interface ContainerSlotIdentifier {
@@ -711,4 +712,9 @@ export function toPlantInstanceDTO(
 
 export interface PlantInstanceAddHistoryAndUpdateTaskDTO {
   readonly date: string;
+}
+
+export interface BulkReopenClosePlantInstanceDTO {
+  readonly plantInstanceIds: string[];
+  readonly action: 'reopen' | 'close';
 }

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { MouseEvent, useCallback, useMemo } from 'react';
 import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -13,19 +13,34 @@ import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-in
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { findHistoryFrom, getPlantedEvent } from '../utility/history.util';
+import useSmallScreen from '../utility/smallScreen.util';
 
 interface ContainerSlotPreviewProps {
   index: number;
   container: Container;
   slot?: Slot;
+  slotSelected: boolean;
   plant?: Plant;
   subSlot?: BaseSlot;
   subPlant?: Plant;
+  isSelecting: boolean;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
+  onSlotSelect: (plantInstanceId: string) => void;
 }
 
 const ContainerSlotPreview = React.memo(
-  ({ index, container, slot, plant, subSlot, subPlant, onSlotClick }: ContainerSlotPreviewProps) => {
+  ({
+    index,
+    container,
+    slot,
+    slotSelected,
+    plant,
+    subSlot,
+    subPlant,
+    isSelecting,
+    onSlotClick,
+    onSlotSelect
+  }: ContainerSlotPreviewProps) => {
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
     const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
@@ -146,12 +161,62 @@ const ContainerSlotPreview = React.memo(
       subPlantStatus
     ]);
 
+    const handleSelect = useCallback(
+      (event: MouseEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (slot?.plantInstanceId) {
+          onSlotSelect(slot.plantInstanceId);
+        }
+      },
+      [onSlotSelect, slot]
+    );
+
+    const handleClick = useCallback(
+      (event: MouseEvent) => {
+        if ((isSelecting || event.shiftKey) && slot?.plantInstanceId) {
+          onSlotSelect(slot.plantInstanceId);
+          return;
+        }
+
+        if (!isSelecting) {
+          onSlotClick(slot, index);
+        }
+      },
+      [index, isSelecting, onSlotClick, onSlotSelect, slot]
+    );
+
+    const isSmallScreen = useSmallScreen();
+
     return (
       <IconButton
-        sx={{ p: 2, width: 80, height: 80, border: `2px solid ${borderColor}`, borderRadius: 0 }}
-        onClick={() => onSlotClick(slot, index)}
+        sx={{
+          p: 2,
+          width: 80,
+          height: 80,
+          border: `2px solid ${slotSelected ? '#e6e6e6' : borderColor}`,
+          borderRadius: 0
+        }}
+        onClick={handleClick}
+        onContextMenu={isSmallScreen ? handleSelect : undefined}
         title={title}
       >
+        {slotSelected ? (
+          <Box
+            key="plant-overlay"
+            sx={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(255, 255, 255, 0.6)',
+              zIndex: 1
+            }}
+          />
+        ) : null}
         {badgeCount ? (
           <Box
             key="plant-badge"

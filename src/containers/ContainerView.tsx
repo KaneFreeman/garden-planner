@@ -1,38 +1,40 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContentText from '@mui/material/DialogContentText';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteIcon from '@mui/icons-material/Delete';
+import GrassIcon from '@mui/icons-material/Grass';
 import HomeIcon from '@mui/icons-material/Home';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ParkIcon from '@mui/icons-material/Park';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import YardIcon from '@mui/icons-material/Yard';
-import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import GrassIcon from '@mui/icons-material/Grass';
-import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, PLANT, Plant, Slot } from '../interface';
-import { usePlantsById } from '../plants/usePlants';
+import YardIcon from '@mui/icons-material/Yard';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
+import DateDialog from '../components/DateDialog';
+import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, PLANT, Plant, Slot } from '../interface';
+import { useBulkReopenClosePlantInstances, usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
+import { usePlantsById } from '../plants/usePlants';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
-import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
 import { getMidnight } from '../utility/date.util';
 import useSmallScreen from '../utility/smallScreen.util';
-import { useUpdateContainerTasks, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
-import ContainerSlotPreview from './ContainerSlotPreview';
 import ContainerEditModal from './ContainerEditModal';
-import DateDialog from '../components/DateDialog';
+import ContainerSlotPreview from './ContainerSlotPreview';
+import { useRemoveContainer, useUpdateContainer, useUpdateContainerTasks } from './hooks/useContainers';
 
 interface ContainerViewProperties {
   container: Container;
@@ -43,6 +45,7 @@ interface ContainerViewProperties {
 
 const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: ContainerViewProperties) => {
   const navigate = useNavigate();
+  const [selectedPlantInstances, setSelectedPlantInstances] = useState<string[]>([]);
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
   const isSmallScreen = useSmallScreen();
@@ -103,43 +106,100 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const tasks = useTasksByContainer(container._id);
   const hasActiveFertilizeTasks = useMemo(() => {
     if (tasks.overdue.length > 0) {
-      return Boolean(tasks.overdue.find((task) => task.type === FERTILIZE));
+      return Boolean(
+        tasks.overdue.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === FERTILIZE
+        )
+      );
     }
 
     if (tasks.thisWeek.length > 0) {
-      return Boolean(tasks.thisWeek.find((task) => task.type === FERTILIZE));
+      return Boolean(
+        tasks.thisWeek.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === FERTILIZE
+        )
+      );
     }
 
     if (tasks.active.length > 0) {
-      return Boolean(tasks.active.find((task) => task.type === FERTILIZE));
+      return Boolean(
+        tasks.active.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === FERTILIZE
+        )
+      );
     }
 
     return false;
-  }, [tasks]);
+  }, [selectedPlantInstances, tasks.active, tasks.overdue, tasks.thisWeek]);
 
   const hasActivePlantTasks = useMemo(() => {
     if (tasks.overdue.length > 0) {
-      return Boolean(tasks.overdue.find((task) => task.type === PLANT));
+      return Boolean(
+        tasks.overdue.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === PLANT
+        )
+      );
     }
 
     if (tasks.thisWeek.length > 0) {
-      return Boolean(tasks.thisWeek.find((task) => task.type === PLANT));
+      return Boolean(
+        tasks.thisWeek.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === PLANT
+        )
+      );
     }
 
     if (tasks.active.length > 0) {
-      return Boolean(tasks.active.find((task) => task.type === PLANT));
+      return Boolean(
+        tasks.active.find(
+          (task) =>
+            (selectedPlantInstances.length === 0 ||
+              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
+            task.type === PLANT
+        )
+      );
     }
 
     return false;
-  }, [tasks]);
+  }, [selectedPlantInstances, tasks.active, tasks.overdue, tasks.thisWeek]);
+
+  const reopenablePlantInstances = useMemo(
+    () => selectedPlantInstances.filter((plantInstanceId) => plantInstancesById[plantInstanceId]?.closed),
+    [plantInstancesById, selectedPlantInstances]
+  );
+
+  const closablePlantInstances = useMemo(
+    () => selectedPlantInstances.filter((plantInstanceId) => !plantInstancesById[plantInstanceId]?.closed),
+    [plantInstancesById, selectedPlantInstances]
+  );
+
+  const bulkReopenClosePlantInstances = useBulkReopenClosePlantInstances();
 
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
   const [fertilizeDate, setFertilizeDate] = useState<Date>(getMidnight());
   const handleFertilizeClose = useCallback(() => setIsFertilizeModalOpen(false), []);
   const handleFertilizeConfirm = useCallback(() => {
-    fertilizeContainer(fertilizeDate);
+    fertilizeContainer(fertilizeDate, selectedPlantInstances.length > 0 ? selectedPlantInstances : undefined);
     setIsFertilizeModalOpen(false);
-  }, [fertilizeContainer, fertilizeDate]);
+    setTimeout(() => {
+      setSelectedPlantInstances([]);
+    }, 250);
+  }, [fertilizeContainer, fertilizeDate, selectedPlantInstances]);
   const handleOnFertilizeClick = useCallback(() => {
     handleMoreMenuClose();
     setFertilizeDate(getMidnight());
@@ -150,9 +210,12 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const [plantDate, setPlantDate] = useState<Date>(getMidnight());
   const handlePlantClose = useCallback(() => setIsPlantModalOpen(false), []);
   const handlePlantConfirm = useCallback(() => {
-    plantContainer(plantDate);
+    plantContainer(plantDate, selectedPlantInstances.length > 0 ? selectedPlantInstances : undefined);
     setIsPlantModalOpen(false);
-  }, [plantContainer, plantDate]);
+    setTimeout(() => {
+      setSelectedPlantInstances([]);
+    }, 250);
+  }, [plantContainer, plantDate, selectedPlantInstances]);
   const handleOnPlantClick = useCallback(() => {
     handleMoreMenuClose();
     setPlantDate(getMidnight());
@@ -174,6 +237,20 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     setOrientation(newOrientation);
     window.localStorage.setItem(`container-${container._id}-orientation`, newOrientation);
   }, [container._id, orientation]);
+
+  const handleSelectToggle = useCallback((plantInstanceId: string) => {
+    setSelectedPlantInstances((oldSelectedPlantInstances) => {
+      const newSelectedPlantInstances = [...oldSelectedPlantInstances];
+      const index = newSelectedPlantInstances.indexOf(plantInstanceId);
+      if (index >= 0) {
+        newSelectedPlantInstances.splice(index, 1);
+        return newSelectedPlantInstances;
+      }
+
+      newSelectedPlantInstances.push(plantInstanceId);
+      return newSelectedPlantInstances;
+    });
+  }, []);
 
   const slots = useMemo(() => {
     if (!container._id) {
@@ -210,20 +287,41 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         subPlant = plantsById[subPlantId];
       }
 
+      const isSelected = Boolean(slot?.plantInstanceId && selectedPlantInstances.includes(slot.plantInstanceId));
+
       return (
         <ContainerSlotPreview
           key={`container-slot-${finalIndex}`}
           plant={plant}
           slot={slot}
+          slotSelected={isSelected}
           container={container}
           index={finalIndex}
           subSlot={slot?.subSlot}
           subPlant={subPlant}
+          isSelecting={selectedPlantInstances.length > 0}
           onSlotClick={onSlotClick}
+          onSlotSelect={handleSelectToggle}
         />
       );
     });
-  }, [container, isPortrait, onSlotClick, plantInstancesById, plantsById]);
+  }, [container, handleSelectToggle, isPortrait, onSlotClick, plantInstancesById, plantsById, selectedPlantInstances]);
+
+  const onReopen = useCallback(() => {
+    bulkReopenClosePlantInstances('reopen', reopenablePlantInstances);
+    handleMoreMenuClose();
+    setTimeout(() => {
+      setSelectedPlantInstances([]);
+    }, 250);
+  }, [bulkReopenClosePlantInstances, reopenablePlantInstances]);
+
+  const onClose = useCallback(() => {
+    bulkReopenClosePlantInstances('close', closablePlantInstances);
+    handleMoreMenuClose();
+    setTimeout(() => {
+      setSelectedPlantInstances([]);
+    }, 250);
+  }, [bulkReopenClosePlantInstances, closablePlantInstances]);
 
   return (
     <>
@@ -279,6 +377,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                   {isSmallScreen ? (
                     <Box key="small-screen-actions" sx={{ display: 'flex' }}>
                       <IconButton
+                        key="rotate-mobile-button"
                         aria-label="rotate"
                         color="secondary"
                         size="small"
@@ -311,7 +410,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         }}
                       >
                         {hasActivePlantTasks ? (
-                          <MenuItem onClick={handleOnPlantClick}>
+                          <MenuItem key="plant-mobile-button" onClick={handleOnPlantClick}>
                             <ListItemIcon>
                               <GrassIcon color="success" fontSize="small" />
                             </ListItemIcon>
@@ -319,29 +418,58 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           </MenuItem>
                         ) : null}
                         {hasActiveFertilizeTasks ? (
-                          <MenuItem color="primary" onClick={handleOnFertilizeClick}>
+                          <MenuItem key="fertlize-mobile-button" color="primary" onClick={handleOnFertilizeClick}>
                             <ListItemIcon>
                               <YardIcon color="primary" fontSize="small" />
                             </ListItemIcon>
                             <Typography color="primary">Fertilze</Typography>
                           </MenuItem>
                         ) : null}
-                        <MenuItem color="primary" onClick={handleOnArchiveUnarchiveClick(!container.archived)}>
-                          <ListItemIcon>
-                            {container.archived ? (
-                              <UnarchiveIcon color="warning" fontSize="small" />
-                            ) : (
-                              <ArchiveIcon color="warning" fontSize="small" />
-                            )}
-                          </ListItemIcon>
-                          <Typography color="warning.main">{container.archived ? 'Unarchive' : 'Archive'}</Typography>
-                        </MenuItem>
-                        <MenuItem onClick={handleOnDelete}>
-                          <ListItemIcon>
-                            <DeleteIcon color="error" fontSize="small" />
-                          </ListItemIcon>
-                          <Typography color="error">Delete</Typography>
-                        </MenuItem>
+                        {selectedPlantInstances.length === 0 ? (
+                          <>
+                            <MenuItem
+                              key="archive-mobile-button"
+                              color="primary"
+                              onClick={handleOnArchiveUnarchiveClick(!container.archived)}
+                            >
+                              <ListItemIcon>
+                                {container.archived ? (
+                                  <UnarchiveIcon color="warning" fontSize="small" />
+                                ) : (
+                                  <ArchiveIcon color="warning" fontSize="small" />
+                                )}
+                              </ListItemIcon>
+                              <Typography color="warning.main">
+                                {container.archived ? 'Unarchive' : 'Archive'}
+                              </Typography>
+                            </MenuItem>
+                            <MenuItem key="delete-mobile-button" onClick={handleOnDelete}>
+                              <ListItemIcon>
+                                <DeleteIcon color="error" fontSize="small" />
+                              </ListItemIcon>
+                              <Typography color="error">Delete</Typography>
+                            </MenuItem>
+                          </>
+                        ) : (
+                          <>
+                            {reopenablePlantInstances.length > 0 ? (
+                              <MenuItem key="reopen-mobile-button" onClick={onReopen}>
+                                <ListItemIcon>
+                                  <LockOpenIcon color="success" fontSize="small" />
+                                </ListItemIcon>
+                                <Typography color="success.main">Reopen</Typography>
+                              </MenuItem>
+                            ) : null}
+                            {closablePlantInstances.length > 0 ? (
+                              <MenuItem key="close-mobile-button" onClick={onClose}>
+                                <ListItemIcon>
+                                  <LockIcon color="warning" fontSize="small" />
+                                </ListItemIcon>
+                                <Typography color="warning.main">Close</Typography>
+                              </MenuItem>
+                            ) : null}
+                          </>
+                        )}
                       </Menu>
                     </Box>
                   ) : (
@@ -363,55 +491,101 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           Fertilze
                         </Button>
                       ) : null}
-                      <Button variant="outlined" color="secondary" onClick={handleRotate} title="Rotate">
-                        <RotateLeftIcon
-                          sx={{
-                            mr: 1,
-                            transition: 'transform 333ms ease-out',
-                            transform: `scaleX(${isPortrait ? '-1' : '1'})`
-                          }}
-                          fontSize="small"
-                        />
-                        Rotate
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="warning"
-                        onClick={handleOnArchiveUnarchiveClick(!container.archived)}
-                        title={`${container.archived ? 'Archive' : 'Unarchive'} container`}
-                      >
-                        {container.archived ? (
-                          <Box
-                            key="unarchive"
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              gap: 1
-                            }}
+                      {selectedPlantInstances.length === 0 ? (
+                        <>
+                          <Button
+                            key="rotate-button"
+                            variant="outlined"
+                            color="secondary"
+                            onClick={handleRotate}
+                            title="Rotate"
                           >
-                            <UnarchiveIcon color="warning" fontSize="small" />
-                            Unarchive
-                          </Box>
-                        ) : (
-                          <Box
-                            key="archive"
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              gap: 1
-                            }}
+                            <RotateLeftIcon
+                              sx={{
+                                mr: 1,
+                                transition: 'transform 333ms ease-out',
+                                transform: `scaleX(${isPortrait ? '-1' : '1'})`
+                              }}
+                              fontSize="small"
+                            />
+                            Rotate
+                          </Button>
+                          <Button
+                            key="archive-button"
+                            variant="outlined"
+                            color="warning"
+                            onClick={handleOnArchiveUnarchiveClick(!container.archived)}
+                            title={`${container.archived ? 'Archive' : 'Unarchive'} container`}
                           >
-                            <ArchiveIcon color="warning" fontSize="small" />
-                            Archive
-                          </Box>
-                        )}
-                      </Button>
-                      <Button variant="outlined" color="error" onClick={handleOnDelete} title="Delete container">
-                        <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-                        Delete
-                      </Button>
+                            {container.archived ? (
+                              <Box
+                                key="unarchive"
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  gap: 1
+                                }}
+                              >
+                                <UnarchiveIcon color="warning" fontSize="small" />
+                                Unarchive
+                              </Box>
+                            ) : (
+                              <Box
+                                key="archive"
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  gap: 1
+                                }}
+                              >
+                                <ArchiveIcon color="warning" fontSize="small" />
+                                Archive
+                              </Box>
+                            )}
+                          </Button>
+                          <Button
+                            key="delete-button"
+                            variant="outlined"
+                            color="error"
+                            onClick={handleOnDelete}
+                            title="Delete container"
+                          >
+                            <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
+                            Delete
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          {reopenablePlantInstances.length > 0 ? (
+                            <Button
+                              key="reopen-button"
+                              variant="outlined"
+                              aria-label="reopen"
+                              color="success"
+                              onClick={onReopen}
+                              title="Reopen"
+                            >
+                              <LockOpenIcon sx={{ mr: 1 }} color="success" fontSize="small" />
+                              Reopen
+                            </Button>
+                          ) : null}
+                          {closablePlantInstances.length > 0 ? (
+                            <Button
+                              key="close-button"
+                              variant="outlined"
+                              aria-label="close"
+                              color="warning"
+                              onClick={onClose}
+                              title="Close"
+                            >
+                              <LockIcon sx={{ mr: 1 }} color="warning" fontSize="small" />
+                              Close
+                            </Button>
+                          ) : null}
+                        </>
+                      )}
                     </Box>
                   )}
                 </Box>

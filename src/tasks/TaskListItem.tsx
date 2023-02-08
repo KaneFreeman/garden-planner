@@ -66,6 +66,7 @@ const TaskListItem = ({
   const onSelectHandler = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
+      event.preventDefault();
 
       if (disableSelect) {
         return;

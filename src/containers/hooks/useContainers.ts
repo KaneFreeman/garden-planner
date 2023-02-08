@@ -174,7 +174,7 @@ export const useUpdateContainerTasks = (containerId: string | undefined, taskTyp
   const runOperation = useContainerOperation({ force: true });
 
   const updateContainerTasks = useCallback(
-    async (date: Date) => {
+    async (date: Date, plantInstanceIds?: string[]) => {
       if (containerId === undefined) {
         return;
       }
@@ -182,7 +182,7 @@ export const useUpdateContainerTasks = (containerId: string | undefined, taskTyp
       await runOperation(() =>
         fetch(Api.container_UpdateTasksPost, {
           params: { containerId, taskType },
-          body: { date: date.toISOString() }
+          body: { date: date.toISOString(), plantInstanceIds }
         })
       );
     },
