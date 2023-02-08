@@ -13,10 +13,7 @@ const ContainerSubSlotRoute = () => {
   const container = useContainer(id);
   const updateContainer = useUpdateContainer();
 
-  const subSlot = useMemo(
-    () => container?.slots?.[indexNumber]?.subSlot ?? {},
-    [container?.slots, indexNumber]
-  );
+  const subSlot = useMemo(() => container?.slots?.[indexNumber]?.subSlot ?? {}, [container?.slots, indexNumber]);
 
   const plantInstance = usePlantInstance(subSlot.plantInstanceId);
 

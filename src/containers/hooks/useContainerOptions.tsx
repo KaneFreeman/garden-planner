@@ -19,7 +19,8 @@ export default function useContainerOptions() {
       sortedContainers?.map((entry) => ({
         label: {
           primary: entry.name,
-          icon: entry.type === CONTAINER_TYPE_INSIDE ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />
+          icon:
+            entry.type === CONTAINER_TYPE_INSIDE ? <HomeIcon titleAccess="Inside" /> : <ParkIcon titleAccess="Inside" />
         },
         value: entry._id
       })),

@@ -20,7 +20,15 @@ interface DateDialogProps {
   onConfirm: (date: Date) => void;
 }
 
-const DateDialog = ({ open, question, label, cancel = 'Cancel', confirm = 'Save', onClose, onConfirm }: DateDialogProps) => {
+const DateDialog = ({
+  open,
+  question,
+  label,
+  cancel = 'Cancel',
+  confirm = 'Save',
+  onClose,
+  onConfirm
+}: DateDialogProps) => {
   const [date, setDate] = useState<Date>(getMidnight());
 
   const finishUpdateStatusFertilized = useCallback(() => {

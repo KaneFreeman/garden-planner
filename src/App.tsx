@@ -69,9 +69,7 @@ const App = () => {
             <BrowserRouter>
               <Main />
             </BrowserRouter>
-            <Snackbar open={hasNewVersion}>
-              {updateAlert}
-            </Snackbar>
+            <Snackbar open={hasNewVersion}>{updateAlert}</Snackbar>
           </LocalizationProvider>
         </Provider>
       </ThemeProvider>

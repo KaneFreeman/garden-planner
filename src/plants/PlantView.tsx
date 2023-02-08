@@ -83,12 +83,9 @@ const PlantView = () => {
   }, [removePlant, id, navigate]);
   const handleOnClose = useCallback(() => setDeleting(false), []);
 
-  const onUrlClick = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-      event.stopPropagation();
-    },
-    []
-  );
+  const onUrlClick = useCallback((event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    event.stopPropagation();
+  }, []);
 
   const renderPlantType = useCallback((value: PlantType | null | undefined) => {
     if (!value) {

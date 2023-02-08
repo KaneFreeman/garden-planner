@@ -171,7 +171,9 @@ const TaskView = ({ task }: TaskViewProperties) => {
                             <CheckBoxOutlineBlankIcon color="primary" key="complete-icon" fontSize="small" />
                           )}
                         </ListItemIcon>
-                        <Typography color={task.completedOn ? 'success.main' : 'primary.main'}>{task.completedOn ? 'Reopen' : 'Mark as complete'}</Typography>
+                        <Typography color={task.completedOn ? 'success.main' : 'primary.main'}>
+                          {task.completedOn ? 'Reopen' : 'Mark as complete'}
+                        </Typography>
                       </MenuItem>
                       <MenuItem onClick={handleOnDelete}>
                         <ListItemIcon>

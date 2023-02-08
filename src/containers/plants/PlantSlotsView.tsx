@@ -195,7 +195,10 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <List>
                     {inactivePlantInstances.map((plantInstance, index) =>
-                      renderPlantSlot('inactive-instances', plantInstance, index, { showStatus: false, openDialog: true })
+                      renderPlantSlot('inactive-instances', plantInstance, index, {
+                        showStatus: false,
+                        openDialog: true
+                      })
                     )}
                   </List>
                 </Box>

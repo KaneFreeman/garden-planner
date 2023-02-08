@@ -10,11 +10,14 @@ const ContainerViewRoute = () => {
   const navigate = useNavigate();
   const container = useContainer(id);
 
-  const onSlotClick = useCallback((_: Slot | undefined, index: number) => {
-    if (container?._id) {
-      navigate(`/container/${container._id}/slot/${index}`);
-    }
-  }, [container?._id, navigate]);
+  const onSlotClick = useCallback(
+    (_: Slot | undefined, index: number) => {
+      if (container?._id) {
+        navigate(`/container/${container._id}/slot/${index}`);
+      }
+    },
+    [container?._id, navigate]
+  );
 
   if (!container || container._id !== id) {
     return <Loading key="container-view-loading" />;

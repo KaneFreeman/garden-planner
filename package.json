@@ -3,11 +3,12 @@
   "version": "1.0.0-alpha1",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "cross-env NODE_ENV=development eslint . --cache --ext .ts"
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "lint": "cross-env NODE_ENV=development eslint . --cache --ext .ts --ext .tsx",
+    "start": "react-scripts start",
+    "test": "react-scripts test"
   },
   "dependencies": {
     "@auth0/auth0-react": "1.12.1",

@@ -23,10 +23,7 @@ export const TasksSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    updateTasks: (
-      state,
-      action: PayloadAction<TaskDTO[]>
-    ) => {
+    updateTasks: (state, action: PayloadAction<TaskDTO[]>) => {
       const tasksById: Record<string, TaskDTO> = {};
       const tasksByPlantInstance: Record<string, TaskDTO[]> = {};
       action.payload.forEach((task) => {

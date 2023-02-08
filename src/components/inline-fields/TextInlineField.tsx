@@ -154,10 +154,7 @@ const TextInlineField = ({
           color={valueActive ? 'text.primary' : undefined}
         >
           {readOnly ? (
-            <ListItem
-              key="textInlineField-display"
-              sx={{ ...(noPadding ? { p: 0 } : {}) }}
-            >
+            <ListItem key="textInlineField-display" sx={{ ...(noPadding ? { p: 0 } : {}) }}>
               {displayValue}
             </ListItem>
           ) : (

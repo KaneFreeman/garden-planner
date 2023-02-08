@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { ContainerSlotIdentifier } from "../../interface";
+import { useMemo } from 'react';
+import { ContainerSlotIdentifier } from '../../interface';
 
 export function getContainerSlotLocation(
   containerId: string | undefined,
