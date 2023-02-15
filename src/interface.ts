@@ -368,6 +368,7 @@ export interface ContainerSlotIdentifier {
 }
 
 export interface BaseSlot {
+  plant?: string | null;
   plantInstanceId?: string | null;
   plantInstanceHistory?: string[];
 }

@@ -2,79 +2,77 @@
 /* eslint-disable promise/always-return */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
-import React, { ReactNode, useCallback, useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import GrassIcon from '@mui/icons-material/Grass';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import YardIcon from '@mui/icons-material/Yard';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import MuiTextField from '@mui/material/TextField';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import { styled } from '@mui/material/styles';
+import MuiTextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import GrassIcon from '@mui/icons-material/Grass';
-import MoveDownIcon from '@mui/icons-material/MoveDown';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AgricultureIcon from '@mui/icons-material/Agriculture';
-import YardIcon from '@mui/icons-material/Yard';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
-import AddIcon from '@mui/icons-material/Add';
-import PicturesView from '../pictures/PicturesView';
-import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import PlantAvatar from '../plants/PlantAvatar';
-import CommentsView from '../components/comments/CommentsView';
-import { getSlotTitle } from '../utility/slot.util';
-import {
-  Plant,
-  Slot,
-  Container,
-  BaseSlot,
-  STARTED_FROM_TYPES,
-  StartedFromType,
-  PlantInstance,
-  PLANTED,
-  TRANSPLANTED,
-  STARTED_FROM_TYPE_SEED,
-  SEASONS,
-  SPRING,
-  Season
-} from '../interface';
-import { usePlants } from '../plants/usePlants';
-import Select from '../components/Select';
-import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
-import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
-import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
-import { getMidnight, setToMidnight } from '../utility/date.util';
+import CommentsView from '../components/comments/CommentsView';
+import DateDialog from '../components/DateDialog';
+import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
+import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
+import Select from '../components/Select';
 import {
-  useAddPlantInstance,
+  BaseSlot,
+  Container,
+  Plant,
+  PLANTED,
+  PlantInstance,
+  Season,
+  SEASONS,
+  Slot,
+  SPRING,
+  StartedFromType,
+  STARTED_FROM_TYPES,
+  STARTED_FROM_TYPE_SEED,
+  TRANSPLANTED
+} from '../interface';
+import PicturesView from '../pictures/PicturesView';
+import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import {
   useFertilizePlantInstance,
   useHarvestPlantInstance,
   useUpdateCreatePlantInstance
 } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
-import useSmallScreen from '../utility/smallScreen.util';
-import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
-import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
+import PlantAvatar from '../plants/PlantAvatar';
+import { usePlants } from '../plants/usePlants';
+import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
-import DateDialog from '../components/DateDialog';
+import { getMidnight, setToMidnight } from '../utility/date.util';
+import { getPlantedEvent } from '../utility/history.util';
+import { getSlotTitle } from '../utility/slot.util';
+import useSmallScreen from '../utility/smallScreen.util';
 import { toTitleCase } from '../utility/string.util';
-import computeSeason from '../utility/season.util';
+import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
-import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import PastSlotPlants from './plants/PastSlotPlants';
-import { getPlantedEvent } from '../utility/history.util';
 
 interface CircleProps {
   backgroundColor: string;
@@ -175,26 +173,18 @@ const ContainerSlotView = ({
 
   const location = useMemo(() => ({ containerId: id, slotId: index, subSlot: type === 'sub-slot' }), [id, index, type]);
   const updateCreatePlantInstance = useUpdateCreatePlantInstance(plantInstance, location, container);
-  const addPlantInstance = useAddPlantInstance();
 
   const createNewPlantInstance = useCallback(() => {
     if (plantInstance && !plantInstance.closed) {
       return;
     }
 
-    addPlantInstance({
-      containerId: id,
-      slotId: index,
-      subSlot: type === 'sub-slot',
-      plant: null,
-      created: new Date(),
-      startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
-      season: computeSeason(),
-      plantedCount: 1
+    updateSlot({
+      plantInstanceId: null
     });
 
     handleMoreMenuClose();
-  }, [addPlantInstance, container.startedFrom, id, index, plantInstance, type]);
+  }, [plantInstance, updateSlot]);
 
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
