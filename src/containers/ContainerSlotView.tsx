@@ -54,6 +54,7 @@ import {
 import PicturesView from '../pictures/PicturesView';
 import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import {
+  useAddPlantInstance,
   useFertilizePlantInstance,
   useHarvestPlantInstance,
   useUpdateCreatePlantInstance
@@ -66,6 +67,7 @@ import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 import { getPlantedEvent } from '../utility/history.util';
+import computeSeason from '../utility/season.util';
 import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import { toTitleCase } from '../utility/string.util';
@@ -115,7 +117,6 @@ const ContainerSlotView = ({
 
   const isSmallScreen = useSmallScreen();
 
-  const [version, setVersion] = useState(0);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
   const [transplantedDate, setTransplantedDate] = useState<Date>(getMidnight());
 
@@ -164,15 +165,14 @@ const ContainerSlotView = ({
       };
 
       // eslint-disable-next-line promise/catch-or-return
-      onSlotChange(newSlot).finally(() => {
-        setVersion(version + 1);
-      });
+      onSlotChange(newSlot);
     },
-    [onSlotChange, slot, version]
+    [onSlotChange, slot]
   );
 
   const location = useMemo(() => ({ containerId: id, slotId: index, subSlot: type === 'sub-slot' }), [id, index, type]);
   const updateCreatePlantInstance = useUpdateCreatePlantInstance(plantInstance, location, container);
+  const addPlantInstance = useAddPlantInstance();
 
   const createNewPlantInstance = useCallback(() => {
     if (plantInstance && !plantInstance.closed) {
@@ -186,16 +186,34 @@ const ContainerSlotView = ({
     handleMoreMenuClose();
   }, [plantInstance, updateSlot]);
 
+  const finishPlanning = useCallback(() => {
+    if (plantInstance) {
+      return;
+    }
+
+    addPlantInstance({
+      containerId: id,
+      slotId: index,
+      subSlot: type === 'sub-slot',
+      plant: null,
+      created: new Date(),
+      startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
+      season: computeSeason(),
+      plantedCount: 1
+    });
+
+    handleMoreMenuClose();
+  }, [addPlantInstance, container.startedFrom, id, index, plantInstance, type]);
+
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
       updateCreatePlantInstance(data).then((result) => {
-        setVersion(version + 1);
         if (result && slot.plantInstanceId !== result._id) {
           updateSlot({ plantInstanceId: result._id });
         }
       });
     },
-    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot, version]
+    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot]
   );
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
@@ -216,9 +234,14 @@ const ContainerSlotView = ({
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
-      onPlantInstanceChange({ plant: value?._id ?? null });
+      if (plantInstance) {
+        onPlantInstanceChange({ plant: value?._id ?? null });
+        return;
+      }
+
+      updateSlot({ plant: value?._id ?? null });
     },
-    [onPlantInstanceChange]
+    [onPlantInstanceChange, plantInstance, updateSlot]
   );
 
   const onPlantClick = useCallback(
@@ -410,21 +433,17 @@ const ContainerSlotView = ({
   const finishUpdateStatusHarvested = useCallback(
     (date: Date) => {
       setShowHarvestedDialogue(false);
-      harvestPlantInstance(date).finally(() => {
-        setVersion(version + 1);
-      });
+      harvestPlantInstance(date);
     },
-    [harvestPlantInstance, version]
+    [harvestPlantInstance]
   );
 
   const finishUpdateStatusFertilized = useCallback(
     (date: Date) => {
       setShowFertilizedDialogue(false);
-      fertilizePlantInstance(date).finally(() => {
-        setVersion(version + 1);
-      });
+      fertilizePlantInstance(date);
     },
-    [fertilizePlantInstance, version]
+    [fertilizePlantInstance]
   );
 
   const finishUpdateStatusTransplanted = useCallback(() => {
@@ -528,7 +547,7 @@ const ContainerSlotView = ({
                         'aria-labelledby': 'basic-button'
                       }}
                     >
-                      {plant && !plantedEvent ? (
+                      {plant && plantInstance && !plantedEvent ? (
                         <MenuItem onClick={onPlantedClick}>
                           <ListItemIcon>
                             <GrassIcon color="success" fontSize="small" />
@@ -582,11 +601,19 @@ const ContainerSlotView = ({
                           <Typography color="success.main">New Plant</Typography>
                         </MenuItem>
                       ) : null}
+                      {!plantInstance ? (
+                        <MenuItem onClick={finishPlanning}>
+                          <ListItemIcon>
+                            <AddIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary.main">Finish Planning</Typography>
+                        </MenuItem>
+                      ) : null}
                     </Menu>
                   </Box>
                 ) : (
                   <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
-                    {plant && !plantedEvent ? (
+                    {plant && plantInstance && !plantedEvent ? (
                       <Button
                         variant="outlined"
                         aria-label="plant"
@@ -660,6 +687,18 @@ const ContainerSlotView = ({
                       >
                         <AddIcon sx={{ mr: 1 }} fontSize="small" />
                         New Plant
+                      </Button>
+                    ) : null}
+                    {plantInstance?.closed === true ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="finish planning"
+                        color="primary"
+                        onClick={finishPlanning}
+                        title="Finish Planning"
+                      >
+                        <AddIcon sx={{ mr: 1 }} fontSize="small" />
+                        Finish Planning
                       </Button>
                     ) : null}
                   </Box>

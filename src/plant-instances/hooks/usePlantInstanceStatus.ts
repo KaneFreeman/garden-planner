@@ -12,11 +12,15 @@ export function getPlantInstanceStatus(
   slotLocation: ContainerSlotIdentifier | null | undefined,
   plantLocation: ContainerSlotIdentifier | null | undefined
 ): DisplayStatusChipProps['status'] {
-  if (instance?.closed) {
+  if (!instance) {
+    return 'Planning';
+  }
+
+  if (instance.closed) {
     return 'Closed';
   }
 
-  if (instance?.history?.[0]) {
+  if (instance.history?.[0]) {
     if (
       !areContainerSlotLocationsEqual(slotLocation, plantLocation) &&
       findHistoryFrom(instance, slotLocation, TRANSPLANTED)
