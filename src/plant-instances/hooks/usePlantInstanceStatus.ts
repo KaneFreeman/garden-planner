@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { blue } from '@mui/material/colors';
 import green from '@mui/material/colors/green';
 import red from '@mui/material/colors/red';
 import yellow from '@mui/material/colors/yellow';
+import { useMemo } from 'react';
 import { DisplayStatusChipProps } from '../../containers/DisplayStatusChip';
 import { ContainerSlotIdentifier, Plant, PlantInstance, TRANSPLANTED } from '../../interface';
 import { areContainerSlotLocationsEqual } from '../../utility/containerSlotLocation.util';
@@ -12,11 +13,15 @@ export function getPlantInstanceStatus(
   slotLocation: ContainerSlotIdentifier | null | undefined,
   plantLocation: ContainerSlotIdentifier | null | undefined
 ): DisplayStatusChipProps['status'] {
-  if (instance?.closed) {
+  if (!instance) {
+    return 'Planning';
+  }
+
+  if (instance.closed) {
     return 'Closed';
   }
 
-  if (instance?.history?.[0]) {
+  if (instance.history?.[0]) {
     if (
       !areContainerSlotLocationsEqual(slotLocation, plantLocation) &&
       findHistoryFrom(instance, slotLocation, TRANSPLANTED)
@@ -57,6 +62,8 @@ export function usePlantInstanceStatusColor(
     }
 
     switch (status) {
+      case 'Planning':
+        return blue[400];
       case 'Planted':
         return green[300];
       case 'Transplanted':

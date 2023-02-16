@@ -2,60 +2,58 @@
 /* eslint-disable promise/always-return */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/no-array-index-key */
-import React, { ReactNode, useCallback, useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import GrassIcon from '@mui/icons-material/Grass';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import YardIcon from '@mui/icons-material/Yard';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import MuiTextField from '@mui/material/TextField';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import { styled } from '@mui/material/styles';
+import MuiTextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import GrassIcon from '@mui/icons-material/Grass';
-import MoveDownIcon from '@mui/icons-material/MoveDown';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AgricultureIcon from '@mui/icons-material/Agriculture';
-import YardIcon from '@mui/icons-material/Yard';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
-import AddIcon from '@mui/icons-material/Add';
-import PicturesView from '../pictures/PicturesView';
-import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import PlantAvatar from '../plants/PlantAvatar';
-import CommentsView from '../components/comments/CommentsView';
-import { getSlotTitle } from '../utility/slot.util';
-import {
-  Plant,
-  Slot,
-  Container,
-  BaseSlot,
-  STARTED_FROM_TYPES,
-  StartedFromType,
-  PlantInstance,
-  PLANTED,
-  TRANSPLANTED,
-  STARTED_FROM_TYPE_SEED,
-  SEASONS,
-  SPRING,
-  Season
-} from '../interface';
-import { usePlants } from '../plants/usePlants';
-import Select from '../components/Select';
-import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
-import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
-import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
-import { getMidnight, setToMidnight } from '../utility/date.util';
+import CommentsView from '../components/comments/CommentsView';
+import DateDialog from '../components/DateDialog';
+import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
+import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
+import Select from '../components/Select';
+import {
+  BaseSlot,
+  Container,
+  Plant,
+  PLANTED,
+  PlantInstance,
+  Season,
+  SEASONS,
+  Slot,
+  SPRING,
+  StartedFromType,
+  STARTED_FROM_TYPES,
+  STARTED_FROM_TYPE_SEED,
+  TRANSPLANTED
+} from '../interface';
+import PicturesView from '../pictures/PicturesView';
+import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import {
   useAddPlantInstance,
   useFertilizePlantInstance,
@@ -63,18 +61,21 @@ import {
   useUpdateCreatePlantInstance
 } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
-import useSmallScreen from '../utility/smallScreen.util';
-import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
-import NumberInlineField from '../components/inline-fields/NumberInlineField';
+import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
+import PlantAvatar from '../plants/PlantAvatar';
+import { usePlants } from '../plants/usePlants';
+import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
-import DateDialog from '../components/DateDialog';
-import { toTitleCase } from '../utility/string.util';
+import { getMidnight, setToMidnight } from '../utility/date.util';
+import { getPlantedEvent } from '../utility/history.util';
 import computeSeason from '../utility/season.util';
+import { getSlotTitle } from '../utility/slot.util';
+import useSmallScreen from '../utility/smallScreen.util';
+import { toTitleCase } from '../utility/string.util';
+import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
-import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import PastSlotPlants from './plants/PastSlotPlants';
-import { getPlantedEvent } from '../utility/history.util';
 
 interface CircleProps {
   backgroundColor: string;
@@ -99,6 +100,7 @@ interface ContainerSlotViewProps {
   container: Container;
   slot: BaseSlot;
   plantInstance: PlantInstance | undefined;
+  subSlot?: BaseSlot;
   subPlantInstance?: PlantInstance;
   onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
 }
@@ -110,6 +112,7 @@ const ContainerSlotView = ({
   container,
   slot,
   plantInstance,
+  subSlot,
   subPlantInstance,
   onSlotChange
 }: ContainerSlotViewProps) => {
@@ -117,7 +120,6 @@ const ContainerSlotView = ({
 
   const isSmallScreen = useSmallScreen();
 
-  const [version, setVersion] = useState(0);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
   const [transplantedDate, setTransplantedDate] = useState<Date>(getMidnight());
 
@@ -166,11 +168,9 @@ const ContainerSlotView = ({
       };
 
       // eslint-disable-next-line promise/catch-or-return
-      onSlotChange(newSlot).finally(() => {
-        setVersion(version + 1);
-      });
+      onSlotChange(newSlot);
     },
-    [onSlotChange, slot, version]
+    [onSlotChange, slot]
   );
 
   const location = useMemo(() => ({ containerId: id, slotId: index, subSlot: type === 'sub-slot' }), [id, index, type]);
@@ -179,6 +179,18 @@ const ContainerSlotView = ({
 
   const createNewPlantInstance = useCallback(() => {
     if (plantInstance && !plantInstance.closed) {
+      return;
+    }
+
+    updateSlot({
+      plantInstanceId: null
+    });
+
+    handleMoreMenuClose();
+  }, [plantInstance, updateSlot]);
+
+  const finishPlanning = useCallback(() => {
+    if (plantInstance) {
       return;
     }
 
@@ -199,24 +211,30 @@ const ContainerSlotView = ({
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
       updateCreatePlantInstance(data).then((result) => {
-        setVersion(version + 1);
         if (result && slot.plantInstanceId !== result._id) {
           updateSlot({ plantInstanceId: result._id });
         }
       });
     },
-    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot, version]
+    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot]
   );
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
 
   const plant = useMemo(
-    () => plants.find((otherPlant) => otherPlant._id === plantInstance?.plant),
-    [plants, plantInstance?.plant]
+    () =>
+      plants.find((otherPlant) =>
+        plantInstance ? otherPlant._id === plantInstance.plant : otherPlant._id === slot.plant
+      ),
+    [plants, plantInstance, slot.plant]
   );
+
   const subPlant = useMemo(
-    () => plants.find((otherPlant) => otherPlant._id === subPlantInstance?.plant),
-    [plants, subPlantInstance?.plant]
+    () =>
+      plants.find((otherPlant) =>
+        subPlantInstance ? otherPlant._id === subPlantInstance?.plant : otherPlant._id === subSlot?.plant
+      ),
+    [plants, subPlantInstance, subSlot?.plant]
   );
 
   const filteredPlants = useMemo(
@@ -226,9 +244,14 @@ const ContainerSlotView = ({
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
-      onPlantInstanceChange({ plant: value?._id ?? null });
+      if (plantInstance) {
+        onPlantInstanceChange({ plant: value?._id ?? null });
+        return;
+      }
+
+      updateSlot({ plant: value?._id ?? null });
     },
-    [onPlantInstanceChange]
+    [onPlantInstanceChange, plantInstance, updateSlot]
   );
 
   const onPlantClick = useCallback(
@@ -420,21 +443,17 @@ const ContainerSlotView = ({
   const finishUpdateStatusHarvested = useCallback(
     (date: Date) => {
       setShowHarvestedDialogue(false);
-      harvestPlantInstance(date).finally(() => {
-        setVersion(version + 1);
-      });
+      harvestPlantInstance(date);
     },
-    [harvestPlantInstance, version]
+    [harvestPlantInstance]
   );
 
   const finishUpdateStatusFertilized = useCallback(
     (date: Date) => {
       setShowFertilizedDialogue(false);
-      fertilizePlantInstance(date).finally(() => {
-        setVersion(version + 1);
-      });
+      fertilizePlantInstance(date);
     },
-    [fertilizePlantInstance, version]
+    [fertilizePlantInstance]
   );
 
   const finishUpdateStatusTransplanted = useCallback(() => {
@@ -538,7 +557,7 @@ const ContainerSlotView = ({
                         'aria-labelledby': 'basic-button'
                       }}
                     >
-                      {plant && !plantedEvent ? (
+                      {plant && plantInstance && !plantedEvent ? (
                         <MenuItem onClick={onPlantedClick}>
                           <ListItemIcon>
                             <GrassIcon color="success" fontSize="small" />
@@ -592,11 +611,19 @@ const ContainerSlotView = ({
                           <Typography color="success.main">New Plant</Typography>
                         </MenuItem>
                       ) : null}
+                      {!plantInstance ? (
+                        <MenuItem onClick={finishPlanning}>
+                          <ListItemIcon>
+                            <EventAvailableIcon color="primary" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="primary.main">Finish Planning</Typography>
+                        </MenuItem>
+                      ) : null}
                     </Menu>
                   </Box>
                 ) : (
                   <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
-                    {plant && !plantedEvent ? (
+                    {plant && plantInstance && !plantedEvent ? (
                       <Button
                         variant="outlined"
                         aria-label="plant"
@@ -608,7 +635,7 @@ const ContainerSlotView = ({
                         Plant
                       </Button>
                     ) : null}
-                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                    {plantedEvent && displayStatus === 'Planted' ? (
                       <Button
                         variant="outlined"
                         aria-label="harvest"
@@ -620,7 +647,7 @@ const ContainerSlotView = ({
                         Harvest
                       </Button>
                     ) : null}
-                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                    {plantedEvent && displayStatus === 'Planted' ? (
                       <Button
                         variant="outlined"
                         aria-label="fertilize"
@@ -630,6 +657,18 @@ const ContainerSlotView = ({
                       >
                         <YardIcon sx={{ mr: 1 }} fontSize="small" />
                         Fertilize
+                      </Button>
+                    ) : null}
+                    {plantedEvent && displayStatus === 'Planted' ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="transplant"
+                        color="error"
+                        onClick={onTransplantClick}
+                        title="Transplant"
+                      >
+                        <MoveDownIcon sx={{ mr: 1 }} fontSize="small" />
+                        Transplant
                       </Button>
                     ) : null}
                     {plantInstance ? (
@@ -648,18 +687,6 @@ const ContainerSlotView = ({
                         {plantInstance.closed ? 'Reopen' : 'Close'}
                       </Button>
                     ) : null}
-                    {plantedEvent ? (
-                      <Button
-                        variant="outlined"
-                        aria-label="transplant"
-                        color="error"
-                        onClick={onTransplantClick}
-                        title="Transplant"
-                      >
-                        <MoveDownIcon sx={{ mr: 1 }} fontSize="small" />
-                        Transplant
-                      </Button>
-                    ) : null}
                     {plantInstance?.closed === true ? (
                       <Button
                         variant="outlined"
@@ -670,6 +697,18 @@ const ContainerSlotView = ({
                       >
                         <AddIcon sx={{ mr: 1 }} fontSize="small" />
                         New Plant
+                      </Button>
+                    ) : null}
+                    {!plantInstance ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="finish planning"
+                        color="primary"
+                        onClick={finishPlanning}
+                        title="Finish Planning"
+                      >
+                        <EventAvailableIcon sx={{ mr: 1 }} fontSize="small" />
+                        Finish Planning
                       </Button>
                     ) : null}
                   </Box>

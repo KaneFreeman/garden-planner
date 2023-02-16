@@ -9,7 +9,7 @@ const StyledChip = styled(Chip)({
 });
 
 export interface DisplayStatusChipProps {
-  status: 'Not Planted' | 'Planted' | 'Transplanted' | 'Closed';
+  status: 'Not Planted' | 'Planted' | 'Transplanted' | 'Closed' | 'Planning';
   count?: number;
   shrink?: boolean;
   size?: 'small' | 'large';
@@ -17,8 +17,10 @@ export interface DisplayStatusChipProps {
 }
 
 const DisplayStatusChip = ({ status, count, shrink, size = 'small', sx }: DisplayStatusChipProps) => {
-  const color: 'default' | 'success' | 'error' | 'warning' = useMemo(() => {
+  const color: 'default' | 'success' | 'error' | 'warning' | 'primary' = useMemo(() => {
     switch (status) {
+      case 'Planning':
+        return 'primary';
       case 'Planted':
         return 'success';
       case 'Transplanted':

@@ -47,6 +47,7 @@ const ContainerSlotRoute = () => {
       container={container}
       slot={slot}
       plantInstance={plantInstance}
+      subSlot={slot.subSlot}
       subPlantInstance={subPlantInstance}
       onSlotChange={handleOnChange}
     />
