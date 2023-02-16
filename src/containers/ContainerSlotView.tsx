@@ -9,6 +9,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MoveDownIcon from '@mui/icons-material/MoveDown';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import YardIcon from '@mui/icons-material/Yard';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -99,6 +100,7 @@ interface ContainerSlotViewProps {
   container: Container;
   slot: BaseSlot;
   plantInstance: PlantInstance | undefined;
+  subSlot?: BaseSlot;
   subPlantInstance?: PlantInstance;
   onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
 }
@@ -110,6 +112,7 @@ const ContainerSlotView = ({
   container,
   slot,
   plantInstance,
+  subSlot,
   subPlantInstance,
   onSlotChange
 }: ContainerSlotViewProps) => {
@@ -219,12 +222,19 @@ const ContainerSlotView = ({
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
 
   const plant = useMemo(
-    () => plants.find((otherPlant) => otherPlant._id === plantInstance?.plant),
-    [plants, plantInstance?.plant]
+    () =>
+      plants.find((otherPlant) =>
+        plantInstance ? otherPlant._id === plantInstance.plant : otherPlant._id === slot.plant
+      ),
+    [plants, plantInstance, slot.plant]
   );
+
   const subPlant = useMemo(
-    () => plants.find((otherPlant) => otherPlant._id === subPlantInstance?.plant),
-    [plants, subPlantInstance?.plant]
+    () =>
+      plants.find((otherPlant) =>
+        subPlantInstance ? otherPlant._id === subPlantInstance?.plant : otherPlant._id === subSlot?.plant
+      ),
+    [plants, subPlantInstance, subSlot?.plant]
   );
 
   const filteredPlants = useMemo(
@@ -604,7 +614,7 @@ const ContainerSlotView = ({
                       {!plantInstance ? (
                         <MenuItem onClick={finishPlanning}>
                           <ListItemIcon>
-                            <AddIcon color="primary" fontSize="small" />
+                            <EventAvailableIcon color="primary" fontSize="small" />
                           </ListItemIcon>
                           <Typography color="primary.main">Finish Planning</Typography>
                         </MenuItem>
@@ -625,7 +635,7 @@ const ContainerSlotView = ({
                         Plant
                       </Button>
                     ) : null}
-                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                    {plantedEvent && displayStatus === 'Planted' ? (
                       <Button
                         variant="outlined"
                         aria-label="harvest"
@@ -637,7 +647,7 @@ const ContainerSlotView = ({
                         Harvest
                       </Button>
                     ) : null}
-                    {plantedEvent && displayStatus !== 'Transplanted' ? (
+                    {plantedEvent && displayStatus === 'Planted' ? (
                       <Button
                         variant="outlined"
                         aria-label="fertilize"
@@ -647,6 +657,18 @@ const ContainerSlotView = ({
                       >
                         <YardIcon sx={{ mr: 1 }} fontSize="small" />
                         Fertilize
+                      </Button>
+                    ) : null}
+                    {plantedEvent && displayStatus === 'Planted' ? (
+                      <Button
+                        variant="outlined"
+                        aria-label="transplant"
+                        color="error"
+                        onClick={onTransplantClick}
+                        title="Transplant"
+                      >
+                        <MoveDownIcon sx={{ mr: 1 }} fontSize="small" />
+                        Transplant
                       </Button>
                     ) : null}
                     {plantInstance ? (
@@ -665,18 +687,6 @@ const ContainerSlotView = ({
                         {plantInstance.closed ? 'Reopen' : 'Close'}
                       </Button>
                     ) : null}
-                    {plantedEvent ? (
-                      <Button
-                        variant="outlined"
-                        aria-label="transplant"
-                        color="error"
-                        onClick={onTransplantClick}
-                        title="Transplant"
-                      >
-                        <MoveDownIcon sx={{ mr: 1 }} fontSize="small" />
-                        Transplant
-                      </Button>
-                    ) : null}
                     {plantInstance?.closed === true ? (
                       <Button
                         variant="outlined"
@@ -689,7 +699,7 @@ const ContainerSlotView = ({
                         New Plant
                       </Button>
                     ) : null}
-                    {plantInstance?.closed === true ? (
+                    {!plantInstance ? (
                       <Button
                         variant="outlined"
                         aria-label="finish planning"
@@ -697,7 +707,7 @@ const ContainerSlotView = ({
                         onClick={finishPlanning}
                         title="Finish Planning"
                       >
-                        <AddIcon sx={{ mr: 1 }} fontSize="small" />
+                        <EventAvailableIcon sx={{ mr: 1 }} fontSize="small" />
                         Finish Planning
                       </Button>
                     ) : null}
