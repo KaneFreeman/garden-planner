@@ -198,7 +198,7 @@ const ContainerSlotView = ({
       containerId: id,
       slotId: index,
       subSlot: type === 'sub-slot',
-      plant: null,
+      plant: slot.plant ?? null,
       created: new Date(),
       startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
       season: computeSeason(),
@@ -206,17 +206,21 @@ const ContainerSlotView = ({
     });
 
     handleMoreMenuClose();
-  }, [addPlantInstance, container.startedFrom, id, index, plantInstance, type]);
+  }, [addPlantInstance, container.startedFrom, id, index, plantInstance, slot.plant, type]);
 
   const onPlantInstanceChange = useCallback(
     (data: Partial<PlantInstance>) => {
-      updateCreatePlantInstance(data).then((result) => {
+      const finalData = { ...data };
+      if (!plantInstance) {
+        finalData.plant = slot.plant;
+      }
+      updateCreatePlantInstance(finalData).then((result) => {
         if (result && slot.plantInstanceId !== result._id) {
           updateSlot({ plantInstanceId: result._id });
         }
       });
     },
-    [slot.plantInstanceId, updateCreatePlantInstance, updateSlot]
+    [plantInstance, slot.plant, slot.plantInstanceId, updateCreatePlantInstance, updateSlot]
   );
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
