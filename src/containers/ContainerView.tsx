@@ -105,31 +105,9 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const tasks = useTasksByContainer(container._id);
   const hasActiveFertilizeTasks = useMemo(() => {
-    if (tasks.overdue.length > 0) {
+    if (tasks.tasks.length > 0) {
       return Boolean(
-        tasks.overdue.find(
-          (task) =>
-            (selectedPlantInstances.length === 0 ||
-              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
-            task.type === FERTILIZE
-        )
-      );
-    }
-
-    if (tasks.thisWeek.length > 0) {
-      return Boolean(
-        tasks.thisWeek.find(
-          (task) =>
-            (selectedPlantInstances.length === 0 ||
-              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
-            task.type === FERTILIZE
-        )
-      );
-    }
-
-    if (tasks.active.length > 0) {
-      return Boolean(
-        tasks.active.find(
+        tasks.tasks.find(
           (task) =>
             (selectedPlantInstances.length === 0 ||
               (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
@@ -139,34 +117,12 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     }
 
     return false;
-  }, [selectedPlantInstances, tasks.active, tasks.overdue, tasks.thisWeek]);
+  }, [selectedPlantInstances, tasks.tasks]);
 
   const hasActivePlantTasks = useMemo(() => {
-    if (tasks.overdue.length > 0) {
+    if (tasks.tasks.length > 0) {
       return Boolean(
-        tasks.overdue.find(
-          (task) =>
-            (selectedPlantInstances.length === 0 ||
-              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
-            task.type === PLANT
-        )
-      );
-    }
-
-    if (tasks.thisWeek.length > 0) {
-      return Boolean(
-        tasks.thisWeek.find(
-          (task) =>
-            (selectedPlantInstances.length === 0 ||
-              (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
-            task.type === PLANT
-        )
-      );
-    }
-
-    if (tasks.active.length > 0) {
-      return Boolean(
-        tasks.active.find(
+        tasks.tasks.find(
           (task) =>
             (selectedPlantInstances.length === 0 ||
               (task.plantInstanceId && selectedPlantInstances.includes(task.plantInstanceId))) &&
@@ -176,7 +132,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     }
 
     return false;
-  }, [selectedPlantInstances, tasks.active, tasks.overdue, tasks.thisWeek]);
+  }, [selectedPlantInstances, tasks.tasks]);
 
   const reopenablePlantInstances = useMemo(
     () => selectedPlantInstances.filter((plantInstanceId) => plantInstancesById[plantInstanceId]?.closed),
