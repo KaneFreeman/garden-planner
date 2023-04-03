@@ -599,7 +599,7 @@ const ContainerSlotView = ({
                           </Typography>
                         </MenuItem>
                       ) : null}
-                      {plantedEvent ? (
+                      {plantedEvent && (displayStatus === 'Planted' || displayStatus === 'Transplanted') ? (
                         <MenuItem onClick={onTransplantClick}>
                           <ListItemIcon>
                             <MoveDownIcon color="error" fontSize="small" />
@@ -663,7 +663,7 @@ const ContainerSlotView = ({
                         Fertilize
                       </Button>
                     ) : null}
-                    {plantedEvent && displayStatus === 'Planted' ? (
+                    {plantedEvent && (displayStatus === 'Planted' || displayStatus === 'Transplanted') ? (
                       <Button
                         variant="outlined"
                         aria-label="transplant"
