@@ -112,7 +112,7 @@ const ContainerSelectViewRoute = () => {
               status: TRANSPLANTED
             }
           ]
-        });
+        }, plantInstance._id);
       } else {
         promise = updatePlantInstance({
           ...plantInstance,

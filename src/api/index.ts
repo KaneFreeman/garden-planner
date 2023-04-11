@@ -204,6 +204,9 @@ interface Rest {
     method: 'POST';
     request: {
       body: Omit<PlantInstanceDTO, '_id'>;
+      query?: {
+        copiedFromId?: string;
+      };
     };
     response: PlantInstanceDTO;
   };

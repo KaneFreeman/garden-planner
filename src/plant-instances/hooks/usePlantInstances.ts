@@ -70,7 +70,7 @@ export const useAddPlantInstance = () => {
   const runOperation = usePlantInstanceOperation({ force: true });
 
   const addPlantInstance = useCallback(
-    async (data: Omit<PlantInstance, '_id'>) => {
+    async (data: Omit<PlantInstance, '_id'>, copiedFromId?: string) => {
       const lastHistoryEvent =
         data.history && data.history.length > 0 ? data.history[data.history.length - 1] : undefined;
       const location = lastHistoryEvent?.to;
@@ -87,7 +87,10 @@ export const useAddPlantInstance = () => {
 
       const response = await runOperation(() =>
         fetch(Api.plantInstance_Post, {
-          body: toPlantInstanceDTO(newData)
+          body: toPlantInstanceDTO(newData),
+          query: {
+            copiedFromId
+          }
         })
       );
 
