@@ -1,35 +1,35 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import DialogContentText from '@mui/material/DialogContentText';
+import DeleteIcon from '@mui/icons-material/Delete';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import Menu from '@mui/material/Menu';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import DeleteIcon from '@mui/icons-material/Delete';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LockIcon from '@mui/icons-material/Lock';
-import PicturesView from '../pictures/PicturesView';
-import TextInlineField from '../components/inline-fields/TextInlineField';
-import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import CommentsView from '../components/comments/CommentsView';
-import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
-import { Plant, PlantType, PLANT_TYPES } from '../interface';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
+import CommentsView from '../components/comments/CommentsView';
+import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
+import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
+import TextInlineField from '../components/inline-fields/TextInlineField';
 import PlantSlotsView from '../containers/plants/PlantSlotsView';
+import { MATURITY_FROM_SEED, MATURITY_FROM_TYPES, MaturityFromType, PLANT_TYPES, Plant, PlantType } from '../interface';
+import PicturesView from '../pictures/PicturesView';
 import useSmallScreen from '../utility/smallScreen.util';
 import PlantDataView from './PlantDataView';
-import { useRemovePlant, usePlant, useUpdatePlant } from './usePlants';
+import { usePlant, useRemovePlant, useUpdatePlant } from './usePlants';
 
 const PlantView = () => {
   const { id } = useParams();
@@ -88,6 +88,16 @@ const PlantView = () => {
   }, []);
 
   const renderPlantType = useCallback((value: PlantType | null | undefined) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return {
+      primary: value
+    };
+  }, []);
+
+  const renderMaturityFromType = useCallback((value: MaturityFromType | null | undefined) => {
     if (!value) {
       return undefined;
     }
@@ -239,6 +249,15 @@ const PlantView = () => {
           label="Days to Maturity"
           value={plant.daysToMaturity}
           onChange={(daysToMaturity) => handleUpdatePlant({ daysToMaturity })}
+        />
+        <DrawerInlineSelect
+          label="Maturity From"
+          value={plant.maturityFrom ?? MATURITY_FROM_SEED}
+          noValueLabel="No plant type"
+          options={MATURITY_FROM_TYPES}
+          onChange={(maturityFrom) => handleUpdatePlant({ maturityFrom })}
+          renderer={renderMaturityFromType}
+          sx={{ mt: 1 }}
         />
         <PlantSlotsView plantId={id} />
         <PlantDataView type={plant.type} />

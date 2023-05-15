@@ -302,6 +302,11 @@ export const PLANT_TYPES: PlantType[] = [
   SUNFLOWER
 ];
 
+export const MATURITY_FROM_SEED = 'Seed';
+export const MATURITY_FROM_TRANSPLANT = 'Transplant';
+export type MaturityFromType = typeof MATURITY_FROM_SEED | typeof MATURITY_FROM_TRANSPLANT;
+export const MATURITY_FROM_TYPES: MaturityFromType[] = [MATURITY_FROM_SEED, MATURITY_FROM_TRANSPLANT];
+
 export interface Plant {
   _id: string;
   name: string;
@@ -309,6 +314,7 @@ export interface Plant {
   url?: string;
   daysToGerminate?: [number | undefined, number | undefined];
   daysToMaturity?: [number | undefined, number | undefined];
+  maturityFrom?: MaturityFromType | null;
   pictures?: PictureData[];
   comments?: Comment[];
   retired?: boolean;
@@ -321,6 +327,7 @@ export interface PlantDTO {
   url?: string;
   daysToGerminate?: [number | undefined, number | undefined];
   daysToMaturity?: [number | undefined, number | undefined];
+  maturityFrom?: MaturityFromType | null;
   pictures?: PictureDataDTO[];
   comments?: CommentDTO[];
   retired?: boolean;
