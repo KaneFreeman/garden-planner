@@ -13,8 +13,8 @@
   "dependencies": {
     "@auth0/auth0-react": "1.12.1",
     "@auth0/auth0-spa-js": "2.0.4",
-    "@emotion/react": "11.10.6",
-    "@emotion/styled": "11.10.6",
+    "@emotion/react": "11.11.0",
+    "@emotion/styled": "11.11.0",
     "@mui/icons-material": "5.11.16",
     "@mui/lab": "5.0.0-alpha.130",
     "@mui/material": "5.13.1",
