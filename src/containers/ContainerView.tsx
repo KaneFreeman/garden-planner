@@ -26,15 +26,19 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'rea
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DateDialog from '../components/DateDialog';
-import { Container, CONTAINER_TYPE_INSIDE, FERTILIZE, PLANT, Plant, Slot } from '../interface';
-import { useBulkReopenClosePlantInstances, usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
+import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, Plant, Slot } from '../interface';
+import {
+  useBulkReopenClosePlantInstances,
+  usePlantInstancesById,
+  useUpdatePlantInstanceTasksInContainer
+} from '../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../plants/usePlants';
 import { useTasksByContainer } from '../tasks/hooks/useTasks';
 import { getMidnight } from '../utility/date.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
-import { useRemoveContainer, useUpdateContainer, useUpdateContainerTasks } from './hooks/useContainers';
+import { useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 
 interface ContainerViewProperties {
   container: Container;
@@ -76,8 +80,8 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
-  const fertilizeContainer = useUpdateContainerTasks(container._id, FERTILIZE);
-  const plantContainer = useUpdateContainerTasks(container._id, PLANT);
+  const fertilizeContainer = useUpdatePlantInstanceTasksInContainer(container._id, FERTILIZE);
+  const plantContainer = useUpdatePlantInstanceTasksInContainer(container._id, PLANT);
 
   const plantsById = usePlantsById();
   const plantInstancesById = usePlantInstancesById();

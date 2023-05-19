@@ -1,17 +1,19 @@
 /* eslint-disable promise/always-return */
 /* eslint-disable promise/catch-or-return */
 import { useCallback, useEffect, useMemo } from 'react';
+import Api from '../../api/api';
+import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { useGetContainers } from '../../containers/hooks/useContainers';
 import {
   Container,
   ContainerSlotIdentifier,
-  fromPlantInstanceDTO,
   PlantInstance,
-  Slot,
   STARTED_FROM_TYPE_SEED,
+  Slot,
+  TaskType,
+  fromPlantInstanceDTO,
   toPlantInstanceDTO
 } from '../../interface';
-import Api from '../../api/api';
-import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectPlantInstanceById,
@@ -20,9 +22,8 @@ import {
   updatePlantInstances
 } from '../../store/slices/plant-instances';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
-import { mapRecord } from '../../utility/record.util';
 import { isNotNullish, isNullish } from '../../utility/null.util';
-import { useGetContainers } from '../../containers/hooks/useContainers';
+import { mapRecord } from '../../utility/record.util';
 import computeSeason from '../../utility/season.util';
 
 export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
@@ -330,4 +331,27 @@ export const useBulkReopenClosePlantInstances = () => {
   );
 
   return bulkReopenClosePlantInstances;
+};
+
+export const useUpdatePlantInstanceTasksInContainer = (containerId: string | undefined, taskType: TaskType) => {
+  const fetch = useFetch();
+  const runOperation = usePlantInstanceOperation({ force: true });
+
+  const updatePlantInstanceTasksInContainer = useCallback(
+    async (date: Date, plantInstanceIds?: string[]) => {
+      if (containerId === undefined) {
+        return;
+      }
+
+      await runOperation(() =>
+        fetch(Api.container_UpdateTasksPost, {
+          params: { containerId, taskType },
+          body: { date: date.toISOString(), plantInstanceIds }
+        })
+      );
+    },
+    [containerId, fetch, runOperation, taskType]
+  );
+
+  return updatePlantInstanceTasksInContainer;
 };

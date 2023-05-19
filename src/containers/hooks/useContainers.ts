@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromContainerDTO, Container, toContainerDTO, TaskType } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { Container, fromContainerDTO, toContainerDTO } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectContainer,
@@ -168,26 +168,3 @@ export function useContainersById() {
 
   return containersById;
 }
-
-export const useUpdateContainerTasks = (containerId: string | undefined, taskType: TaskType) => {
-  const fetch = useFetch();
-  const runOperation = useContainerOperation({ force: true });
-
-  const updateContainerTasks = useCallback(
-    async (date: Date, plantInstanceIds?: string[]) => {
-      if (containerId === undefined) {
-        return;
-      }
-
-      await runOperation(() =>
-        fetch(Api.container_UpdateTasksPost, {
-          params: { containerId, taskType },
-          body: { date: date.toISOString(), plantInstanceIds }
-        })
-      );
-    },
-    [containerId, fetch, runOperation, taskType]
-  );
-
-  return updateContainerTasks;
-};
