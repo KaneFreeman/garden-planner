@@ -31,10 +31,10 @@
   dependencies:
     "@auth0/auth0-spa-js" "^1.22.6"
 
-"@auth0/auth0-spa-js@2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-2.0.6.tgz#129998c42ad8363166b8263afd5f80c12d2e756f"
-  integrity sha512-uZfYZEPi6jZCsixMQWpsaET9fUfTFDct0Bi/zR49Sw/y843WkMJyWDmt9XIae12/JKG+ehZNYYSI+/739jaa9Q==
+"@auth0/auth0-spa-js@2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@auth0/auth0-spa-js/-/auth0-spa-js-2.0.7.tgz#9da04e610223267cd96f93c46129847a8a53aaf2"
+  integrity sha512-iQ22AZCqOMG0q8/YPkvT4lGe2gsaopZ2kZb2cIBa7w+0hhGJhl6ANpFI6FzAKMzGRGmVocKxYdHha7lxAhbyPA==
 
 "@auth0/auth0-spa-js@^1.22.6":
   version "1.22.6"
