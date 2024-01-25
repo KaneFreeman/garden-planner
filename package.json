@@ -34,7 +34,7 @@
     "react-window": "1.8.10",
     "redux": "4.2.1",
     "redux-thunk": "2.4.2",
-    "web-vitals": "2.1.4",
+    "web-vitals": "3.5.2",
     "workbox-background-sync": "6.6.1",
     "workbox-broadcast-update": "6.6.1",
     "workbox-cacheable-response": "6.6.1",
