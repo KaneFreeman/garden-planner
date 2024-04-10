@@ -109,7 +109,6 @@ const PlantDataView = ({ type }: PlantDataViewProps) => {
         <CollapsableSimpleInlineField
           key={`section-${section[0]}`}
           label={section[0]}
-          // eslint-disable-next-line react/no-danger
           value={<div dangerouslySetInnerHTML={{ __html: section[1] }} />}
           startCollapsed
         />

@@ -1,4 +1,4 @@
-import React, { MouseEvent, useCallback, useMemo } from 'react';
+import React, { MouseEvent, memo, useCallback, useMemo } from 'react';
 import format from 'date-fns/format';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -28,7 +28,7 @@ interface ContainerSlotPreviewProps {
   onSlotSelect: (plantInstanceId: string) => void;
 }
 
-const ContainerSlotPreview = React.memo(
+const ContainerSlotPreview = memo(
   ({
     index,
     container,

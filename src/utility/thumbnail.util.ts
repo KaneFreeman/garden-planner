@@ -1,4 +1,3 @@
-/* eslint-disable compat/compat */
 export default function generateThumbnail(
   dataUrl: string,
   boundBox: { width: number; height: number }

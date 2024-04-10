@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -16,7 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Loading from '../components/Loading';
@@ -53,7 +52,7 @@ const PlantView = () => {
     [id, plant, updatePlant]
   );
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

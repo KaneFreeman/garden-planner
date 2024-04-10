@@ -1,14 +1,10 @@
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable promise/always-return */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IdToken, useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useMemo, useState } from 'react';
 import { isNotNullish } from '../utility/null.util';
 import Rest from './index';
 
 type GetMethods<T> = {
-  [P in keyof T]: T[P] extends { method: 'GET'; response: Array<any> } | { method: 'GET'; response: {} } ? P : never;
+  [P in keyof T]: T[P] extends { method: 'GET'; response: Array<any> } | { method: 'GET'; response: Record<string, never> } ? P : never;
 }[keyof T];
 
 export type RestCollectionKeys = GetMethods<Rest>;
@@ -135,7 +131,7 @@ function fetchEndpoint(accessToken?: IdToken) {
     const { body = undefined, params = {}, query = undefined } = options as any;
     // eslint-disable-next-line prefer-const
     let [method, url] = (endpoint as string).split(':') as [METHOD, string];
-    url = `${process.env.REACT_APP_API_URL}${url}`;
+    url = `${import.meta.env.VITE_API_URL}${url}`;
     if (params) {
       Object.keys(params).forEach((param) => {
         url = url.replace(`{${param}}`, (params as any)[param]);

@@ -1,7 +1,3 @@
-/* eslint-disable promise/no-nesting */
-/* eslint-disable promise/always-return */
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useCallback } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';

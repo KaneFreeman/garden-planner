@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable no-param-reassign */
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
 import { BulkCompleteTaskDTO, fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';

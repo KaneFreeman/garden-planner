@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { styled, SxProps, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -27,7 +27,7 @@ interface PictureProps {
 }
 
 const PictureView = ({ picture, alt, size = 'large', onClick, onDelete, onSetDefault, sx }: PictureProps) => {
-  const [contextMenu, setContextMenu] = React.useState<{
+  const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Middleware } from 'redux';
 
 const logger: Middleware = (store) => (next) => (action) => {

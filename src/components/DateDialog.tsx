@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -6,7 +5,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import MuiTextField from '@mui/material/TextField';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 
@@ -47,7 +45,7 @@ const DateDialog = ({
               label={label}
               value={date}
               onChange={(newDate: Date | null) => newDate && setDate(setToMidnight(newDate))}
-              renderInput={(params) => <MuiTextField {...params} sx={{ flexGrow: 1 }} />}
+              slotProps={{ textField: { sx: { flexGrow: 1 } } }}
             />
           </Box>
         </form>

@@ -1,4 +1,3 @@
-/* eslint-disable compat/compat */
 import { useState, useEffect } from 'react';
 
 export default function useScreenOrientation() {

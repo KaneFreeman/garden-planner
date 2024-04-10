@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import ListItemButton from '@mui/material/ListItemButton';

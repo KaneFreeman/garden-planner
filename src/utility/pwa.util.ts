@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { useCallback, useEffect } from 'react';
 import { useWindowEvent } from './window.util';
 

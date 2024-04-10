@@ -59,8 +59,8 @@ const App = () => {
 
   return (
     <Auth0Provider
-      domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ''}
-      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ''}
+      domain={import.meta.env.VITE_AUTH0_DOMAIN ?? ''}
+      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID ?? ''}
       redirectUri={window.location.origin}
     >
       <ThemeProvider theme={theme}>

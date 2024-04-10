@@ -1,10 +1,8 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import TextField from '@mui/material/TextField';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import format from 'date-fns/format';
 import { setToMidnight } from '../../utility/date.util';
@@ -79,8 +77,8 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
         value={value}
         onChange={(date: Date | null) => setInternalValue(date ? setToMidnight(date) : undefined)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        renderInput={(params: any) => <TextField {...params} className="dateInlineField-dateTimeInput" />}
         onClose={handleClose}
+        slotProps={{ textField: { sx: { display: 'none' } } }}
       />
     </Box>
   );

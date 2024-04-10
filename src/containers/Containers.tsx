@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import ListItemText from '@mui/material/ListItemText';

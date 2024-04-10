@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GrassIcon from '@mui/icons-material/Grass';
@@ -58,7 +57,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const backLabel = searchParams.get('backLabel');
   const backPath = searchParams.get('backPath');
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

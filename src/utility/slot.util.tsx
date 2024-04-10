@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 function getRowColumn(index: number, rows?: number) {
   const column = Math.floor(index / (rows ?? 1));
 

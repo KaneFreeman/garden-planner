@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import {
   BulkCompleteTaskDTO,
   BulkReopenClosePlantInstanceDTO,
@@ -67,7 +66,7 @@ interface Rest {
   };
   'GET:/plant': {
     method: 'GET';
-    request: {};
+    request: Record<string, never>;
     response: PlantDTO[];
   };
   'POST:/plant': {
@@ -107,7 +106,7 @@ interface Rest {
   };
   'GET:/container': {
     method: 'GET';
-    request: {};
+    request: Record<string, never>;
     response: ContainerDTO[];
   };
   'POST:/container': {
@@ -183,7 +182,7 @@ interface Rest {
   };
   'GET:/static/plantData': {
     method: 'GET';
-    request: {};
+    request: Record<string, never>;
     response: Record<PlantType, PlantDataDTO>;
   };
   'GET:/static/plantData/{plantType}': {
@@ -197,7 +196,7 @@ interface Rest {
   };
   'GET:/plant-instance': {
     method: 'GET';
-    request: {};
+    request: Record<string, never>;
     response: PlantInstanceDTO[];
   };
   'POST:/plant-instance': {

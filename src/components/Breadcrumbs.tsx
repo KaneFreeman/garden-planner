@@ -1,5 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { ReactNode, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';

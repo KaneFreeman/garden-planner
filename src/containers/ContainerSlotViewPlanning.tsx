@@ -1,0 +1,253 @@
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../components/Breadcrumbs';
+import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
+import { BaseSlot, Container, Plant, PlantInstance, STARTED_FROM_TYPE_SEED, Slot } from '../interface';
+import { useAddPlantInstance } from '../plant-instances/hooks/usePlantInstances';
+import PlantAvatar from '../plants/PlantAvatar';
+import { usePlants } from '../plants/usePlants';
+import computeSeason from '../utility/season.util';
+import { getSlotTitle } from '../utility/slot.util';
+import useSmallScreen from '../utility/smallScreen.util';
+import ContainerSlotViewSubPlant from './ContainerSlotViewSubPlant';
+import DisplayStatusChip from './DisplayStatusChip';
+import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
+import PastSlotPlants from './plants/PastSlotPlants';
+
+interface ContainerSlotViewPlanningProps {
+  id: string;
+  index: number;
+  type: 'slot' | 'sub-slot';
+  container: Container;
+  slot: BaseSlot;
+  subSlot?: BaseSlot;
+  subPlantInstance?: PlantInstance;
+  onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
+}
+
+const ContainerSlotViewPlanning = ({
+  id,
+  index,
+  type,
+  container,
+  slot,
+  subSlot,
+  subPlantInstance,
+  onSlotChange
+}: ContainerSlotViewPlanningProps) => {
+  const navigate = useNavigate();
+
+  const isSmallScreen = useSmallScreen();
+
+  const plants = usePlants();
+
+  const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
+
+  const slotLocation = useContainerSlotLocation(id, index, type === 'sub-slot');
+
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMoreMenuAnchorElement(event.currentTarget);
+  };
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorElement(null);
+  };
+
+  useEffect(() => {
+    handleMoreMenuClose();
+  }, [isSmallScreen]);
+
+  const updateSlot = useCallback(
+    (data: Partial<Slot>) => {
+      const newSlot: Slot = {
+        ...slot,
+        ...data
+      };
+
+      onSlotChange(newSlot);
+    },
+    [onSlotChange, slot]
+  );
+
+  const addPlantInstance = useAddPlantInstance();
+
+  const finishPlanning = useCallback(() => {
+    addPlantInstance({
+      containerId: id,
+      slotId: index,
+      subSlot: type === 'sub-slot',
+      plant: slot.plant ?? null,
+      created: new Date(),
+      startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
+      season: computeSeason(),
+      plantedCount: 1
+    });
+
+    handleMoreMenuClose();
+  }, [addPlantInstance, container.startedFrom, id, index, slot.plant, type]);
+
+  const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
+
+  const plant = useMemo(() => plants.find((otherPlant) => otherPlant._id === slot.plant), [plants, slot.plant]);
+
+  const filteredPlants = useMemo(() => plants.filter((aPlant) => aPlant.retired !== true), [plants]);
+
+  const updatePlant = useCallback(
+    (value: Plant | null) => {
+      updateSlot({ plant: value?._id ?? null });
+    },
+    [updateSlot]
+  );
+
+  const onPlantClick = useCallback(
+    (target: Plant) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (target && path) {
+        event.stopPropagation();
+        navigate(`/plant/${target._id}?backPath=${path}&backLabel=${title}`);
+      }
+    },
+    [navigate, path, title]
+  );
+
+  const renderPlant = useCallback(
+    (value: Plant | null | undefined, listType: 'value' | 'options') => {
+      if (!value) {
+        return undefined;
+      }
+
+      if (listType === 'value') {
+        return {
+          raw: (
+            <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
+              <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {value.name}
+              </Box>
+            </Button>
+          ),
+          avatar: <PlantAvatar plant={value} />
+        };
+      }
+
+      return {
+        primary: value.name,
+        avatar: <PlantAvatar plant={value} />
+      };
+    },
+    [onPlantClick]
+  );
+
+  return (
+    <>
+      <Box sx={{ p: 2, width: '100%', boxSizing: 'border-box' }}>
+        <Breadcrumbs
+          trail={[
+            {
+              to: `/containers`,
+              label: 'Containers'
+            },
+            {
+              to: `/container/${container._id}`,
+              label: container.name
+            },
+            type === 'sub-slot'
+              ? {
+                  to: `/container/${container._id}/slot/${index}`,
+                  label: title
+                }
+              : null
+          ]}
+        >
+          {{
+            current: type === 'sub-slot' ? 'Sub Plant' : title,
+            actions: (
+              <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                {isSmallScreen ? (
+                  <Box key="small-screen-actions" sx={{ display: 'flex' }}>
+                    <IconButton
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                      aria-expanded={moreMenuOpen ? 'true' : undefined}
+                      aria-haspopup="true"
+                      onClick={handleMoreMenuClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={moreMenuAnchorElement}
+                      open={moreMenuOpen}
+                      onClose={handleMoreMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button'
+                      }}
+                    >
+                      <MenuItem onClick={finishPlanning}>
+                        <ListItemIcon>
+                          <EventAvailableIcon color="primary" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="primary.main">Finish Planning</Typography>
+                      </MenuItem>
+                    </Menu>
+                  </Box>
+                ) : (
+                  <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    <Button
+                      variant="outlined"
+                      aria-label="finish planning"
+                      color="primary"
+                      onClick={finishPlanning}
+                      title="Finish Planning"
+                    >
+                      <EventAvailableIcon sx={{ mr: 1 }} fontSize="small" />
+                      Finish Planning
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )
+          }}
+        </Breadcrumbs>
+        <Box>
+          <Typography variant="subtitle1" component="div" color="GrayText">
+            Status
+          </Typography>
+          <Typography variant="body1" component="div" sx={{ mt: 1, mb: 1 }}>
+            {<DisplayStatusChip status="Planning" size="large" />}
+          </Typography>
+        </Box>
+        <DrawerInlineSelect
+          label="Plant"
+          value={plant}
+          noValueLabel="No plant"
+          options={filteredPlants}
+          onChange={updatePlant}
+          renderer={renderPlant}
+          sx={{ mt: 1 }}
+        />
+        {type === 'slot' ? (
+          <ContainerSlotViewSubPlant
+            id={id}
+            index={index}
+            container={container}
+            subSlot={subSlot}
+            subPlantInstance={subPlantInstance}
+          />
+        ) : null}
+        <PastSlotPlants slot={slot} location={slotLocation} />
+      </Box>
+    </>
+  );
+};
+
+export default ContainerSlotViewPlanning;

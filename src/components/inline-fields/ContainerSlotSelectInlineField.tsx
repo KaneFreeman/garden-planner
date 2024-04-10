@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';

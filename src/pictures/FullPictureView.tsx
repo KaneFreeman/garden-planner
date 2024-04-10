@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';

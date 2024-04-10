@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import format from 'date-fns/format';
@@ -9,7 +8,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import MuiTextField from '@mui/material/TextField';
 import DialogContentText from '@mui/material/DialogContentText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -197,7 +195,6 @@ const TaskView = ({ task }: TaskViewProperties) => {
                     Go to
                   </Button>
                 ) : null}
-                {/* eslint-disable-next-line no-nested-ternary */}
                 {isCustom ? (
                   <>
                     {task.completedOn ? (
@@ -332,10 +329,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
                   onChange={(newCompletedOn: Date | null) =>
                     newCompletedOn && setCompletedOn(setToMidnight(newCompletedOn))
                   }
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  renderInput={(params: any) => (
-                    <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1 }} />
-                  )}
+                  slotProps={{ textField: { sx: { flexGrow: 1 } } }}
                 />
               </Box>
             </form>

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react';
 import DialogContentText from '@mui/material/DialogContentText';
 import Box from '@mui/material/Box';

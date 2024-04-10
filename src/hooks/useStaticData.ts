@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { useCallback, useEffect } from 'react';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';

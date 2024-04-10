@@ -66,7 +66,7 @@ const Main = () => {
     );
   }
 
-  if (user?.email !== process.env.REACT_APP_MASTER_EMAIL) {
+  if (user?.email !== import.meta.env.VITE_MASTER_EMAIL) {
     return (
       <Box
         sx={{

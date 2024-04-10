@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import format from 'date-fns/format';

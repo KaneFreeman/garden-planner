@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable @typescript-eslint/ban-types */
 import { CSSProperties, PureComponent, ReactNode } from 'react';
 import createDetectElementResize from '../utility/detectElementResize';
 

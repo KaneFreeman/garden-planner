@@ -1,5 +1,3 @@
-/* eslint-disable promise/always-return */
-/* eslint-disable promise/catch-or-return */
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
@@ -148,28 +146,29 @@ export const useUpdatePlantInstance = () => {
   return updatePlantInstance;
 };
 
-export const useRemovePlantInstance = () => {
+export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
 
-  const removePlantInstance = useCallback(
-    async (plantInstanceId: string) => {
-      const response = await runOperation(() =>
-        fetch(Api.plantInstance_IdDelete, {
-          params: {
-            plantInstanceId
-          }
-        })
-      );
+  const removePlantInstance = useCallback(async () => {
+    if (isNullish(plantInstance?._id)) {
+      return;
+    }
 
-      if (!response) {
-        return undefined;
-      }
+    const response = await runOperation(() =>
+      fetch(Api.plantInstance_IdDelete, {
+        params: {
+          plantInstanceId: plantInstance._id
+        }
+      })
+    );
 
-      return fromPlantInstanceDTO(response);
-    },
-    [fetch, runOperation]
-  );
+    if (!response) {
+      return undefined;
+    }
+
+    return fromPlantInstanceDTO(response);
+  }, [fetch, plantInstance?._id, runOperation]);
 
   return removePlantInstance;
 };

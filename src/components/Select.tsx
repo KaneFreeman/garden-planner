@@ -93,7 +93,6 @@ const Select = <T extends string | number>({
   const renderedOptions = useMemo(
     () =>
       options?.map((option, index) => (
-        // eslint-disable-next-line react/no-array-index-key
         <MenuItem key={`menu-item-${index}`} value={option.value}>
           {option.emphasize === true ? <em>{renderLabel(option.label)}</em> : renderLabel(option.label)}
         </MenuItem>

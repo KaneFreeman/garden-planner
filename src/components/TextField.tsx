@@ -83,7 +83,6 @@ const TextField = (props: TextFieldProps) => {
       error={error || (otherProps.required && dirty && isEmpty)}
       autoFocus={autoFocus}
       InputProps={inputProps}
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...otherProps}
     />
   );

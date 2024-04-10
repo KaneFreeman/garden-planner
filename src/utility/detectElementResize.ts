@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-this-alias */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Detect Element Resize.
  * https://github.com/sdecima/javascript-detect-element-resize
@@ -23,6 +20,7 @@ if (typeof window !== 'undefined') {
   // eslint-disable-next-line no-restricted-globals
   windowObject = self;
 } else {
+  // @ts-expect-error Global is not defined
   windowObject = global;
 }
 
@@ -58,6 +56,7 @@ if (cancelAnimationFrameFn == null || requestAnimationFrameFn == null) {
     clearTimeoutFn(timeoutID);
   };
   requestFrame = function requestAnimationFrameWithSetTimeoutFallback(callback: () => void) {
+    // eslint-disable-next-line prefer-const
     let timeoutID: any;
 
     const animationFrameID = requestAnimationFrameFn(function animationFrameCallback() {
@@ -115,6 +114,7 @@ export default function createDetectElementResize(nonce: any) {
         return;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       const element = this;
       resetTriggers(this);
       if (this.__resizeRAF__) {

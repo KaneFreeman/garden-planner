@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { useMemo } from 'react';
 import { styled, SxProps, Theme } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';

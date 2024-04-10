@@ -47,7 +47,7 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
 
   const selecting = useMemo(() => selectedTasks.length > 0, [selectedTasks]);
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = React.useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

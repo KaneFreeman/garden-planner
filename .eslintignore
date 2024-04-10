@@ -34,3 +34,8 @@ global.d.ts
 
 src/service-worker.ts
 src/serviceWorkerRegistration.ts
+
+.eslintrc
+vite-env.d.ts
+vite.config.ts
+jest.config.js

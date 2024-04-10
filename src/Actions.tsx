@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
@@ -22,8 +22,8 @@ const Actions = () => {
   const filterPlants = useAppSelector(selectFilterPlants);
   const dispatch = useAppDispatch();
 
-  const [modalOpen, setModalOpen] = React.useState<'container' | 'plant' | 'task' | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState<'container' | 'plant' | 'task' | null>(null);
+  const [open, setOpen] = useState(false);
 
   const openContainerModal = useCallback(() => {
     setModalOpen('container');

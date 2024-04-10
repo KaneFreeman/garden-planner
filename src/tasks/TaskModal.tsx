@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -6,7 +5,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import MuiTextField from '@mui/material/TextField';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import TextField from '../components/TextField';
 import { getMidnight, setToMidnight } from '../utility/date.util';
@@ -97,17 +95,13 @@ const TaskModal = ({ open, path = null, plantInstanceId, onClose }: TaskModalPro
               label="Start"
               value={editData?.start}
               onChange={(start: Date | null) => start && update({ start: setToMidnight(start) })}
-              renderInput={(params) => (
-                <MuiTextField {...params} className="start-dateTimeInput" sx={{ flexGrow: 1 }} />
-              )}
+              slotProps={{ textField: { sx: { flexGrow: 1 } } }}
             />
             <MobileDatePicker
               label="Due"
               value={editData?.due}
               onChange={(due: Date | null) => due && update({ due: setToMidnight(due) })}
-              renderInput={(params) => (
-                <MuiTextField {...params} className="due-dateTimeInput" sx={{ flexGrow: 1, ml: 2 }} />
-              )}
+              slotProps={{ textField: { sx: { flexGrow: 1, ml: 2 } } }}
             />
           </Box>
         </DialogContent>

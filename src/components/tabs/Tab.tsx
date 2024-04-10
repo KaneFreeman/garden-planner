@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from 'react';
 import MuiTab from '@mui/material/Tab';
 import { SxProps, Theme } from '@mui/material/styles';

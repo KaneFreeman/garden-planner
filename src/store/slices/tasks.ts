@@ -68,12 +68,12 @@ export const TasksSlice = createSlice({
 export const { updateTasks, buildTaskLookupByContainer } = TasksSlice.actions;
 
 export const selectTasks = (state: RootState) => state.tasks.tasks;
-export const selectTaskById = (id?: string) => (state: RootState) => id ? state.tasks.tasksById[id] : undefined;
+export const selectTaskById = (id?: string) => (state: RootState) => (id ? state.tasks.tasksById[id] : undefined);
 export const selectTasksByContainer = (containerId?: string) => (state: RootState) =>
-  containerId ? state.tasks.tasksByContainer[containerId] : [];
+  containerId ? state.tasks.tasksByContainer[containerId] : undefined;
 export const selectTasksByContainers = (state: RootState) => state.tasks.tasksByContainer;
 export const selectTasksByPlantInstance = (plantInstanceId?: string) => (state: RootState) =>
-  plantInstanceId ? state.tasks.tasksByPlantInstance[plantInstanceId] : [];
+  plantInstanceId ? state.tasks.tasksByPlantInstance[plantInstanceId] : undefined;
 export const selectTasksByPlantInstances = (state: RootState) => state.tasks.tasksByPlantInstance;
 
 export default TasksSlice.reducer;
