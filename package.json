@@ -50,7 +50,7 @@
     "workbox-streams": "6.6.1"
   },
   "devDependencies": {
-    "@testing-library/dom": "9.3.3",
+    "@testing-library/dom": "9.3.4",
     "@types/jest": "^29.5.12",
     "@types/node": "18.19.4",
     "@types/react": "18.2.21",
