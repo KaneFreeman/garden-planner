@@ -104,5 +104,8 @@
     "singleQuote": true,
     "printWidth": 120,
     "endOfLine": "lf"
+  },
+  "resolutions": {
+    "@types/react": "18.2.75"
   }
 }

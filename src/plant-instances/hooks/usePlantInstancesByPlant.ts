@@ -14,5 +14,5 @@ export default function usePlantInstancesByPlant(plantId: string | undefined): P
     getPlantInstances();
   }, [getPlantInstances]);
 
-  return useMemo(() => plantInstanceDTOs.map(fromPlantInstanceDTO), [plantInstanceDTOs]);
+  return useMemo(() => (plantInstanceDTOs ?? []).map(fromPlantInstanceDTO), [plantInstanceDTOs]);
 }
