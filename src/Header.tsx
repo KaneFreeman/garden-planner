@@ -1,24 +1,24 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
-import IconButton from '@mui/material/IconButton';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Badge from '@mui/material/Badge';
-import InboxIcon from '@mui/icons-material/Inbox';
 import GrassIcon from '@mui/icons-material/Grass';
+import InboxIcon from '@mui/icons-material/Inbox';
 import MenuIcon from '@mui/icons-material/Menu';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import './Actions.css';
+import { ListItemButton } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import Actions from './Actions';
-import { useTasks } from './tasks/hooks/useTasks';
+import './Actions.css';
 import './Header.css';
+import { useTasks } from './tasks/hooks/useTasks';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -76,9 +76,9 @@ const Header = () => {
         <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
           <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
             <List disablePadding>
-              <ListItem
-                button
+              <ListItemButton
                 key="Tasks"
+                component="div"
                 selected={pathname === '/' || pathname.startsWith('/task')}
                 onClick={() => navigate('/')}
               >
@@ -88,10 +88,10 @@ const Header = () => {
                   </Badge>
                 </ListItemIcon>
                 <ListItemText primary="Tasks" />
-              </ListItem>
-              <ListItem
-                button
+              </ListItemButton>
+              <ListItemButton
                 key="Containers"
+                component="div"
                 selected={pathname === '/containers' || pathname.startsWith('/container')}
                 onClick={() => navigate('/containers')}
               >
@@ -99,10 +99,10 @@ const Header = () => {
                   <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary="Containers" />
-              </ListItem>
-              <ListItem
-                button
+              </ListItemButton>
+              <ListItemButton
                 key="Plants"
+                component="div"
                 selected={pathname === '/plants' || pathname.startsWith('/plant')}
                 onClick={() => navigate('/plants')}
               >
@@ -110,7 +110,7 @@ const Header = () => {
                   <GrassIcon />
                 </ListItemIcon>
                 <ListItemText primary="Plants" />
-              </ListItem>
+              </ListItemButton>
             </List>
           </Box>
         </Drawer>
