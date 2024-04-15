@@ -54,7 +54,7 @@
     "workbox-window": "7.0.0"
   },
   "devDependencies": {
-    "@testing-library/dom": "9.3.4",
+    "@testing-library/dom": "10.0.0",
     "@types/jest": "29.5.12",
     "@types/node": "18.19.31",
     "@types/object-hash": "^3.0.6",
