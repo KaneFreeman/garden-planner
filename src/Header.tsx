@@ -1,28 +1,66 @@
+import AddIcon from '@mui/icons-material/Add';
+import CheckIcon from '@mui/icons-material/Check';
 import GrassIcon from '@mui/icons-material/Grass';
 import InboxIcon from '@mui/icons-material/Inbox';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MenuIcon from '@mui/icons-material/Menu';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import { ListItemButton } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import Actions from './Actions';
 import './Actions.css';
 import './Header.css';
+import GardenModal from './gardens/GardenModal';
+import { Garden } from './interface';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { selectGardens, selectSelectedGarden, setSelectedGarden } from './store/slices/gardens';
 import { useTasks } from './tasks/hooks/useTasks';
 
 const Header = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
+  const dispatch = useAppDispatch();
+  const garden = useAppSelector(selectSelectedGarden);
+  const gardens = useAppSelector(selectGardens);
+  const [gardenMenuAnchorEl, setGardenMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const gardenMenuOpen = Boolean(gardenMenuAnchorEl);
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    setGardenMenuAnchorEl(event.currentTarget);
+  }, []);
+  const handleClose = useCallback(() => {
+    setGardenMenuAnchorEl(null);
+  }, []);
+
+  const [gardenModalOpen, setGardenModalOpen] = useState(false);
+  const handleGardenModalOpen = useCallback(() => {
+    handleClose();
+    setGardenModalOpen(true);
+  }, [handleClose]);
+  const handleGardenModalClose = useCallback(() => {
+    setGardenModalOpen(false);
+  }, []);
+  const handleGardenClick = useCallback(
+    (g: Garden) => () => {
+      dispatch(setSelectedGarden(g._id));
+      handleClose();
+    },
+    [dispatch, handleClose]
+  );
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = useCallback(
@@ -114,20 +152,59 @@ const Header = () => {
             </List>
           </Box>
         </Drawer>
-        <Typography
-          variant="h6"
-          component="div"
+        <Button
+          id="garden-button"
+          aria-controls={gardenMenuOpen ? 'garden-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={gardenMenuOpen ? 'true' : undefined}
+          onClick={handleClick}
+          endIcon={<KeyboardArrowDownIcon />}
           sx={{
-            flexGrow: 1,
-            ml: 1,
+            ml: 1.5,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            color: 'text.primary',
+            textTransform: 'unset',
+            fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+            fontWeight: 500,
+            fontSize: '1.25rem',
+            px: 1.5,
+            py: 0.5
           }}
         >
-          Garden Planner
-        </Typography>
+          {garden?.name ?? 'Garden Planner'}
+        </Button>
+        <Menu
+          id="garden-menu"
+          anchorEl={gardenMenuAnchorEl}
+          open={gardenMenuOpen}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'garden-button'
+          }}
+        >
+          {(gardens ?? []).map((g) => (
+            <MenuItem key={g._id} onClick={g._id === garden?._id ? undefined : handleGardenClick(g)}>
+              {g._id === garden?._id ? (
+                <ListItemIcon>
+                  <CheckIcon fontSize="small" />
+                </ListItemIcon>
+              ) : null}
+              <ListItemText inset={g._id !== garden?._id}>{g.name}</ListItemText>
+            </MenuItem>
+          ))}
+          <Divider />
+          <MenuItem onClick={handleGardenModalOpen}>
+            <ListItemIcon>
+              <AddIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Add Garden</ListItemText>
+          </MenuItem>
+        </Menu>
+        <Box sx={{ flexGrow: 1 }} />
         <Actions />
+        <GardenModal open={gardenModalOpen} onClose={handleGardenModalClose} />
       </Toolbar>
     </AppBar>
   );

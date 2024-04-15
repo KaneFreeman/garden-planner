@@ -3,63 +3,145 @@ import {
   BulkReopenClosePlantInstanceDTO,
   ContainerDTO,
   ContainerTaskUpdateDTO,
+  CreateUserDTO,
+  GardenDTO,
+  LoginDTO,
   PictureDTO,
   PlantDataDTO,
   PlantDTO,
   PlantInstanceAddHistoryAndUpdateTaskDTO,
   PlantInstanceDTO,
   PlantType,
+  SessionDTO,
   TaskDTO
 } from '../interface';
 
 interface Rest {
-  'GET:/task': {
+  'POST:/auth/login': {
+    method: 'POST';
+    request: {
+      body: LoginDTO;
+    };
+    response: SessionDTO;
+  };
+  'GET:/auth/profile': {
     method: 'GET';
     request: {
       query?: {
         path?: string;
       };
     };
-    response: TaskDTO[];
+    response: Omit<SessionDTO, 'accessToken'>;
   };
-  'POST:/task': {
+
+  'POST:/user': {
     method: 'POST';
     request: {
-      body: Omit<TaskDTO, '_id'>;
+      body: CreateUserDTO;
     };
-    response: TaskDTO;
+    response: { status?: 'success'; message?: string };
   };
-  'GET:/task/{taskId}': {
+
+  'GET:/garden': {
+    method: 'GET';
+    request: Record<string, never>;
+    response: GardenDTO[];
+  };
+  'POST:/garden': {
+    method: 'POST';
+    request: {
+      body: Omit<GardenDTO, '_id'>;
+    };
+    response: GardenDTO;
+  };
+  'GET:/garden/{gardenId}': {
     method: 'GET';
     request: {
       params: {
+        gardenId: string;
+      };
+    };
+    response: GardenDTO;
+  };
+  'PUT:/garden/{gardenId}': {
+    method: 'PUT';
+    request: {
+      params: {
+        gardenId: string;
+      };
+      body: Omit<GardenDTO, '_id'>;
+    };
+    response: GardenDTO;
+  };
+  'DELETE:/garden/{gardenId}': {
+    method: 'DELETE';
+    request: {
+      params: {
+        gardenId: string;
+      };
+    };
+    response: GardenDTO;
+  };
+
+  'GET:/garden/{gardenId}/task': {
+    method: 'GET';
+    request: {
+      params: {
+        gardenId: string;
+      };
+      query?: {
+        path?: string;
+      };
+    };
+    response: TaskDTO[];
+  };
+  'POST:/garden/{gardenId}/task': {
+    method: 'POST';
+    request: {
+      params: {
+        gardenId: string;
+      };
+      body: Omit<TaskDTO, '_id'>;
+    };
+    response: TaskDTO;
+  };
+  'GET:/garden/{gardenId}/task/{taskId}': {
+    method: 'GET';
+    request: {
+      params: {
+        gardenId: string;
         taskId: string;
       };
     };
     response: TaskDTO;
   };
-  'PUT:/task/{taskId}': {
+  'PUT:/garden/{gardenId}/task/{taskId}': {
     method: 'PUT';
     request: {
       params: {
+        gardenId: string;
         taskId: string;
       };
       body: Omit<TaskDTO, '_id'>;
     };
     response: TaskDTO;
   };
-  'DELETE:/task/{taskId}': {
+  'DELETE:/garden/{gardenId}/task/{taskId}': {
     method: 'DELETE';
     request: {
       params: {
+        gardenId: string;
         taskId: string;
       };
     };
     response: TaskDTO;
   };
-  'PUT:/task/bulk-complete': {
+  'PUT:/garden/{gardenId}/task/bulk-complete': {
     method: 'PUT';
     request: {
+      params: {
+        gardenId: string;
+      };
       body: BulkCompleteTaskDTO;
     };
     response: number;
@@ -104,22 +186,30 @@ interface Rest {
     };
     response: PlantDTO;
   };
-  'GET:/container': {
+  'GET:/garden/{gardenId}/container': {
     method: 'GET';
-    request: Record<string, never>;
+    request: {
+      params: {
+        gardenId: string;
+      };
+    };
     response: ContainerDTO[];
   };
-  'POST:/container': {
+  'POST:/garden/{gardenId}/container': {
     method: 'POST';
     request: {
+      params: {
+        gardenId: string;
+      };
       body: Omit<ContainerDTO, '_id'>;
     };
     response: ContainerDTO;
   };
-  'POST:/container/{containerId}/{taskType}': {
+  'POST:/garden/{gardenId}/container/{containerId}/{taskType}': {
     method: 'POST';
     request: {
       params: {
+        gardenId: string;
         containerId: string;
         taskType: string;
       };
@@ -127,29 +217,32 @@ interface Rest {
     };
     response: ContainerDTO;
   };
-  'GET:/container/{containerId}': {
+  'GET:/garden/{gardenId}/container/{containerId}': {
     method: 'GET';
     request: {
       params: {
+        gardenId: string;
         containerId: string;
       };
     };
     response: ContainerDTO;
   };
-  'PUT:/container/{containerId}': {
+  'PUT:/garden/{gardenId}/container/{containerId}': {
     method: 'PUT';
     request: {
       params: {
+        gardenId: string;
         containerId: string;
       };
       body: Omit<ContainerDTO, '_id'>;
     };
     response: ContainerDTO;
   };
-  'DELETE:/container/{containerId}': {
+  'DELETE:/garden/{gardenId}/container/{containerId}': {
     method: 'DELETE';
     request: {
       params: {
+        gardenId: string;
         containerId: string;
       };
     };
@@ -194,14 +287,21 @@ interface Rest {
     };
     response: PlantDataDTO | null;
   };
-  'GET:/plant-instance': {
+  'GET:/garden/{gardenId}/plant-instance': {
     method: 'GET';
-    request: Record<string, never>;
+    request: {
+      params: {
+        gardenId: string;
+      };
+    };
     response: PlantInstanceDTO[];
   };
-  'POST:/plant-instance': {
+  'POST:/garden/{gardenId}/plant-instance': {
     method: 'POST';
     request: {
+      params: {
+        gardenId: string;
+      };
       body: Omit<PlantInstanceDTO, '_id'>;
       query?: {
         copiedFromId?: string;
@@ -209,57 +309,65 @@ interface Rest {
     };
     response: PlantInstanceDTO;
   };
-  'GET:/plant-instance/{plantInstanceId}': {
+  'GET:/garden/{gardenId}/plant-instance/{plantInstanceId}': {
     method: 'GET';
     request: {
       params: {
+        gardenId: string;
         plantInstanceId: string;
       };
     };
     response: PlantInstanceDTO;
   };
-  'PUT:/plant-instance/{plantInstanceId}': {
+  'PUT:/garden/{gardenId}/plant-instance/{plantInstanceId}': {
     method: 'PUT';
     request: {
       params: {
+        gardenId: string;
         plantInstanceId: string;
       };
       body: Omit<PlantInstanceDTO, '_id'>;
     };
     response: PlantInstanceDTO;
   };
-  'DELETE:/plant-instance/{plantInstanceId}': {
+  'DELETE:/garden/{gardenId}/plant-instance/{plantInstanceId}': {
     method: 'DELETE';
     request: {
       params: {
+        gardenId: string;
         plantInstanceId: string;
       };
     };
     response: PlantInstanceDTO;
   };
-  'POST:/plant-instance/{plantInstanceId}/fertilize': {
+  'POST:/garden/{gardenId}/plant-instance/{plantInstanceId}/fertilize': {
     method: 'POST';
     request: {
       params: {
+        gardenId: string;
         plantInstanceId: string;
       };
       body: PlantInstanceAddHistoryAndUpdateTaskDTO;
     };
     response: PlantInstanceDTO;
   };
-  'POST:/plant-instance/{plantInstanceId}/harvest': {
+  'POST:/garden/{gardenId}/plant-instance/{plantInstanceId}/harvest': {
     method: 'POST';
     request: {
       params: {
+        gardenId: string;
         plantInstanceId: string;
       };
       body: PlantInstanceAddHistoryAndUpdateTaskDTO;
     };
     response: PlantInstanceDTO;
   };
-  'POST:/plant-instance/bulk-reopen-close': {
+  'POST:/garden/{gardenId}/plant-instance/bulk-reopen-close': {
     method: 'POST';
     request: {
+      params: {
+        gardenId: string;
+      };
       body: BulkReopenClosePlantInstanceDTO;
     };
     response: PlantInstanceDTO[];

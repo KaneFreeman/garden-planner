@@ -1,129 +1,71 @@
-import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { useAuth0 } from '@auth0/auth0-react';
-import Header from './Header';
-import Plants from './plants/Plants';
-import PlantView from './plants/PlantView';
-import Containers from './containers/Containers';
-import ContainerViewRoute from './containers/ContainerViewRoute';
-import Tasks from './tasks/Tasks';
-import ContainerSlotRoute from './containers/ContainerSlotRoute';
-import ContainerSubSlotRoute from './containers/ContainerSubSlotRoute';
-import TaskViewRoute from './tasks/TaskViewRoute';
-import ContainerSelectViewRoute from './containers/ContainerSelectViewRoute';
+import { useEffect, useState } from 'react';
+import LoginPage from './auth/LoginPage';
+import { useCheckLogin } from './auth/useAuth';
+import Loading from './components/Loading';
+import GardensView from './gardens/GardensView';
 import { useAppDispatch, useAppSelector } from './store/hooks';
+import { selectUser } from './store/slices/auth';
 import { selectPlantInstancesByIds } from './store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from './store/slices/tasks';
-import ScrollToTop from './components/ScrollToTop';
+import { isNotNullish } from './utility/null.util';
 
 const Main = () => {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect } = useAuth0();
+  const [loading, setLoading] = useState(true);
 
   const dispatch = useAppDispatch();
   const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
   const tasks = useAppSelector(selectTasks);
+  const user = useAppSelector(selectUser);
+
+  const checkLogin = useCheckLogin();
+
+  useEffect(() => {
+    setLoading(true);
+    let alive = true;
+
+    const checkAccessToken = async () => {
+      const accessToken = localStorage.getItem('token');
+      if (isNotNullish(accessToken)) {
+        const response = await checkLogin(accessToken);
+        if (alive && !response) {
+          setLoading(false);
+        }
+
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    checkAccessToken();
+
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     dispatch(buildTaskLookupByContainer({ tasks, plantInstancesByIds }));
   }, [dispatch, plantInstancesByIds, tasks]);
 
-  if (isLoading || error) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          position: 'relative',
-          width: '100%',
-          height: '100vh',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Typography variant="body1">Loading...</Typography>
-      </Box>
-    );
+  console.log('[MAIN] loading', loading, 'user', user);
+
+  if (loading) {
+    return <Loading />;
   }
 
-  if (!isAuthenticated) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          position: 'relative',
-          width: '100%',
-          height: '100vh',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Button variant="outlined" size="large" onClick={loginWithRedirect}>
-          Login in
-        </Button>
-      </Box>
-    );
+  if (!user) {
+    return <LoginPage />;
   }
 
-  if (user?.email !== import.meta.env.VITE_MASTER_EMAIL) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          position: 'relative',
-          width: '100%',
-          height: '100vh',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Typography variant="body1">Not authorized</Typography>
-      </Box>
-    );
-  }
-
-  return (
-    <>
-      <Header />
-      <ScrollToTop />
-      <Box
-        sx={{
-          display: 'flex',
-          width: '100%',
-          boxSizing: 'border-box',
-          justifyContent: 'center',
-          height: 'calc(100vh - 56px)',
-          top: '56px',
-          position: 'relative'
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            width: '100%',
-            boxSizing: 'border-box',
-            justifyContent: 'center'
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Tasks />} />
-            <Route path="/containers" element={<Containers />} />
-            <Route path="/container/:id" element={<ContainerViewRoute />} />
-            <Route path="/container/:id/slot/:index" element={<ContainerSlotRoute />} />
-            <Route path="/container/:id/slot/:index/sub-slot" element={<ContainerSubSlotRoute />} />
-            <Route
-              path="/container/:id/slot/:index/transplant/:otherContainerId"
-              element={<ContainerSelectViewRoute />}
-            />
-            <Route path="/plants" element={<Plants />} />
-            <Route path="/plant/:id" element={<PlantView />} />
-            <Route path="/task/:id" element={<TaskViewRoute />} />
-          </Routes>
-        </Box>
-      </Box>
-    </>
-  );
+  return <GardensView />;
 };
 
 export default Main;

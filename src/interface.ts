@@ -726,3 +726,43 @@ export interface BulkReopenClosePlantInstanceDTO {
   readonly plantInstanceIds: string[];
   readonly action: 'reopen' | 'close';
 }
+
+export interface SessionDTO {
+  readonly userId: string;
+  readonly email: string;
+  readonly accessToken: string;
+}
+
+export interface LoginDTO {
+  readonly email: string;
+  readonly password: string;
+}
+
+export interface CreateUserDTO {
+  readonly email: string;
+  readonly password: string;
+  readonly firstName: string;
+  readonly lastName: string;
+}
+
+export interface Garden {
+  _id: string;
+  name: string;
+  retired?: boolean;
+}
+
+export interface GardenDTO extends Garden {}
+
+export function fromGardenDTO(dto: GardenDTO): Garden {
+  return {
+    ...dto
+  };
+}
+
+export function toGardenDTO(dto: Garden): GardenDTO;
+export function toGardenDTO(dto: Omit<Garden, '_id'>): Omit<GardenDTO, '_id'>;
+export function toGardenDTO(dto: Omit<Garden, '_id'> | Garden): Omit<GardenDTO, '_id'> | GardenDTO {
+  return {
+    ...dto
+  };
+}

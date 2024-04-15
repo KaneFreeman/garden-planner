@@ -30,7 +30,7 @@ export function usePlantData() {
     const getContainersCall = async () => {
       const data = await getPlantData();
 
-      if (data && alive) {
+      if (alive && data && typeof data !== 'string') {
         dispatch(updatePlantData(data));
       }
     };

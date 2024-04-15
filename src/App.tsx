@@ -1,21 +1,20 @@
-import { useCallback, useMemo, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { Auth0Provider } from '@auth0/auth0-react';
-import Snackbar from '@mui/material/Snackbar';
-import Button from '@mui/material/Button';
-import ThemeProvider from '@mui/material/styles/ThemeProvider';
-import createTheme from '@mui/material/styles/createTheme';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import createTheme from '@mui/material/styles/createTheme';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useWindowEvent } from './utility/window.util';
-import PWAUpdateConfirmEvent from './utility/events/pawUpdateConfirmEvent';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useCallback, useMemo, useState } from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import './App.css';
 import Main from './Main';
 import { store } from './store';
-import './App.css';
+import PWAUpdateConfirmEvent from './utility/events/pawUpdateConfirmEvent';
 import { useCheckForUpdates } from './utility/pwa.util';
+import { useWindowEvent } from './utility/window.util';
 
 const App = () => {
   const theme = useMemo(
@@ -58,22 +57,16 @@ const App = () => {
   );
 
   return (
-    <Auth0Provider
-      domain={import.meta.env.VITE_AUTH0_DOMAIN ?? ''}
-      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID ?? ''}
-      redirectUri={window.location.origin}
-    >
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <BrowserRouter>
-              <Main />
-            </BrowserRouter>
-            <Snackbar open={hasNewVersion}>{updateAlert}</Snackbar>
-          </LocalizationProvider>
-        </Provider>
-      </ThemeProvider>
-    </Auth0Provider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <BrowserRouter>
+            <Main />
+          </BrowserRouter>
+          <Snackbar open={hasNewVersion}>{updateAlert}</Snackbar>
+        </LocalizationProvider>
+      </Provider>
+    </ThemeProvider>
   );
 };
 
