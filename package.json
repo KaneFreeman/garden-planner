@@ -58,8 +58,8 @@
     "@types/jest": "29.5.12",
     "@types/node": "18.19.31",
     "@types/object-hash": "^3.0.6",
-    "@types/react": "18.2.75",
-    "@types/react-dom": "18.2.24",
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.25",
     "@types/react-router": "5.1.20",
     "@types/react-router-dom": "5.3.3",
     "@types/react-window": "1.8.8",
@@ -111,6 +111,6 @@
     "endOfLine": "lf"
   },
   "resolutions": {
-    "@types/react": "18.2.75"
+    "@types/react": "18.2.79"
   }
 }
