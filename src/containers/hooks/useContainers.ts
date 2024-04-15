@@ -9,20 +9,22 @@ import {
   selectContainersById,
   updateContainers
 } from '../../store/slices/containers';
+import { selectSelectedGarden } from '../../store/slices/gardens';
 import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 
 export const useGetContainers = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
+  const garden = useAppSelector(selectSelectedGarden);
 
   const getContainers = useCallback(async () => {
-    const response = await fetch(Api.container_Get, {}, options);
+    const response = await fetch(Api.container_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
-    if (response) {
+    if (response && typeof response !== 'string') {
       dispatch(updateContainers(response));
     }
-  }, [dispatch, fetch, options]);
+  }, [dispatch, fetch, garden?._id, options]);
 
   return getContainers;
 };
@@ -53,22 +55,24 @@ const useContainerOperation = (options?: ExtraFetchOptions) => {
 export const useAddContainer = () => {
   const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const addContainer = useCallback(
     async (data: Omit<Container, '_id'>) => {
       const response = await runOperation(() =>
         fetch(Api.container_Post, {
+          params: { gardenId: garden?._id ?? '' },
           body: toContainerDTO(data)
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromContainerDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return addContainer;
@@ -77,25 +81,24 @@ export const useAddContainer = () => {
 export const useUpdateContainer = () => {
   const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const addContainer = useCallback(
     async (data: Container) => {
       const response = await runOperation(() =>
         fetch(Api.container_IdPut, {
-          params: {
-            containerId: data._id
-          },
+          params: { gardenId: garden?._id ?? '', containerId: data._id },
           body: toContainerDTO(data)
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromContainerDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return addContainer;
@@ -104,24 +107,23 @@ export const useUpdateContainer = () => {
 export const useRemoveContainer = () => {
   const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const removeContainer = useCallback(
     async (containerId: string) => {
       const response = await runOperation(() =>
         fetch(Api.container_IdDelete, {
-          params: {
-            containerId
-          }
+          params: { gardenId: garden?._id ?? '', containerId }
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromContainerDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return removeContainer;

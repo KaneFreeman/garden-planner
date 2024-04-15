@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { Container, fromPlantDTO, Plant, toPlantDTO } from '../interface';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
+import { Container, Plant, fromPlantDTO, toPlantDTO } from '../interface';
+import { useGetPlantInstances } from '../plant-instances/hooks/usePlantInstances';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { selectPlantInstancesByContainers } from '../store/slices/plant-instances';
 import { selectPlant, selectPlants, selectPlantsById, updatePlants } from '../store/slices/plants';
 import { useGetTasks } from '../tasks/hooks/useTasks';
-import { selectPlantInstancesByContainers } from '../store/slices/plant-instances';
 import { isNotNullish } from '../utility/null.util';
 import { mapRecord } from '../utility/record.util';
-import { useGetPlantInstances } from '../plant-instances/hooks/usePlantInstances';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
@@ -17,7 +17,7 @@ export const useGetPlants = (options?: ExtraFetchOptions) => {
   const getPlants = useCallback(async () => {
     const response = await fetch(Api.plant_Get, {}, options);
 
-    if (response) {
+    if (response && typeof response !== 'string') {
       dispatch(updatePlants(response));
     }
   }, [dispatch, fetch, options]);
@@ -60,7 +60,7 @@ export const useAddPlant = () => {
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
@@ -87,7 +87,7 @@ export const useUpdatePlant = () => {
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
@@ -113,7 +113,7 @@ export const useRemovePlant = () => {
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 

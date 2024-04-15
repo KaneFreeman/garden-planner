@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { fromPictureDTO, Picture, toPictureDTO } from '../interface';
 import Api from '../api/api';
 import useFetch from '../api/useFetch';
+import { Picture, fromPictureDTO, toPictureDTO } from '../interface';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectPicture, updatePicture } from '../store/slices/pictures';
 
@@ -14,7 +14,7 @@ export const useAddPicture = () => {
         body: toPictureDTO(data)
       });
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
@@ -37,7 +37,7 @@ export const useRemovePicture = () => {
         }
       });
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
@@ -69,7 +69,7 @@ export function usePicture(pictureId: string | undefined) {
         }
       });
 
-      if (data && alive) {
+      if (alive && data && typeof data !== 'string') {
         dispatch(updatePicture(data));
       }
     };

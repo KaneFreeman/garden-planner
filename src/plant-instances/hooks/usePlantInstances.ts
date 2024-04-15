@@ -13,6 +13,7 @@ import {
   toPlantInstanceDTO
 } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectSelectedGarden } from '../../store/slices/gardens';
 import {
   selectPlantInstanceById,
   selectPlantInstances,
@@ -27,14 +28,15 @@ import computeSeason from '../../utility/season.util';
 export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
+  const garden = useAppSelector(selectSelectedGarden);
 
   const getPlantInstances = useCallback(async () => {
-    const response = await fetch(Api.plantInstance_Get, {}, options);
+    const response = await fetch(Api.plantInstance_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
-    if (response) {
+    if (response && typeof response !== 'string') {
       dispatch(updatePlantInstances(response));
     }
-  }, [dispatch, fetch, options]);
+  }, [dispatch, fetch, garden?._id, options]);
 
   return getPlantInstances;
 };
@@ -67,6 +69,7 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
 export const useAddPlantInstance = () => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const addPlantInstance = useCallback(
     async (data: Omit<PlantInstance, '_id'>, copiedFromId?: string) => {
@@ -86,6 +89,7 @@ export const useAddPlantInstance = () => {
 
       const response = await runOperation(() =>
         fetch(Api.plantInstance_Post, {
+          params: { gardenId: garden?._id ?? '' },
           body: toPlantInstanceDTO(newData),
           query: {
             copiedFromId
@@ -93,13 +97,13 @@ export const useAddPlantInstance = () => {
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromPlantInstanceDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return addPlantInstance;
@@ -108,6 +112,7 @@ export const useAddPlantInstance = () => {
 export const useUpdatePlantInstance = () => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const updatePlantInstance = useCallback(
     async (data: PlantInstance) => {
@@ -127,20 +132,18 @@ export const useUpdatePlantInstance = () => {
 
       const response = await runOperation(() =>
         fetch(Api.plantInstance_IdPut, {
-          params: {
-            plantInstanceId: newData._id
-          },
+          params: { gardenId: garden?._id ?? '', plantInstanceId: newData._id },
           body: toPlantInstanceDTO(newData)
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromPlantInstanceDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return updatePlantInstance;
@@ -149,6 +152,7 @@ export const useUpdatePlantInstance = () => {
 export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const removePlantInstance = useCallback(async () => {
     if (isNullish(plantInstance?._id)) {
@@ -157,18 +161,16 @@ export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined)
 
     const response = await runOperation(() =>
       fetch(Api.plantInstance_IdDelete, {
-        params: {
-          plantInstanceId: plantInstance._id
-        }
+        params: { gardenId: garden?._id ?? '', plantInstanceId: plantInstance._id }
       })
     );
 
-    if (!response) {
+    if (!response || typeof response === 'string') {
       return undefined;
     }
 
     return fromPlantInstanceDTO(response);
-  }, [fetch, plantInstance?._id, runOperation]);
+  }, [fetch, garden?._id, plantInstance?._id, runOperation]);
 
   return removePlantInstance;
 };
@@ -224,6 +226,7 @@ export function usePlantInstancesFromSlot(slot: Slot | undefined | null) {
 export const useFertilizePlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
+  const garden = useAppSelector(selectSelectedGarden);
 
   const fertilizePlantInstance = useCallback(
     async (date: Date) => {
@@ -233,12 +236,12 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined | 
 
       await runOperation(() =>
         fetch(Api.plantInstance_FertilizePost, {
-          params: { plantInstanceId },
+          params: { gardenId: garden?._id ?? '', plantInstanceId },
           body: { date: date.toISOString() }
         })
       );
     },
-    [plantInstanceId, fetch, runOperation]
+    [plantInstanceId, runOperation, fetch, garden?._id]
   );
 
   return fertilizePlantInstance;
@@ -247,6 +250,7 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined | 
 export const useHarvestPlantInstance = (plantInstanceId: string | undefined | null) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
+  const garden = useAppSelector(selectSelectedGarden);
 
   const harvestPlantInstance = useCallback(
     async (date: Date) => {
@@ -256,12 +260,12 @@ export const useHarvestPlantInstance = (plantInstanceId: string | undefined | nu
 
       await runOperation(() =>
         fetch(Api.plantInstance_HarvestPost, {
-          params: { plantInstanceId },
+          params: { gardenId: garden?._id ?? '', plantInstanceId },
           body: { date: date.toISOString() }
         })
       );
     },
-    [plantInstanceId, fetch, runOperation]
+    [plantInstanceId, runOperation, fetch, garden?._id]
   );
 
   return harvestPlantInstance;
@@ -314,11 +318,13 @@ export const useUpdateCreatePlantInstance = (
 export const useBulkReopenClosePlantInstances = () => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const bulkReopenClosePlantInstances = useCallback(
     async (action: 'reopen' | 'close', plantInstanceIds: string[]) => {
       await runOperation(() =>
         fetch(Api.plantInstance_BulkReopenClose, {
+          params: { gardenId: garden?._id ?? '' },
           body: {
             action,
             plantInstanceIds
@@ -326,7 +332,7 @@ export const useBulkReopenClosePlantInstances = () => {
         })
       );
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return bulkReopenClosePlantInstances;
@@ -335,6 +341,7 @@ export const useBulkReopenClosePlantInstances = () => {
 export const useUpdatePlantInstanceTasksInContainer = (containerId: string | undefined, taskType: TaskType) => {
   const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const updatePlantInstanceTasksInContainer = useCallback(
     async (date: Date, plantInstanceIds?: string[]) => {
@@ -344,12 +351,12 @@ export const useUpdatePlantInstanceTasksInContainer = (containerId: string | und
 
       await runOperation(() =>
         fetch(Api.container_UpdateTasksPost, {
-          params: { containerId, taskType },
+          params: { gardenId: garden?._id ?? '', containerId, taskType },
           body: { date: date.toISOString(), plantInstanceIds }
         })
       );
     },
-    [containerId, fetch, runOperation, taskType]
+    [containerId, fetch, garden?._id, runOperation, taskType]
   );
 
   return updatePlantInstanceTasksInContainer;

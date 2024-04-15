@@ -1,8 +1,8 @@
 import addDays from 'date-fns/addDays';
 import { useCallback, useEffect, useMemo } from 'react';
-import { BulkCompleteTaskDTO, fromTaskDTO, SortedTasks, Task, toTaskDTO } from '../../interface';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { BulkCompleteTaskDTO, SortedTasks, Task, fromTaskDTO, toTaskDTO } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectTaskById,
@@ -13,20 +13,22 @@ import {
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
+import { selectSelectedGarden } from '../../store/slices/gardens';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();
   const dispatch = useAppDispatch();
+  const garden = useAppSelector(selectSelectedGarden);
 
   const getTasks = useCallback(async () => {
-    const response = await fetch(Api.task_Get, {}, options);
+    const response = await fetch(Api.task_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
-    if (response) {
+    if (response && typeof response !== 'string') {
       dispatch(updateTasks(response));
     }
 
     return response;
-  }, [dispatch, fetch, options]);
+  }, [dispatch, fetch, garden?._id, options]);
 
   return getTasks;
 };
@@ -55,22 +57,24 @@ const useTasksOperation = (options?: ExtraFetchOptions) => {
 export const useAddTask = () => {
   const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Omit<Task, '_id'>) => {
       const response = await runOperation(() =>
         fetch(Api.task_Post, {
+          params: { gardenId: garden?._id ?? '' },
           body: toTaskDTO(data)
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromTaskDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return addTask;
@@ -79,25 +83,27 @@ export const useAddTask = () => {
 export const useUpdateTask = () => {
   const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Task) => {
       const response = await runOperation(() =>
         fetch(Api.task_IdPut, {
           params: {
+            gardenId: garden?._id ?? '',
             taskId: data._id
           },
           body: toTaskDTO(data)
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromTaskDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return addTask;
@@ -106,24 +112,23 @@ export const useUpdateTask = () => {
 export const useRemoveTask = () => {
   const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const removeTask = useCallback(
     async (taskId: string) => {
       const response = await runOperation(() =>
         fetch(Api.task_IdDelete, {
-          params: {
-            taskId
-          }
+          params: { gardenId: garden?._id ?? '', taskId }
         })
       );
 
-      if (!response) {
+      if (!response || typeof response === 'string') {
         return undefined;
       }
 
       return fromTaskDTO(response);
     },
-    [fetch, runOperation]
+    [fetch, garden?._id, runOperation]
   );
 
   return removeTask;
@@ -237,17 +242,20 @@ export const useTasksByContainers = (limit?: number) => {
   const { today, oneWeekFromNow, daysFromNow, daysLimit } = useSortDates(limit);
   return useMemo(
     () =>
-      Object.keys(taskDtos).reduce((byContainer, containerId) => {
-        byContainer[containerId] = sortTasks(
-          taskDtos[containerId].map(fromTaskDTO),
-          today,
-          oneWeekFromNow,
-          daysFromNow,
-          daysLimit
-        );
+      Object.keys(taskDtos).reduce(
+        (byContainer, containerId) => {
+          byContainer[containerId] = sortTasks(
+            taskDtos[containerId].map(fromTaskDTO),
+            today,
+            oneWeekFromNow,
+            daysFromNow,
+            daysLimit
+          );
 
-        return byContainer;
-      }, {} as Record<string, ReturnType<typeof useSortTasks>>),
+          return byContainer;
+        },
+        {} as Record<string, ReturnType<typeof useSortTasks>>
+      ),
     [daysFromNow, daysLimit, oneWeekFromNow, taskDtos, today]
   );
 };
@@ -261,16 +269,18 @@ export const useTask = (id: string | undefined) => {
 export const useBulkCompleteTasks = () => {
   const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
+  const garden = useAppSelector(selectSelectedGarden);
 
   const bulkCompleteTasks = useCallback(
     async (data: BulkCompleteTaskDTO) => {
       return runOperation(() =>
         fetch(Api.task_PutBulkComplete, {
+          params: { gardenId: garden?._id ?? '' },
           body: data
         })
       );
     },
-    [fetch, runOperation]
+    [fetch, garden, runOperation]
   );
 
   return bulkCompleteTasks;

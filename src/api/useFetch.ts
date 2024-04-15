@@ -1,10 +1,16 @@
-import { IdToken, useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useAppSelector } from '../store/hooks';
+import { selectAccessToken } from '../store/slices/auth';
 import { isNotNullish } from '../utility/null.util';
 import Rest from './index';
+import hash from 'object-hash';
 
 type GetMethods<T> = {
-  [P in keyof T]: T[P] extends { method: 'GET'; response: Array<any> } | { method: 'GET'; response: Record<string, never> } ? P : never;
+  [P in keyof T]: T[P] extends
+    | { method: 'GET'; response: Array<any> }
+    | { method: 'GET'; response: Record<string, never> }
+    ? P
+    : never;
 }[keyof T];
 
 export type RestCollectionKeys = GetMethods<Rest>;
@@ -63,16 +69,26 @@ export function areValuesEmpty(fields: Record<string, QueryValues>) {
 /**
  * Simple fetch wrapper to get JSON REST API
  */
-async function fetchRequest<T>(accessToken: IdToken, url: string, options: FetchOptions = {}): Promise<T> {
+async function fetchRequest<T>(
+  accessToken: string | undefined,
+  url: string,
+  options: FetchOptions = {},
+  extraOptions?: ExtraFetchOptions
+): Promise<T | string | undefined> {
   const { method = 'GET', body = undefined } = options;
+
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  });
+
+  if (isNotNullish(accessToken)) {
+    headers.set('authorization', `Bearer ${accessToken}`);
+  }
 
   const response = await fetch(url, {
     method,
-    headers: new Headers({
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      authorization: `Bearer ${accessToken.__raw}`
-    }),
+    headers,
     body: isNotNullish(body) ? JSON.stringify(body) : body
   });
 
@@ -80,8 +96,11 @@ async function fetchRequest<T>(accessToken: IdToken, url: string, options: Fetch
     /**
      * In the case of a UNAUTHORIZED status, reload the page to prompt for login.
      */
-    window.location.reload();
-    return undefined as any;
+    localStorage.removeItem('token');
+    if (extraOptions?.redirectOn401 === true) {
+      window.location.reload();
+    }
+    return undefined;
   }
 
   if (response.status === 204) {
@@ -90,11 +109,13 @@ async function fetchRequest<T>(accessToken: IdToken, url: string, options: Fetch
 		if there is no response. We've got to cast this here because we don't know at compile time that
 		T is undefined. If we're calling this method and get a 204, we can assume this is intentional T is undefined.
 		 */
-    return undefined as any;
+    return undefined;
   }
 
   if (!response.ok) {
-    return undefined as any;
+    const errorBody = await response.json();
+
+    return errorBody.message as string | undefined;
   }
 
   return response.json();
@@ -106,6 +127,8 @@ const CACHE_TIME = 5000;
 
 export interface ExtraFetchOptions {
   force?: boolean;
+  accessToken?: string;
+  redirectOn401?: boolean;
 }
 
 /**
@@ -116,16 +139,12 @@ export interface ExtraFetchOptions {
  * or takes options with an error handler and returns a union of the response type and the
  * error handler return type
  */
-function fetchEndpoint(accessToken?: IdToken) {
+function fetchEndpoint(accessToken?: string) {
   return async <T extends keyof Rest>(
     endpoint: T,
     options: Rest[T]['request'],
     extraOptions?: ExtraFetchOptions
-  ): Promise<Rest[T]['response'] | undefined> => {
-    if (!accessToken) {
-      return Promise.resolve(undefined);
-    }
-
+  ): Promise<Rest[T]['response'] | string | undefined> => {
     const { force = false } = extraOptions ?? {};
 
     const { body = undefined, params = {}, query = undefined } = options as any;
@@ -142,32 +161,49 @@ function fetchEndpoint(accessToken?: IdToken) {
     }
 
     if (method.toLowerCase() === 'get') {
-      if (!force && url in getDataCache && new Date().getTime() - getDataCache[url].date.getTime() < CACHE_TIME) {
+      const dataCacheKey = hash({
+        url,
+        options
+      });
+
+      if (
+        !force &&
+        dataCacheKey in getDataCache &&
+        new Date().getTime() - getDataCache[dataCacheKey].date.getTime() < CACHE_TIME
+      ) {
         return Promise.resolve(undefined);
       }
 
-      if (url in getRequestsInProgress) {
+      if (dataCacheKey in getRequestsInProgress) {
         return Promise.resolve(undefined);
       }
 
       const p = new Promise<Rest[T]['response'] | undefined>((resolve) => {
-        getRequestsInProgress[url] = [resolve];
+        getRequestsInProgress[dataCacheKey] = [resolve];
       });
 
-      fetchRequest<Rest[T]['response'] | undefined>(accessToken, url, { body, method }).then((response) => {
-        getDataCache[url] = {
+      fetchRequest<Rest[T]['response'] | undefined>(
+        extraOptions?.accessToken ?? accessToken,
+        url,
+        {
+          body,
+          method
+        },
+        extraOptions
+      ).then((response) => {
+        getDataCache[dataCacheKey] = {
           date: new Date(),
           data: response
         };
-        const resolveFunctions = getRequestsInProgress[url];
+        const resolveFunctions = getRequestsInProgress[dataCacheKey];
         resolveFunctions.forEach((resolveFunction) => resolveFunction(response));
-        delete getRequestsInProgress[url];
+        delete getRequestsInProgress[dataCacheKey];
       });
 
       return p;
     }
 
-    return fetchRequest(accessToken, url, { body, method });
+    return fetchRequest(extraOptions?.accessToken ?? accessToken, url, { body, method }, extraOptions);
   };
 }
 
@@ -175,29 +211,6 @@ export type QueryValues = string | boolean | number | undefined | null;
 export type QueryMap = Record<string, QueryValues | QueryValues[]>;
 
 export default function useFetch() {
-  const [accessToken, setAccessToken] = useState<IdToken>();
-
-  const { getIdTokenClaims } = useAuth0();
-
-  useEffect(() => {
-    let alive = true;
-
-    const getAccessToken = async () => {
-      const newAccessToken = await getIdTokenClaims();
-
-      if (alive) {
-        setAccessToken(newAccessToken);
-      }
-    };
-
-    getAccessToken();
-
-    return () => {
-      alive = false;
-    };
-  }, [getIdTokenClaims]);
-
-  const fetchCall = useMemo(() => fetchEndpoint(accessToken), [accessToken]);
-
-  return fetchCall;
+  const accessToken = useAppSelector(selectAccessToken);
+  return useMemo(() => fetchEndpoint(accessToken), [accessToken]);
 }
