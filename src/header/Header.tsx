@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
+import EditIcon from '@mui/icons-material/Edit';
 import GrassIcon from '@mui/icons-material/Grass';
 import InboxIcon from '@mui/icons-material/Inbox';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -21,14 +22,16 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import EditGardenModal from '../gardens/EditGardenModal';
+import NewGardenModal from '../gardens/NewGardenModal';
+import { Garden } from '../interface';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { selectGardens, selectSelectedGarden, setSelectedGarden } from '../store/slices/gardens';
+import { useTasks } from '../tasks/hooks/useTasks';
+import UserMenu from '../account/AccountMenu';
 import Actions from './Actions';
 import './Actions.css';
 import './Header.css';
-import GardenModal from './gardens/GardenModal';
-import { Garden } from './interface';
-import { useAppDispatch, useAppSelector } from './store/hooks';
-import { selectGardens, selectSelectedGarden, setSelectedGarden } from './store/slices/gardens';
-import { useTasks } from './tasks/hooks/useTasks';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -61,6 +64,14 @@ const Header = () => {
     },
     [dispatch, handleClose]
   );
+
+  const [gardenEditModalOpen, setGardenEditModalOpen] = useState(false);
+  const handleGardenEditModalOpen = useCallback(() => {
+    setGardenEditModalOpen(true);
+  }, []);
+  const handleGardenEditModalClose = useCallback(() => {
+    setGardenEditModalOpen(false);
+  }, []);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = useCallback(
@@ -202,9 +213,18 @@ const Header = () => {
             <ListItemText>Add Garden</ListItemText>
           </MenuItem>
         </Menu>
+        <IconButton onClick={handleGardenEditModalOpen}>
+          <EditIcon fontSize="small" />
+        </IconButton>
         <Box sx={{ flexGrow: 1 }} />
-        <Actions />
-        <GardenModal open={gardenModalOpen} onClose={handleGardenModalClose} />
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Actions />
+          <UserMenu />
+        </Box>
+        {garden ? (
+          <EditGardenModal garden={garden} open={gardenEditModalOpen} onClose={handleGardenEditModalClose} />
+        ) : null}
+        <NewGardenModal open={gardenModalOpen} onClose={handleGardenModalClose} />
       </Toolbar>
     </AppBar>
   );

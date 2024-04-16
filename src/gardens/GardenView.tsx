@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Header from '../Header';
+import Header from '../header/Header';
 import ScrollToTop from '../components/ScrollToTop';
 import ContainerSelectViewRoute from '../containers/ContainerSelectViewRoute';
 import ContainerSlotRoute from '../containers/ContainerSlotRoute';

@@ -5,6 +5,7 @@ import {
   ContainerTaskUpdateDTO,
   CreateUserDTO,
   GardenDTO,
+  GenerateTokenDTO,
   LoginDTO,
   PictureDTO,
   PlantDataDTO,
@@ -13,7 +14,8 @@ import {
   PlantInstanceDTO,
   PlantType,
   SessionDTO,
-  TaskDTO
+  TaskDTO,
+  ValidateTokenDTO
 } from '../interface';
 
 interface Rest {
@@ -32,6 +34,20 @@ interface Rest {
       };
     };
     response: Omit<SessionDTO, 'accessToken'>;
+  };
+  'POST:/auth/token/generate': {
+    method: 'POST';
+    request: {
+      body: GenerateTokenDTO;
+    };
+    response: { status?: 'success'; message?: string };
+  };
+  'POST:/auth/token/validate': {
+    method: 'POST';
+    request: {
+      body: ValidateTokenDTO;
+    };
+    response: SessionDTO;
   };
 
   'POST:/user': {

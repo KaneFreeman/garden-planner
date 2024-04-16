@@ -30,7 +30,7 @@ const CreateGardenView = () => {
         }}
       >
         <img src="/favicon64.png" />
-        <Box component="form" onSubmit={handleAddGarden} sx={{ mt: 3, width: '100%' }}>
+        <Box component="form" onSubmit={handleAddGarden} sx={{ mt: 2, width: '100%' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField required fullWidth id="name" name="name" label="Name" autoFocus />

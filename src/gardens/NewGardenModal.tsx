@@ -6,10 +6,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import React, { useCallback, useState } from 'react';
 import TextField from '../components/TextField';
 import { Garden } from '../interface';
-import './GardenModal.css';
-import { useAddGarden } from './useGardens';
 import { useAppDispatch } from '../store/hooks';
 import { setSelectedGarden } from '../store/slices/gardens';
+import './GardenModal.css';
+import { useAddGarden } from './useGardens';
 
 interface GardenModalProperties {
   open: boolean;
@@ -20,7 +20,7 @@ function isValidGarden(garden: Partial<Garden> | null): garden is Omit<Garden, '
   return garden?.name !== undefined;
 }
 
-const GardenModal = ({ open, onClose }: GardenModalProperties) => {
+const NewGardenModal = ({ open, onClose }: GardenModalProperties) => {
   const [editData, setEditData] = useState<Partial<Garden> | null>(null);
 
   const dispatch = useAppDispatch();
@@ -94,4 +94,4 @@ const GardenModal = ({ open, onClose }: GardenModalProperties) => {
   );
 };
 
-export default GardenModal;
+export default NewGardenModal;

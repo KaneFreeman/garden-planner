@@ -1,58 +1,66 @@
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 import Copyright from '../components/Copyright';
 import { useSignUp } from './useAuth';
-import Alert from '@mui/material/Alert';
 
 export interface SignUpProps {
   onLoginClick: () => void;
 }
 
 const SignUp = ({ onLoginClick }: SignUpProps) => {
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | false>(false);
   const signUp = useSignUp();
 
-  const handleSignUp = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSignUp = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    setError(false);
+      setLoading(true);
+      setError(false);
 
-    const data = new FormData(event.currentTarget);
+      const data = new FormData(event.currentTarget);
 
-    const response = await signUp({
-      email: data.get('email')?.toString() ?? '',
-      password: data.get('password')?.toString() ?? '',
-      firstName: data.get('firstName')?.toString() ?? '',
-      lastName: data.get('lastName')?.toString() ?? ''
-    });
+      const response = await signUp({
+        email: data.get('email')?.toString() ?? '',
+        password: data.get('password')?.toString() ?? '',
+        firstName: data.get('firstName')?.toString() ?? '',
+        lastName: data.get('lastName')?.toString() ?? ''
+      });
 
-    if (response !== true) {
-      setError(response);
-      return;
-    }
+      if (response !== true) {
+        setError(response);
+        setLoading(false);
+        return;
+      }
 
-    onLoginClick();
-  };
+      onLoginClick();
+      setLoading(false);
+    },
+    [onLoginClick, signUp]
+  );
 
   return (
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100dvh'
         }}
       >
         <img src="/favicon64.png" />
-        <Box component="form" onSubmit={handleSignUp} sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSignUp} sx={{ mt: 2, width: '100%' }}>
           {error ? (
-            <Alert severity="error" sx={{ mb: 3 }}>
+            <Alert severity="error" sx={{ mt: 1, mb: 3 }}>
               {error}
             </Alert>
           ) : null}
@@ -101,22 +109,31 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                   minlength: '8'
                 }}
                 autoComplete="new-password"
+                disabled={loading}
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
             Create Account
           </Button>
-          <Grid container justifyContent="flex-end">
-            <Grid item>
-              <Link component="button" variant="body2" onClick={onLoginClick}>
-                Already have an account? Login in
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
+        <Link
+          component="button"
+          variant="body2"
+          onClick={onLoginClick}
+          sx={{
+            mt: 2,
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'underline'
+            }
+          }}
+          disabled={loading}
+        >
+          Already have an account? Login in
+        </Link>
+        <Copyright sx={{ mt: 4 }} />
       </Box>
-      <Copyright sx={{ mt: 5 }} />
     </Container>
   );
 };

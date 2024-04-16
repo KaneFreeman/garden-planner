@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
-import { CreateUserDTO, LoginDTO } from '../interface';
+import { CreateUserDTO, GenerateTokenDTO, LoginDTO, ValidateTokenDTO } from '../interface';
 import { useAppDispatch } from '../store/hooks';
-import { updateUser } from '../store/slices/auth';
+import { logout, updateUser } from '../store/slices/auth';
 import { isNullish } from '../utility/null.util';
 
 export const useLogin = (options?: ExtraFetchOptions) => {
@@ -64,4 +64,62 @@ export const useSignUp = (options?: ExtraFetchOptions) => {
   );
 
   return signUp;
+};
+
+export const useGenerateToken = (options?: ExtraFetchOptions) => {
+  const fetch = useFetch();
+
+  const generateToken = useCallback(
+    async (data: GenerateTokenDTO): Promise<string | true> => {
+      const response = await fetch(
+        Api.auth_token_PostGenerateToken,
+        { body: data },
+        { ...options, redirectOn401: false }
+      );
+
+      if (isNullish(response) || typeof response === 'string') {
+        return response ?? 'An error occurred while generating token';
+      }
+
+      return true;
+    },
+    [fetch, options]
+  );
+
+  return generateToken;
+};
+
+export const useLoginWithToken = (options?: ExtraFetchOptions) => {
+  const fetch = useFetch();
+  const dispatch = useAppDispatch();
+
+  const loginWithToken = useCallback(
+    async (data: ValidateTokenDTO) => {
+      const response = await fetch(
+        Api.auth_token_PostValidateToken,
+        { body: data },
+        { ...options, redirectOn401: false }
+      );
+
+      if (isNullish(response) || typeof response === 'string') {
+        return response ?? 'An error occurred while validating token';
+      }
+
+      dispatch(updateUser(response));
+      return true;
+    },
+    [dispatch, fetch, options]
+  );
+
+  return loginWithToken;
+};
+
+export const useLogout = () => {
+  const dispatch = useAppDispatch();
+
+  const logoutCallback = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  return logoutCallback;
 };

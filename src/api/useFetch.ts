@@ -100,7 +100,9 @@ async function fetchRequest<T>(
     if (extraOptions?.redirectOn401 === true) {
       window.location.reload();
     }
-    return undefined;
+
+    const errorBody = await response.json();
+    return errorBody.message as string | undefined;
   }
 
   if (response.status === 204) {
@@ -114,7 +116,6 @@ async function fetchRequest<T>(
 
   if (!response.ok) {
     const errorBody = await response.json();
-
     return errorBody.message as string | undefined;
   }
 

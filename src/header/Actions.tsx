@@ -3,7 +3,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import GrassIcon from '@mui/icons-material/Grass';
 import InboxIcon from '@mui/icons-material/Inbox';
 import Box from '@mui/material/Box';
-import MuiIconButton, { IconButtonProps } from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -12,27 +12,11 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import React, { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Actions.css';
-import ContainerModal from './containers/ContainerModal';
-import PlantModal from './plants/PlantModal';
-import { useAppDispatch, useAppSelector } from './store/hooks';
-import { selectFilterPlants, toggleFilterPlants } from './store/slices/plants';
-import TaskModal from './tasks/TaskModal';
-
-function IconButton(props: IconButtonProps) {
-  return (
-    <MuiIconButton
-      sx={{
-        backgroundColor: 'primary.main',
-        color: 'rgba(0, 0, 0, 0.87)',
-        '&:hover': {
-          color: 'rgba(0, 0, 0, 0.87)',
-          backgroundColor: 'primary.dark'
-        }
-      }}
-      {...props}
-    />
-  );
-}
+import ContainerModal from '../containers/ContainerModal';
+import PlantModal from '../plants/PlantModal';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { selectFilterPlants, toggleFilterPlants } from '../store/slices/plants';
+import TaskModal from '../tasks/TaskModal';
 
 const Actions = () => {
   const { pathname } = useLocation();
@@ -93,6 +77,7 @@ const Actions = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleOpen}
+        sx={{ width: '50px' }}
       >
         <SpeedDialIcon sx={{ transform: open ? 'rotate(45deg)' : 'rotate(0)', transition: 'transform 0.333s' }} />
       </IconButton>

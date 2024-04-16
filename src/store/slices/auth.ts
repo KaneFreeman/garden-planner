@@ -22,11 +22,19 @@ export const AuthSlice = createSlice({
         ...state,
         user: action.payload
       };
+    },
+    logout: (state) => {
+      localStorage.removeItem('token');
+
+      return {
+        ...state,
+        user: undefined
+      };
     }
   }
 });
 
-export const { updateUser } = AuthSlice.actions;
+export const { updateUser, logout } = AuthSlice.actions;
 
 export const selectAccessToken = (state: RootState) => state.auth.user?.accessToken;
 

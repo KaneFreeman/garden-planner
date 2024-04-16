@@ -18,7 +18,7 @@
     "@mui/lab": "5.0.0-alpha.170",
     "@mui/material": "5.15.15",
     "@mui/system": "5.15.15",
-    "@mui/x-date-pickers": "7.2.0",
+    "@mui/x-date-pickers": "7.1.1",
     "@reduxjs/toolkit": "1.9.7",
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "13.4.0",
@@ -34,7 +34,7 @@
     "react-window": "1.8.10",
     "redux": "4.2.1",
     "redux-thunk": "2.4.2",
-    "vite": "5.2.9",
+    "vite": "5.2.8",
     "vite-plugin-pwa": "0.19.8",
     "vite-tsconfig-paths": "4.3.2",
     "web-vitals": "2.1.4",
@@ -54,17 +54,17 @@
     "workbox-window": "7.0.0"
   },
   "devDependencies": {
-    "@testing-library/dom": "10.0.0",
+    "@testing-library/dom": "9.3.4",
     "@types/jest": "29.5.12",
-    "@types/node": "20.12.7",
+    "@types/node": "18.19.31",
     "@types/object-hash": "^3.0.6",
-    "@types/react": "18.2.79",
-    "@types/react-dom": "18.2.25",
+    "@types/react": "18.2.75",
+    "@types/react-dom": "18.2.24",
     "@types/react-router": "5.1.20",
     "@types/react-router-dom": "5.3.3",
     "@types/react-window": "1.8.8",
-    "@typescript-eslint/eslint-plugin": "7.7.0",
-    "@typescript-eslint/parser": "7.7.0",
+    "@typescript-eslint/eslint-plugin": "7.6.0",
+    "@typescript-eslint/parser": "7.6.0",
     "cross-env": "7.0.3",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
@@ -111,6 +111,6 @@
     "endOfLine": "lf"
   },
   "resolutions": {
-    "@types/react": "18.2.79"
+    "@types/react": "18.2.75"
   }
 }
