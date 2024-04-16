@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { FormEvent } from 'react';
 import { useAddGarden } from './useGardens';
@@ -23,19 +22,18 @@ const CreateGardenView = () => {
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '70dvh'
         }}
       >
         <img src="/favicon64.png" />
         <Box component="form" onSubmit={handleAddGarden} sx={{ mt: 2, width: '100%' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField required fullWidth id="name" name="name" label="Name" autoFocus />
-            </Grid>
-          </Grid>
+          <Box sx={{ width: '100%', mt: 2 }}>
+            <TextField required fullWidth id="name" name="name" label="Name" autoFocus />
+          </Box>
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Create Garden
           </Button>

@@ -53,7 +53,7 @@ const LoginWithPassword = ({ email, onNotYouClick, onUseTokenClick }: TokenProps
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '100dvh'
+          height: '70dvh'
         }}
       >
         <img src="/favicon64.png" />
