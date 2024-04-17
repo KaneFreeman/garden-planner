@@ -1,7 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import thunkMiddleware from 'redux-thunk';
-import loggerMiddleware from '../middleware/logger';
-import monitorReducersEnhancer from '../middleware/monitorReducer';
 import authReducer from './slices/auth';
 import containersReducer from './slices/containers';
 import gardensReducer from './slices/gardens';
@@ -21,9 +18,7 @@ export const store = configureStore({
     containers: containersReducer,
     pictures: picturesReducer,
     plantInstances: plantInstancesReducer
-  },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunkMiddleware).concat(loggerMiddleware),
-  enhancers: [monitorReducersEnhancer]
+  }
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -52,8 +52,6 @@ const Main = () => {
     dispatch(buildTaskLookupByContainer({ tasks, plantInstancesByIds }));
   }, [dispatch, plantInstancesByIds, tasks]);
 
-  console.log('[MAIN] loading', loading, 'user', user);
-
   if (loading) {
     return <Loading sx={{ m: 0, height: '100dvh' }} />;
   }
