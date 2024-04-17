@@ -10,7 +10,7 @@ interface ImageProps {
 
 const Image = styled('img')<ImageProps>(({ size }) => {
   if (size === 'full') {
-    return { objectFit: 'cover', maxWidth: '100vw', maxHeight: '100vh' };
+    return { objectFit: 'cover', maxWidth: '100vw', maxHeight: '100dvh' };
   }
 
   return { objectFit: 'cover', width: size, height: size };

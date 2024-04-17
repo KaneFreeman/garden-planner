@@ -26,15 +26,12 @@ const Main = () => {
     const checkAccessToken = async () => {
       const accessToken = localStorage.getItem('token');
       if (isNotNullish(accessToken)) {
-        const response = await checkLogin(accessToken);
-        if (alive && !response) {
-          setLoading(false);
-        }
-
-        return;
+        await checkLogin(accessToken);
       }
 
-      setLoading(false);
+      if (alive) {
+        setLoading(false);
+      }
     };
 
     checkAccessToken();
@@ -58,7 +55,7 @@ const Main = () => {
   console.log('[MAIN] loading', loading, 'user', user);
 
   if (loading) {
-    return <Loading />;
+    return <Loading sx={{ m: 0, height: '100dvh' }} />;
   }
 
   if (!user) {

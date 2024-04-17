@@ -86,40 +86,44 @@ async function fetchRequest<T>(
     headers.set('authorization', `Bearer ${accessToken}`);
   }
 
-  const response = await fetch(url, {
-    method,
-    headers,
-    body: isNotNullish(body) ? JSON.stringify(body) : body
-  });
+  try {
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: isNotNullish(body) ? JSON.stringify(body) : body
+    });
 
-  if (response.status === 401) {
-    /**
-     * In the case of a UNAUTHORIZED status, reload the page to prompt for login.
-     */
-    localStorage.removeItem('token');
-    if (extraOptions?.redirectOn401 === true) {
-      window.location.reload();
+    if (response.status === 401) {
+      /**
+       * In the case of a UNAUTHORIZED status, reload the page to prompt for login.
+       */
+      localStorage.removeItem('token');
+      if (extraOptions?.redirectOn401 === true) {
+        window.location.reload();
+      }
+
+      const errorBody = await response.json();
+      return errorBody.message as string | undefined;
     }
 
-    const errorBody = await response.json();
-    return errorBody.message as string | undefined;
-  }
-
-  if (response.status === 204) {
-    /*
+    if (response.status === 204) {
+      /*
 		In the case of a NO CONTENT status, we can't call response.json() because it throws an error
 		if there is no response. We've got to cast this here because we don't know at compile time that
 		T is undefined. If we're calling this method and get a 204, we can assume this is intentional T is undefined.
 		 */
-    return undefined;
-  }
+      return undefined;
+    }
 
-  if (!response.ok) {
-    const errorBody = await response.json();
-    return errorBody.message as string | undefined;
-  }
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return errorBody.message as string | undefined;
+    }
 
-  return response.json();
+    return response.json();
+  } catch (e: unknown) {
+    return 'Failed to communicate with server';
+  }
 }
 
 const getRequestsInProgress: Record<string, ((value: any | undefined) => void)[]> = {};

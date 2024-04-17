@@ -557,7 +557,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               mt: 1,
               overflowX: 'auto',
               overflowY: 'auto',
-              maxHeight: 'calc(100vh - 128px)',
+              maxHeight: 'calc(100dvh - 128px)',
               boxSizing: 'border-box'
             }}
           >

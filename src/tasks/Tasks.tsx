@@ -79,7 +79,7 @@ const Tasks = () => {
               </Alert>
             )}
           </TabPanel>
-          <TabPanel value={tab} index={1} sx={{ overflow: 'hidden', height: 'calc(100vh - 106px)' }}>
+          <TabPanel value={tab} index={1} sx={{ overflow: 'hidden', height: 'calc(100dvh - 106px)' }}>
             {completed.length > 0 ? (
               <Box sx={{ pl: 2, pr: 2, boxSizing: 'border-box', height: '100%' }}>
                 <Box

@@ -37,7 +37,7 @@ const GardenView = () => {
           width: '100%',
           boxSizing: 'border-box',
           justifyContent: 'center',
-          height: 'calc(100vh - 56px)',
+          height: 'calc(100dvh - 56px)',
           top: '56px',
           position: 'relative'
         }}
