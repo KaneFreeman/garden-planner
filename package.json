@@ -101,5 +101,8 @@
   },
   "resolutions": {
     "@types/react": "18.2.79"
+  },
+  "engines": {
+    "node": ">=18.18 <19"
   }
 }
