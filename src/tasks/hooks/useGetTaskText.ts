@@ -1,6 +1,5 @@
+import { format, formatDistance } from 'date-fns';
 import { useMemo } from 'react';
-import format from 'date-fns/format';
-import formatDistance from 'date-fns/formatDistance';
 import { Task } from '../../interface';
 import { setToMidnight } from '../../utility/date.util';
 

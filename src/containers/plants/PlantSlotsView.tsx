@@ -1,21 +1,21 @@
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import { format } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import format from 'date-fns/format';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import Chip from '@mui/material/Chip';
-import { PlantInstance } from '../../interface';
-import useSmallScreen from '../../utility/smallScreen.util';
-import { getSlotTitle } from '../../utility/slot.util';
-import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
 import CollapsableSimpleInlineField from '../../components/inline-fields/CollapsableSimpleInlineField';
-import { getFirstEventAt, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
+import { PlantInstance } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesById } from '../../plant-instances/hooks/usePlantInstances';
-import { useContainersById } from '../hooks/useContainers';
+import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
+import { getFirstEventAt, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
+import { getSlotTitle } from '../../utility/slot.util';
+import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
+import { useContainersById } from '../hooks/useContainers';
 
 interface PlantSlotsViewProps {
   plantId: string | undefined;

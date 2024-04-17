@@ -1,19 +1,19 @@
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
-import format from 'date-fns/format';
-import formatDistance from 'date-fns/formatDistance';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import GrassIcon from '@mui/icons-material/Grass';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import YardIcon from '@mui/icons-material/Yard';
 import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import GrassIcon from '@mui/icons-material/Grass';
-import MoveDownIcon from '@mui/icons-material/MoveDown';
-import AgricultureIcon from '@mui/icons-material/Agriculture';
-import YardIcon from '@mui/icons-material/Yard';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { format, formatDistance } from 'date-fns';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router';
+import { useContainersById } from '../containers/hooks/useContainers';
 import {
   ContainerSlotIdentifier,
   FERTILIZED,
@@ -23,9 +23,8 @@ import {
   PlantInstanceHistory,
   TRANSPLANTED
 } from '../interface';
-import { getMidnight } from '../utility/date.util';
 import { areContainerSlotLocationsEqual, getLocationTitle } from '../utility/containerSlotLocation.util';
-import { useContainersById } from '../containers/hooks/useContainers';
+import { getMidnight } from '../utility/date.util';
 import './PlantInstanceHistoryView.css';
 
 interface PlantInstanceHistoryViewProps {

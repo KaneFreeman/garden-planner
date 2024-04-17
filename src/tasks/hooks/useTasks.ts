@@ -1,9 +1,10 @@
-import addDays from 'date-fns/addDays';
+import { addDays } from 'date-fns';
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { BulkCompleteTaskDTO, SortedTasks, Task, fromTaskDTO, toTaskDTO } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectSelectedGarden } from '../../store/slices/gardens';
 import {
   selectTaskById,
   selectTasks,
@@ -13,7 +14,6 @@ import {
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
-import { selectSelectedGarden } from '../../store/slices/gardens';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const fetch = useFetch();

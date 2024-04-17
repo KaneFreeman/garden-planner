@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import format from 'date-fns/format';
-import List from '@mui/material/List';
 import Box from '@mui/material/Box';
+import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
+import { format } from 'date-fns';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ContainerSlotIdentifier, PlantInstance, Slot } from '../../interface';
-import useSmallScreen from '../../utility/smallScreen.util';
+import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../../plants/usePlants';
-import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { getFirstEventAt, useFirstEventStaticLocationComparator } from '../../utility/history.util';
+import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
 
 interface PastSlotPlantsProps {

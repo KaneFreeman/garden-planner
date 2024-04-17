@@ -1,19 +1,19 @@
-import React, { MouseEvent, memo, useCallback, useMemo } from 'react';
-import format from 'date-fns/format';
+import GrassIcon from '@mui/icons-material/Grass';
+import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import GrassIcon from '@mui/icons-material/Grass';
-import PlantAvatar from '../plants/PlantAvatar';
-import { BaseSlot, CLOSED, Container, Plant, PLANTED, Slot, TRANSPLANTED } from '../interface';
-import { getSlotTitle } from '../utility/slot.util';
-import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
-import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
-import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { format } from 'date-fns';
+import { MouseEvent, memo, useCallback, useMemo } from 'react';
+import { BaseSlot, CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
+import PlantAvatar from '../plants/PlantAvatar';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { findHistoryFrom, getPlantedEvent } from '../utility/history.util';
+import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
+import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 
 interface ContainerSlotPreviewProps {
   index: number;

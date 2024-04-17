@@ -1,4 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { Tuple, configureStore } from '@reduxjs/toolkit';
+import logger from '../middleware/logger';
 import authReducer from './slices/auth';
 import containersReducer from './slices/containers';
 import gardensReducer from './slices/gardens';
@@ -18,7 +19,8 @@ export const store = configureStore({
     containers: containersReducer,
     pictures: picturesReducer,
     plantInstances: plantInstancesReducer
-  }
+  },
+  middleware: () => new Tuple(logger)
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
