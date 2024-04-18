@@ -32,6 +32,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
         password: data.get('password')?.toString() ?? '',
         firstName: data.get('firstName')?.toString() ?? '',
         lastName: data.get('lastName')?.toString() ?? '',
+        zipCode: data.get('zipCode')?.toString() ?? '',
         summaryEmail: true
       });
 
@@ -75,6 +76,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 name="firstName"
                 label="First Name"
                 autoFocus
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -85,6 +87,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 name="lastName"
                 label="Last Name"
                 autoComplete="family-name"
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12}>
@@ -96,6 +99,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 label="Email Address"
                 autoComplete="email"
                 type="email"
+                disabled={loading}
               />
             </Grid>
             <Grid item xs={12}>
@@ -110,6 +114,19 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                   minLength: '8'
                 }}
                 autoComplete="new-password"
+                disabled={loading}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="zipCode"
+                name="zipCode"
+                label="Zip Code"
+                inputProps={{
+                  pattern: '[0-9]{5}'
+                }}
                 disabled={loading}
               />
             </Grid>
