@@ -73,73 +73,77 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
       }}
       open={open}
       onClose={handleOnClose}
+      PaperProps={{
+        component: 'form',
+        onSubmit
+      }}
       maxWidth="sm"
       fullWidth
     >
       <DialogTitle>My Account</DialogTitle>
       <DialogContent>
-        <form name="user-modal-form" onSubmit={onSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                required
-                label="Email"
-                type="email"
-                disabled
-                value={user.email}
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="given-name"
-                required
-                label="First Name"
-                autoFocus
-                value={editData.firstName}
-                onChange={(firstName) => update({ firstName })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                label="Last Name"
-                autoComplete="family-name"
-                value={editData.lastName}
-                onChange={(lastName) => update({ lastName })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                label="New Password"
-                type="password"
-                inputProps={{
-                  minlength: '8'
-                }}
-                autoComplete="new-password"
-                disabled={loading}
-                value={editData.password}
-                onChange={(password) => update({ password })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={editData.summaryEmail}
-                    onChange={(event) => update({ summaryEmail: event.target.checked })}
-                  />
-                }
-                label="Receive daily summary email"
-              />
-            </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField required label="Email" type="email" disabled value={user.email} autoComplete="email" />
           </Grid>
-        </form>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              autoComplete="given-name"
+              required
+              label="First Name"
+              autoFocus
+              value={editData.firstName}
+              onChange={(firstName) => update({ firstName })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              label="Last Name"
+              autoComplete="family-name"
+              value={editData.lastName}
+              onChange={(lastName) => update({ lastName })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="New Password"
+              type="password"
+              inputProps={{
+                minLength: '8'
+              }}
+              autoComplete="new-password"
+              disabled={loading}
+              value={editData.password}
+              onChange={(password) => update({ password })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              label="Zip Code"
+              autoComplete="family-name"
+              value={editData.zipCode}
+              inputProps={{ pattern: '[0-9]{5}' }}
+              onChange={(zipCode) => update({ zipCode })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={editData.summaryEmail}
+                  onChange={(event) => update({ summaryEmail: event.target.checked })}
+                />
+              }
+              label="Receive daily summary email"
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleOnClose}>Cancel</Button>
-        <Button onClick={onSave}>Save</Button>
+        <Button type="submit">Save</Button>
       </DialogActions>
     </Dialog>
   );

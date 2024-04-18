@@ -752,6 +752,7 @@ export interface UserDTO {
   readonly firstName: string;
   readonly lastName: string;
   readonly summaryEmail: boolean;
+  readonly zipCode: string;
 }
 
 export interface Garden {

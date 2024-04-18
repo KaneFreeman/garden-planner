@@ -107,7 +107,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 label="Password"
                 type="password"
                 inputProps={{
-                  minlength: '8'
+                  minLength: '8'
                 }}
                 autoComplete="new-password"
                 disabled={loading}

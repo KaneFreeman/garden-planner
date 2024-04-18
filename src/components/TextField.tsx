@@ -30,7 +30,16 @@ interface TextFieldProps {
 }
 
 const TextField = (props: TextFieldProps) => {
-  const { onChange, error, variant = 'standard', autoFocus, startAdornment, endAdornment, ...otherProps } = props;
+  const {
+    onChange,
+    error,
+    variant = 'standard',
+    autoFocus,
+    startAdornment,
+    endAdornment,
+    inputProps,
+    ...otherProps
+  } = props;
   const id = useMemo(() => otherProps.label?.toLowerCase().replace(' ', '_'), [otherProps.label]);
 
   const [isEmpty, setIsEmpty] = useState(
@@ -46,9 +55,9 @@ const TextField = (props: TextFieldProps) => {
     otherProps.value = otherProps.value ?? '';
   }
 
-  const inputProps: Partial<InputProps> = useMemo(() => {
+  const finalInputProps: Partial<InputProps> = useMemo(() => {
     const allInputProps: Partial<InputProps> = {};
-    const baseInputProps: InputBaseComponentProps = {};
+    const baseInputProps: InputBaseComponentProps = inputProps ?? {};
 
     if (startAdornment !== undefined) {
       allInputProps.startAdornment = <InputAdornment position="start">{startAdornment}</InputAdornment>;
@@ -60,7 +69,7 @@ const TextField = (props: TextFieldProps) => {
 
     allInputProps.inputProps = baseInputProps;
     return allInputProps;
-  }, [endAdornment, startAdornment]);
+  }, [endAdornment, inputProps, startAdornment]);
 
   const handleOnChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback(
     (event) => {
@@ -85,7 +94,7 @@ const TextField = (props: TextFieldProps) => {
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}
       autoFocus={autoFocus}
-      InputProps={inputProps}
+      InputProps={finalInputProps}
       {...otherProps}
     />
   );
