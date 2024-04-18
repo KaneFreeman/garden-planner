@@ -1,9 +1,9 @@
-import React, { KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
-import { SxProps, Theme } from '@mui/material/styles';
-import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { InputProps } from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
+import { InputBaseComponentProps } from '@mui/material/InputBase';
 import MuiTextField from '@mui/material/TextField';
+import { SxProps, Theme } from '@mui/material/styles';
+import React, { HTMLInputTypeAttribute, KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
 import { isNotEmpty } from '../utility/string.util';
 
 interface TextFieldProps {
@@ -25,6 +25,8 @@ interface TextFieldProps {
   variant?: 'outlined' | 'filled' | 'standard';
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
+  autoComplete?: string | undefined;
+  type?: HTMLInputTypeAttribute | undefined;
 }
 
 const TextField = (props: TextFieldProps) => {
@@ -76,6 +78,7 @@ const TextField = (props: TextFieldProps) => {
   return (
     <MuiTextField
       id={id}
+      name={id}
       margin="dense"
       variant={variant}
       onChange={handleOnChange}

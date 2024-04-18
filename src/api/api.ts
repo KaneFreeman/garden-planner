@@ -8,7 +8,9 @@ const enum Api {
   auth_token_PostGenerateToken = 'POST:/auth/token/generate',
   auth_token_PostValidateToken = 'POST:/auth/token/validate',
 
+  user_Get = 'GET:/user',
   user_Post = 'POST:/user',
+  user_Put = 'PUT:/user',
 
   garden_Get = 'GET:/garden',
   garden_IdGet = 'GET:/garden/{gardenId}',

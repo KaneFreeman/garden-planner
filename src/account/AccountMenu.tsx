@@ -1,19 +1,27 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useCallback, useMemo, useState } from 'react';
-import { useAppSelector } from '../store/hooks';
-import { selectUser } from '../store/slices/auth';
-import { nameToAvatarColor } from '../utility/account.util';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLogout } from '../auth/useAuth';
+import { useAppSelector } from '../store/hooks';
+import { selectUserDetails } from '../store/slices/auth';
+import { nameToAvatarColor } from '../utility/account.util';
+import { useGetUser } from './useUser';
+import AccountModal from './AccountModal';
 
 const AccountMenu = () => {
-  const user = useAppSelector(selectUser);
+  const userDetails = useAppSelector(selectUserDetails);
+  const getUser = useGetUser();
+
+  useEffect(() => {
+    getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const logout = useLogout();
 
@@ -26,9 +34,17 @@ const AccountMenu = () => {
     setAnchorEl(null);
   }, []);
 
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
+  const handleAccountModalOpen = useCallback(() => {
+    setAccountModalOpen(true);
+  }, []);
+  const handleAccountModalClose = useCallback(() => {
+    setAccountModalOpen(false);
+  }, []);
+
   const initials = useMemo(
-    () => `${user?.firstName.charAt(0) ?? 'G'}${user?.lastName.charAt(0) ?? 'P'}`,
-    [user?.firstName, user?.lastName]
+    () => `${userDetails?.firstName.charAt(0) ?? 'G'}${userDetails?.lastName.charAt(0) ?? 'P'}`,
+    [userDetails?.firstName, userDetails?.lastName]
   );
   const color = useMemo(() => nameToAvatarColor(initials), [initials]);
 
@@ -52,12 +68,14 @@ const AccountMenu = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <SettingsIcon fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
+        {userDetails ? (
+          <MenuItem onClick={handleAccountModalOpen}>
+            <ListItemIcon>
+              <AccountCircleIcon fontSize="small" />
+            </ListItemIcon>
+            My Account
+          </MenuItem>
+        ) : null}
         <Divider />
         <MenuItem onClick={logout}>
           <ListItemIcon>
@@ -66,6 +84,9 @@ const AccountMenu = () => {
           Logout
         </MenuItem>
       </Menu>
+      {userDetails ? (
+        <AccountModal user={userDetails} open={accountModalOpen} onClose={handleAccountModalClose} />
+      ) : null}
     </>
   );
 };

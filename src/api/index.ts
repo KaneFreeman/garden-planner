@@ -3,18 +3,18 @@ import {
   BulkReopenClosePlantInstanceDTO,
   ContainerDTO,
   ContainerTaskUpdateDTO,
-  CreateUserDTO,
   GardenDTO,
   GenerateTokenDTO,
   LoginDTO,
   PictureDTO,
-  PlantDataDTO,
   PlantDTO,
+  PlantDataDTO,
   PlantInstanceAddHistoryAndUpdateTaskDTO,
   PlantInstanceDTO,
   PlantType,
   SessionDTO,
   TaskDTO,
+  UserDTO,
   ValidateTokenDTO
 } from '../interface';
 
@@ -50,12 +50,24 @@ interface Rest {
     response: SessionDTO;
   };
 
+  'GET:/user': {
+    method: 'GET';
+    request: Record<string, never>;
+    response: UserDTO;
+  };
   'POST:/user': {
     method: 'POST';
     request: {
-      body: CreateUserDTO;
+      body: UserDTO;
     };
     response: { status?: 'success'; message?: string };
+  };
+  'PUT:/user': {
+    method: 'PUT';
+    request: {
+      body: UserDTO;
+    };
+    response: UserDTO;
   };
 
   'GET:/garden': {

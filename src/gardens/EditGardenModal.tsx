@@ -109,9 +109,7 @@ const EditGardenModal = ({ garden, open, onClose }: GardenModalProperties) => {
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button onClick={handleOnClose}>Cancel</Button>
-              <Button onClick={onSave} color="success">
-                Save
-              </Button>
+              <Button onClick={onSave}>Save</Button>
             </Box>
           </Box>
         </DialogActions>

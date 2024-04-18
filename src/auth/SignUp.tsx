@@ -6,8 +6,8 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import { FormEvent, useCallback, useState } from 'react';
+import { useAddUser } from '../account/useUser';
 import Copyright from '../components/Copyright';
-import { useSignUp } from './useAuth';
 
 export interface SignUpProps {
   onLoginClick: () => void;
@@ -16,7 +16,7 @@ export interface SignUpProps {
 const SignUp = ({ onLoginClick }: SignUpProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | false>(false);
-  const signUp = useSignUp();
+  const signUp = useAddUser();
 
   const handleSignUp = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -31,7 +31,8 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
         email: data.get('email')?.toString() ?? '',
         password: data.get('password')?.toString() ?? '',
         firstName: data.get('firstName')?.toString() ?? '',
-        lastName: data.get('lastName')?.toString() ?? ''
+        lastName: data.get('lastName')?.toString() ?? '',
+        summaryEmail: true
       });
 
       if (response !== true) {

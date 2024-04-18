@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import Api from '../api/api';
 import useFetch, { ExtraFetchOptions } from '../api/useFetch';
-import { CreateUserDTO, GenerateTokenDTO, LoginDTO, ValidateTokenDTO } from '../interface';
+import { GenerateTokenDTO, LoginDTO, ValidateTokenDTO } from '../interface';
 import { useAppDispatch } from '../store/hooks';
 import { logout, updateUser } from '../store/slices/auth';
 import { isNullish } from '../utility/null.util';
@@ -46,24 +46,6 @@ export const useCheckLogin = (options?: ExtraFetchOptions) => {
   );
 
   return checkLogin;
-};
-
-export const useSignUp = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
-
-  const signUp = useCallback(
-    async (data: CreateUserDTO): Promise<true | string> => {
-      const response = await fetch(Api.user_Post, { body: data }, options);
-      if (isNullish(response) || typeof response === 'string') {
-        return response ?? 'An error occurred while creating account';
-      }
-
-      return true;
-    },
-    [fetch, options]
-  );
-
-  return signUp;
 };
 
 export const useGenerateToken = (options?: ExtraFetchOptions) => {

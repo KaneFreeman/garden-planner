@@ -730,8 +730,6 @@ export interface BulkReopenClosePlantInstanceDTO {
 export interface SessionDTO {
   readonly userId: string;
   readonly email: string;
-  readonly firstName: string;
-  readonly lastName: string;
   readonly accessToken: string;
 }
 
@@ -748,11 +746,12 @@ export interface GenerateTokenDTO {
   readonly email: string;
 }
 
-export interface CreateUserDTO {
+export interface UserDTO {
   readonly email: string;
-  readonly password: string;
+  readonly password?: string;
   readonly firstName: string;
   readonly lastName: string;
+  readonly summaryEmail: boolean;
 }
 
 export interface Garden {
