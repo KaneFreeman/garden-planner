@@ -1554,17 +1554,17 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/x-date-pickers@7.3.2":
-  version "7.3.2"
-  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-7.3.2.tgz#4b834e575e25ebdce4fad73e01953a76203d0320"
-  integrity sha512-i7JaDs1eXSZWyJihfszUHVV0t/C2HvtdMv5tHwv3E3enMx5Hup1vkJ64vZAH2fgGrTHQH8mjxvVsmI6jhDXIUg==
+"@mui/x-date-pickers@7.4.0":
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-7.4.0.tgz#77c7ab185070d525927a2599c6bf337c42fa2d3f"
+  integrity sha512-Xh0LD/PCYIWWSchvtnEHdUfIsnANA0QOppUkCJ+4b8mN7z+TMEBA/LHmzA2+edxo7eanyfJ7L52znxwPP4vX8Q==
   dependencies:
     "@babel/runtime" "^7.24.0"
     "@mui/base" "^5.0.0-beta.40"
     "@mui/system" "^5.15.14"
     "@mui/utils" "^5.15.14"
     "@types/react-transition-group" "^4.4.10"
-    clsx "^2.1.0"
+    clsx "^2.1.1"
     prop-types "^15.8.1"
     react-transition-group "^4.4.5"
 
@@ -2419,6 +2419,11 @@ clsx@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.0.tgz#e851283bcb5c80ee7608db18487433f7b23f77cb"
   integrity sha512-m3iNNWpd9rl3jvvcBnu70ylMdrXt8Vlq4HYadnU5fwcOtvkSQWPmj7amUcDT2qYI7risszBjI5AUIUox9D16pg==
+
+clsx@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
+  integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
 color-convert@^1.9.0:
   version "1.9.3"
