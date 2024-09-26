@@ -48,7 +48,7 @@
     "workbox-window": "7.1.0"
   },
   "devDependencies": {
-    "@types/node": "18.19.52",
+    "@types/node": "18.19.53",
     "@types/object-hash": "3.0.6",
     "@types/react": "18.3.9",
     "@types/react-dom": "18.3.0",
