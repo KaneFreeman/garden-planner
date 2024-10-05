@@ -1798,10 +1798,10 @@
     prop-types "^15.8.1"
     react-is "^18.3.1"
 
-"@mui/x-date-pickers@7.18.0":
-  version "7.18.0"
-  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-7.18.0.tgz#264158195aeeaf32a00519718f6c67c165b06711"
-  integrity sha512-12tXIoMj9vpS8fS/bS3kWPCoVrH38vNGCxgplI0vOnUrN9rJuYJz3agLPJe1S0xciTw+9W8ZSe3soaW+owoz1Q==
+"@mui/x-date-pickers@7.19.0":
+  version "7.19.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-7.19.0.tgz#63c906d2dcbb7060b229b4edf30b8c511c7e643b"
+  integrity sha512-OIQ+IxgL2Si7DP68sw1ImcHXZtAmklHcyo/oqP4HuJZ2lVnP5sJkoXrksfumL1wjWKJkecONFz3unAqViKXzCQ==
   dependencies:
     "@babel/runtime" "^7.25.6"
     "@mui/utils" "^5.16.6"
