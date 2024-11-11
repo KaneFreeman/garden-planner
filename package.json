@@ -28,7 +28,7 @@
     "react-router": "6.28.0",
     "react-router-dom": "6.28.0",
     "react-window": "1.8.10",
-    "vite": "5.4.10",
+    "vite": "5.4.11",
     "vite-plugin-pwa": "0.20.5",
     "vite-tsconfig-paths": "4.3.2",
     "web-vitals": "3.5.2",
