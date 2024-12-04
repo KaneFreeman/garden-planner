@@ -13,9 +13,9 @@
   "dependencies": {
     "@emotion/react": "11.13.5",
     "@emotion/styled": "11.13.5",
-    "@mui/icons-material": "5.16.8",
+    "@mui/icons-material": "5.16.9",
     "@mui/lab": "5.0.0-alpha.174",
-    "@mui/material": "5.16.8",
+    "@mui/material": "5.16.9",
     "@mui/system": "5.16.8",
     "@mui/x-date-pickers": "7.23.0",
     "@reduxjs/toolkit": "2.4.0",
