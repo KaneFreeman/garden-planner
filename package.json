@@ -50,8 +50,8 @@
   "devDependencies": {
     "@types/node": "18.19.67",
     "@types/object-hash": "3.0.6",
-    "@types/react": "18.3.13",
-    "@types/react-dom": "18.3.1",
+    "@types/react": "18.3.14",
+    "@types/react-dom": "18.3.2",
     "@types/react-router": "5.1.20",
     "@types/react-router-dom": "5.3.3",
     "@types/react-window": "1.8.8",
@@ -67,7 +67,7 @@
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-react": "7.37.2",
-    "eslint-plugin-react-hooks": "5.0.0",
+    "eslint-plugin-react-hooks": "5.1.0",
     "prettier": "3.4.2",
     "typescript": "5.7.2"
   },
@@ -101,7 +101,7 @@
     "endOfLine": "lf"
   },
   "resolutions": {
-    "@types/react": "18.3.13"
+    "@types/react": "18.3.14"
   },
   "engines": {
     "node": ">=18.18 <19"
