@@ -3,7 +3,7 @@
 </p>
 
 <p align=center>
-  <a href="https://github.com/KaneFreeman/garden-planner/actions/workflows/build.yml"><img src="https://github.com/kanefreeman/garden-planner/workflows/Build/badge.svg?branch=main" /></a>
+  <a href="https://github.com/KaneFreeman/garden-planner/actions/workflows/build.yml"><img src="https://github.com/KaneFreeman/garden-planner/actions/workflows/build.yml/badge.svg" /></a>
 </p>
 
 # Garden Planner
