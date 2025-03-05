@@ -121,7 +121,7 @@ async function fetchRequest<T>(
     }
 
     return response.json();
-  } catch (e: unknown) {
+  } catch (_e: unknown) {
     return 'Failed to communicate with server';
   }
 }

@@ -246,7 +246,7 @@ export default function createDetectElementResize(nonce: any) {
         }
         try {
           element.__resizeTriggers__ = !element.removeChild(element.__resizeTriggers__);
-        } catch (e) {
+        } catch (_e) {
           // Preact compat; see developit/preact-compat/issues/228
         }
       }

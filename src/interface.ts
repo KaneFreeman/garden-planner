@@ -761,7 +761,7 @@ export interface Garden {
   retired?: boolean;
 }
 
-export interface GardenDTO extends Garden {}
+export type GardenDTO = Garden;
 
 export function fromGardenDTO(dto: GardenDTO): Garden {
   return {
