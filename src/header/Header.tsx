@@ -6,6 +6,7 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MenuIcon from '@mui/icons-material/Menu';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { useTheme } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
@@ -20,15 +21,16 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { MouseEvent, useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
+import UserMenu from '../account/AccountMenu';
 import EditGardenModal from '../gardens/EditGardenModal';
 import NewGardenModal from '../gardens/NewGardenModal';
 import { Garden } from '../interface';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectGardens, selectSelectedGarden, setSelectedGarden } from '../store/slices/gardens';
 import { useTasks } from '../tasks/hooks/useTasks';
-import UserMenu from '../account/AccountMenu';
+import useSmallScreen from '../utility/smallScreen.util';
 import Actions from './Actions';
 import './Actions.css';
 import './Header.css';
@@ -36,6 +38,9 @@ import './Header.css';
 const Header = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
+  const isSmallScreen = useSmallScreen();
+  const theme = useTheme();
 
   const dispatch = useAppDispatch();
   const garden = useAppSelector(selectSelectedGarden);
@@ -66,7 +71,8 @@ const Header = () => {
   );
 
   const [gardenEditModalOpen, setGardenEditModalOpen] = useState(false);
-  const handleGardenEditModalOpen = useCallback(() => {
+  const handleGardenEditModalOpen = useCallback((event: MouseEvent) => {
+    event.preventDefault();
     setGardenEditModalOpen(true);
   }, []);
   const handleGardenEditModalClose = useCallback(() => {
@@ -169,6 +175,7 @@ const Header = () => {
           aria-haspopup="true"
           aria-expanded={gardenMenuOpen ? 'true' : undefined}
           onClick={handleClick}
+          onContextMenu={isSmallScreen ? handleGardenEditModalOpen : undefined}
           endIcon={<KeyboardArrowDownIcon />}
           sx={{
             ml: 1.5,
@@ -181,10 +188,16 @@ const Header = () => {
             fontWeight: 500,
             fontSize: '1.25rem',
             px: 1.5,
-            py: 0.5
+            py: 0.5,
+            [theme.breakpoints.down('sm')]: {
+              fontWeight: 400,
+              fontSize: '1rem'
+            }
           }}
         >
-          {garden?.name ?? 'Garden Planner'}
+          <Box sx={{ width: '100%', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            {garden?.name ?? 'Garden Planner'}
+          </Box>
         </Button>
         <Menu
           id="garden-menu"
@@ -213,11 +226,21 @@ const Header = () => {
             <ListItemText>Add Garden</ListItemText>
           </MenuItem>
         </Menu>
-        <IconButton onClick={handleGardenEditModalOpen}>
-          <EditIcon fontSize="small" />
-        </IconButton>
+        {!isSmallScreen ? (
+          <IconButton onClick={handleGardenEditModalOpen}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+        ) : null}
         <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            [theme.breakpoints.down('sm')]: {
+              gap: 0.5
+            }
+          }}
+        >
           <Actions />
           <UserMenu />
         </Box>

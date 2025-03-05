@@ -1,26 +1,26 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import Avatar from '@mui/material/Avatar';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
-import { useTasksByContainers } from '../tasks/hooks/useTasks';
-import TaskBadge from '../tasks/TaskBadge';
-import Tabs from '../components/tabs/Tabs';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import TabPanel from '../components/tabs/TabPanel';
+import Tabs from '../components/tabs/Tabs';
 import { Container } from '../interface';
+import { getPlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { useTasksByContainers } from '../tasks/hooks/useTasks';
+import TaskBadge from '../tasks/TaskBadge';
 import useSmallScreen from '../utility/smallScreen.util';
-import { useContainers } from './hooks/useContainers';
-import DisplayStatusChip from './DisplayStatusChip';
 import './Containers.css';
-import { getPlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import DisplayStatusChip from './DisplayStatusChip';
+import { useContainers } from './hooks/useContainers';
 
 interface Counts {
   notPlanted: number;
@@ -38,86 +38,89 @@ const Containers = () => {
   const [tab, setTab] = useState(0);
 
   const counts: Record<string, Counts> = useMemo(() => {
-    return containers.reduce((data, container) => {
-      if (!container.slots) {
+    return containers.reduce(
+      (data, container) => {
+        if (!container.slots) {
+          return data;
+        }
+
+        const { slots } = container;
+
+        data[container._id] = Object.keys(slots).reduce(
+          (countData, slotId) => {
+            const slot = slots[+slotId];
+            if (slot.plantInstanceId) {
+              const plantInstance = plantInstancesById[slot.plantInstanceId];
+              if (plantInstance) {
+                const location = getPlantInstanceLocation(plantInstance);
+                const status = getPlantInstanceStatus(
+                  plantInstance,
+                  {
+                    containerId: container._id,
+                    slotId: +slotId,
+                    subSlot: false
+                  },
+                  location
+                );
+                switch (status) {
+                  case 'Planted':
+                    countData.planted += 1;
+                    break;
+                  case 'Transplanted':
+                    countData.transplanted += 1;
+                    break;
+                  case 'Not Planted':
+                    countData.notPlanted += 1;
+                    break;
+                  default:
+                    break;
+                }
+              }
+            }
+
+            const subPlantInstanceId = slot.subSlot?.plantInstanceId;
+            if (subPlantInstanceId) {
+              const plantInstance = plantInstancesById[subPlantInstanceId];
+              if (plantInstance) {
+                const location = getPlantInstanceLocation(plantInstance);
+                const status = getPlantInstanceStatus(
+                  plantInstance,
+                  {
+                    containerId: container._id,
+                    slotId: +slotId,
+                    subSlot: true
+                  },
+                  location
+                );
+                switch (status) {
+                  case 'Planted':
+                    countData.planted += 1;
+                    break;
+                  case 'Transplanted':
+                    countData.transplanted += 1;
+                    break;
+                  case 'Not Planted':
+                    countData.notPlanted += 1;
+                    break;
+                  default:
+                    break;
+                }
+              }
+            }
+
+            return countData;
+          },
+          {
+            notPlanted: 0,
+            planted: 0,
+            transplanted: 0
+          } as Counts
+        );
+
         return data;
-      }
-
-      const { slots } = container;
-
-      data[container._id] = Object.keys(slots).reduce(
-        (countData, slotId) => {
-          const slot = slots[+slotId];
-          if (slot.plantInstanceId) {
-            const plantInstance = plantInstancesById[slot.plantInstanceId];
-            if (plantInstance) {
-              const location = getPlantInstanceLocation(plantInstance);
-              const status = getPlantInstanceStatus(
-                plantInstance,
-                {
-                  containerId: container._id,
-                  slotId: +slotId,
-                  subSlot: false
-                },
-                location
-              );
-              switch (status) {
-                case 'Planted':
-                  countData.planted += 1;
-                  break;
-                case 'Transplanted':
-                  countData.transplanted += 1;
-                  break;
-                case 'Not Planted':
-                  countData.notPlanted += 1;
-                  break;
-                default:
-                  break;
-              }
-            }
-          }
-
-          const subPlantInstanceId = slot.subSlot?.plantInstanceId;
-          if (subPlantInstanceId) {
-            const plantInstance = plantInstancesById[subPlantInstanceId];
-            if (plantInstance) {
-              const location = getPlantInstanceLocation(plantInstance);
-              const status = getPlantInstanceStatus(
-                plantInstance,
-                {
-                  containerId: container._id,
-                  slotId: +slotId,
-                  subSlot: true
-                },
-                location
-              );
-              switch (status) {
-                case 'Planted':
-                  countData.planted += 1;
-                  break;
-                case 'Transplanted':
-                  countData.transplanted += 1;
-                  break;
-                case 'Not Planted':
-                  countData.notPlanted += 1;
-                  break;
-                default:
-                  break;
-              }
-            }
-          }
-
-          return countData;
-        },
-        {
-          notPlanted: 0,
-          planted: 0,
-          transplanted: 0
-        } as Counts
-      );
-
-      return data;
-    }, {} as Record<string, Counts>);
+      },
+      {} as Record<string, Counts>
+    );
   }, [containers, plantInstancesById]);
 
   const renderCounts = useCallback(

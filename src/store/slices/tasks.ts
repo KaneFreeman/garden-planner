@@ -46,7 +46,7 @@ export const TasksSlice = createSlice({
     ) => {
       const tasksByContainer: Record<string, TaskDTO[]> = {};
       action.payload.tasks.forEach((task) => {
-        if (task.plantInstanceId) {
+        if (task.plantInstanceId && task.completedOn === undefined) {
           const plantInstance = action.payload.plantInstancesByIds[task.plantInstanceId];
           if (plantInstance) {
             if (plantInstance.containerId) {

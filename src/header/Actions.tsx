@@ -2,6 +2,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import GrassIcon from '@mui/icons-material/Grass';
 import InboxIcon from '@mui/icons-material/Inbox';
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -11,17 +12,19 @@ import MenuItem from '@mui/material/MenuItem';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import React, { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import './Actions.css';
 import ContainerModal from '../containers/ContainerModal';
 import PlantModal from '../plants/PlantModal';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectFilterPlants, toggleFilterPlants } from '../store/slices/plants';
 import TaskModal from '../tasks/TaskModal';
+import './Actions.css';
 
 const Actions = () => {
   const { pathname } = useLocation();
   const filterPlants = useAppSelector(selectFilterPlants);
   const dispatch = useAppDispatch();
+
+  const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -55,13 +58,27 @@ const Actions = () => {
   }, []);
 
   return (
-    <Box className="actions" sx={{ display: 'flex', gap: 2 }}>
+    <Box
+      className="actions"
+      sx={{
+        display: 'flex',
+        gap: 2,
+        [theme.breakpoints.down('sm')]: {
+          gap: 0.5
+        }
+      }}
+    >
       {pathname === '/plants' ? (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             aria-label="delete"
             size="small"
-            sx={{ ml: 1 }}
+            sx={{
+              ml: 1,
+              [theme.breakpoints.down('sm')]: {
+                ml: 0.5
+              }
+            }}
             onClick={() => dispatch(toggleFilterPlants())}
             title="Delete comment"
             color={filterPlants ? 'secondary' : 'default'}
@@ -77,7 +94,12 @@ const Actions = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleOpen}
-        sx={{ width: '50px' }}
+        sx={{
+          width: '50px',
+          [theme.breakpoints.down('sm')]: {
+            width: '40px'
+          }
+        }}
       >
         <SpeedDialIcon sx={{ transform: open ? 'rotate(45deg)' : 'rotate(0)', transition: 'transform 0.333s' }} />
       </IconButton>

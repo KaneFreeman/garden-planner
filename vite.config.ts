@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
-import { VitePWA } from 'vite-plugin-pwa';
+import { type ManifestOptions, VitePWA } from 'vite-plugin-pwa';
+import manifest from './public/manifest.json' with { type: 'json' };
 
 export default defineConfig({
   // depending on your application, base can also be "/"
@@ -9,7 +10,9 @@ export default defineConfig({
   plugins: [
     react(),
     viteTsconfigPaths(),
-    VitePWA({})
+    VitePWA({
+      manifest: manifest as Partial<ManifestOptions>
+    })
   ],
   server: {
     // this ensures that the browser opens upon server start

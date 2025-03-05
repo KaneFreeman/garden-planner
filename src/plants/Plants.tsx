@@ -1,24 +1,21 @@
-import { useNavigate } from 'react-router';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import List from '@mui/material/List';
 import Box from '@mui/material/Box';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Chip from '@mui/material/Chip';
-import { styled } from '@mui/material/styles';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
+import TabPanel from '../components/tabs/TabPanel';
+import Tabs from '../components/tabs/Tabs';
+import { useContainers } from '../containers/hooks/useContainers';
+import { Plant } from '../interface';
 import { useAppSelector } from '../store/hooks';
 import { selectFilterPlants } from '../store/slices/plants';
-import { useContainers } from '../containers/hooks/useContainers';
-import PlantAvatar from './PlantAvatar';
-import { usePlants } from './usePlants';
 import useSmallScreen from '../utility/smallScreen.util';
+import PlantAvatar from './PlantAvatar';
 import './Plants.css';
-
-const StyledChip = styled(Chip)({
-  height: 24,
-  fontSize: 12
-});
+import { usePlants } from './usePlants';
 
 const Plants = () => {
   const navigate = useNavigate();
@@ -28,34 +25,57 @@ const Plants = () => {
 
   const plants = usePlants(filterPlants ? containers : undefined);
 
+  const [tab, setTab] = useState(0);
+
+  const createListItem = useCallback(
+    (plant: Plant) => (
+      <ListItem key={`plant-${plant._id}`} disablePadding>
+        <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
+          <ListItemAvatar>
+            <PlantAvatar plant={plant} />
+          </ListItemAvatar>
+          <ListItemText
+            primary={plant.name}
+            classes={{
+              root: 'listItemText-root',
+              primary: 'listItemText-primary'
+            }}
+            sx={isSmallScreen ? {} : { flex: 'unset' }}
+          />
+        </ListItemButton>
+      </ListItem>
+    ),
+    [isSmallScreen, navigate]
+  );
+
+  const activePlants = useMemo(() => {
+    return plants.filter((plant) => plant.retired !== true).map(createListItem);
+  }, [plants, createListItem]);
+
+  const archivedPlants = useMemo(() => {
+    return plants.filter((plant) => plant.retired === true).map(createListItem);
+  }, [plants, createListItem]);
+
   return (
     <Box sx={{ width: '100%' }}>
-      <nav aria-label="main plants">
-        <List>
-          {plants.map((plant) => (
-            <ListItem key={`plant-${plant._id}`} disablePadding>
-              <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
-                <ListItemAvatar>
-                  <PlantAvatar plant={plant} faded={plant.retired === true} />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={plant.name}
-                  classes={{
-                    root: 'listItemText-root',
-                    primary: 'listItemText-primary'
-                  }}
-                  sx={isSmallScreen ? {} : { flex: 'unset' }}
-                />
-                {plant.retired === true ? (
-                  <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
-                    <StyledChip label="Retired" color="warning" title="Retired" />
-                  </Box>
-                ) : null}
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </nav>
+      <Tabs ariaLabel="tasks tabs" onChange={(newTab) => setTab(newTab)} sxRoot={{ top: 56 }}>
+        {{
+          label: 'Active'
+        }}
+        {{
+          label: 'Archived'
+        }}
+      </Tabs>
+      <TabPanel value={tab} index={0}>
+        <nav key="active" aria-label="main plants active">
+          <List>{activePlants}</List>
+        </nav>
+      </TabPanel>
+      <TabPanel value={tab} index={1}>
+        <nav key="archived" aria-label="main plants archived">
+          <List>{archivedPlants}</List>
+        </nav>
+      </TabPanel>
     </Box>
   );
 };

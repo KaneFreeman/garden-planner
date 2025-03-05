@@ -3,7 +3,7 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { format } from 'date-fns';
-import { MouseEvent, memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { BaseSlot, CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -12,35 +12,21 @@ import PlantAvatar from '../plants/PlantAvatar';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { findHistoryFrom, getPlantedEvent } from '../utility/history.util';
 import { getSlotTitle } from '../utility/slot.util';
-import useSmallScreen from '../utility/smallScreen.util';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 
 interface ContainerSlotPreviewProps {
   index: number;
   container: Container;
   slot?: Slot;
-  slotSelected: boolean;
   plant?: Plant;
   subSlot?: BaseSlot;
   subPlant?: Plant;
-  isSelecting: boolean;
+  isActionable: boolean | undefined;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
-  onSlotSelect: (plantInstanceId: string) => void;
 }
 
 const ContainerSlotPreview = memo(
-  ({
-    index,
-    container,
-    slot,
-    slotSelected,
-    plant,
-    subSlot,
-    subPlant,
-    isSelecting,
-    onSlotClick,
-    onSlotSelect
-  }: ContainerSlotPreviewProps) => {
+  ({ index, container, slot, plant, subSlot, subPlant, isActionable, onSlotClick }: ContainerSlotPreviewProps) => {
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
     const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
@@ -161,33 +147,9 @@ const ContainerSlotPreview = memo(
       subPlantStatus
     ]);
 
-    const handleSelect = useCallback(
-      (event: MouseEvent) => {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (slot?.plantInstanceId) {
-          onSlotSelect(slot.plantInstanceId);
-        }
-      },
-      [onSlotSelect, slot]
-    );
-
-    const handleClick = useCallback(
-      (event: MouseEvent) => {
-        if ((isSelecting || event.shiftKey) && slot?.plantInstanceId) {
-          onSlotSelect(slot.plantInstanceId);
-          return;
-        }
-
-        if (!isSelecting) {
-          onSlotClick(slot, index);
-        }
-      },
-      [index, isSelecting, onSlotClick, onSlotSelect, slot]
-    );
-
-    const isSmallScreen = useSmallScreen();
+    const handleClick = useCallback(() => {
+      onSlotClick(slot, index);
+    }, [index, onSlotClick, slot]);
 
     return (
       <IconButton
@@ -195,14 +157,13 @@ const ContainerSlotPreview = memo(
           p: 2,
           width: 80,
           height: 80,
-          border: `2px solid ${slotSelected ? '#e6e6e6' : borderColor}`,
+          border: `2px solid ${isActionable === false ? 'rgba(0,0,0,0.7)' : borderColor}`,
           borderRadius: 0
         }}
         onClick={handleClick}
-        onContextMenu={isSmallScreen ? handleSelect : undefined}
         title={title}
       >
-        {slotSelected ? (
+        {isActionable === false ? (
           <Box
             key="plant-overlay"
             sx={{
@@ -212,7 +173,7 @@ const ContainerSlotPreview = memo(
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'rgba(0,0,0,0.85)',
               zIndex: 1
             }}
           />
