@@ -14,7 +14,7 @@ import Tabs from '../components/tabs/Tabs';
 import { Container } from '../interface';
 import { getPlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstances';
-import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { getPlantInstanceStatusForSlot } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useTasksByContainers } from '../tasks/hooks/useTasks';
 import TaskBadge from '../tasks/TaskBadge';
 import useSmallScreen from '../utility/smallScreen.util';
@@ -53,7 +53,7 @@ const Containers = () => {
               const plantInstance = plantInstancesById[slot.plantInstanceId];
               if (plantInstance) {
                 const location = getPlantInstanceLocation(plantInstance);
-                const status = getPlantInstanceStatus(
+                const status = getPlantInstanceStatusForSlot(
                   plantInstance,
                   {
                     containerId: container._id,
@@ -83,7 +83,7 @@ const Containers = () => {
               const plantInstance = plantInstancesById[subPlantInstanceId];
               if (plantInstance) {
                 const location = getPlantInstanceLocation(plantInstance);
-                const status = getPlantInstanceStatus(
+                const status = getPlantInstanceStatusForSlot(
                   plantInstance,
                   {
                     containerId: container._id,

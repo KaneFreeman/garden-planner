@@ -8,7 +8,19 @@ import { ContainerSlotIdentifier, Plant, PlantInstance, TRANSPLANTED } from '../
 import { areContainerSlotLocationsEqual } from '../../utility/containerSlotLocation.util';
 import { findHistoryFrom } from '../../utility/history.util';
 
-export function getPlantInstanceStatus(
+export function getPlantInstanceStatus(instance: PlantInstance): DisplayStatusChipProps['status'] {
+  if (instance.closed) {
+    return 'Closed';
+  }
+
+  if (instance.history?.[0]) {
+    return 'Planted';
+  }
+
+  return 'Not Planted';
+}
+
+export function getPlantInstanceStatusForSlot(
   instance: PlantInstance | undefined,
   slotLocation: ContainerSlotIdentifier | null | undefined,
   plantLocation: ContainerSlotIdentifier | null | undefined
@@ -41,7 +53,7 @@ export function usePlantInstanceStatus(
   plantLocation: ContainerSlotIdentifier | null | undefined
 ): DisplayStatusChipProps['status'] {
   return useMemo(
-    () => getPlantInstanceStatus(instance, slotLocation, plantLocation),
+    () => getPlantInstanceStatusForSlot(instance, slotLocation, plantLocation),
     [instance, plantLocation, slotLocation]
   );
 }

@@ -44,11 +44,19 @@ const DisplayStatusChip = ({ status, count, shrink, size = 'small', sx }: Displa
 
   const title = useMemo(() => `${count ? `${count} ` : ''}${status}`, [count, status]);
 
+  const finalSx: SxProps<Theme> = useMemo(
+    () => ({
+      ...(sx ?? {}),
+      fontWeight: 600
+    }),
+    [sx]
+  );
+
   if (size === 'small') {
-    return <StyledChip sx={sx} label={label} color={color} title={title} />;
+    return <StyledChip sx={finalSx} label={label} color={color} title={title} />;
   }
 
-  return <Chip sx={sx} label={label} color={color} title={title} />;
+  return <Chip sx={finalSx} label={label} color={color} title={title} />;
 };
 
 export default DisplayStatusChip;

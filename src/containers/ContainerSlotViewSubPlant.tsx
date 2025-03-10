@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { BaseSlot, Container, Plant, PlantInstance } from '../interface';
 import { getPlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
-import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { getPlantInstanceStatusForSlot } from '../plant-instances/hooks/usePlantInstanceStatus';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlants } from '../plants/usePlants';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
@@ -91,7 +91,7 @@ const ContainerSlotViewSubPlant = ({
 
   const renderedSubPlant = useMemo(() => {
     const subLocation = getPlantInstanceLocation(subPlantInstance);
-    const subStatus = getPlantInstanceStatus(
+    const subStatus = getPlantInstanceStatusForSlot(
       subPlantInstance,
       {
         containerId: id,

@@ -169,11 +169,14 @@ export function usePlants(containersToFilter?: Container[]) {
     if (containersToFilter) {
       const uniquePlantsInContainers = containersToFilter
         .flatMap((container) => {
-          return (
-            plantInstancesByContainer[container._id]
+          return [
+            ...(plantInstancesByContainer[container._id]
               ?.filter((plantInstance) => plantInstance.closed !== true && isNotNullish(plantInstance.plant))
-              .map((plantInstance) => plantInstance.plant) ?? []
-          );
+              .map((plantInstance) => plantInstance.plant) ?? []),
+            ...Object.values(container.slots ?? {})
+              .filter((s) => !s.plantInstanceId && s.plant)
+              .map((s) => s.plant)
+          ];
         })
         .filter((value, index, self) => {
           return self.indexOf(value) === index;

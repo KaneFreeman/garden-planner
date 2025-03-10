@@ -50,7 +50,7 @@ import {
 import PicturesView from '../pictures/PicturesView';
 import PlantInstanceHistoryView from '../plant-instances/PlantInstanceHistoryView';
 import { getPlantInstanceLocation, usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
-import { getPlantInstanceStatus, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { getPlantInstanceStatusForSlot, usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import {
   useFertilizePlantInstance,
   useHarvestPlantInstance,
@@ -288,7 +288,7 @@ const ContainerSlotViewActive = ({
 
   const renderedSubPlant = useMemo(() => {
     const subLocation = getPlantInstanceLocation(subPlantInstance);
-    const subStatus = getPlantInstanceStatus(
+    const subStatus = getPlantInstanceStatusForSlot(
       subPlantInstance,
       {
         containerId: id,
