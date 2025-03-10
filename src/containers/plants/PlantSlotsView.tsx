@@ -11,7 +11,7 @@ import { PlantInstance } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesById } from '../../plant-instances/hooks/usePlantInstances';
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
-import { getFirstEventAt, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
+import { getFirstEventAt, getPlantedEvent, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
 import { getSlotTitle } from '../../utility/slot.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
@@ -128,7 +128,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         Object.keys(container?.slots ?? {}).length > 1 ? ` - ${getSlotTitle(instance.slotId, container?.rows)}` : ''
       }${instance.subSlot ? ' - Sub-Slot' : ''}`;
 
-      const firstEvent = getFirstEventAt(instance, instance);
+      const firstEvent = getPlantedEvent(instance);
       let secondary: string | undefined;
       if (firstEvent) {
         secondary = `${firstEvent.status} on ${format(firstEvent.date, 'MMM d, yyyy')}`;
@@ -142,6 +142,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
           primary={primary}
           secondary={secondary}
           showStatus={showStatus}
+          showAvatar
         />
       );
     },
@@ -186,7 +187,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
             key="inactive-slots"
             label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box>Inactive Slots</Box>
+                <Box>Past Slots</Box>
                 <Chip label={inactivePlantInstances.length} color="secondary" variant="outlined" />
               </Box>
             }
