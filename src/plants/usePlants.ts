@@ -147,7 +147,24 @@ export function usePlants(containersToFilter?: Container[]) {
   const plantInstancesByContainer = useAppSelector(selectPlantInstancesByContainers);
   const plants = useMemo(() => {
     let data = plantDtos.map(fromPlantDTO);
-    data.sort((a, b) => a.name.localeCompare(b.name));
+    data.sort((a, b) => {
+      let result: number;
+      if (a.type == null && b.type == null) {
+        result = 0;
+      } else if (a.type == null) {
+        result = -1;
+      } else if (b.type == null) {
+        result = 1;
+      } else {
+        result = a.type.localeCompare(b.type);
+      }
+
+      if (result === 0) {
+        return a.name.localeCompare(b.name);
+      }
+
+      return result;
+    });
 
     if (containersToFilter) {
       const uniquePlantsInContainers = containersToFilter
