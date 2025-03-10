@@ -7,7 +7,7 @@ import { ContainerSlotIdentifier, PlantInstance, Slot } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../../plants/usePlants';
-import { getFirstEventAt, useFirstEventStaticLocationComparator } from '../../utility/history.util';
+import { getPlantedEvent, useFirstEventStaticLocationComparator } from '../../utility/history.util';
 import { getPlantTitle } from '../../utility/plant.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
@@ -69,7 +69,7 @@ const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
       }
 
       let secondary: string | undefined;
-      const firstEvent = getFirstEventAt(instance, location);
+      const firstEvent = getPlantedEvent(instance);
       if (firstEvent) {
         secondary = `${firstEvent.status} on ${format(firstEvent.date, 'MMM d, yyyy')}`;
       }
@@ -86,7 +86,7 @@ const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
         />
       );
     },
-    [location, plantInstanceClick, plantsById]
+    [plantInstanceClick, plantsById]
   );
 
   return (

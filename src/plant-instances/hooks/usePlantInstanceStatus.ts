@@ -6,14 +6,14 @@ import { useMemo } from 'react';
 import { DisplayStatusChipProps } from '../../containers/DisplayStatusChip';
 import { ContainerSlotIdentifier, Plant, PlantInstance, TRANSPLANTED } from '../../interface';
 import { areContainerSlotLocationsEqual } from '../../utility/containerSlotLocation.util';
-import { findHistoryFrom } from '../../utility/history.util';
+import { findHistoryFrom, getPlantedEvent } from '../../utility/history.util';
 
 export function getPlantInstanceStatus(instance: PlantInstance): DisplayStatusChipProps['status'] {
   if (instance.closed) {
     return 'Closed';
   }
 
-  if (instance.history && instance.history.length > 0 && instance.history[0]) {
+  if (getPlantedEvent(instance)) {
     return 'Planted';
   }
 
@@ -33,7 +33,7 @@ export function getPlantInstanceStatusForSlot(
     return 'Closed';
   }
 
-  if (instance.history && instance.history.length > 0 && instance.history[0]) {
+  if (getPlantedEvent(instance)) {
     if (
       !areContainerSlotLocationsEqual(slotLocation, plantLocation) &&
       findHistoryFrom(instance, slotLocation, TRANSPLANTED)
