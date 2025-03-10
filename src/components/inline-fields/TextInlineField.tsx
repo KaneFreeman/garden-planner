@@ -26,7 +26,7 @@ interface TextInlineFieldProps {
     | 'button'
     | 'overline'
     | 'inherit';
-  value: string | undefined;
+  value: string;
   valueActive?: boolean;
   valueVariant?:
     | 'h1'
@@ -43,8 +43,8 @@ interface TextInlineFieldProps {
     | 'button'
     | 'overline'
     | 'inherit';
-  onChange(value: string | undefined): void;
-  renderer?: (value: string | undefined) => React.ReactNode;
+  onChange(value: string): boolean | Promise<boolean> | void | Promise<void>;
+  renderer?: (value: string) => React.ReactNode;
   noMargin?: boolean;
   noPadding?: boolean;
   sx?: SxProps<Theme> | undefined;
@@ -65,7 +65,7 @@ const TextInlineField = ({
   readOnly = false
 }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
-  const [internalValue, setInternalValue] = useState<string | undefined>(value);
+  const [internalValue, setInternalValue] = useState<string>(value);
 
   useEffect(() => {
     if (value !== internalValue) {
@@ -79,11 +79,13 @@ const TextInlineField = ({
   }, []);
 
   const handleClose = useCallback(
-    (save: boolean) => () => {
+    (save: boolean) => async () => {
       setOpen(false);
       if (internalValue !== value) {
         if (save) {
-          onChange(internalValue);
+          if ((await onChange(internalValue)) === false) {
+            setInternalValue(value);
+          }
         } else {
           setInternalValue(value);
         }

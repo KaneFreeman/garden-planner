@@ -133,12 +133,19 @@ const PlantView = () => {
                 valueVariant="h6"
                 value={plant.name}
                 valueActive
-                onChange={(name) => handleUpdatePlant({ name })}
+                onChange={(name) => {
+                  if (name === '') {
+                    return false;
+                  }
+
+                  handleUpdatePlant({ name });
+                }}
                 noMargin
                 noPadding
                 sx={{
                   minWidth: 0
                 }}
+                renderer={(value) => `${plant.type ? `${plant.type} - ` : ''}${value}`}
               />
             ),
             actions: (
@@ -227,7 +234,7 @@ const PlantView = () => {
         />
         <TextInlineField
           label="Url"
-          value={plant.url}
+          value={plant.url ?? ''}
           onChange={(url) => handleUpdatePlant({ url })}
           renderer={(value) =>
             value ? (

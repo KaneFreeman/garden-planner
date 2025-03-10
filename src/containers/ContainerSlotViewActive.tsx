@@ -262,6 +262,7 @@ const ContainerSlotViewActive = ({
           raw: (
             <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {value.type ? `${value.type} - ` : ''}
                 {value.name}
               </Box>
             </Button>
@@ -271,7 +272,7 @@ const ContainerSlotViewActive = ({
       }
 
       return {
-        primary: value.name,
+        primary: `${value.type ? `${value.type} - ` : ''}${value.name}`,
         avatar: <PlantAvatar plant={value} />
       };
     },
@@ -318,6 +319,7 @@ const ContainerSlotViewActive = ({
             </ListItemAvatar>
             <Button variant="text" onClick={onPlantClick(subPlant)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
+                {subPlant.type ? `${subPlant.type} - ` : ''}
                 {subPlant.name}
               </Box>
             </Button>

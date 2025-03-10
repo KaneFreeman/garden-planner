@@ -35,7 +35,7 @@ const Plants = () => {
             <PlantAvatar plant={plant} />
           </ListItemAvatar>
           <ListItemText
-            primary={plant.name}
+            primary={`${plant.type ? `${plant.type} - ` : ''}${plant.name}`}
             classes={{
               root: 'listItemText-root',
               primary: 'listItemText-primary'
