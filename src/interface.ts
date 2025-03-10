@@ -623,7 +623,7 @@ export function toStatus(rawStatus: string): HistoryStatus {
   }
 }
 
-export function toStartedFromType(rawStartedFrom: string): StartedFromType {
+export function toStartedFromType(rawStartedFrom: unknown): StartedFromType {
   switch (rawStartedFrom) {
     case 'Transplant':
       return STARTED_FROM_TYPE_TRANSPLANT;

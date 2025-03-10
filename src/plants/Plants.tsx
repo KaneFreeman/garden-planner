@@ -65,7 +65,7 @@ const Plants = () => {
     });
 
     plantInstances.forEach((plantInstance) => {
-      if (!plantInstance.plant || plantInstance.closed) {
+      if (!plantInstance || plantInstance.closed || !plantInstance.plant || !(plantInstance.plant in counts)) {
         return;
       }
 

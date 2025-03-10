@@ -13,7 +13,7 @@ export function getPlantInstanceStatus(instance: PlantInstance): DisplayStatusCh
     return 'Closed';
   }
 
-  if (instance.history?.[0]) {
+  if (instance.history && instance.history.length > 0 && instance.history[0]) {
     return 'Planted';
   }
 
@@ -33,7 +33,7 @@ export function getPlantInstanceStatusForSlot(
     return 'Closed';
   }
 
-  if (instance.history?.[0]) {
+  if (instance.history && instance.history.length > 0 && instance.history[0]) {
     if (
       !areContainerSlotLocationsEqual(slotLocation, plantLocation) &&
       findHistoryFrom(instance, slotLocation, TRANSPLANTED)
