@@ -127,7 +127,7 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
             onChange={(_, newValue) => update({ type: newValue ?? undefined })}
           />
           <TextField label="URL" value={editData?.url} onChange={(url) => update({ url })} variant="outlined" />
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1, gap: 1 }}>
             <NumberTextField
               label="Days to Germinate"
               value={editData?.daysToGerminate?.[0]}
@@ -140,7 +140,7 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
               variant="outlined"
               wholeNumber
             />
-            &nbsp;-&nbsp;
+            <Box>-</Box>
             <NumberTextField
               value={editData?.daysToGerminate?.[1]}
               onChange={(value) =>
@@ -153,7 +153,7 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
               wholeNumber
             />
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1.5, mb: 1, gap: 1 }}>
             <NumberTextField
               label="Days to Maturity"
               value={editData?.daysToMaturity?.[0]}
@@ -166,7 +166,7 @@ const PlantModal = ({ open, onClose }: PlantModalProperties) => {
               variant="outlined"
               wholeNumber
             />
-            &nbsp;-&nbsp;
+            <Box>-</Box>
             <NumberTextField
               value={editData?.daysToMaturity?.[1]}
               onChange={(value) =>
