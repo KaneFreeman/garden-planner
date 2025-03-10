@@ -32,7 +32,6 @@ const DateDialog = ({
   const finishUpdateStatusFertilized = useCallback(() => {
     onConfirm(date);
     onClose();
-    setDate(getMidnight());
   }, [date, onClose, onConfirm]);
 
   return (

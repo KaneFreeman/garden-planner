@@ -7,6 +7,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ParkIcon from '@mui/icons-material/Park';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import YardIcon from '@mui/icons-material/Yard';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -26,20 +27,17 @@ import React, { MouseEvent, ReactNode, useCallback, useEffect, useMemo, useState
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DateDialog from '../components/DateDialog';
-import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, Plant, Slot } from '../interface';
+import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, PLANTED, Plant, Slot } from '../interface';
 import {
   useBulkReopenClosePlantInstances,
   usePlantInstancesById,
   useUpdatePlantInstanceTasksInContainer
 } from '../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../plants/usePlants';
-import { getMidnight } from '../utility/date.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
-import { useTasksByContainer } from '../tasks/hooks/useTasks';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 
 type ActionMode = 'none' | 'plant' | 'fertilize' | 'close';
 
@@ -116,20 +114,19 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const handleEditOpen = useCallback(() => setEditing(true), []);
   const handleEditClose = useCallback(() => setEditing(false), []);
 
-  const tasks = useTasksByContainer(container._id);
   const fertilizableInstanceIds = useMemo(
     () =>
-      tasks.tasks
-        .filter((t) => t.type === FERTILIZE && t.completedOn === undefined && t.plantInstanceId !== undefined)
-        .map((t) => t.plantInstanceId),
-    [tasks.tasks]
+      Object.values(plantInstancesById)
+        .filter((pi) => !pi?.closed && pi.history?.find((h) => h.status === PLANTED))
+        .map((pi) => pi._id),
+    [plantInstancesById]
   );
   const plantableInstanceIds = useMemo(
     () =>
-      tasks.tasks
-        .filter((t) => t.type === PLANT && t.completedOn === undefined && t.plantInstanceId !== undefined)
-        .map((t) => t.plantInstanceId),
-    [tasks.tasks]
+      Object.values(plantInstancesById)
+        .filter((pi) => !pi?.closed && !pi.history?.find((h) => h.status === PLANTED))
+        .map((pi) => pi._id),
+    [plantInstancesById]
   );
   const closableInstanceIds = useMemo(
     () =>
@@ -155,42 +152,44 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const bulkReopenClosePlantInstances = useBulkReopenClosePlantInstances();
 
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
-  const [fertilizeDate, setFertilizeDate] = useState<Date>(getMidnight());
   const handleFertilizeClose = useCallback(() => {
     setIsFertilizeModalOpen(false);
     setSelectedPlantInstance(null);
   }, []);
-  const handleFertilizeConfirm = useCallback(() => {
-    if (selectedPlantInstance == null) {
-      return;
-    }
-    fertilizeContainer(fertilizeDate, [selectedPlantInstance]);
-    setIsFertilizeModalOpen(false);
-    setSelectedPlantInstance(null);
-  }, [fertilizeContainer, fertilizeDate, selectedPlantInstance]);
+  const handleFertilizeConfirm = useCallback(
+    (fertilizeDate: Date) => {
+      if (selectedPlantInstance == null) {
+        return;
+      }
+      fertilizeContainer(fertilizeDate, [selectedPlantInstance]);
+      setIsFertilizeModalOpen(false);
+      setSelectedPlantInstance(null);
+    },
+    [fertilizeContainer, selectedPlantInstance]
+  );
   const handleFertilize = useCallback(() => {
     handleMoreMenuClose();
-    setFertilizeDate(getMidnight());
     setIsFertilizeModalOpen(true);
   }, []);
 
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
-  const [plantDate, setPlantDate] = useState<Date>(getMidnight());
   const handlePlantClose = useCallback(() => {
     setIsPlantModalOpen(false);
     setSelectedPlantInstance(null);
   }, []);
-  const handlePlantConfirm = useCallback(() => {
-    if (selectedPlantInstance == null) {
-      return;
-    }
-    plantContainer(plantDate, [selectedPlantInstance]);
-    setIsPlantModalOpen(false);
-    setSelectedPlantInstance(null);
-  }, [plantContainer, plantDate, selectedPlantInstance]);
+  const handlePlantConfirm = useCallback(
+    (plantDate: Date) => {
+      if (selectedPlantInstance == null) {
+        return;
+      }
+      plantContainer(plantDate, [selectedPlantInstance]);
+      setIsPlantModalOpen(false);
+      setSelectedPlantInstance(null);
+    },
+    [plantContainer, selectedPlantInstance]
+  );
   const handlePlant = useCallback(() => {
     handleMoreMenuClose();
-    setPlantDate(getMidnight());
     setIsPlantModalOpen(true);
   }, []);
 
@@ -535,16 +534,16 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                width: (isPortrait ? container.rows : container.columns ?? 1) * 80 + 4,
-                height: (isPortrait ? container.columns : container.rows ?? 1) * 80 + 4
+                width: (isPortrait ? container.rows : (container.columns ?? 1)) * 80 + 4,
+                height: (isPortrait ? container.columns : (container.rows ?? 1)) * 80 + 4
               }}
             >
               <Box
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: `repeat(${isPortrait ? container.rows : container.columns}, minmax(0, 1fr))`,
-                  width: (isPortrait ? container.rows : container.columns ?? 1) * 80,
-                  height: (isPortrait ? container.columns : container.rows ?? 1) * 80,
+                  width: (isPortrait ? container.rows : (container.columns ?? 1)) * 80,
+                  height: (isPortrait ? container.columns : (container.rows ?? 1)) * 80,
                   border: '2px solid #2c2c2c'
                 }}
               >
