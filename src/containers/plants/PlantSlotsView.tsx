@@ -11,7 +11,7 @@ import { PlantInstance } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesById } from '../../plant-instances/hooks/usePlantInstances';
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
-import { getFirstEventAt, getPlantedEvent, useFirstEventComparatorWithSecondary } from '../../utility/history.util';
+import { getPlantedEvent, usePlantedEventComparatorWithSecondary } from '../../utility/history.util';
 import { getSlotTitle } from '../../utility/slot.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
@@ -89,7 +89,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
     [containersById]
   );
 
-  const firstEventComparatorWithSecondary = useFirstEventComparatorWithSecondary(secondaryCompare);
+  const firstEventComparatorWithSecondary = usePlantedEventComparatorWithSecondary(secondaryCompare);
 
   const [activePlantInstances, inactivePlantInstances] = useMemo(() => {
     const active: PlantInstance[] = [];

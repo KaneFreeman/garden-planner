@@ -7,7 +7,7 @@ import { ContainerSlotIdentifier, PlantInstance, Slot } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../../plants/usePlants';
-import { getPlantedEvent, useFirstEventStaticLocationComparator } from '../../utility/history.util';
+import { getPlantedEvent, usePlantedEventComparator } from '../../utility/history.util';
 import { getPlantTitle } from '../../utility/plant.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
@@ -17,12 +17,12 @@ interface PastSlotPlantsProps {
   slot: Slot;
 }
 
-const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
+const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
 
-  const firstEventStaticLocationComparator = useFirstEventStaticLocationComparator(location);
+  const firstEventStaticLocationComparator = usePlantedEventComparator();
 
   const plantInstances = usePlantInstancesFromSlot(slot);
   const sortedPlantInstances = useMemo(() => {

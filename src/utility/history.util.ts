@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import {
   ContainerSlotIdentifier,
-  PlantInstance,
   HistoryStatus,
-  TRANSPLANTED,
+  PLANTED,
+  PlantInstance,
   PlantInstanceHistory,
-  PLANTED
+  TRANSPLANTED
 } from '../interface';
 
 export function matchLocations(
@@ -100,15 +100,13 @@ export function getFirstEventAt(
 
 type PlantInstanceCompare = (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => number;
 
-function compareFirstEvents(
+function comparePlantedEvents(
   a: PlantInstance | undefined | null,
-  aLocation: ContainerSlotIdentifier | undefined | null,
   b: PlantInstance | undefined | null,
-  bLocation: ContainerSlotIdentifier | undefined | null,
   secondaryCompare?: PlantInstanceCompare
 ) {
-  const aEvent = getFirstEventAt(a, aLocation);
-  const bEvent = getFirstEventAt(b, bLocation);
+  const aEvent = getPlantedEvent(a);
+  const bEvent = getPlantedEvent(b);
 
   const aDate = aEvent?.date;
   const bDate = bEvent?.date;
@@ -135,22 +133,19 @@ function compareFirstEvents(
   return result;
 }
 
-export const firstEventComparator = (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
-  return compareFirstEvents(a, a, b, b);
+export const plantedEventComparator = (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
+  return comparePlantedEvents(a, b);
 };
 
-export const useFirstEventComparatorWithSecondary = (secondaryCompare: PlantInstanceCompare) =>
+export const usePlantedEventComparator = () =>
+  useCallback((a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
+    return comparePlantedEvents(a, b);
+  }, []);
+
+export const usePlantedEventComparatorWithSecondary = (secondaryCompare: PlantInstanceCompare) =>
   useCallback(
     (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
-      return compareFirstEvents(a, a, b, b, secondaryCompare);
+      return comparePlantedEvents(a, b, secondaryCompare);
     },
     [secondaryCompare]
-  );
-
-export const useFirstEventStaticLocationComparator = (location: ContainerSlotIdentifier | undefined | null) =>
-  useCallback(
-    (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
-      return compareFirstEvents(a, location, b, location);
-    },
-    [location]
   );
