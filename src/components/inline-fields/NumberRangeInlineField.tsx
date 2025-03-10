@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import ListItemButton from '@mui/material/ListItemButton';
-import IconButton from '@mui/material/IconButton';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import ListItemButton from '@mui/material/ListItemButton';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import NumberTextField from '../NumberTextField';
 
 interface NumberRangeInlineFieldProps {
@@ -76,7 +76,7 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
         {label}
       </Typography>
       {open ? (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <NumberTextField
             autoFocus
             value={internalValue?.[0]}
@@ -87,8 +87,9 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
             wholeNumber={wholeNumber}
             min={min}
             max={max}
+            inputProps={{ sx: { height: 40, boxSizing: 'border-box' } }}
           />
-          &nbsp;-&nbsp;
+          <Box>-</Box>
           <NumberTextField
             value={internalValue?.[1]}
             onChange={handleOnChange(1)}
@@ -98,6 +99,7 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
             wholeNumber={wholeNumber}
             min={min}
             max={max}
+            inputProps={{ sx: { height: 40, boxSizing: 'border-box' } }}
           />
           <IconButton onClick={handleClose(false)} color="error">
             <CloseIcon />
@@ -110,9 +112,9 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
         <Typography
           variant="body1"
           component="div"
-          sx={{ flexGrow: 1, height: 32, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
+          sx={{ flexGrow: 1, height: 40, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0 }}
         >
-          <ListItemButton key="dateInlineField-display" onClick={open ? undefined : handleOpen} sx={{ minHeight: 40 }}>
+          <ListItemButton key="dateInlineField-display" onClick={open ? undefined : handleOpen} sx={{ height: 40 }}>
             {value?.[0]}
             {value?.[1] ? <Box>&nbsp;-&nbsp;{value[1]}</Box> : null}
           </ListItemButton>

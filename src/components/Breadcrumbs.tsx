@@ -33,7 +33,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
   const filteredTrail = useMemo(() => filterNullish(trail), [trail]);
 
   const backTrail: ReactNode[] = useMemo(() => {
-    const finalTrail = backPath && backLabel ? [{ to: backPath, label: backLabel }] : filteredTrail ?? [];
+    const finalTrail = backPath && backLabel ? [{ to: backPath, label: backLabel }] : (filteredTrail ?? []);
     if (finalTrail.length === 0) {
       return [null];
     }

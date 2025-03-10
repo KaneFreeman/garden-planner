@@ -141,6 +141,7 @@ const DrawerInlineSelect = <T extends string | number | object>(props: DrawerInl
             listType === 'options' &&
             (value === input || (hasDefault(props) && input === props.defaultValue && isNullish(value)))
           }
+          sx={{ height: 40 }}
         >
           {result.avatar ? <ListItemAvatar sx={{ display: 'flex' }}>{result.avatar}</ListItemAvatar> : null}
           {result.icon ? <ListItemIcon>{result.icon}</ListItemIcon> : null}

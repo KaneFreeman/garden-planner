@@ -12,7 +12,7 @@ interface PlantDataViewProps {
 
 const TextBox = styled(Box)({
   display: 'flex',
-  minHeight: 32
+  minHeight: 40
 });
 
 const PlantDataView = ({ type }: PlantDataViewProps) => {

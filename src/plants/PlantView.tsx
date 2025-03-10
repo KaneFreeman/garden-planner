@@ -145,6 +145,9 @@ const PlantView = () => {
                 sx={{
                   minWidth: 0
                 }}
+                editSx={{
+                  width: isSmallScreen ? undefined : 500
+                }}
                 renderer={(value) => `${plant.type ? `${plant.type} - ` : ''}${value}`}
               />
             ),

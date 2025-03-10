@@ -1,14 +1,15 @@
-import React, { KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
-import { SxProps, Theme } from '@mui/material/styles';
 import { InputProps } from '@mui/material/Input';
-import { InputBaseComponentProps } from '@mui/material/InputBase';
 import InputAdornment from '@mui/material/InputAdornment';
+import type { InputBaseComponentProps } from '@mui/material/InputBase';
+import { SxProps, Theme } from '@mui/material/styles';
 import MuiTextField from '@mui/material/TextField';
+import React, { KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
 
 interface NumberTextFieldProps {
   id?: string;
   label?: string;
   value: number | undefined;
+  inputProps?: InputBaseComponentProps | undefined;
   onChange?: (value: number) => void;
   required?: boolean;
   error?: boolean;
@@ -30,6 +31,7 @@ const NumberTextField = ({
   id,
   label,
   value,
+  inputProps,
   onChange,
   required = false,
   error = false,
@@ -70,9 +72,9 @@ const NumberTextField = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  const inputProps: Partial<InputProps> = useMemo(() => {
+  const finalInputProps: Partial<InputProps> = useMemo(() => {
     const allInputProps: Partial<InputProps> = {};
-    const baseInputProps: InputBaseComponentProps = {};
+    const baseInputProps: InputBaseComponentProps = { ...inputProps };
 
     if (min !== undefined) {
       baseInputProps.min = min;
@@ -96,7 +98,7 @@ const NumberTextField = ({
 
     allInputProps.inputProps = baseInputProps;
     return allInputProps;
-  }, [endAdornment, max, min, startAdornment, step]);
+  }, [endAdornment, inputProps, max, min, startAdornment, step]);
 
   return (
     <MuiTextField
@@ -125,7 +127,7 @@ const NumberTextField = ({
         }
       }}
       required={required}
-      InputProps={inputProps}
+      InputProps={finalInputProps}
       fullWidth
       error={Boolean(
         error ||

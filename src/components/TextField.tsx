@@ -1,6 +1,6 @@
 import { InputProps } from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
-import { InputBaseComponentProps } from '@mui/material/InputBase';
+import type { InputBaseComponentProps } from '@mui/material/InputBase';
 import MuiTextField from '@mui/material/TextField';
 import { SxProps, Theme } from '@mui/material/styles';
 import React, { HTMLInputTypeAttribute, KeyboardEventHandler, useCallback, useMemo, useState } from 'react';

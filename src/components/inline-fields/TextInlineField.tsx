@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import IconButton from '@mui/material/IconButton';
-import { SxProps, Theme } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import { SxProps, Theme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TextField from '../TextField';
 
 interface TextInlineFieldProps {
@@ -48,6 +48,7 @@ interface TextInlineFieldProps {
   noMargin?: boolean;
   noPadding?: boolean;
   sx?: SxProps<Theme> | undefined;
+  editSx?: SxProps<Theme> | undefined;
   readOnly?: boolean;
 }
 
@@ -62,6 +63,7 @@ const TextInlineField = ({
   noMargin = false,
   noPadding = false,
   sx,
+  editSx,
   readOnly = false
 }: TextInlineFieldProps) => {
   const [open, setOpen] = useState(false);
@@ -117,8 +119,12 @@ const TextInlineField = ({
     );
   }, [renderer, value]);
 
+  const finalSx: SxProps<Theme> = useMemo(() => {
+    return { ...(sx ?? {}), ...(open && editSx ? editSx : {}) };
+  }, [editSx, open, sx]);
+
   return (
-    <Box onClick={readOnly || open ? undefined : handleOpen} sx={sx}>
+    <Box onClick={readOnly || open ? undefined : handleOpen} sx={finalSx}>
       {label ? (
         <Typography
           variant={labelVariant}
@@ -146,13 +152,14 @@ const TextInlineField = ({
           }
           onKeyDown={onKeyDown}
           sx={{ mt: 0, mb: 0 }}
+          inputProps={{ sx: { height: 40, boxSizing: 'border-box' } }}
           variant="outlined"
         />
       ) : (
         <Typography
           variant={valueVariant}
           component="div"
-          sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ...(noMargin ? {} : { ml: -2, mr: -2, mt: 0.5 }) }}
+          sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', ...(noMargin ? {} : { ml: -2, mr: -2, mt: 0 }) }}
           color={valueActive ? 'text.primary' : undefined}
         >
           {readOnly ? (
@@ -163,7 +170,7 @@ const TextInlineField = ({
             <ListItemButton
               key="textInlineField-display-button"
               onClick={open ? undefined : handleOpen}
-              sx={{ ...(noPadding ? { p: 0 } : {}), minHeight: 40 }}
+              sx={{ ...(noPadding ? { p: 0 } : {}), height: 40 }}
             >
               {displayValue}
             </ListItemButton>
