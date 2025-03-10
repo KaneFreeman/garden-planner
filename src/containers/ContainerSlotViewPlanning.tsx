@@ -15,6 +15,7 @@ import { BaseSlot, Container, Plant, PlantInstance, STARTED_FROM_TYPE_SEED, Slot
 import { useAddPlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlants } from '../plants/usePlants';
+import { getPlantTitle } from '../utility/plant.util';
 import computeSeason from '../utility/season.util';
 import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
@@ -130,7 +131,7 @@ const ContainerSlotViewPlanning = ({
           raw: (
             <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                {value.name}
+                {getPlantTitle(value)}
               </Box>
             </Button>
           ),
@@ -139,7 +140,7 @@ const ContainerSlotViewPlanning = ({
       }
 
       return {
-        primary: value.name,
+        primary: getPlantTitle(value),
         avatar: <PlantAvatar plant={value} />
       };
     },

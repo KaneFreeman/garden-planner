@@ -1,20 +1,21 @@
+import CloseIcon from '@mui/icons-material/Close';
+import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import CommentsView from '../components/comments/CommentsView';
+import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { PlantInstance } from '../interface';
+import PicturesView from '../pictures/PicturesView';
+import PlantAvatar from '../plants/PlantAvatar';
 import { usePlant } from '../plants/usePlants';
 import { isNullish } from '../utility/null.util';
-import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
-import PlantAvatar from '../plants/PlantAvatar';
-import PicturesView from '../pictures/PicturesView';
-import CommentsView from '../components/comments/CommentsView';
+import { getPlantTitle } from '../utility/plant.util';
 import PlantInstanceHistoryView from './PlantInstanceHistoryView';
 
 interface PlantInstanceDialogProps {
@@ -46,7 +47,7 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {plant.name}
+          {getPlantTitle(plant)}
           <IconButton aria-label="close" onClick={onClose}>
             <CloseIcon />
           </IconButton>
@@ -61,7 +62,7 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
                 <PlantAvatar plant={plant} />
               </ListItemAvatar>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                {plant.name}
+                {getPlantTitle(plant)}
               </Box>
             </ListItemButton>
           }
@@ -69,8 +70,8 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
         <SimpleInlineField label="Started From" value={plantInstance.startedFrom} />
         <SimpleInlineField label="Planted Count" value={plantInstance.plantedCount} />
         <PlantInstanceHistoryView plantInstance={plantInstance} />
-        <PicturesView data={plantInstance} alt={plant.name} />
-        <CommentsView id={`plant-${plantInstance._id}`} data={plantInstance} alt={plant.name} />
+        <PicturesView data={plantInstance} alt={getPlantTitle(plant)} />
+        <CommentsView id={`plant-${plantInstance._id}`} data={plantInstance} alt={getPlantTitle(plant)} />
       </DialogContent>
     </Dialog>
   );

@@ -13,6 +13,7 @@ import { getPlantInstanceStatusForSlot } from '../plant-instances/hooks/usePlant
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlants } from '../plants/usePlants';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
+import { getPlantTitle } from '../utility/plant.util';
 import { getSlotTitle } from '../utility/slot.util';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 
@@ -122,7 +123,7 @@ const ContainerSlotViewSubPlant = ({
             </ListItemAvatar>
             <Button variant="text" onClick={onPlantClick(subPlant)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                {subPlant.name}
+                {getPlantTitle(subPlant)}
               </Box>
             </Button>
             {subPlantInstance ? subDisplayStatus : null}

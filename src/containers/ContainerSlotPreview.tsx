@@ -11,6 +11,7 @@ import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import PlantAvatar from '../plants/PlantAvatar';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { findHistoryFrom, getPlantedEvent } from '../utility/history.util';
+import { getPlantTitle } from '../utility/plant.util';
 import { getSlotTitle } from '../utility/slot.util';
 import useSlotPreviewBadgeColor from './hooks/useSlotPreviewBadgeColor';
 
@@ -83,7 +84,7 @@ const ContainerSlotPreview = memo(
       if (!slot) {
         slotTitle += ` - Not Planted`;
       } else if (plant) {
-        slotTitle += ` - ${plant.name}, ${plantStatus}`;
+        slotTitle += ` - ${getPlantTitle(plant)}, ${plantStatus}`;
         if (plantStatus === PLANTED) {
           const plantedEvent = getPlantedEvent(plantInstance);
           if (plantedEvent) {
@@ -107,7 +108,7 @@ const ContainerSlotPreview = memo(
       }
 
       if (slot?.subSlot && subPlantInstance?.closed !== true && subPlant) {
-        slotTitle += ` and ${subPlant.name}, ${subPlantStatus}`;
+        slotTitle += ` and ${getPlantTitle(subPlant)}, ${subPlantStatus}`;
 
         if (subPlantStatus === PLANTED) {
           slotTitle += `, Planted`;

@@ -15,6 +15,7 @@ import { usePlantInstances } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useAppSelector } from '../store/hooks';
 import { selectFilterPlants } from '../store/slices/plants';
+import { getPlantTitle } from '../utility/plant.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import PlantAvatar from './PlantAvatar';
 import './Plants.css';
@@ -98,7 +99,7 @@ const Plants = () => {
             <PlantAvatar plant={plant} />
           </ListItemAvatar>
           <ListItemText
-            primary={`${plant.type ? `${plant.type} - ` : ''}${plant.name}`}
+            primary={getPlantTitle(plant)}
             classes={{
               root: 'listItemText-root',
               primary: 'listItemText-primary'

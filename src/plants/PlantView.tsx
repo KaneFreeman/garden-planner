@@ -26,6 +26,7 @@ import TextInlineField from '../components/inline-fields/TextInlineField';
 import PlantSlotsView from '../containers/plants/PlantSlotsView';
 import { MATURITY_FROM_SEED, MATURITY_FROM_TYPES, MaturityFromType, PLANT_TYPES, Plant, PlantType } from '../interface';
 import PicturesView from '../pictures/PicturesView';
+import { getPlantTitle } from '../utility/plant.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import PlantDataView from './PlantDataView';
 import { usePlant, useRemovePlant, useUpdatePlant } from './usePlants';
@@ -148,7 +149,7 @@ const PlantView = () => {
                 editSx={{
                   width: isSmallScreen ? undefined : 500
                 }}
-                renderer={(value) => `${plant.type ? `${plant.type} - ` : ''}${value}`}
+                renderer={(value) => getPlantTitle(plant, value)}
               />
             ),
             actions: (
@@ -268,8 +269,8 @@ const PlantView = () => {
         />
         <PlantSlotsView plantId={id} />
         <PlantDataView type={plant.type} />
-        <PicturesView data={plant} alt={plant.name} />
-        <CommentsView id={`plant-${id}`} data={plant} alt={plant.name} />
+        <PicturesView data={plant} alt={getPlantTitle(plant)} />
+        <CommentsView id={`plant-${id}`} data={plant} alt={getPlantTitle(plant)} />
       </Box>
       <Dialog
         open={deleting}

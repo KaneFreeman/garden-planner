@@ -1,10 +1,11 @@
-import { memo, useMemo } from 'react';
+import GrassIcon from '@mui/icons-material/Grass';
 import Avatar from '@mui/material/Avatar';
 import { SxProps, Theme } from '@mui/material/styles';
-import GrassIcon from '@mui/icons-material/Grass';
+import { memo, useMemo } from 'react';
 import { ContainerSlotIdentifier, Plant, PlantInstance } from '../interface';
-import { usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import { usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
+import { getPlantTitle } from '../utility/plant.util';
 
 interface PlantAvatarProperties {
   plant?: Plant;
@@ -48,7 +49,7 @@ const PlantAvatar = memo(
       return (
         <Avatar
           variant={variant}
-          alt={plant.name}
+          alt={getPlantTitle(plant)}
           sx={{ width: size, height: size, minWidth: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
         >
           <GrassIcon color="primary" />
@@ -60,7 +61,7 @@ const PlantAvatar = memo(
       <Avatar
         variant={variant}
         src={plant.pictures[0].thumbnail}
-        alt={plant.name}
+        alt={getPlantTitle(plant)}
         sx={{ width: size, height: size, minWidth: size, boxSizing: 'border-box', ...borderSx, ...extraSx, ...sx }}
       />
     );

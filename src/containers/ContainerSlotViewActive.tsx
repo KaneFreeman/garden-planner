@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -63,6 +64,7 @@ import ContainerSlotTasksView from '../tasks/container/ContainerSlotTasksView';
 import { useTasksByPlantInstance } from '../tasks/hooks/useTasks';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 import { getPlantedEvent } from '../utility/history.util';
+import { getPlantTitle } from '../utility/plant.util';
 import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import { toTitleCase } from '../utility/string.util';
@@ -70,7 +72,6 @@ import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import useContainerOptions from './hooks/useContainerOptions';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import PastSlotPlants from './plants/PastSlotPlants';
-import DialogContentText from '@mui/material/DialogContentText';
 
 interface CircleProps {
   backgroundColor: string;
@@ -262,8 +263,7 @@ const ContainerSlotViewActive = ({
           raw: (
             <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                {value.type ? `${value.type} - ` : ''}
-                {value.name}
+                {getPlantTitle(value)}
               </Box>
             </Button>
           ),
@@ -272,7 +272,7 @@ const ContainerSlotViewActive = ({
       }
 
       return {
-        primary: `${value.type ? `${value.type} - ` : ''}${value.name}`,
+        primary: getPlantTitle(value),
         avatar: <PlantAvatar plant={value} />
       };
     },
@@ -319,8 +319,7 @@ const ContainerSlotViewActive = ({
             </ListItemAvatar>
             <Button variant="text" onClick={onPlantClick(subPlant)} sx={{ ml: -1 }}>
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
-                {subPlant.type ? `${subPlant.type} - ` : ''}
-                {subPlant.name}
+                {getPlantTitle(subPlant)}
               </Box>
             </Button>
             {subPlantInstance ? subDisplayStatus : null}

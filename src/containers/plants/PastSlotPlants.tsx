@@ -8,6 +8,7 @@ import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../../plants/usePlants';
 import { getFirstEventAt, useFirstEventStaticLocationComparator } from '../../utility/history.util';
+import { getPlantTitle } from '../../utility/plant.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import SlotListItem from '../SlotListItem';
 
@@ -32,10 +33,13 @@ const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
 
   const plantInstancesById = useMemo(
     () =>
-      plantInstances.reduce((acc, plantInstance) => {
-        acc[plantInstance._id] = plantInstance;
-        return acc;
-      }, {} as Record<string, PlantInstance>),
+      plantInstances.reduce(
+        (acc, plantInstance) => {
+          acc[plantInstance._id] = plantInstance;
+          return acc;
+        },
+        {} as Record<string, PlantInstance>
+      ),
     [plantInstances]
   );
   const plantsById = usePlantsById();
@@ -75,7 +79,7 @@ const PastSlotPlants = ({ location, slot }: PastSlotPlantsProps) => {
           key={`${key}-${index}`}
           instance={instance}
           onClick={plantInstanceClick}
-          primary={plant.name}
+          primary={getPlantTitle(plant)}
           secondary={secondary}
           showStatus={false}
           showAvatar

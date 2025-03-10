@@ -124,8 +124,8 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
       const { showStatus = true, openDialog = false } = options || {};
       const container = containersById[instance.containerId];
 
-      const primary = `${container?.name} - ${
-        Object.keys(container?.slots ?? {}).length > 1 ? getSlotTitle(instance.slotId, container?.rows) : ''
+      const primary = `${container?.name}${
+        Object.keys(container?.slots ?? {}).length > 1 ? ` - ${getSlotTitle(instance.slotId, container?.rows)}` : ''
       }${instance.subSlot ? ' - Sub-Slot' : ''}`;
 
       const firstEvent = getFirstEventAt(instance, instance);

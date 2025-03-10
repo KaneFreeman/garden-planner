@@ -1,26 +1,27 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { PlantInstance, Slot, TRANSPLANTED } from '../interface';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Loading from '../components/Loading';
-import PlantAvatar from '../plants/PlantAvatar';
-import { usePlant } from '../plants/usePlants';
+import { PlantInstance, Slot, TRANSPLANTED } from '../interface';
+import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import {
   useAddPlantInstance,
   usePlantInstance,
   useUpdatePlantInstance
 } from '../plant-instances/hooks/usePlantInstances';
-import { useContainer } from './hooks/useContainers';
-import ContainerView from './ContainerView';
 import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
-import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
-import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
+import PlantAvatar from '../plants/PlantAvatar';
+import { usePlant } from '../plants/usePlants';
 import { findHistoryFromIndex } from '../utility/history.util';
+import { getPlantTitle } from '../utility/plant.util';
+import ContainerView from './ContainerView';
+import { useContainer } from './hooks/useContainers';
+import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 
 const ContainerSelectViewRoute = () => {
   const { id: containerId, index, otherContainerId } = useParams();
@@ -93,26 +94,29 @@ const ContainerSelectViewRoute = () => {
           history = history.slice(0, historyIndex);
         }
 
-        promise = addPlantInstance({
-          ...plantInstance,
-          history: [
-            ...history,
-            {
-              from: {
-                containerId,
-                slotId: indexNumber,
-                subSlot: sourceIsSubSlot
-              },
-              to: {
-                containerId: otherContainerId,
-                slotId: otherSlotIndex,
-                subSlot
-              },
-              date: transplantedDate,
-              status: TRANSPLANTED
-            }
-          ]
-        }, plantInstance._id);
+        promise = addPlantInstance(
+          {
+            ...plantInstance,
+            history: [
+              ...history,
+              {
+                from: {
+                  containerId,
+                  slotId: indexNumber,
+                  subSlot: sourceIsSubSlot
+                },
+                to: {
+                  containerId: otherContainerId,
+                  slotId: otherSlotIndex,
+                  subSlot
+                },
+                date: transplantedDate,
+                status: TRANSPLANTED
+              }
+            ]
+          },
+          plantInstance._id
+        );
       } else {
         promise = updatePlantInstance({
           ...plantInstance,
@@ -191,7 +195,7 @@ const ContainerSelectViewRoute = () => {
                   size={28}
                   sx={{ mr: 1.5 }}
                 />
-                <ListItemText secondary="Slot" primary={plant?.name ?? 'Empty'} />
+                <ListItemText secondary="Slot" primary={plant ? getPlantTitle(plant) : 'Empty'} />
               </ListItemButton>
               <ListItemButton onClick={onSlotSelectConfirm(true)}>
                 <PlantAvatar
@@ -201,7 +205,7 @@ const ContainerSelectViewRoute = () => {
                   size={28}
                   sx={{ mr: 1.5 }}
                 />
-                <ListItemText secondary="Sub Slot" primary={subPlant?.name ?? 'Empty'} />
+                <ListItemText secondary="Sub Slot" primary={subPlant ? getPlantTitle(subPlant) : 'Empty'} />
               </ListItemButton>
             </List>
           </DialogContent>
