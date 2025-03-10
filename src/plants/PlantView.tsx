@@ -233,7 +233,6 @@ const PlantView = () => {
           options={sortedPlantTypes}
           onChange={(type) => handleUpdatePlant({ type })}
           renderer={renderPlantType}
-          sx={{ mt: 1 }}
         />
         <TextInlineField
           label="Url"
@@ -266,7 +265,6 @@ const PlantView = () => {
           options={MATURITY_FROM_TYPES}
           onChange={(maturityFrom) => handleUpdatePlant({ maturityFrom })}
           renderer={renderMaturityFromType}
-          sx={{ mt: 1 }}
         />
         <PlantSlotsView plantId={id} />
         <PlantDataView type={plant.type} />

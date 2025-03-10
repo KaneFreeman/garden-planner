@@ -92,7 +92,7 @@ const NumberInlineField = ({ label, value, onChange, wholeNumber, min, max }: Nu
         <Typography
           variant="body1"
           component="div"
-          sx={{ flexGrow: 1, height: 40, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0.5 }}
+          sx={{ flexGrow: 1, height: 40, display: 'flex', alignItems: 'center', ml: -2, mr: -2, mt: 0 }}
         >
           <ListItemButton
             key="numberInlineField-display"

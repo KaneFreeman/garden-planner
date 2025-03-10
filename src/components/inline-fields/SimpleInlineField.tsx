@@ -20,7 +20,7 @@ const SimpleInlineField = ({ label, value }: SimpleInlineFieldProps) => {
       <Typography
         variant="body1"
         component="div"
-        sx={{ mt: 1, flexGrow: 1, minHeight: 40, display: 'flex', alignItems: 'center' }}
+        sx={{ flexGrow: 1, minHeight: 40, display: 'flex', alignItems: 'center' }}
       >
         {value}
       </Typography>
