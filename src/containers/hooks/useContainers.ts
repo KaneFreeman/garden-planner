@@ -83,7 +83,7 @@ export const useUpdateContainer = () => {
   const runOperation = useContainerOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
-  const addContainer = useCallback(
+  const updateContainer = useCallback(
     async (data: Container) => {
       const response = await runOperation(() =>
         fetch(Api.container_IdPut, {
@@ -101,7 +101,7 @@ export const useUpdateContainer = () => {
     [fetch, garden?._id, runOperation]
   );
 
-  return addContainer;
+  return updateContainer;
 };
 
 export const useRemoveContainer = () => {

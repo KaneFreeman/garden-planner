@@ -439,6 +439,7 @@ export interface Container {
   _id: string;
   name: string;
   type: ContainerType;
+  year?: number;
   rows: number;
   columns: number;
   slots?: Record<number, Slot>;
@@ -450,6 +451,7 @@ export interface ContainerDTO {
   _id: string;
   name: string;
   type: ContainerType;
+  year?: number;
   rows: number;
   columns: number;
   slots?: Record<number, SlotDTO>;

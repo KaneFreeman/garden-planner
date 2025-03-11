@@ -187,7 +187,7 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
                   {historyItem.status}
                   {extra}
                 </Typography>
-                <Typography variant="body2" color="GrayText">
+                <Typography variant="body2" color="GrayText" title={format(historyItem.date, 'MMM d, yyyy h:mm a')}>
                   {date}
                 </Typography>
               </TimelineContent>

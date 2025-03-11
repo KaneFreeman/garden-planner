@@ -1,17 +1,18 @@
-import React, { useCallback, useState } from 'react';
+import HomeIcon from '@mui/icons-material/Home';
+import ParkIcon from '@mui/icons-material/Park';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import HomeIcon from '@mui/icons-material/Home';
-import ParkIcon from '@mui/icons-material/Park';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import React, { useCallback, useState } from 'react';
 import NumberTextField from '../components/NumberTextField';
+import Select from '../components/Select';
 import TextField from '../components/TextField';
 import { Container, CONTAINER_TYPES, STARTED_FROM_TYPES } from '../interface';
 import { useAddContainer } from './hooks/useContainers';
-import Select from '../components/Select';
 
 interface ContainerModalProperties {
   open: boolean;
@@ -98,6 +99,18 @@ const ContainerModal = ({ open, onClose }: ContainerModalProperties) => {
               value: entry
             }))}
             sx={{ mt: 1.5, mb: 1 }}
+          />
+          <MobileDatePicker
+            label="Year"
+            value={editData?.year ? new Date(editData.year, 0, 1) : null}
+            views={['year']}
+            onChange={(newYearDate: Date | null) => update({ year: newYearDate?.getFullYear() })}
+            slotProps={{
+              actionBar: {
+                actions: ['clear', 'cancel', 'accept']
+              },
+              textField: { sx: { mt: 1.5, mb: 1, width: '100%', flexGrow: 1 } }
+            }}
           />
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
             <NumberTextField

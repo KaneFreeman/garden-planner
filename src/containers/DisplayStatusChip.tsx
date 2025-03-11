@@ -1,11 +1,6 @@
+import { SxProps, Theme } from '@mui/material/styles';
 import { useMemo } from 'react';
-import { styled, SxProps, Theme } from '@mui/material/styles';
-import Chip from '@mui/material/Chip';
-
-const StyledChip = styled(Chip)({
-  height: 24,
-  fontSize: 12
-});
+import Chip from '../components/Chip';
 
 export interface DisplayStatusChipProps {
   status: 'Not Planted' | 'Planted' | 'Transplanted' | 'Closed' | 'Planning';
@@ -44,19 +39,11 @@ const DisplayStatusChip = ({ status, count, shrink, size = 'small', sx }: Displa
 
   const title = useMemo(() => `${count ? `${count} ` : ''}${status}`, [count, status]);
 
-  const finalSx: SxProps<Theme> = useMemo(
-    () => ({
-      ...(sx ?? {}),
-      fontWeight: 600
-    }),
-    [sx]
+  return (
+    <Chip color={color} title={title} size={size} sx={sx}>
+      {label}
+    </Chip>
   );
-
-  if (size === 'small') {
-    return <StyledChip sx={finalSx} label={label} color={color} title={title} />;
-  }
-
-  return <Chip sx={finalSx} label={label} color={color} title={title} />;
 };
 
 export default DisplayStatusChip;

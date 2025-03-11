@@ -3,3 +3,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.listItemText-root .listItemText-secondary {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}

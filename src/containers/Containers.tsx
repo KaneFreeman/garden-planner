@@ -7,7 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -21,6 +21,28 @@ import useSmallScreen from '../utility/smallScreen.util';
 import './Containers.css';
 import DisplayStatusChip from './DisplayStatusChip';
 import { useContainers } from './hooks/useContainers';
+import Chip from '../components/Chip';
+import { generateTagColor } from '../utility/color.util';
+import ContainersYearGroup from './ContainersYearGroup';
+
+function sortContainers(a: Container, b: Container): number {
+  let result: number;
+  if (a.year == null && b.year == null) {
+    result = 0;
+  } else if (a.year == null) {
+    result = -1;
+  } else if (b.year == null) {
+    result = 1;
+  } else {
+    result = b.year - a.year;
+  }
+
+  if (result === 0) {
+    return a.name.localeCompare(b.name);
+  }
+
+  return result;
+}
 
 interface Counts {
   notPlanted: number;
@@ -161,10 +183,20 @@ const Containers = () => {
           </ListItemAvatar>
           <ListItemText
             primary={container.name}
-            secondary={`${container.rows} x ${container.columns}`}
+            secondary={
+              <>
+                {container.rows} x {container.columns}
+                {container.year != null ? (
+                  <Chip title={`${container.year}`} colors={generateTagColor(container.year)} sx={{ ml: 1 }}>
+                    {container.year}
+                  </Chip>
+                ) : null}
+              </>
+            }
             classes={{
               root: 'listItemText-root',
-              primary: 'listItemText-primary'
+              primary: 'listItemText-primary',
+              secondary: 'listItemText-secondary'
             }}
             sx={isSmallScreen ? {} : { flex: 'unset' }}
           />
@@ -176,11 +208,35 @@ const Containers = () => {
   );
 
   const activeContainers = useMemo(() => {
-    return containers.filter((container) => !container.archived).map(createListItem);
+    const data = containers.filter((container) => !container.archived);
+
+    data.sort(sortContainers);
+
+    return data.map(createListItem);
   }, [containers, createListItem]);
 
-  const archivedContainers = useMemo(() => {
-    return containers.filter((container) => container.archived).map(createListItem);
+  const [years, archivedContainers] = useMemo(() => {
+    const data = containers.filter((container) => container.archived);
+
+    data.sort(sortContainers);
+
+    return data.reduce<[string[], Record<string, ReactNode[]>]>(
+      (acc, container) => {
+        if (container.year !== undefined && !acc[0].includes(`${container.year}`)) {
+          acc[0].push(`${container.year}`);
+          acc[1][`${container.year}`] = [];
+        } else {
+          if (!('None' in acc[1])) {
+            acc[1]['None'] = [];
+          }
+        }
+
+        acc[1][container.year !== undefined ? `${container.year}` : 'None'].push(createListItem(container));
+
+        return acc;
+      },
+      [[], {}]
+    );
   }, [containers, createListItem]);
 
   return (
@@ -200,7 +256,12 @@ const Containers = () => {
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <nav key="archived" aria-label="main containers archived">
-          <List>{archivedContainers}</List>
+          <List>
+            {'None' in archivedContainers ? archivedContainers['None'] : null}
+            {years.map((year) => (
+              <ContainersYearGroup year={year}>{archivedContainers[year]}</ContainersYearGroup>
+            ))}
+          </List>
         </nav>
       </TabPanel>
     </Box>

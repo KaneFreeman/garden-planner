@@ -26,6 +26,7 @@ import Typography from '@mui/material/Typography';
 import React, { MouseEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Chip from '../components/Chip';
 import DateDialog from '../components/DateDialog';
 import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, PLANTED, Plant, Slot } from '../interface';
 import {
@@ -34,6 +35,7 @@ import {
   useUpdatePlantInstanceTasksInContainer
 } from '../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../plants/usePlants';
+import { generateTagColor } from '../utility/color.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
@@ -344,6 +346,11 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                   >
                     {titleRenderer ? titleRenderer(container.name) : container.name}
                   </Box>
+                  {container.year != null ? (
+                    <Chip title={`${container.year}`} colors={generateTagColor(container.year)} sx={{ ml: 1 }}>
+                      {container.year}
+                    </Chip>
+                  ) : null}
                   <Typography
                     variant="subtitle1"
                     component="span"
