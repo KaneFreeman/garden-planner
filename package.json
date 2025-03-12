@@ -59,7 +59,7 @@
     "@typescript-eslint/parser": "8.26.1",
     "cross-env": "7.0.3",
     "eslint": "8.57.1",
-    "eslint-config-prettier": "10.0.2",
+    "eslint-config-prettier": "10.1.1",
     "eslint-import-resolver-typescript": "3.8.4",
     "eslint-plugin-compat": "6.0.2",
     "eslint-plugin-import": "2.31.0",
