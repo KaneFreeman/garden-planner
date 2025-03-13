@@ -243,7 +243,7 @@ interface Rest {
       };
       body: ContainerTaskUpdateDTO;
     };
-    response: ContainerDTO;
+    response: number;
   };
   'GET:/garden/{gardenId}/container/{containerId}': {
     method: 'GET';
@@ -275,6 +275,16 @@ interface Rest {
       };
     };
     response: ContainerDTO;
+  };
+  'POST:/garden/{gardenId}/container/{containerId}/finish-planning': {
+    method: 'POST';
+    request: {
+      params: {
+        gardenId: string;
+        containerId: string;
+      };
+    };
+    response: number;
   };
   'POST:/picture': {
     method: 'POST';

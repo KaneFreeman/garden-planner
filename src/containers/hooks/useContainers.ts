@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
 import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
 import { Container, fromContainerDTO, toContainerDTO } from '../../interface';
+import { useGetPlantInstances } from '../../plant-instances/hooks/usePlantInstances';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   selectContainer,
@@ -170,3 +171,29 @@ export function useContainersById() {
 
   return containersById;
 }
+
+export const useFinishPlanningContainer = (containerId: string | undefined) => {
+  const fetch = useFetch();
+  const garden = useAppSelector(selectSelectedGarden);
+  const getPlantInstances = useGetPlantInstances({ force: true });
+  const getContainers = useGetContainers({ force: true });
+  const getTasks = useGetTasks({ force: true });
+
+  const finishPlanningContainer = useCallback(async () => {
+    const response = await fetch(Api.container_FinishPlanningPost, {
+      params: { containerId: containerId ?? '', gardenId: garden?._id ?? '' }
+    });
+
+    await getPlantInstances();
+    await getTasks();
+    await getContainers();
+
+    if (response === undefined || typeof response === 'string') {
+      return 0;
+    }
+
+    return response;
+  }, [containerId, fetch, garden?._id, getContainers, getPlantInstances, getTasks]);
+
+  return finishPlanningContainer;
+};

@@ -1,5 +1,6 @@
 import ArchiveIcon from '@mui/icons-material/Archive';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import GrassIcon from '@mui/icons-material/Grass';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
@@ -39,7 +40,7 @@ import { generateTagColor } from '../utility/color.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
-import { useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
+import { useFinishPlanningContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 
 type ActionMode = 'none' | 'plant' | 'fertilize' | 'close';
 
@@ -89,6 +90,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
+  const finishPlanningContainer = useFinishPlanningContainer(container._id);
   const fertilizeContainer = useUpdatePlantInstanceTasksInContainer(container._id, FERTILIZE);
   const plantContainer = useUpdatePlantInstanceTasksInContainer(container._id, PLANT);
 
@@ -98,7 +100,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const isPortrait = useMemo(() => orientation === 'portrait', [orientation]);
 
   const [deleting, setDeleting] = useState(false);
-
   const handleOnDelete = useCallback(() => {
     handleMoreMenuClose();
     setDeleting(true);
@@ -248,6 +249,41 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     },
     [container, updateContainer]
   );
+
+  const [areYouDonePlanning, setAreYouDonePlanning] = useState(false);
+  const handleFinishPlanningClick = useCallback(() => {
+    handleMoreMenuClose();
+    setAreYouDonePlanning(true);
+  }, []);
+  const handleFinishPlanningConfirm = useCallback(() => {
+    setAreYouDonePlanning(false);
+    finishPlanningContainer();
+  }, [finishPlanningContainer]);
+  const handleFinishPlanningClose = useCallback(() => setAreYouDonePlanning(false), []);
+
+  const hasSlotsInPlanning = useMemo(() => {
+    if (!container._id || !container.slots) {
+      return false;
+    }
+
+    const slotIndexes = Object.keys(container.slots);
+    for (const slotIndex of slotIndexes) {
+      const slot = container.slots[+slotIndex];
+      if (!slot) {
+        continue;
+      }
+
+      if (!slot.plantInstanceId && slot.plant) {
+        return true;
+      }
+
+      if (slot.subSlot && !slot.subSlot.plantInstanceId && slot.subSlot.plant) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [container._id, container.slots]);
 
   const handleRotate = useCallback(() => {
     const newOrientation = orientation === 'portrait' ? 'landscape' : 'portrait';
@@ -403,6 +439,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           'aria-labelledby': 'basic-button'
                         }}
                       >
+                        {hasSlotsInPlanning ? (
+                          <MenuItem key="finish-planning-mobile-button" onClick={handleFinishPlanningClick}>
+                            <ListItemIcon>
+                              <EditNoteIcon color="primary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="primary">Finish Planning</Typography>
+                          </MenuItem>
+                        ) : null}
                         <MenuItem
                           key="archive-mobile-button"
                           color="primary"
@@ -444,6 +488,18 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         />
                         Rotate
                       </Button>
+                      {hasSlotsInPlanning ? (
+                        <Button
+                          key="finish-planning-button"
+                          variant="outlined"
+                          color="primary"
+                          onClick={handleFinishPlanningClick}
+                          title="Finish planning container"
+                        >
+                          <EditNoteIcon sx={{ mr: 1 }} fontSize="small" />
+                          Finish Planning
+                        </Button>
+                      ) : null}
                       <Button
                         key="archive-button"
                         variant="outlined"
@@ -578,6 +634,27 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           </Button>
           <Button onClick={handleOnDeleteConfirm} color="error">
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={areYouDonePlanning}
+        onClose={handleFinishPlanningClose}
+        aria-labelledby="finish-planning-container-title"
+        aria-describedby="finish-planning-container-description"
+      >
+        <DialogTitle id="finish-planning-container-title">Finish planning container</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="finish-planning-container-description">
+            Are you sure you are finished planning this container?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleFinishPlanningClose} color="secondary" autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={handleFinishPlanningConfirm} color="primary">
+            Finish Planning
           </Button>
         </DialogActions>
       </Dialog>
