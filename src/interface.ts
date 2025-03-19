@@ -371,43 +371,19 @@ export interface ContainerTaskUpdateDTO {
 export interface ContainerSlotIdentifier {
   containerId: string;
   slotId: number;
-  subSlot?: boolean;
 }
 
-export interface BaseSlot {
+export interface Slot {
   plant?: string | null;
   plantInstanceId?: string | null;
   plantInstanceHistory?: string[];
 }
 
-export interface Slot extends BaseSlot {
-  subSlot?: BaseSlot;
-}
-
-export type BaseSlotWithIdentifier = BaseSlot & ContainerSlotIdentifier;
-
-export interface BaseSlotDTO {
+export interface SlotDTO {
   plantInstanceId?: string | null;
 }
 
-export interface SlotDTO extends BaseSlotDTO {
-  subSlot?: BaseSlotDTO;
-}
-
-function fromBaseSlotDTO(dto: BaseSlotDTO): BaseSlot {
-  return {
-    ...dto
-  };
-}
-
-export function fromSlotDTO(dto: SlotDTO): Slot {
-  return {
-    ...fromBaseSlotDTO(dto),
-    subSlot: dto.subSlot ? fromBaseSlotDTO(dto.subSlot) : undefined
-  };
-}
-
-export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
+function fromSlotDTO(dto: SlotDTO): Slot {
   return {
     ...dto
   };
@@ -415,8 +391,7 @@ export function toBaseSlotDTO(dto: BaseSlot): BaseSlotDTO {
 
 export function toSlotDTO(dto: Slot): SlotDTO {
   return {
-    ...toBaseSlotDTO(dto),
-    subSlot: dto.subSlot ? toBaseSlotDTO(dto.subSlot) : undefined
+    ...dto
   };
 }
 
@@ -666,7 +641,6 @@ export interface PlantInstance {
   _id: string;
   containerId: string;
   slotId: number;
-  subSlot?: boolean;
   plant: string | null;
   created: Date;
   pictures?: PictureData[];
@@ -682,7 +656,6 @@ export interface PlantInstanceDTO {
   _id: string;
   containerId: string;
   slotId: number;
-  subSlot?: boolean;
   plant: string | null;
   created: string;
   pictures?: PictureDataDTO[];

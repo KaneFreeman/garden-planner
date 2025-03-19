@@ -12,7 +12,7 @@ export function matchLocations(
   a: ContainerSlotIdentifier | undefined | null,
   b: ContainerSlotIdentifier | undefined | null
 ): boolean {
-  return a?.containerId === b?.containerId && a?.slotId === b?.slotId && a?.subSlot === b?.subSlot;
+  return a?.containerId === b?.containerId && a?.slotId === b?.slotId;
 }
 
 export function findHistoryFromIndex(

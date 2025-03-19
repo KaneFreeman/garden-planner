@@ -1,53 +1,28 @@
-import { BaseSlot, Container, PlantInstance } from '../interface';
+import { Container, PlantInstance, Slot } from '../interface';
 import ContainerSlotViewActive from './ContainerSlotViewActive';
 import ContainerSlotViewPlanning from './ContainerSlotViewPlanning';
 
 interface ContainerSlotViewProps {
   id: string;
   index: number;
-  type: 'slot' | 'sub-slot';
   container: Container;
-  slot: BaseSlot;
+  slot: Slot;
   plantInstance: PlantInstance | undefined;
-  subSlot?: BaseSlot;
-  subPlantInstance?: PlantInstance;
-  onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
+  onSlotChange: (slot: Slot) => Promise<Container | undefined>;
 }
 
-const ContainerSlotView = ({
-  id,
-  index,
-  type,
-  container,
-  slot,
-  plantInstance,
-  subSlot,
-  subPlantInstance,
-  onSlotChange
-}: ContainerSlotViewProps) => {
+const ContainerSlotView = ({ id, index, container, slot, plantInstance, onSlotChange }: ContainerSlotViewProps) => {
   return plantInstance ? (
     <ContainerSlotViewActive
       id={id}
       index={index}
-      type={type}
       container={container}
       slot={slot}
       plantInstance={plantInstance}
-      subSlot={subSlot}
-      subPlantInstance={subPlantInstance}
       onSlotChange={onSlotChange}
     />
   ) : (
-    <ContainerSlotViewPlanning
-      id={id}
-      index={index}
-      type={type}
-      container={container}
-      slot={slot}
-      subSlot={subSlot}
-      subPlantInstance={subPlantInstance}
-      onSlotChange={onSlotChange}
-    />
+    <ContainerSlotViewPlanning id={id} index={index} container={container} slot={slot} onSlotChange={onSlotChange} />
   );
 };
 

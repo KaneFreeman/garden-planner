@@ -9,6 +9,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
 import { Container } from '../interface';
@@ -17,13 +18,12 @@ import { usePlantInstancesById } from '../plant-instances/hooks/usePlantInstance
 import { getPlantInstanceStatusForSlot } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useTasksByContainers } from '../tasks/hooks/useTasks';
 import TaskBadge from '../tasks/TaskBadge';
+import { generateTagColor } from '../utility/color.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import './Containers.css';
+import ContainersYearGroup from './ContainersYearGroup';
 import DisplayStatusChip from './DisplayStatusChip';
 import { useContainers } from './hooks/useContainers';
-import Chip from '../components/Chip';
-import { generateTagColor } from '../utility/color.util';
-import ContainersYearGroup from './ContainersYearGroup';
 
 function sortContainers(a: Container, b: Container): number {
   let result: number;
@@ -79,38 +79,7 @@ const Containers = () => {
                   plantInstance,
                   {
                     containerId: container._id,
-                    slotId: +slotId,
-                    subSlot: false
-                  },
-                  location
-                );
-                switch (status) {
-                  case 'Planted':
-                    countData.planted += 1;
-                    break;
-                  case 'Transplanted':
-                    countData.transplanted += 1;
-                    break;
-                  case 'Not Planted':
-                    countData.notPlanted += 1;
-                    break;
-                  default:
-                    break;
-                }
-              }
-            }
-
-            const subPlantInstanceId = slot.subSlot?.plantInstanceId;
-            if (subPlantInstanceId) {
-              const plantInstance = plantInstancesById[subPlantInstanceId];
-              if (plantInstance) {
-                const location = getPlantInstanceLocation(plantInstance);
-                const status = getPlantInstanceStatusForSlot(
-                  plantInstance,
-                  {
-                    containerId: container._id,
-                    slotId: +slotId,
-                    subSlot: true
+                    slotId: +slotId
                   },
                   location
                 );

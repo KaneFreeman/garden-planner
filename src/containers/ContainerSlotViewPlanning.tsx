@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import { BaseSlot, Container, Plant, PlantInstance, STARTED_FROM_TYPE_SEED, Slot } from '../interface';
+import { Container, Plant, STARTED_FROM_TYPE_SEED, Slot } from '../interface';
 import { useAddPlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlants } from '../plants/usePlants';
@@ -19,7 +19,6 @@ import { getPlantTitle } from '../utility/plant.util';
 import computeSeason from '../utility/season.util';
 import { getSlotTitle } from '../utility/slot.util';
 import useSmallScreen from '../utility/smallScreen.util';
-import ContainerSlotViewSubPlant from './ContainerSlotViewSubPlant';
 import DisplayStatusChip from './DisplayStatusChip';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import PastSlotPlants from './plants/PastSlotPlants';
@@ -27,24 +26,12 @@ import PastSlotPlants from './plants/PastSlotPlants';
 interface ContainerSlotViewPlanningProps {
   id: string;
   index: number;
-  type: 'slot' | 'sub-slot';
   container: Container;
-  slot: BaseSlot;
-  subSlot?: BaseSlot;
-  subPlantInstance?: PlantInstance;
-  onSlotChange: (slot: BaseSlot) => Promise<Container | undefined>;
+  slot: Slot;
+  onSlotChange: (slot: Slot) => Promise<Container | undefined>;
 }
 
-const ContainerSlotViewPlanning = ({
-  id,
-  index,
-  type,
-  container,
-  slot,
-  subSlot,
-  subPlantInstance,
-  onSlotChange
-}: ContainerSlotViewPlanningProps) => {
+const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }: ContainerSlotViewPlanningProps) => {
   const navigate = useNavigate();
 
   const isSmallScreen = useSmallScreen();
@@ -53,7 +40,7 @@ const ContainerSlotViewPlanning = ({
 
   const path = useMemo(() => (id ? `/container/${id}/slot/${index}` : undefined), [id, index]);
 
-  const slotLocation = useContainerSlotLocation(id, index, type === 'sub-slot');
+  const slotLocation = useContainerSlotLocation(id, index);
 
   const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
@@ -86,7 +73,6 @@ const ContainerSlotViewPlanning = ({
     addPlantInstance({
       containerId: id,
       slotId: index,
-      subSlot: type === 'sub-slot',
       plant: slot.plant ?? null,
       created: new Date(),
       startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
@@ -95,7 +81,7 @@ const ContainerSlotViewPlanning = ({
     });
 
     handleMoreMenuClose();
-  }, [addPlantInstance, container.startedFrom, id, index, slot.plant, type]);
+  }, [addPlantInstance, container.startedFrom, id, index, slot.plant]);
 
   const title = useMemo(() => getSlotTitle(index, container?.rows), [container?.rows, index]);
 
@@ -159,17 +145,11 @@ const ContainerSlotViewPlanning = ({
             {
               to: `/container/${container._id}`,
               label: container.name
-            },
-            type === 'sub-slot'
-              ? {
-                  to: `/container/${container._id}/slot/${index}`,
-                  label: title
-                }
-              : null
+            }
           ]}
         >
           {{
-            current: type === 'sub-slot' ? 'Sub Plant' : title,
+            current: title,
             actions: (
               <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                 {isSmallScreen ? (
@@ -236,15 +216,6 @@ const ContainerSlotViewPlanning = ({
           renderer={renderPlant}
           sx={{ mt: 1 }}
         />
-        {type === 'slot' ? (
-          <ContainerSlotViewSubPlant
-            id={id}
-            index={index}
-            container={container}
-            subSlot={subSlot}
-            subPlantInstance={subPlantInstance}
-          />
-        ) : null}
         <PastSlotPlants slot={slot} location={slotLocation} />
       </Box>
     </>

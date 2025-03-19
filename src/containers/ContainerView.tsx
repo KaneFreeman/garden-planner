@@ -282,10 +282,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
       if (!slot.plantInstanceId && slot.plant) {
         return true;
       }
-
-      if (slot.subSlot && !slot.subSlot.plantInstanceId && slot.subSlot.plant) {
-        return true;
-      }
     }
 
     return false;
@@ -326,20 +322,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         plant = plantsById[plantId];
       }
 
-      let subPlant: Plant | undefined;
-      let subPlantInstance = slot?.subSlot?.plantInstanceId
-        ? plantInstancesById[slot?.subSlot?.plantInstanceId]
-        : undefined;
-
-      if (subPlantInstance?.closed === true) {
-        subPlantInstance = undefined;
-      }
-
-      const subPlantId = subPlantInstance ? subPlantInstance.plant : slot?.subSlot?.plant;
-      if (subPlantId !== undefined && subPlantId !== null) {
-        subPlant = plantsById[subPlantId];
-      }
-
       return (
         <ContainerSlotPreview
           key={`container-slot-${finalIndex}`}
@@ -347,8 +329,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           slot={slot}
           container={container}
           index={finalIndex}
-          subSlot={slot?.subSlot}
-          subPlant={subPlant}
           size={slotWidth}
           isActionable={
             actionableInstanceIds !== undefined

@@ -57,11 +57,6 @@ const Plants = () => {
         if (!slot.plantInstanceId && slot.plant && slot.plant in counts) {
           counts[slot.plant].planned += 1;
         }
-
-        const subSlot = slot.subSlot;
-        if (subSlot && !subSlot.plantInstanceId && subSlot.plant && subSlot.plant in counts) {
-          counts[subSlot.plant].planned += 1;
-        }
       });
     });
 

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { format } from 'date-fns';
 import { memo, useCallback, useMemo } from 'react';
-import { BaseSlot, CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
+import { CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
@@ -20,25 +20,13 @@ interface ContainerSlotPreviewProps {
   container: Container;
   slot?: Slot;
   plant?: Plant;
-  subSlot?: BaseSlot;
-  subPlant?: Plant;
   size: number;
   isActionable: boolean | undefined;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
 }
 
 const ContainerSlotPreview = memo(
-  ({
-    index,
-    container,
-    slot,
-    plant,
-    subSlot,
-    subPlant,
-    size,
-    isActionable,
-    onSlotClick
-  }: ContainerSlotPreviewProps) => {
+  ({ index, container, slot, plant, size, isActionable, onSlotClick }: ContainerSlotPreviewProps) => {
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
     const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
@@ -46,19 +34,7 @@ const ContainerSlotPreview = memo(
       plantInstance,
       {
         containerId: container._id,
-        slotId: index,
-        subSlot: false
-      },
-      plantLocation
-    );
-
-    const subPlantInstance = usePlantInstance(subSlot?.plantInstanceId);
-    const subPlantStatus = usePlantInstanceStatus(
-      subPlantInstance,
-      {
-        containerId: container._id,
-        slotId: index,
-        subSlot: true
+        slotId: index
       },
       plantLocation
     );
@@ -68,8 +44,7 @@ const ContainerSlotPreview = memo(
       plantInstance,
       {
         containerId: container._id,
-        slotId: index,
-        subSlot: false
+        slotId: index
       },
       plantLocation,
       plant
@@ -91,8 +66,7 @@ const ContainerSlotPreview = memo(
             plantInstance,
             {
               containerId: container._id,
-              slotId: index,
-              subSlot: false
+              slotId: index
             },
             TRANSPLANTED
           );
@@ -103,46 +77,8 @@ const ContainerSlotPreview = memo(
         }
       }
 
-      if (slot?.subSlot && subPlantInstance?.closed !== true && subPlant) {
-        slotTitle += ` and ${getPlantTitle(subPlant)}, ${subPlantStatus}`;
-
-        if (subPlantStatus === PLANTED) {
-          slotTitle += `, Planted`;
-          const subPlantedEvent = getPlantedEvent(subPlantInstance);
-          if (subPlantedEvent) {
-            slotTitle += ` on ${format(subPlantedEvent.date, 'MMM d, yyyy')}`;
-          }
-        } else if (subPlantStatus === TRANSPLANTED) {
-          slotTitle += `, Transplanted`;
-          const subTranplantedEvent = findHistoryFrom(
-            plantInstance,
-            {
-              containerId: container._id,
-              slotId: index,
-              subSlot: true
-            },
-            TRANSPLANTED
-          );
-
-          if (subTranplantedEvent) {
-            slotTitle += ` on ${format(subTranplantedEvent.date, 'MMM d, yyyy')}`;
-          }
-        }
-      }
-
       return slotTitle;
-    }, [
-      container._id,
-      container.rows,
-      index,
-      plant,
-      plantInstance,
-      plantStatus,
-      slot,
-      subPlant,
-      subPlantInstance,
-      subPlantStatus
-    ]);
+    }, [container._id, container.rows, index, plant, plantInstance, plantStatus, slot]);
 
     const handleClick = useCallback(() => {
       onSlotClick(slot, index);

@@ -1,13 +1,13 @@
-import { useCallback, useMemo, useState } from 'react';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import { PlantInstance, Task, CUSTOM } from '../../interface';
-import useSmallScreen from '../../utility/smallScreen.util';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import { useCallback, useMemo, useState } from 'react';
+import { CUSTOM, PlantInstance, Task } from '../../interface';
 import { getMidnight } from '../../utility/date.util';
+import useSmallScreen from '../../utility/smallScreen.util';
 import { useTasksByPlantInstance } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
 import TaskModal from '../TaskModal';
@@ -17,16 +17,9 @@ interface ContainerSlotTasksViewProps {
   containerId: string | undefined;
   slotId: number;
   slotTitle: string;
-  type: 'slot' | 'sub-slot';
 }
 
-const ContainerSlotTasksView = ({
-  plantInstance,
-  containerId,
-  slotId,
-  slotTitle,
-  type
-}: ContainerSlotTasksViewProps) => {
+const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle }: ContainerSlotTasksViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -43,8 +36,8 @@ const ContainerSlotTasksView = ({
       return undefined;
     }
 
-    return `/container/${containerId}/slot/${slotId}${type === 'sub-slot' ? '/sub-slot' : ''}`;
-  }, [containerId, slotId, type]);
+    return `/container/${containerId}/slot/${slotId}`;
+  }, [containerId, slotId]);
 
   const { completed, overdue, next, active, thisWeek } = useTasksByPlantInstance(plantInstance?._id, -1);
 
@@ -70,14 +63,14 @@ const ContainerSlotTasksView = ({
             path
               ? {
                   path,
-                  title: `${slotTitle}${type === 'sub-slot' ? ` - Sub Plant` : ''}`
+                  title: `${slotTitle}`
                 }
               : undefined
           }
         />
       );
     },
-    [path, slotTitle, today, type]
+    [path, slotTitle, today]
   );
 
   const completedCustomTasks = useMemo(() => completed.filter((task) => task.type === CUSTOM), [completed]);

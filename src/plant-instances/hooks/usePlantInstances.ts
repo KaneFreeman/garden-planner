@@ -82,8 +82,7 @@ export const useAddPlantInstance = () => {
         newData = {
           ...data,
           containerId: location?.containerId,
-          slotId: location?.slotId,
-          subSlot: location?.subSlot
+          slotId: location?.slotId
         };
       }
 
@@ -125,8 +124,7 @@ export const useUpdatePlantInstance = () => {
         newData = {
           ...data,
           containerId: location?.containerId,
-          slotId: location?.slotId,
-          subSlot: location?.subSlot
+          slotId: location?.slotId
         };
       }
 

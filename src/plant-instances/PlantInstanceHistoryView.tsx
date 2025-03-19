@@ -41,7 +41,7 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
   const navigateToLocation = useCallback(
     (location: ContainerSlotIdentifier | undefined) => {
       if (location) {
-        navigate(`/container/${location.containerId}/slot/${location.slotId}${location.subSlot ? '/sub-slot' : ''}`);
+        navigate(`/container/${location.containerId}/slot/${location.slotId}`);
         return true;
       }
 

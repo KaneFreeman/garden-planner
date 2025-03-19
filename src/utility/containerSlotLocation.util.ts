@@ -34,14 +34,6 @@ export function compareContainerSlotLocations(
     return 1;
   }
 
-  if (!a.subSlot && b.subSlot) {
-    return -1;
-  }
-
-  if (a.subSlot && !b.subSlot) {
-    return 1;
-  }
-
   return 0;
 }
 
@@ -62,7 +54,7 @@ export function getLocationTitle(
 
   return `${container.name}${
     Object.keys(container?.slots ?? {}).length > 1 ? ` - ${getSlotTitle(value.slotId, container.rows)}` : ''
-  }${value.subSlot === true ? ' - Sub Slot' : ''}`;
+  }`;
 }
 
 export function useLocationTitle(

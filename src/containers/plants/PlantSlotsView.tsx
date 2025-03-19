@@ -114,7 +114,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
 
   const onClickHandler = useCallback(
     (instance: PlantInstance) => {
-      navigate(`/container/${instance.containerId}/slot/${instance.slotId}${instance.subSlot ? '/sub-slot' : ''}`);
+      navigate(`/container/${instance.containerId}/slot/${instance.slotId}`);
     },
     [navigate]
   );
@@ -126,7 +126,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
 
       const primary = `${container?.name}${
         Object.keys(container?.slots ?? {}).length > 1 ? ` - ${getSlotTitle(instance.slotId, container?.rows)}` : ''
-      }${instance.subSlot ? ' - Sub-Slot' : ''}`;
+      }`;
 
       const firstEvent = getPlantedEvent(instance);
       let secondary: string | undefined;

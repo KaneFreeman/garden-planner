@@ -1,27 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import Select from '../Select';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import ListItem from '@mui/material/ListItem';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
+import useContainerOptions from '../../containers/hooks/useContainerOptions';
 import { ContainerSlotIdentifier } from '../../interface';
 import { useAppSelector } from '../../store/hooks';
 import { selectContainer } from '../../store/slices/containers';
-import useContainerOptions from '../../containers/hooks/useContainerOptions';
-import { isNullish } from '../../utility/null.util';
 import { useLocationTitle } from '../../utility/containerSlotLocation.util';
+import { isNullish } from '../../utility/null.util';
+import Select from '../Select';
 
 interface ContainerSlotSelectInlineFieldProps {
   label: React.ReactNode;
   value: ContainerSlotIdentifier | null;
   containerId: string;
   slotId: number;
-  isSubSlot: boolean;
   onChange(value: ContainerSlotIdentifier | null): void;
 }
 
@@ -30,7 +29,6 @@ const ContainerSlotSelectInlineField = ({
   value,
   containerId,
   slotId,
-  isSubSlot,
   onChange
 }: ContainerSlotSelectInlineFieldProps) => {
   const navigate = useNavigate();
@@ -57,21 +55,21 @@ const ContainerSlotSelectInlineField = ({
           if (isNullish(internalValue)) {
             onChange(null);
           } else {
-            navigate(`/container/${containerId}/slot/${slotId}/transplant/${internalValue}?subSlot=${isSubSlot}`);
+            navigate(`/container/${containerId}/slot/${slotId}/transplant/${internalValue}`);
           }
         } else {
           setInternalValue(value?.containerId ?? null);
         }
       }
     },
-    [containerId, internalValue, isSubSlot, navigate, onChange, slotId, value]
+    [containerId, internalValue, navigate, onChange, slotId, value]
   );
 
   const onClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       if (value) {
         event.stopPropagation();
-        navigate(`/container/${value.containerId}/slot/${value.slotId}${value.subSlot === true ? '/sub-slot' : ''}`);
+        navigate(`/container/${value.containerId}/slot/${value.slotId}`);
       }
     },
     [navigate, value]

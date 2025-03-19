@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
-import { BaseSlot } from '../interface';
+import { Slot } from '../interface';
 import { usePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import ContainerSlotView from './ContainerSlotView';
 import { useContainer, useUpdateContainer } from './hooks/useContainers';
@@ -16,15 +16,13 @@ const ContainerSlotRoute = () => {
   const slot = useMemo(() => container?.slots?.[indexNumber] ?? {}, [container?.slots, indexNumber]);
 
   const plantInstance = usePlantInstance(slot.plantInstanceId);
-  const subPlantInstance = usePlantInstance(slot.subSlot?.plantInstanceId);
 
   const handleOnChange = useCallback(
-    async (newSlot: BaseSlot) => {
+    async (newSlot: Slot) => {
       if (id && container) {
         const newSlots = { ...(container.slots ?? {}) };
         newSlots[indexNumber] = {
-          ...newSlot,
-          subSlot: slot.subSlot
+          ...newSlot
         };
 
         return updateContainer({ ...container, slots: newSlots });
@@ -32,7 +30,7 @@ const ContainerSlotRoute = () => {
 
       return undefined;
     },
-    [container, id, indexNumber, slot.subSlot, updateContainer]
+    [container, id, indexNumber, updateContainer]
   );
 
   if (!id || !container) {
@@ -43,12 +41,9 @@ const ContainerSlotRoute = () => {
     <ContainerSlotView
       id={id}
       index={indexNumber}
-      type="slot"
       container={container}
       slot={slot}
       plantInstance={plantInstance}
-      subSlot={slot.subSlot}
-      subPlantInstance={subPlantInstance}
       onSlotChange={handleOnChange}
     />
   );
