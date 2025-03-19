@@ -29,7 +29,7 @@ const DateDialog = ({
 }: DateDialogProps) => {
   const [date, setDate] = useState<Date>(getMidnight());
 
-  const finishUpdateStatusFertilized = useCallback(() => {
+  const handleSubmit = useCallback(() => {
     onConfirm(date);
     onClose();
   }, [date, onClose, onConfirm]);
@@ -38,7 +38,7 @@ const DateDialog = ({
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>{question}</DialogTitle>
       <DialogContent>
-        <form name="plant-modal-form" onSubmit={finishUpdateStatusFertilized} noValidate>
+        <form name="plant-modal-form" onSubmit={handleSubmit} noValidate>
           <Box sx={{ display: 'flex', pt: 2 }}>
             <MobileDatePicker
               label={label}
@@ -51,7 +51,7 @@ const DateDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{cancel}</Button>
-        <Button onClick={finishUpdateStatusFertilized} variant="contained">
+        <Button onClick={handleSubmit} variant="contained">
           {confirm}
         </Button>
       </DialogActions>

@@ -68,7 +68,6 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
           }
         />
         <SimpleInlineField label="Started From" value={plantInstance.startedFrom} />
-        <SimpleInlineField label="Planted Count" value={plantInstance.plantedCount} />
         <PlantInstanceHistoryView plantInstance={plantInstance} />
         <PicturesView data={plantInstance} alt={getPlantTitle(plant)} />
         <CommentsView id={`plant-${plantInstance._id}`} data={plantInstance} alt={getPlantTitle(plant)} />

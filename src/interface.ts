@@ -649,7 +649,6 @@ export interface PlantInstance {
   closed?: boolean;
   startedFrom: StartedFromType;
   season: Season;
-  plantedCount: number;
 }
 
 export interface PlantInstanceDTO {
@@ -664,7 +663,6 @@ export interface PlantInstanceDTO {
   closed?: boolean;
   startedFrom: string;
   season: string;
-  plantedCount: number;
 }
 
 export function fromPlantInstanceDTO(dto: PlantInstanceDTO): PlantInstance {

@@ -292,7 +292,6 @@ export const useUpdateCreatePlantInstance = (
           ...data,
           ...location,
           created: new Date(),
-          plantedCount: 1,
           startedFrom: container?.startedFrom ?? STARTED_FROM_TYPE_SEED,
           season: computeSeason()
         };

@@ -27,7 +27,6 @@ import DateDialog from '../components/DateDialog';
 import Select from '../components/Select';
 import CommentsView from '../components/comments/CommentsView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
-import NumberInlineField from '../components/inline-fields/NumberInlineField';
 import {
   Container,
   PLANTED,
@@ -105,8 +104,7 @@ const ContainerSlotViewActive = ({
     setTransplantedToContainerId(null);
   }, [slot]);
 
-  const [showHowManyPlanted, setShowHowManyPlanted] = useState(false);
-  const [plantedCount, setPlantedCount] = useState(1);
+  const [showPlantedDialogue, setShowPlantedDialogue] = useState(false);
 
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
@@ -239,7 +237,7 @@ const ContainerSlotViewActive = ({
   );
 
   const onPlantedClick = useCallback(() => {
-    setShowHowManyPlanted(true);
+    setShowPlantedDialogue(true);
     handleMoreMenuClose();
   }, []);
 
@@ -327,13 +325,11 @@ const ContainerSlotViewActive = ({
               slotId: index
             }
           }
-        ],
-        plantedCount
+        ]
       });
-      setShowHowManyPlanted(false);
-      setPlantedCount(1);
+      setShowPlantedDialogue(false);
     },
-    [id, index, onPlantInstanceChange, plantedCount]
+    [id, index, onPlantInstanceChange]
   );
 
   const finishUpdateStatusHarvested = useCallback(
@@ -638,15 +634,6 @@ const ContainerSlotViewActive = ({
           renderer={renderSeason}
           sx={{ mt: 1 }}
         />
-        {plantedEvent ? (
-          <NumberInlineField
-            label="Planted Count"
-            value={plantInstance.plantedCount}
-            onChange={(value) => onPlantInstanceChange({ plantedCount: value })}
-            wholeNumber
-            min={0}
-          />
-        ) : null}
         <ContainerSlotTasksView plantInstance={plantInstance} containerId={id} slotId={index} slotTitle={title} />
         <PlantInstanceHistoryView plantInstance={plantInstance} slotLocation={slotLocation} />
         <PastSlotPlants slot={slot} location={slotLocation} />
@@ -666,13 +653,13 @@ const ContainerSlotViewActive = ({
         />
       </Box>
       <DateDialog
-        open={showHowManyPlanted}
+        open={showPlantedDialogue}
         question="How many did you plant?"
         label="Planted On"
-        onClose={() => setShowHowManyPlanted(false)}
+        onClose={() => setShowPlantedDialogue(false)}
         onConfirm={finishUpdateStatusPlanted}
       />
-      <Dialog open={showTransplantedModal} onClose={() => setShowHowManyPlanted(false)} maxWidth="xs" fullWidth>
+      <Dialog open={showTransplantedModal} onClose={() => setShowPlantedDialogue(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Transplant</DialogTitle>
         <DialogContent>
           <form name="plant-modal-form" onSubmit={finishUpdateStatusTransplanted} noValidate>

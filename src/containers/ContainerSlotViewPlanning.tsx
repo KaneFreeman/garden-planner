@@ -76,8 +76,7 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
       plant: slot.plant ?? null,
       created: new Date(),
       startedFrom: container.startedFrom ?? STARTED_FROM_TYPE_SEED,
-      season: computeSeason(),
-      plantedCount: 1
+      season: computeSeason()
     });
 
     handleMoreMenuClose();
