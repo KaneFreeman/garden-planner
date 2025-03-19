@@ -29,6 +29,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Chip from '../components/Chip';
 import DateDialog from '../components/DateDialog';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, PLANTED, Plant, Slot } from '../interface';
 import {
   useBulkReopenClosePlantInstances,
@@ -41,6 +42,11 @@ import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import { useFinishPlanningContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
+
+const MAX_SLOT_WIDTH = 80;
+const MIN_SLOT_WIDTH = 50;
+const SLOT_BORDER_WIDTH = 4;
+const APP_PADDING = 32;
 
 type ActionMode = 'none' | 'plant' | 'fertilize' | 'close';
 
@@ -291,6 +297,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     window.localStorage.setItem(`container-${container._id}-orientation`, newOrientation);
   }, [container._id, orientation]);
 
+  const { width } = useWindowDimensions();
+  const slotWidth = useMemo(() => {
+    const w =
+      Math.floor((width - APP_PADDING) / ((isPortrait ? container.rows : container.columns) ?? 1)) - SLOT_BORDER_WIDTH;
+
+    return Math.min(Math.max(w, MIN_SLOT_WIDTH), MAX_SLOT_WIDTH);
+  }, [container.columns, container.rows, isPortrait, width]);
+
   const slots = useMemo(() => {
     if (!container._id) {
       return [];
@@ -335,6 +349,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           index={finalIndex}
           subSlot={slot?.subSlot}
           subPlant={subPlant}
+          size={slotWidth}
           isActionable={
             actionableInstanceIds !== undefined
               ? plantInstance
@@ -346,7 +361,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         />
       );
     });
-  }, [actionableInstanceIds, container, isPortrait, handleSlotClick, plantInstancesById, plantsById]);
+  }, [container, isPortrait, plantInstancesById, slotWidth, actionableInstanceIds, handleSlotClick, plantsById]);
 
   return (
     <>
@@ -551,7 +566,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               ) : null
             }}
           </Breadcrumbs>
-          <Box sx={{ mt: 1, mb: 1 }}>
+          <Box sx={{ mt: 1, mb: 1, height: '47px' }}>
             <ToggleButtonGroup value={mode} exclusive onChange={handleModeChange} aria-label="action mode">
               <ToggleButton value="none" sx={{ pl: 3, pr: 3 }}>
                 <VisibilityIcon fontSize="small"></VisibilityIcon>
@@ -589,7 +604,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               mt: 1,
               overflowX: 'auto',
               overflowY: 'auto',
-              maxHeight: 'calc(100dvh - 128px)',
+              maxHeight: 'calc(100dvh - 183px)',
               boxSizing: 'border-box'
             }}
           >
@@ -597,16 +612,16 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                width: (isPortrait ? container.rows : (container.columns ?? 1)) * 80 + 4,
-                height: (isPortrait ? container.columns : (container.rows ?? 1)) * 80 + 4
+                width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth + SLOT_BORDER_WIDTH,
+                height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth + SLOT_BORDER_WIDTH
               }}
             >
               <Box
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: `repeat(${isPortrait ? container.rows : container.columns}, minmax(0, 1fr))`,
-                  width: (isPortrait ? container.rows : (container.columns ?? 1)) * 80,
-                  height: (isPortrait ? container.columns : (container.rows ?? 1)) * 80,
+                  width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth,
+                  height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth,
                   border: '2px solid #2c2c2c'
                 }}
               >
