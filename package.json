@@ -17,7 +17,7 @@
     "@mui/lab": "5.0.0-alpha.176",
     "@mui/material": "5.17.1",
     "@mui/system": "5.17.1",
-    "@mui/x-date-pickers": "7.28.3",
+    "@mui/x-date-pickers": "7.29.0",
     "@reduxjs/toolkit": "2.7.0",
     "@vitejs/plugin-react": "4.4.0",
     "date-fns": "3.6.0",
