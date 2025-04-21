@@ -65,7 +65,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     setMode(newMode ?? 'none');
   }, []);
 
-  const [selectedPlantInstance, setSelectedPlantInstance] = useState<string | null>(null);
+  const [selectedPlantInstances, setSelectedPlantInstances] = useState<string[]>([]);
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
   const isSmallScreen = useSmallScreen();
@@ -163,18 +163,18 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const [isFertilizeModalOpen, setIsFertilizeModalOpen] = useState(false);
   const handleFertilizeClose = useCallback(() => {
     setIsFertilizeModalOpen(false);
-    setSelectedPlantInstance(null);
+    setSelectedPlantInstances([]);
   }, []);
   const handleFertilizeConfirm = useCallback(
     (fertilizeDate: Date) => {
-      if (selectedPlantInstance == null) {
+      if (selectedPlantInstances.length === 0) {
         return;
       }
-      fertilizeContainer(fertilizeDate, [selectedPlantInstance]);
+      fertilizeContainer(fertilizeDate, selectedPlantInstances);
       setIsFertilizeModalOpen(false);
-      setSelectedPlantInstance(null);
+      setSelectedPlantInstances([]);
     },
-    [fertilizeContainer, selectedPlantInstance]
+    [fertilizeContainer, selectedPlantInstances]
   );
   const handleFertilize = useCallback(() => {
     handleMoreMenuClose();
@@ -184,18 +184,18 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const [isPlantModalOpen, setIsPlantModalOpen] = useState(false);
   const handlePlantClose = useCallback(() => {
     setIsPlantModalOpen(false);
-    setSelectedPlantInstance(null);
+    setSelectedPlantInstances([]);
   }, []);
   const handlePlantConfirm = useCallback(
     (plantDate: Date) => {
-      if (selectedPlantInstance == null) {
+      if (selectedPlantInstances.length === 0) {
         return;
       }
-      plantContainer(plantDate, [selectedPlantInstance]);
+      plantContainer(plantDate, selectedPlantInstances);
       setIsPlantModalOpen(false);
-      setSelectedPlantInstance(null);
+      setSelectedPlantInstances([]);
     },
-    [plantContainer, selectedPlantInstance]
+    [plantContainer, selectedPlantInstances]
   );
   const handlePlant = useCallback(() => {
     handleMoreMenuClose();
@@ -203,13 +203,13 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   }, []);
 
   const handleClose = useCallback(() => {
-    if (selectedPlantInstance == null) {
+    if (selectedPlantInstances.length === 0) {
       return;
     }
-    bulkReopenClosePlantInstances('close', [selectedPlantInstance]);
+    bulkReopenClosePlantInstances('close', selectedPlantInstances);
     handleMoreMenuClose();
-    setSelectedPlantInstance(null);
-  }, [bulkReopenClosePlantInstances, selectedPlantInstance]);
+    setSelectedPlantInstances([]);
+  }, [bulkReopenClosePlantInstances, selectedPlantInstances]);
 
   const handleSlotClick = useCallback(
     (slot: Slot | undefined, index: number) => {
@@ -229,7 +229,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         return;
       }
 
-      setSelectedPlantInstance(slot.plantInstanceId);
+      setSelectedPlantInstances([slot.plantInstanceId]);
 
       switch (mode) {
         case 'plant':
@@ -245,6 +245,11 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     },
     [container._id, handleClose, handleFertilize, handlePlant, mode, navigate, onSlotClick]
   );
+
+  const handleOnFertilizeContainerClick = useCallback(() => {
+    setSelectedPlantInstances([...fertilizableInstanceIds]);
+    handleFertilize();
+  }, [fertilizableInstanceIds, handleFertilize]);
 
   const handleOnArchiveUnarchiveClick = useCallback(
     (archived: boolean) => () => {
@@ -434,6 +439,18 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           'aria-labelledby': 'basic-button'
                         }}
                       >
+                        {fertilizableInstanceIds.length > 0 ? (
+                          <MenuItem
+                            key="fertlize-mobile-button"
+                            color="primary"
+                            onClick={handleOnFertilizeContainerClick}
+                          >
+                            <ListItemIcon>
+                              <YardIcon color="primary" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="primary">Fertilze Container</Typography>
+                          </MenuItem>
+                        ) : null}
                         {hasSlotsInPlanning ? (
                           <MenuItem key="finish-planning-mobile-button" onClick={handleFinishPlanningClick}>
                             <ListItemIcon>
@@ -483,6 +500,17 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         />
                         Rotate
                       </Button>
+                      {fertilizableInstanceIds.length > 0 ? (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={handleOnFertilizeContainerClick}
+                          title="Fertilize container"
+                        >
+                          <YardIcon sx={{ mr: 1 }} fontSize="small" />
+                          Fertilze Container
+                        </Button>
+                      ) : null}
                       {hasSlotsInPlanning ? (
                         <Button
                           key="finish-planning-button"
