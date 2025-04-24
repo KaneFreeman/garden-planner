@@ -318,6 +318,7 @@ export interface Plant {
   pictures?: PictureData[];
   comments?: Comment[];
   retired?: boolean;
+  reorder?: boolean;
 }
 
 export interface PlantDTO {

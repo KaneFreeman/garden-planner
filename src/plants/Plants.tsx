@@ -4,10 +4,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DisplayStatusChip from '../containers/DisplayStatusChip';
 import { useContainers, useContainersById } from '../containers/hooks/useContainers';
 import { NOT_PLANTED, Plant, PLANTED } from '../interface';
@@ -15,15 +18,20 @@ import { usePlantInstances } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useAppSelector } from '../store/hooks';
 import { selectFilterPlants } from '../store/slices/plants';
-import { getPlantTitle } from '../utility/plant.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import PlantAvatar from './PlantAvatar';
 import './Plants.css';
 import { usePlants } from './usePlants';
+import IconButton from '@mui/material/IconButton';
 
 interface Counts {
   planned: number;
   planted: number;
+}
+
+interface PlantRenderOptions {
+  showPlantedCount?: boolean;
+  showLinkToPage?: boolean;
 }
 
 const Plants = () => {
@@ -87,41 +95,76 @@ const Plants = () => {
   }, [containers, containersById, plantInstances, plants]);
 
   const createListItem = useCallback(
-    (plant: Plant, countData: Counts | undefined | null) => (
+    (
+      plant: Plant,
+      countData: Counts | undefined | null,
+      { showPlantedCount = false, showLinkToPage = false }: PlantRenderOptions
+    ) => (
       <ListItem key={`plant-${plant._id}`} disablePadding>
         <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
           <ListItemAvatar>
             <PlantAvatar plant={plant} />
           </ListItemAvatar>
           <ListItemText
-            primary={getPlantTitle(plant)}
+            primary={plant.name}
             classes={{
               root: 'listItemText-root',
               primary: 'listItemText-primary'
             }}
             sx={isSmallScreen ? {} : { flex: 'unset' }}
           />
-          <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
-            {countData && countData.planned > 0 ? (
-              <DisplayStatusChip count={countData.planned} status="Planning" shrink={isSmallScreen} />
-            ) : null}
-            {countData && countData.planted > 0 ? (
-              <DisplayStatusChip count={countData.planted} status="Planted" shrink={isSmallScreen} />
-            ) : null}
-          </Box>
+          {showPlantedCount ? (
+            <Box sx={{ ml: 2, gap: 1, display: 'flex' }}>
+              {countData && countData.planned > 0 ? (
+                <DisplayStatusChip count={countData.planned} status="Planning" shrink={isSmallScreen} />
+              ) : null}
+              {countData && countData.planted > 0 ? (
+                <DisplayStatusChip count={countData.planted} status="Planted" shrink={isSmallScreen} />
+              ) : null}
+            </Box>
+          ) : null}
+          {showLinkToPage && plant.url ? (
+            <a href={plant.url} target="_blank" rel="noopener noreferrer">
+              <IconButton sx={{ marginLeft: '8px' }} onClick={(event) => event.stopPropagation()}>
+                <OpenInNewIcon></OpenInNewIcon>
+              </IconButton>
+            </a>
+          ) : null}
         </ListItemButton>
       </ListItem>
     ),
     [isSmallScreen, navigate]
   );
 
-  const activePlants = useMemo(() => {
-    return plants.filter((plant) => plant.retired !== true).map((p) => createListItem(p, plantCounts[p._id]));
-  }, [plants, createListItem, plantCounts]);
+  const buildPlantList = useCallback(
+    (filter: (plant: Plant) => boolean, options: PlantRenderOptions = {}) => {
+      return plants.filter(filter).reduce<Record<string, JSX.Element[]>>((acc, plant) => {
+        if (!plant.type) {
+          return acc;
+        }
 
-  const archivedPlants = useMemo(() => {
-    return plants.filter((plant) => plant.retired === true).map((p) => createListItem(p, plantCounts[p._id]));
-  }, [plants, createListItem, plantCounts]);
+        if (!(plant.type in acc)) {
+          acc[plant.type] = [];
+        }
+
+        acc[plant.type].push(createListItem(plant, plantCounts[plant._id], options));
+        return acc;
+      }, {});
+    },
+    [createListItem, plantCounts, plants]
+  );
+
+  const activePlants = useMemo(
+    () => buildPlantList((plant) => plant.retired !== true, { showPlantedCount: true }),
+    [buildPlantList]
+  );
+  const archivedPlants = useMemo(() => buildPlantList((plant) => plant.retired === true), [buildPlantList]);
+
+  const reorderPlantCount = useMemo(() => plants.filter((plant) => plant.reorder === true).length, [plants]);
+  const reorderPlants = useMemo(
+    () => buildPlantList((plant) => plant.reorder === true, { showLinkToPage: true }),
+    [buildPlantList]
+  );
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -132,15 +175,81 @@ const Plants = () => {
         {{
           label: 'Archived'
         }}
+        {{
+          label: (
+            <Box sx={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <div>Reorder List</div>
+              <Chip title={`${reorderPlantCount}`} size="extra-small" color="info">
+                {reorderPlantCount}
+              </Chip>
+            </Box>
+          )
+        }}
       </Tabs>
       <TabPanel value={tab} index={0}>
         <nav key="active" aria-label="main plants active">
-          <List>{activePlants}</List>
+          {Object.keys(activePlants).map((plantType) => {
+            const renderedPlants = activePlants[plantType];
+            return (
+              <List
+                key={`list-${plantType}`}
+                subheader={
+                  <ListSubheader
+                    component="div"
+                    sx={{ backgroundColor: '#191919', fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}
+                  >
+                    {plantType}
+                  </ListSubheader>
+                }
+              >
+                {renderedPlants}
+              </List>
+            );
+          })}
         </nav>
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <nav key="archived" aria-label="main plants archived">
-          <List>{archivedPlants}</List>
+          {Object.keys(archivedPlants).map((plantType) => {
+            const renderedPlants = archivedPlants[plantType];
+            return (
+              <List
+                key={`list-${plantType}`}
+                subheader={
+                  <ListSubheader
+                    component="div"
+                    sx={{ backgroundColor: '#191919', fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}
+                  >
+                    {plantType}
+                  </ListSubheader>
+                }
+              >
+                {renderedPlants}
+              </List>
+            );
+          })}
+        </nav>
+      </TabPanel>
+      <TabPanel value={tab} index={2}>
+        <nav key="archived" aria-label="main plants reorder">
+          {Object.keys(reorderPlants).map((plantType) => {
+            const renderedPlants = reorderPlants[plantType];
+            return (
+              <List
+                key={`list-${plantType}`}
+                subheader={
+                  <ListSubheader
+                    component="div"
+                    sx={{ backgroundColor: '#191919', fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}
+                  >
+                    {plantType}
+                  </ListSubheader>
+                }
+              >
+                {renderedPlants}
+              </List>
+            );
+          })}
         </nav>
       </TabPanel>
     </Box>

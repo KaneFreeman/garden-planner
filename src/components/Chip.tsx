@@ -2,9 +2,20 @@ import { useMemo } from 'react';
 import { styled, SxProps, Theme } from '@mui/material/styles';
 import MuiChip, { ChipProps as MuiChipProps } from '@mui/material/Chip';
 
-const StyledChip = styled(MuiChip)({
+const ExtraSmallStyledChip = styled(MuiChip)({
+  height: 18,
+  fontSize: 10,
+  '.MuiChip-label': {
+    padding: '0 8px'
+  }
+});
+
+const SmallStyledChip = styled(MuiChip)({
   height: 24,
-  fontSize: 12
+  fontSize: 12,
+  '.MuiChip-label': {
+    padding: '0 12px'
+  }
 });
 
 export interface ChipProps {
@@ -15,7 +26,7 @@ export interface ChipProps {
     backgroundColor: string;
     color: string;
   };
-  size?: 'small' | 'large';
+  size?: 'extra-small' | 'small' | 'large';
   sx?: MuiChipProps['sx'];
 }
 
@@ -29,8 +40,12 @@ const Chip = ({ children: label, title, color, colors, size = 'small', sx }: Chi
     [colors, sx]
   );
 
+  if (size === 'extra-small') {
+    return <ExtraSmallStyledChip sx={finalSx} label={label} color={color} title={title} />;
+  }
+
   if (size === 'small') {
-    return <StyledChip sx={finalSx} label={label} color={color} title={title} />;
+    return <SmallStyledChip sx={finalSx} label={label} color={color} title={title} />;
   }
 
   return <MuiChip sx={finalSx} label={label} color={color} title={title} />;

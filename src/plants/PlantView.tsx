@@ -9,6 +9,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -65,6 +67,11 @@ const PlantView = () => {
   useEffect(() => {
     handleMoreMenuClose();
   }, [isSmallScreen]);
+
+  const onReorderChange = useCallback(() => {
+    handleUpdatePlant({ reorder: !plant?.reorder });
+    handleMoreMenuClose();
+  }, [handleUpdatePlant, plant?.reorder]);
 
   const onRetireChange = useCallback(() => {
     handleUpdatePlant({ retired: !plant?.retired });
@@ -175,6 +182,18 @@ const PlantView = () => {
                         'aria-labelledby': 'basic-button'
                       }}
                     >
+                      <MenuItem onClick={onReorderChange}>
+                        <ListItemIcon>
+                          {plant.reorder === true ? (
+                            <RemoveShoppingCartIcon color="error" fontSize="small" />
+                          ) : (
+                            <ShoppingCartIcon color="primary" fontSize="small" />
+                          )}
+                        </ListItemIcon>
+                        <Typography color={plant.reorder === true ? 'error.main' : 'primary.main'}>
+                          {plant.reorder === true ? 'Remove from shopping list' : 'Add to shopping list'}
+                        </Typography>
+                      </MenuItem>
                       <MenuItem onClick={onRetireChange}>
                         <ListItemIcon>
                           {plant.retired === true ? (
@@ -197,6 +216,20 @@ const PlantView = () => {
                   </Box>
                 ) : (
                   <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    <Button
+                      variant="outlined"
+                      aria-label={plant.reorder === true ? 'remove from shopping list' : 'add to shopping list'}
+                      color={plant.reorder === true ? 'error' : 'primary'}
+                      onClick={onReorderChange}
+                      title={plant.reorder === true ? 'Remove from shopping list' : 'Add to shopping list'}
+                    >
+                      {plant.reorder === true ? (
+                        <RemoveShoppingCartIcon sx={{ mr: 1 }} color="error" fontSize="small" />
+                      ) : (
+                        <ShoppingCartIcon sx={{ mr: 1 }} color="primary" fontSize="small" />
+                      )}
+                      {plant.reorder === true ? 'Remove from shopping list' : 'Add to shopping list'}
+                    </Button>
                     <Button
                       variant="outlined"
                       aria-label={plant.retired === true ? 'unretire' : 'retire'}

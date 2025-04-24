@@ -6,7 +6,7 @@ import MuiTabs from '@mui/material/Tabs';
 import Tab from './Tab';
 
 export interface TabType {
-  label: string;
+  label: React.ReactNode;
   disabled?: boolean;
 }
 
