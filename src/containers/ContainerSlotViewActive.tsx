@@ -654,7 +654,7 @@ const ContainerSlotViewActive = ({
       </Box>
       <DateDialog
         open={showPlantedDialogue}
-        question="How many did you plant?"
+        question="When did you plant them?"
         label="Planted On"
         onClose={() => setShowPlantedDialogue(false)}
         onConfirm={finishUpdateStatusPlanted}

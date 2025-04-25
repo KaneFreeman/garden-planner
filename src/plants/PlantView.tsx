@@ -2,6 +2,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import StoreIcon from '@mui/icons-material/Store';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -9,21 +12,22 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { format } from 'date-fns/format';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
+import DateDialog from '../components/DateDialog';
 import Loading from '../components/Loading';
 import CommentsView from '../components/comments/CommentsView';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import NumberRangeInlineField from '../components/inline-fields/NumberRangeInlineField';
+import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import PlantSlotsView from '../containers/plants/PlantSlotsView';
 import { MATURITY_FROM_SEED, MATURITY_FROM_TYPES, MaturityFromType, PLANT_TYPES, Plant, PlantType } from '../interface';
@@ -72,6 +76,19 @@ const PlantView = () => {
     handleUpdatePlant({ reorder: !plant?.reorder });
     handleMoreMenuClose();
   }, [handleUpdatePlant, plant?.reorder]);
+
+  const [showReorderDialogue, setShowReorderDialogue] = useState(false);
+  const onReorderClick = useCallback(() => {
+    setShowReorderDialogue(true);
+    handleMoreMenuClose();
+  }, []);
+
+  const finishReordering = useCallback((date: Date) => {
+    handleUpdatePlant({
+      lastOrdered: date
+    });
+    setShowReorderDialogue(false);
+  }, []);
 
   const onRetireChange = useCallback(() => {
     handleUpdatePlant({ retired: !plant?.retired });
@@ -182,6 +199,12 @@ const PlantView = () => {
                         'aria-labelledby': 'basic-button'
                       }}
                     >
+                      <MenuItem onClick={onReorderClick}>
+                        <ListItemIcon>
+                          <StoreIcon color="secondary" fontSize="small" />
+                        </ListItemIcon>
+                        <Typography color="secondary.main">Reorder</Typography>
+                      </MenuItem>
                       <MenuItem onClick={onReorderChange}>
                         <ListItemIcon>
                           {plant.reorder === true ? (
@@ -216,6 +239,16 @@ const PlantView = () => {
                   </Box>
                 ) : (
                   <Box key="large-screen-actions" sx={{ display: 'flex', gap: 1.5 }}>
+                    <Button
+                      variant="outlined"
+                      aria-label="reorder"
+                      color="secondary"
+                      onClick={onReorderClick}
+                      title="Reorder"
+                    >
+                      <StoreIcon sx={{ mr: 1 }} fontSize="small" />
+                      Reorder
+                    </Button>
                     <Button
                       variant="outlined"
                       aria-label={plant.reorder === true ? 'remove from shopping list' : 'add to shopping list'}
@@ -282,6 +315,9 @@ const PlantView = () => {
             ) : null
           }
         />
+        {plant.lastOrdered ? (
+          <SimpleInlineField label="Last Ordered" value={format(plant.lastOrdered, 'MMM d, yyyy')} />
+        ) : null}
         <NumberRangeInlineField
           label="Days to Germinate"
           value={plant.daysToGerminate}
@@ -326,6 +362,13 @@ const PlantView = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <DateDialog
+        open={showReorderDialogue}
+        question="When did you reorder them?"
+        label="Reordered On"
+        onClose={() => setShowReorderDialogue(false)}
+        onConfirm={finishReordering}
+      />
     </>
   );
 };

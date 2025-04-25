@@ -319,6 +319,7 @@ export interface Plant {
   comments?: Comment[];
   retired?: boolean;
   reorder?: boolean;
+  lastOrdered?: Date;
 }
 
 export interface PlantDTO {
@@ -332,13 +333,15 @@ export interface PlantDTO {
   pictures?: PictureDataDTO[];
   comments?: CommentDTO[];
   retired?: boolean;
+  lastOrdered?: string;
 }
 
 export function fromPlantDTO(dto: PlantDTO): Plant {
   return {
     ...dto,
     pictures: dto.pictures !== undefined ? dto.pictures.map(fromPictureDataDTO) : undefined,
-    comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined
+    comments: dto.comments !== undefined ? dto.comments.map(fromCommentDTO) : undefined,
+    lastOrdered: dto.lastOrdered ? new Date(dto.lastOrdered) : undefined
   };
 }
 
@@ -348,7 +351,8 @@ export function toPlantDTO(dto: Omit<Plant, '_id'> | Plant): Omit<PlantDTO, '_id
   return {
     ...dto,
     pictures: dto.pictures !== undefined ? dto.pictures.map(toPictureDataDTO) : undefined,
-    comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined
+    comments: dto.comments !== undefined ? dto.comments.map(toCommentDTO) : undefined,
+    lastOrdered: dto.lastOrdered ? dto.lastOrdered.toISOString() : undefined
   };
 }
 
