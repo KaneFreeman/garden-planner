@@ -83,12 +83,15 @@ const PlantView = () => {
     handleMoreMenuClose();
   }, []);
 
-  const finishReordering = useCallback((date: Date) => {
-    handleUpdatePlant({
-      lastOrdered: date
-    });
-    setShowReorderDialogue(false);
-  }, []);
+  const finishReordering = useCallback(
+    (date: Date) => {
+      handleUpdatePlant({
+        lastOrdered: date
+      });
+      setShowReorderDialogue(false);
+    },
+    [handleUpdatePlant]
+  );
 
   const onRetireChange = useCallback(() => {
     handleUpdatePlant({ retired: !plant?.retired });

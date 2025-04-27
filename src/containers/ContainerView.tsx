@@ -126,23 +126,27 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const fertilizableInstanceIds = useMemo(
     () =>
       Object.values(plantInstancesById)
-        .filter((pi) => !pi?.closed && pi.history?.find((h) => h.status === PLANTED))
+        .filter(
+          (pi) => pi.containerId === container._id && !pi?.closed && pi.history?.find((h) => h.status === PLANTED)
+        )
         .map((pi) => pi._id),
-    [plantInstancesById]
+    [container._id, plantInstancesById]
   );
   const plantableInstanceIds = useMemo(
     () =>
       Object.values(plantInstancesById)
-        .filter((pi) => !pi?.closed && !pi.history?.find((h) => h.status === PLANTED))
+        .filter(
+          (pi) => pi.containerId === container._id && !pi?.closed && !pi.history?.find((h) => h.status === PLANTED)
+        )
         .map((pi) => pi._id),
-    [plantInstancesById]
+    [container._id, plantInstancesById]
   );
   const closableInstanceIds = useMemo(
     () =>
       Object.values(plantInstancesById)
-        .filter((pi) => !pi?.closed)
+        .filter((pi) => pi.containerId === container._id && !pi?.closed)
         .map((pi) => pi._id),
-    [plantInstancesById]
+    [container._id, plantInstancesById]
   );
 
   const actionableInstanceIds = useMemo(() => {
