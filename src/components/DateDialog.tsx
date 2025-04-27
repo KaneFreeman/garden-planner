@@ -41,6 +41,7 @@ const DateDialog = ({
         <form name="plant-modal-form" onSubmit={handleSubmit} noValidate>
           <Box sx={{ display: 'flex', pt: 2 }}>
             <DatePicker
+              autoFocus
               label={label}
               value={date}
               onChange={(newDate: Date | null) => newDate && setDate(setToMidnight(newDate))}
