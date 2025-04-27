@@ -142,15 +142,12 @@ const Plants = () => {
   const buildPlantList = useCallback(
     (filter: (plant: Plant) => boolean, options: PlantRenderOptions = {}) => {
       return plants.filter(filter).reduce<Record<string, JSX.Element[]>>((acc, plant) => {
-        if (!plant.type) {
-          return acc;
+        const plantType = plant.type ?? 'Other';
+        if (!(plantType in acc)) {
+          acc[plantType] = [];
         }
 
-        if (!(plant.type in acc)) {
-          acc[plant.type] = [];
-        }
-
-        acc[plant.type].push(createListItem(plant, plantCounts[plant._id], options));
+        acc[plantType].push(createListItem(plant, plantCounts[plant._id], options));
         return acc;
       }, {});
     },
