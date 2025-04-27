@@ -35,7 +35,7 @@ const ContainerSelectViewRoute = () => {
   const displayStatus = usePlantInstanceStatus(plantInstance, slotLocation, plantInstanceLocation);
 
   const onSlotClick = useCallback(
-    (_: Slot | undefined, otherSlotIndex: number) => async () => {
+    async (_: Slot | undefined, otherSlotIndex: number) => {
       if (!containerId || !plantInstance || !otherContainerId || otherSlotIndex < 0) {
         return;
       }
