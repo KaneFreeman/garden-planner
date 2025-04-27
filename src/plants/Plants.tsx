@@ -1,16 +1,18 @@
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import { format } from 'date-fns/format';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DisplayStatusChip from '../containers/DisplayStatusChip';
 import { useContainers, useContainersById } from '../containers/hooks/useContainers';
 import { NOT_PLANTED, Plant, PLANTED } from '../interface';
@@ -22,7 +24,6 @@ import useSmallScreen from '../utility/smallScreen.util';
 import PlantAvatar from './PlantAvatar';
 import './Plants.css';
 import { usePlants } from './usePlants';
-import IconButton from '@mui/material/IconButton';
 
 interface Counts {
   planned: number;
@@ -107,9 +108,11 @@ const Plants = () => {
           </ListItemAvatar>
           <ListItemText
             primary={plant.name}
+            secondary={plant.lastOrdered ? `Last ordered on ${format(plant.lastOrdered, 'MMM d, yyyy')}` : undefined}
             classes={{
               root: 'listItemText-root',
-              primary: 'listItemText-primary'
+              primary: 'listItemText-primary',
+              secondary: 'listItemText-secondary'
             }}
             sx={isSmallScreen ? {} : { flex: 'unset' }}
           />

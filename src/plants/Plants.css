@@ -1,4 +1,5 @@
-.listItemText-root .listItemText-primary {
+.listItemText-root .listItemText-primary,
+.listItemText-root .listItemText-secondary {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
