@@ -15,7 +15,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, formatDistance } from 'date-fns';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -322,7 +322,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
           <DialogContent>
             <form name="plant-modal-form" onSubmit={markTaskAsCompleted} noValidate>
               <Box sx={{ display: 'flex', pt: 2, pb: 2 }}>
-                <MobileDatePicker
+                <DatePicker
                   label="Completed On"
                   value={completedOn}
                   onChange={(newCompletedOn: Date | null) =>

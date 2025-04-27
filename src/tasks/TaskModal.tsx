@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import React, { useCallback, useState } from 'react';
 import TextField from '../components/TextField';
-import { getMidnight, setToMidnight } from '../utility/date.util';
 import { Task } from '../interface';
+import { getMidnight, setToMidnight } from '../utility/date.util';
 import { useAddTask } from './hooks/useTasks';
 
 interface TaskModalProperties {
@@ -91,13 +91,13 @@ const TaskModal = ({ open, path = null, plantInstanceId, onClose }: TaskModalPro
             variant="outlined"
           />
           <Box sx={{ display: 'flex', mt: 2, mb: 2 }}>
-            <MobileDatePicker
+            <DatePicker
               label="Start"
               value={editData?.start}
               onChange={(start: Date | null) => start && update({ start: setToMidnight(start) })}
               slotProps={{ textField: { sx: { flexGrow: 1 } } }}
             />
-            <MobileDatePicker
+            <DatePicker
               label="Due"
               value={editData?.due}
               onChange={(due: Date | null) => due && update({ due: setToMidnight(due) })}

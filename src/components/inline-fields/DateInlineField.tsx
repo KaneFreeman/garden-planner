@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format } from 'date-fns';
 import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { setToMidnight } from '../../utility/date.util';
@@ -71,7 +71,7 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
           )}
         </Typography>
       </Box>
-      <MobileDatePicker
+      <DatePicker
         key="date-picker"
         open={open}
         value={value}

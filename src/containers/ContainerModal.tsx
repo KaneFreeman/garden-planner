@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useCallback, useState } from 'react';
 import NumberTextField from '../components/NumberTextField';
 import Select from '../components/Select';
@@ -100,7 +100,7 @@ const ContainerModal = ({ open, onClose }: ContainerModalProperties) => {
             }))}
             sx={{ mt: 1.5, mb: 1 }}
           />
-          <MobileDatePicker
+          <DatePicker
             label="Year"
             value={editData?.year ? new Date(editData.year, 0, 1) : null}
             views={['year']}

@@ -19,7 +19,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -672,7 +672,7 @@ const ContainerSlotViewActive = ({
               />
             </Box>
             <Box sx={{ display: 'flex', mt: 1, mb: 0.5 }}>
-              <MobileDatePicker
+              <DatePicker
                 label="Transplanted On"
                 value={transplantedDate}
                 onChange={(newPlantedDate: Date | null) =>

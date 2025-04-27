@@ -1,11 +1,11 @@
-import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useCallback, useState } from 'react';
 import { getMidnight, setToMidnight } from '../utility/date.util';
 
 interface DateDialogProps {
@@ -40,7 +40,7 @@ const DateDialog = ({
       <DialogContent>
         <form name="plant-modal-form" onSubmit={handleSubmit} noValidate>
           <Box sx={{ display: 'flex', pt: 2 }}>
-            <MobileDatePicker
+            <DatePicker
               label={label}
               value={date}
               onChange={(newDate: Date | null) => newDate && setDate(setToMidnight(newDate))}
