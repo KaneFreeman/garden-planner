@@ -435,12 +435,24 @@ export interface ContainerDTO {
   rows: number;
   columns: number;
   slots?: Record<number, SlotDTO>;
+  startedFrom?: string;
+  archived?: boolean;
+}
+
+export function toStartedFromType(rawStartedFrom: unknown): StartedFromType {
+  switch (rawStartedFrom) {
+    case 'Transplant':
+      return STARTED_FROM_TYPE_TRANSPLANT;
+    default:
+      return STARTED_FROM_TYPE_SEED;
+  }
 }
 
 export function fromContainerDTO(dto: ContainerDTO): Container {
   return {
     ...dto,
-    slots: dto.slots ? mapRecord(dto.slots, fromSlotDTO) : undefined
+    slots: dto.slots ? mapRecord(dto.slots, fromSlotDTO) : undefined,
+    startedFrom: dto.startedFrom ? toStartedFromType(dto.startedFrom) : undefined
   };
 }
 
@@ -602,15 +614,6 @@ export function toStatus(rawStatus: string): HistoryStatus {
       return FERTILIZED;
     default:
       return PLANTED;
-  }
-}
-
-export function toStartedFromType(rawStartedFrom: unknown): StartedFromType {
-  switch (rawStartedFrom) {
-    case 'Transplant':
-      return STARTED_FROM_TYPE_TRANSPLANT;
-    default:
-      return STARTED_FROM_TYPE_SEED;
   }
 }
 

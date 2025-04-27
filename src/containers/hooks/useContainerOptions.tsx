@@ -1,15 +1,14 @@
-import { useMemo } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import ParkIcon from '@mui/icons-material/Park';
-import { useAppSelector } from '../../store/hooks';
-import { selectContainers } from '../../store/slices/containers';
+import { useMemo } from 'react';
 import { CONTAINER_TYPE_INSIDE } from '../../interface';
+import { useContainers } from './useContainers';
 
 export default function useContainerOptions() {
-  const containers = useAppSelector(selectContainers);
+  const containers = useContainers();
 
   const sortedContainers = useMemo(() => {
-    const temp = [...containers];
+    const temp = [...containers].filter((c) => !c.archived);
     temp.sort((a, b) => a.name.localeCompare(b.name));
     return temp;
   }, [containers]);

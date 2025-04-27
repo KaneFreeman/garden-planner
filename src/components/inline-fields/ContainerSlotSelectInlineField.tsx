@@ -6,12 +6,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
+import { useContainer } from '../../containers/hooks/useContainers';
 import { ContainerSlotIdentifier } from '../../interface';
-import { useAppSelector } from '../../store/hooks';
-import { selectContainer } from '../../store/slices/containers';
 import { useLocationTitle } from '../../utility/containerSlotLocation.util';
 import { isNullish } from '../../utility/null.util';
 import Select from '../Select';
@@ -75,8 +74,7 @@ const ContainerSlotSelectInlineField = ({
     [navigate, value]
   );
 
-  const transplantContainerSelector = useMemo(() => selectContainer(value?.containerId), [value?.containerId]);
-  const transplantContainer = useAppSelector(transplantContainerSelector);
+  const transplantContainer = useContainer(value?.containerId);
 
   const containerOptions = useContainerOptions();
 
