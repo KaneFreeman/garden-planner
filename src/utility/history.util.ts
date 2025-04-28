@@ -81,8 +81,11 @@ export function getPlantedDate(plantInstance: PlantInstance | undefined | null) 
   return getPlantedEvent(plantInstance)?.date ?? null;
 }
 
-export function getTransplantedDate(plantInstance: PlantInstance | undefined | null, from: ContainerSlotIdentifier) {
-  return findHistoryTo(plantInstance, from, TRANSPLANTED)?.date ?? null;
+export function getTransplantedDate(
+  plantInstance: PlantInstance | undefined | null,
+  from: ContainerSlotIdentifier | undefined | null
+) {
+  return findHistoryFrom(plantInstance, from, TRANSPLANTED)?.date ?? null;
 }
 
 export function getFirstEventAt(

@@ -5,6 +5,7 @@ import GrassIcon from '@mui/icons-material/Grass';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
 import ParkIcon from '@mui/icons-material/Park';
 import RotateLeftIcon from '@mui/icons-material/RotateLeft';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
@@ -29,6 +30,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Chip from '../components/Chip';
 import DateDialog from '../components/DateDialog';
+import Select from '../components/Select';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import { CONTAINER_TYPE_INSIDE, Container, FERTILIZE, PLANT, PLANTED, Plant, Slot } from '../interface';
 import {
@@ -38,9 +40,11 @@ import {
 } from '../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../plants/usePlants';
 import { generateTagColor } from '../utility/color.util';
+import { getTransplantedDate } from '../utility/history.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerSlotPreview from './ContainerSlotPreview';
+import useContainerOptions from './hooks/useContainerOptions';
 import { useFinishPlanningContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 
 const MAX_SLOT_WIDTH = 80;
@@ -141,6 +145,13 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         .map((pi) => pi._id),
     [container._id, plantInstancesById]
   );
+  const transplantableInstanceIds = useMemo(
+    () =>
+      Object.values(plantInstancesById)
+        .filter((pi) => pi.containerId === container._id && !pi?.closed && getTransplantedDate(pi, pi))
+        .map((pi) => pi._id),
+    [container._id, plantInstancesById]
+  );
   const closableInstanceIds = useMemo(
     () =>
       Object.values(plantInstancesById)
@@ -206,14 +217,17 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     setIsPlantModalOpen(true);
   }, []);
 
-  const handleClose = useCallback(() => {
-    if (selectedPlantInstances.length === 0) {
-      return;
-    }
-    bulkReopenClosePlantInstances('close', selectedPlantInstances);
-    handleMoreMenuClose();
-    setSelectedPlantInstances([]);
-  }, [bulkReopenClosePlantInstances, selectedPlantInstances]);
+  const handleClose = useCallback(
+    (ids: string[]) => {
+      if (ids.length === 0) {
+        return;
+      }
+      bulkReopenClosePlantInstances('close', ids);
+      handleMoreMenuClose();
+      setSelectedPlantInstances([]);
+    },
+    [bulkReopenClosePlantInstances]
+  );
 
   const handleSlotClick = useCallback(
     (slot: Slot | undefined, index: number) => {
@@ -237,17 +251,34 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
       switch (mode) {
         case 'plant':
-          handlePlant();
+          if (plantableInstanceIds.includes(slot.plantInstanceId)) {
+            handlePlant();
+          }
           break;
         case 'fertilize':
-          handleFertilize();
+          if (fertilizableInstanceIds.includes(slot.plantInstanceId)) {
+            handleFertilize();
+          }
           break;
         case 'close':
-          handleClose();
+          if (closableInstanceIds.includes(slot.plantInstanceId)) {
+            handleClose([slot.plantInstanceId]);
+          }
           break;
       }
     },
-    [container._id, handleClose, handleFertilize, handlePlant, mode, navigate, onSlotClick]
+    [
+      closableInstanceIds,
+      container._id,
+      fertilizableInstanceIds,
+      handleClose,
+      handleFertilize,
+      handlePlant,
+      mode,
+      navigate,
+      onSlotClick,
+      plantableInstanceIds
+    ]
   );
 
   const handleOnFertilizeContainerClick = useCallback(() => {
@@ -275,6 +306,30 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     finishPlanningContainer();
   }, [finishPlanningContainer]);
   const handleFinishPlanningClose = useCallback(() => setAreYouDonePlanning(false), []);
+
+  const [showTransplantedModal, setShowTransplantedModal] = useState(false);
+  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(null);
+  const onTransplantClick = useCallback(() => {
+    setShowTransplantedModal(true);
+    handleMoreMenuClose();
+  }, []);
+  const finishUpdateStatusTransplanted = useCallback(() => {
+    if (transplantedToContainerId !== null) {
+      navigate(
+        `/container/${container?._id}/bulk-transplant/${transplantedToContainerId}?backPath=${`/container/${container._id}`}&backLabel=${container.name}`
+      );
+    }
+  }, [container._id, container.name, navigate, transplantedToContainerId]);
+
+  const containerOptions = useContainerOptions();
+  const onTransplantContainerChange = useCallback(
+    (newValue: string | undefined) => {
+      if (transplantedToContainerId !== newValue) {
+        setTransplantedToContainerId(newValue ?? null);
+      }
+    },
+    [transplantedToContainerId]
+  );
 
   const hasSlotsInPlanning = useMemo(() => {
     if (!container._id || !container.slots) {
@@ -435,7 +490,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         <MoreVertIcon />
                       </IconButton>
                       <Menu
-                        id="basic-menu"
                         anchorEl={moreMenuAnchorElement}
                         open={moreMenuOpen}
                         onClose={handleMoreMenuClose}
@@ -461,6 +515,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                               <EditNoteIcon color="primary" fontSize="small" />
                             </ListItemIcon>
                             <Typography color="primary">Finish Planning</Typography>
+                          </MenuItem>
+                        ) : null}
+                        {transplantableInstanceIds ? (
+                          <MenuItem onClick={onTransplantClick}>
+                            <ListItemIcon>
+                              <MoveDownIcon color="error" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="error.main">Bulk Transplant</Typography>
                           </MenuItem>
                         ) : null}
                         <MenuItem
@@ -527,51 +589,53 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                           Finish Planning
                         </Button>
                       ) : null}
-                      <Button
-                        key="archive-button"
-                        variant="outlined"
-                        color="warning"
-                        onClick={handleOnArchiveUnarchiveClick(!container.archived)}
-                        title={`${container.archived ? 'Archive' : 'Unarchive'} container`}
+                      <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={moreMenuOpen ? 'long-menu' : undefined}
+                        aria-expanded={moreMenuOpen ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleMoreMenuClick}
                       >
-                        {container.archived ? (
-                          <Box
-                            key="unarchive"
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              gap: 1
-                            }}
-                          >
-                            <UnarchiveIcon color="warning" fontSize="small" />
-                            Unarchive
-                          </Box>
-                        ) : (
-                          <Box
-                            key="archive"
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              gap: 1
-                            }}
-                          >
-                            <ArchiveIcon color="warning" fontSize="small" />
-                            Archive
-                          </Box>
-                        )}
-                      </Button>
-                      <Button
-                        key="delete-button"
-                        variant="outlined"
-                        color="error"
-                        onClick={handleOnDelete}
-                        title="Delete container"
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={moreMenuAnchorElement}
+                        open={moreMenuOpen}
+                        onClose={handleMoreMenuClose}
+                        MenuListProps={{
+                          'aria-labelledby': 'basic-button'
+                        }}
                       >
-                        <DeleteIcon sx={{ mr: 1 }} fontSize="small" />
-                        Delete
-                      </Button>
+                        {transplantableInstanceIds ? (
+                          <MenuItem onClick={onTransplantClick}>
+                            <ListItemIcon>
+                              <MoveDownIcon color="error" fontSize="small" />
+                            </ListItemIcon>
+                            <Typography color="error.main">Bulk Transplant</Typography>
+                          </MenuItem>
+                        ) : null}
+                        <MenuItem
+                          key="archive-mobile-button"
+                          color="primary"
+                          onClick={handleOnArchiveUnarchiveClick(!container.archived)}
+                        >
+                          <ListItemIcon>
+                            {container.archived ? (
+                              <UnarchiveIcon color="warning" fontSize="small" />
+                            ) : (
+                              <ArchiveIcon color="warning" fontSize="small" />
+                            )}
+                          </ListItemIcon>
+                          <Typography color="warning.main">{container.archived ? 'Unarchive' : 'Archive'}</Typography>
+                        </MenuItem>
+                        <MenuItem key="delete-mobile-button" onClick={handleOnDelete}>
+                          <ListItemIcon>
+                            <DeleteIcon color="error" fontSize="small" />
+                          </ListItemIcon>
+                          <Typography color="error">Delete</Typography>
+                        </MenuItem>
+                      </Menu>
                     </Box>
                   )}
                 </Box>
@@ -682,6 +746,27 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           </Button>
           <Button onClick={handleFinishPlanningConfirm} color="primary">
             Finish Planning
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showTransplantedModal} onClose={() => setShowTransplantedModal(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Bulk Transplant</DialogTitle>
+        <DialogContent>
+          <form name="plant-modal-form" onSubmit={finishUpdateStatusTransplanted} noValidate>
+            <Box sx={{ display: 'flex', mt: 1, mb: 2, gap: 1 }}>
+              <Select
+                label="Container"
+                value={transplantedToContainerId ?? undefined}
+                onChange={onTransplantContainerChange}
+                options={containerOptions}
+              />
+            </Box>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowTransplantedModal(false)}>Cancel</Button>
+          <Button onClick={finishUpdateStatusTransplanted} variant="contained">
+            Next
           </Button>
         </DialogActions>
       </Dialog>

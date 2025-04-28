@@ -659,7 +659,7 @@ const ContainerSlotViewActive = ({
         onClose={() => setShowPlantedDialogue(false)}
         onConfirm={finishUpdateStatusPlanted}
       />
-      <Dialog open={showTransplantedModal} onClose={() => setShowPlantedDialogue(false)} maxWidth="xs" fullWidth>
+      <Dialog open={showTransplantedModal} onClose={() => setShowTransplantedModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Transplant</DialogTitle>
         <DialogContent>
           <form name="plant-modal-form" onSubmit={finishUpdateStatusTransplanted} noValidate>

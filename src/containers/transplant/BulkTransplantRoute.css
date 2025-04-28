@@ -1,0 +1,12 @@
+.transplant-slot .transplant-slot-text {
+  max-width: 300px;
+  margin: 0;
+  margin-right: 24px;
+}
+
+.transplant-slot-text .transplant-slot-text-primary,
+.transplant-slot-text .transplant-slot-text-secondary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

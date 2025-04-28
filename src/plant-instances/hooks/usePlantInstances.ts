@@ -54,13 +54,15 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
         return undefined;
       }
 
-      await getPlantInstances();
-      await getContainers();
-      await getTasks();
+      if (options?.skipRefresh !== true) {
+        await getPlantInstances();
+        await getContainers();
+        await getTasks();
+      }
 
       return response;
     },
-    [getContainers, getPlantInstances, getTasks]
+    [getContainers, getPlantInstances, getTasks, options?.skipRefresh]
   );
 
   return runOperation;
@@ -108,9 +110,10 @@ export const useAddPlantInstance = () => {
   return addPlantInstance;
 };
 
-export const useUpdatePlantInstance = () => {
+export const useUpdatePlantInstance = (options: { skipRefresh?: boolean } = {}) => {
+  const { skipRefresh = false } = options;
   const fetch = useFetch();
-  const runOperation = usePlantInstanceOperation({ force: true });
+  const runOperation = usePlantInstanceOperation({ skipRefresh, force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const updatePlantInstance = useCallback(

@@ -15,6 +15,7 @@ import { selectPlantInstancesByIds } from '../store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from '../store/slices/tasks';
 import TaskViewRoute from '../tasks/TaskViewRoute';
 import Tasks from '../tasks/Tasks';
+import BulkTransplantRoute from '../containers/transplant/BulkTransplantRoute';
 
 const GardenView = () => {
   const dispatch = useAppDispatch();
@@ -58,6 +59,7 @@ const GardenView = () => {
               path="/container/:id/slot/:index/transplant/:otherContainerId"
               element={<ContainerSelectViewRoute />}
             />
+            <Route path="/container/:id/bulk-transplant/:otherContainerId" element={<BulkTransplantRoute />} />
             <Route path="/plants" element={<Plants />} />
             <Route path="/plant/:id" element={<PlantView />} />
             <Route path="/task/:id" element={<TaskViewRoute />} />

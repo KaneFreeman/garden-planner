@@ -131,6 +131,7 @@ const getDataCache: Record<string, { date: Date; data: any }> = {};
 const CACHE_TIME = 5000;
 
 export interface ExtraFetchOptions {
+  skipRefresh?: boolean;
   force?: boolean;
   accessToken?: string;
   redirectOn401?: boolean;
