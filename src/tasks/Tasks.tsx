@@ -6,7 +6,7 @@ import Tabs from '../components/tabs/Tabs';
 import TabPanel from '../components/tabs/TabPanel';
 import AutoSizer from '../components/AutoSizer';
 import { getMidnight } from '../utility/date.util';
-import { Task } from '../interface';
+import { Task, TaskGroup } from '../interface';
 import { useTasks } from './hooks/useTasks';
 import TaskListItem from './TaskListItem';
 import TasksSection from './TasksSection';
@@ -22,7 +22,7 @@ const Tasks = () => {
   const renderTask = useCallback(
     (
       key: string,
-      task: Task,
+      task: Task | TaskGroup,
       index: number,
       options?: { showStart?: boolean; isThisWeek?: boolean; isOverdue?: boolean; style?: React.CSSProperties }
     ) => {
@@ -42,8 +42,44 @@ const Tasks = () => {
     [today]
   );
 
+  const completedTasks = useMemo(() => {
+    const completedCustomTasks = completed.filter((task) => task.type === 'Custom');
+    const completedTaskGroups = Object.values(
+      completed
+        .filter((task) => task.type !== 'Custom')
+        .reduce<Record<string, TaskGroup>>((acc, task) => {
+          const key = `taskGroup-${task.path}_${task.type}_${task.text}_${task.start}_${task.due}_${task.completedOn}`;
+          if (!(key in acc)) {
+            acc[key] = {
+              key,
+              path: task.path,
+              type: task.type,
+              text: task.text,
+              start: task.start,
+              due: task.due,
+              completedOn: task.completedOn,
+              instances: []
+            };
+          }
+
+          acc[key].instances.push({
+            _id: task._id,
+            plantInstanceId: task.plantInstanceId
+          });
+
+          return acc;
+        }, {})
+    );
+
+    const data = [...completedCustomTasks, ...completedTaskGroups];
+
+    data.sort((a, b) => b.completedOn!.getTime() - a.completedOn!.getTime());
+
+    return data;
+  }, [completed]);
+
   const renderVirtualTask = useCallback(
-    (key: string, tasksToRender: Task[], showStart = false) =>
+    (key: string, tasksToRender: (Task | TaskGroup)[], showStart = false) =>
       ({ index, style }: ListChildComponentProps) =>
         renderTask(key, tasksToRender[index], index, { showStart, style }),
     [renderTask]
@@ -96,7 +132,7 @@ const Tasks = () => {
                         itemCount={completed.length}
                         overscanCount={5}
                       >
-                        {renderVirtualTask('completed', completed)}
+                        {renderVirtualTask('completed', completedTasks)}
                       </FixedSizeList>
                     )}
                   </AutoSizer>
