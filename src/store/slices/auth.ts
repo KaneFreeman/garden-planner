@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '..';
 import { SessionDTO, UserDTO } from '../../interface';
+import { isNotNullish } from '../../utility/null.util';
 
 // Define a type for the slice state
 export interface AuthState {
@@ -17,7 +18,11 @@ export const AuthSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<SessionDTO>) => {
-      localStorage.setItem('token', action.payload.accessToken);
+      localStorage.setItem('accessToken', action.payload.accessToken);
+
+      if (isNotNullish(action.payload.refreshToken)) {
+        localStorage.setItem('refreshToken', action.payload.refreshToken);
+      }
 
       return {
         ...state,
@@ -31,7 +36,8 @@ export const AuthSlice = createSlice({
       };
     },
     logout: (state) => {
-      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
 
       return {
         ...state,
@@ -45,6 +51,7 @@ export const AuthSlice = createSlice({
 export const { updateUser, updateUserDetails, logout } = AuthSlice.actions;
 
 export const selectAccessToken = (state: RootState) => state.auth.user?.accessToken;
+export const selectRefreshToken = (state: RootState) => state.auth.user?.refreshToken;
 
 export const selectUser = (state: RootState) => state.auth.user;
 

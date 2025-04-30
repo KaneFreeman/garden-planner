@@ -711,7 +711,10 @@ export interface BulkReopenClosePlantInstanceDTO {
 export interface SessionDTO {
   readonly userId: string;
   readonly email: string;
+  readonly firstName: string;
+  readonly lastName: string;
   readonly accessToken: string;
+  readonly refreshToken?: string;
 }
 
 export interface LoginDTO {

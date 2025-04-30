@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
-import { useAppSelector } from '../store/hooks';
-import { selectAccessToken } from '../store/slices/auth';
-import { isNotNullish } from '../utility/null.util';
-import Rest from './index';
 import hash from 'object-hash';
+import { useMemo } from 'react';
+import { store } from '../store';
+import { useAppSelector } from '../store/hooks';
+import { selectAccessToken, selectRefreshToken, updateUser } from '../store/slices/auth';
+import { isNotNullish, isNullish } from '../utility/null.util';
+import Rest from './index';
 
 type GetMethods<T> = {
   [P in keyof T]: T[P] extends
@@ -66,14 +67,55 @@ export function areValuesEmpty(fields: Record<string, QueryValues>) {
   return !Object.keys(fields).some((name) => Boolean(fields[name]));
 }
 
+async function getNewAccessToken(refreshToken: string): Promise<string | null> {
+  const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    body: JSON.stringify({ refreshToken })
+  });
+
+  if (refreshResponse.ok) {
+    const refreshBody = await refreshResponse.json();
+    const newAccessToken = refreshBody.accessToken as string;
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/profile`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        authorization: `Bearer ${newAccessToken}`
+      }
+    });
+
+    if (isNullish(response) || typeof response === 'string') {
+      return null;
+    }
+
+    const profile = await response.json();
+
+    await store.dispatch(updateUser({ ...profile, accessToken: newAccessToken }));
+
+    return newAccessToken;
+  }
+
+  return null;
+}
+
+let refreshTokenPromise: Promise<string | null> | null = null;
+
 /**
  * Simple fetch wrapper to get JSON REST API
  */
 async function fetchRequest<T>(
   accessToken: string | undefined,
+  refreshToken: string | undefined,
   url: string,
   options: FetchOptions = {},
-  extraOptions?: ExtraFetchOptions
+  extraOptions?: ExtraFetchOptions,
+  hasRetried?: boolean
 ): Promise<T | string | undefined> {
   const { method = 'GET', body = undefined } = options;
 
@@ -94,12 +136,34 @@ async function fetchRequest<T>(
     });
 
     if (response.status === 401) {
+      let forceLogout = true;
+      if (!hasRetried && isNotNullish(refreshToken)) {
+        forceLogout = false;
+        let newAccessToken: string | null;
+        if (refreshTokenPromise != null) {
+          newAccessToken = await refreshTokenPromise;
+        } else {
+          refreshTokenPromise = getNewAccessToken(refreshToken);
+          newAccessToken = await refreshTokenPromise;
+          refreshTokenPromise = null;
+        }
+
+        if (newAccessToken != null) {
+          return fetchRequest(newAccessToken, refreshToken, url, options, extraOptions, true);
+        } else {
+          forceLogout = true;
+        }
+      }
+
       /**
        * In the case of a UNAUTHORIZED status, reload the page to prompt for login.
        */
-      localStorage.removeItem('token');
-      if (extraOptions?.redirectOn401 === true) {
-        window.location.reload();
+      if (forceLogout) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        if (extraOptions?.redirectOn401 === true) {
+          window.location.reload();
+        }
       }
 
       const errorBody = await response.json();
@@ -134,6 +198,7 @@ export interface ExtraFetchOptions {
   skipRefresh?: boolean;
   force?: boolean;
   accessToken?: string;
+  refreshToken?: string;
   redirectOn401?: boolean;
 }
 
@@ -145,7 +210,7 @@ export interface ExtraFetchOptions {
  * or takes options with an error handler and returns a union of the response type and the
  * error handler return type
  */
-function fetchEndpoint(accessToken?: string) {
+function fetchEndpoint(accessToken: string | undefined, refreshToken: string | undefined) {
   return async <T extends keyof Rest>(
     endpoint: T,
     options: Rest[T]['request'],
@@ -190,6 +255,7 @@ function fetchEndpoint(accessToken?: string) {
 
       fetchRequest<Rest[T]['response'] | undefined>(
         extraOptions?.accessToken ?? accessToken,
+        extraOptions?.refreshToken ?? refreshToken,
         url,
         {
           body,
@@ -209,7 +275,13 @@ function fetchEndpoint(accessToken?: string) {
       return p;
     }
 
-    return fetchRequest(extraOptions?.accessToken ?? accessToken, url, { body, method }, extraOptions);
+    return fetchRequest(
+      extraOptions?.accessToken ?? accessToken,
+      extraOptions?.refreshToken ?? refreshToken,
+      url,
+      { body, method },
+      extraOptions
+    );
   };
 }
 
@@ -218,5 +290,6 @@ export type QueryMap = Record<string, QueryValues | QueryValues[]>;
 
 export default function useFetch() {
   const accessToken = useAppSelector(selectAccessToken);
-  return useMemo(() => fetchEndpoint(accessToken), [accessToken]);
+  const refreshToken = useAppSelector(selectRefreshToken);
+  return useMemo(() => fetchEndpoint(accessToken, refreshToken), [accessToken, refreshToken]);
 }

@@ -24,9 +24,10 @@ const Main = () => {
     let alive = true;
 
     const checkAccessToken = async () => {
-      const accessToken = localStorage.getItem('token');
-      if (isNotNullish(accessToken)) {
-        await checkLogin(accessToken);
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (isNotNullish(accessToken) && isNotNullish(refreshToken)) {
+        await checkLogin(accessToken, refreshToken);
       }
 
       if (alive) {

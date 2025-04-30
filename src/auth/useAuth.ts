@@ -32,8 +32,8 @@ export const useCheckLogin = (options?: ExtraFetchOptions) => {
   const dispatch = useAppDispatch();
 
   const checkLogin = useCallback(
-    async (accessToken: string) => {
-      const response = await fetch(Api.auth_GetProfile, {}, { ...options, accessToken });
+    async (accessToken: string, refreshToken: string) => {
+      const response = await fetch(Api.auth_GetProfile, {}, { ...options, accessToken, refreshToken });
 
       if (isNullish(response) || typeof response === 'string') {
         return false;
