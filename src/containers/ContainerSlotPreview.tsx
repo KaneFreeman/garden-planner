@@ -22,11 +22,12 @@ interface ContainerSlotPreviewProps {
   plant?: Plant;
   size: number;
   isActionable: boolean | undefined;
+  isLink: boolean;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
 }
 
 const ContainerSlotPreview = memo(
-  ({ index, container, slot, plant, size, isActionable, onSlotClick }: ContainerSlotPreviewProps) => {
+  ({ index, container, slot, plant, size, isActionable, isLink, onSlotClick }: ContainerSlotPreviewProps) => {
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
     const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
@@ -49,6 +50,8 @@ const ContainerSlotPreview = memo(
       plantLocation,
       plant
     );
+
+    const url = useMemo(() => `/container/${container._id}/slot/${index}`, [container._id, index]);
 
     const title = useMemo(() => {
       let slotTitle = `${getSlotTitle(index, container.rows)}`;
@@ -86,6 +89,8 @@ const ContainerSlotPreview = memo(
 
     return (
       <IconButton
+        component={isLink ? 'a' : 'div'}
+        href={isLink ? url : undefined}
         sx={{
           p: 2,
           width: size,
@@ -93,7 +98,7 @@ const ContainerSlotPreview = memo(
           border: `2px solid ${isActionable === false ? 'rgba(0,0,0,0.7)' : borderColor}`,
           borderRadius: 0
         }}
-        onClick={handleClick}
+        onClick={!isLink ? handleClick : undefined}
         title={title}
       >
         {isActionable === false ? (

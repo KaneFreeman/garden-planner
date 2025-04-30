@@ -6,8 +6,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router';
 import CommentsView from '../components/comments/CommentsView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { PlantInstance } from '../interface';
@@ -25,19 +23,7 @@ interface PlantInstanceDialogProps {
 }
 
 const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDialogProps) => {
-  const navigate = useNavigate();
-
   const plant = usePlant(plantInstance?.plant);
-
-  const onPlantClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (plant) {
-        event.stopPropagation();
-        navigate(`/plant/${plant._id}`);
-      }
-    },
-    [navigate, plant]
-  );
 
   if (isNullish(plantInstance) || !plant) {
     return null;
@@ -57,7 +43,7 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
         <SimpleInlineField
           label="Plant"
           value={
-            <ListItemButton onClick={onPlantClick} sx={{ gap: 0 }}>
+            <ListItemButton component="a" href={`/plant/${plant._id}`} sx={{ gap: 0 }}>
               <ListItemAvatar sx={{ display: 'flex' }}>
                 <PlantAvatar plant={plant} />
               </ListItemAvatar>

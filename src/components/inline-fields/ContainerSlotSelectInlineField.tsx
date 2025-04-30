@@ -64,16 +64,6 @@ const ContainerSlotSelectInlineField = ({
     [containerId, internalValue, navigate, onChange, slotId, value]
   );
 
-  const onClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      if (value) {
-        event.stopPropagation();
-        navigate(`/container/${value.containerId}/slot/${value.slotId}`);
-      }
-    },
-    [navigate, value]
-  );
-
   const transplantContainer = useContainer(value?.containerId);
 
   const containerOptions = useContainerOptions();
@@ -94,7 +84,12 @@ const ContainerSlotSelectInlineField = ({
         <Typography variant="body1" component="div" sx={{ ml: -2, mr: -2 }}>
           <ListItem button key="container-slot-select-display" onClick={open ? undefined : handleOpen}>
             {transplantContainer && value ? (
-              <Button variant="text" onClick={onClick} sx={{ ml: -1 }}>
+              <Button
+                component="a"
+                variant="text"
+                href={`/container/${value.containerId}/slot/${value.slotId}`}
+                sx={{ ml: -1 }}
+              >
                 <Box component="span">{title}</Box>
               </Button>
             ) : (

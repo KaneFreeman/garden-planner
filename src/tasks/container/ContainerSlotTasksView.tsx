@@ -59,6 +59,8 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle 
           showStart={showStart}
           isThisWeek={isThisWeek}
           isOverdue={isOverdue}
+          disableSelect={true}
+          disabled={path != null}
           back={
             path
               ? {

@@ -5,7 +5,6 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import CollapsableSimpleInlineField from '../../components/inline-fields/CollapsableSimpleInlineField';
 import { PlantInstance } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
@@ -28,7 +27,6 @@ interface RenderPlantSlotOptions {
 
 const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
   const isSmallScreen = useSmallScreen();
-  const navigate = useNavigate();
 
   const plantInstances = usePlantInstancesByPlant(plantId);
   const plantInstancesById = usePlantInstancesById();
@@ -112,13 +110,6 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
     return [active, inactive];
   }, [containersById, firstEventComparatorWithSecondary, plantInstances]);
 
-  const onClickHandler = useCallback(
-    (instance: PlantInstance) => {
-      navigate(`/container/${instance.containerId}/slot/${instance.slotId}`);
-    },
-    [navigate]
-  );
-
   const renderPlantSlot = useCallback(
     (key: string, instance: PlantInstance, index: number, options?: RenderPlantSlotOptions) => {
       const { showStatus = true, openDialog = false } = options || {};
@@ -138,7 +129,8 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         <SlotListItem
           key={`${key}-${index}`}
           instance={instance}
-          onClick={openDialog ? openPlantInstanceDialog : onClickHandler}
+          url={!openDialog ? `/container/${instance.containerId}/slot/${instance.slotId}` : undefined}
+          onClick={openDialog ? openPlantInstanceDialog : undefined}
           primary={primary}
           secondary={secondary}
           showStatus={showStatus}
@@ -146,7 +138,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
         />
       );
     },
-    [containersById, onClickHandler, openPlantInstanceDialog]
+    [containersById, openPlantInstanceDialog]
   );
 
   return (

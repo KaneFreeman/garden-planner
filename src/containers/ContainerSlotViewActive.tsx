@@ -192,16 +192,6 @@ const ContainerSlotViewActive = ({
     [onPlantInstanceChange]
   );
 
-  const onPlantClick = useCallback(
-    (target: Plant) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      if (target && path) {
-        event.stopPropagation();
-        navigate(`/plant/${target._id}?backPath=${path}&backLabel=${title}`);
-      }
-    },
-    [navigate, path, title]
-  );
-
   const renderPlant = useCallback(
     (value: Plant | null | undefined, listType: 'value' | 'options') => {
       if (!value) {
@@ -211,7 +201,12 @@ const ContainerSlotViewActive = ({
       if (listType === 'value') {
         return {
           raw: (
-            <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
+            <Button
+              component="a"
+              variant="text"
+              href={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
+              sx={{ ml: -1 }}
+            >
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                 {getPlantTitle(value)}
               </Box>
@@ -226,7 +221,7 @@ const ContainerSlotViewActive = ({
         avatar: <PlantAvatar plant={value} />
       };
     },
-    [onPlantClick]
+    [path, title]
   );
 
   const plantInstanceLocation = usePlantInstanceLocation(plantInstance);

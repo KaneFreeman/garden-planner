@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { format } from 'date-fns/format';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -36,7 +35,6 @@ interface PlantRenderOptions {
 }
 
 const Plants = () => {
-  const navigate = useNavigate();
   const filterPlants = useAppSelector(selectFilterPlants);
   const containers = useContainers();
   const containersById = useContainersById();
@@ -102,7 +100,7 @@ const Plants = () => {
       { showPlantedCount = false, showLinkToPage = false }: PlantRenderOptions
     ) => (
       <ListItem key={`plant-${plant._id}`} disablePadding>
-        <ListItemButton onClick={() => navigate(`/plant/${plant._id}`)}>
+        <ListItemButton component="a" href={`/plant/${plant._id}`}>
           <ListItemAvatar>
             <PlantAvatar plant={plant} />
           </ListItemAvatar>
@@ -136,7 +134,7 @@ const Plants = () => {
         </ListItemButton>
       </ListItem>
     ),
-    [isSmallScreen, navigate]
+    [isSmallScreen]
   );
 
   const buildPlantList = useCallback(

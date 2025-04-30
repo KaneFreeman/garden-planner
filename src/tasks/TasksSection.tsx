@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import YardIcon from '@mui/icons-material/Yard';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import GrassIcon from '@mui/icons-material/Grass';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { getMidnight } from '../utility/date.util';
-import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task } from '../interface';
+import YardIcon from '@mui/icons-material/Yard';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DateDialog from '../components/DateDialog';
+import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TaskGroup } from '../interface';
+import { getMidnight } from '../utility/date.util';
 import useSmallScreen from '../utility/smallScreen.util';
-import TaskListItem from './TaskListItem';
 import { useBulkCompleteTasks } from './hooks/useTasks';
+import TaskListItem from './TaskListItem';
 import './Tasks.css';
 
 interface TasksSettings {
@@ -33,6 +33,22 @@ interface TasksSectionProps {
   disableSelect?: boolean;
 }
 
+function getIdMapper(t: Task | TaskGroup): string | string[] {
+  if ('_id' in t) {
+    return t._id;
+  }
+
+  return t.instances.map((i) => i._id);
+}
+
+function getId(t: Task | TaskGroup): string {
+  if ('_id' in t) {
+    return t._id;
+  }
+
+  return t.key;
+}
+
 const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSectionProps) => {
   const today = useMemo(() => getMidnight().getTime(), []);
 
@@ -42,8 +58,8 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
   const [showHarvestedDialogue, setShowHarvestedDialogue] = useState(false);
   const [showFertilizedDialogue, setShowFertilizedDialogue] = useState(false);
 
-  const [selectedTasks, setSelectedTasks] = useState<Task[]>([]);
-  const selectedTaskIds = useMemo(() => selectedTasks.map((task) => task._id), [selectedTasks]);
+  const [selectedTasks, setSelectedTasks] = useState<(Task | TaskGroup)[]>([]);
+  const selectedTaskIds = useMemo(() => selectedTasks.map(getId), [selectedTasks]);
 
   const selecting = useMemo(() => selectedTasks.length > 0, [selectedTasks]);
 
@@ -58,8 +74,39 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
 
   const isSmallScreen = useSmallScreen();
 
+  const customTasks = useMemo(() => tasks.filter((task) => task.type === 'Custom'), [tasks]);
+
+  const taskGroups = useMemo(
+    () =>
+      Object.values(
+        tasks.reduce<Record<string, TaskGroup>>((acc, task) => {
+          const key = `taskGroup-${task.path}_${task.type}_${task.text}_${task.start}_${task.due}_${task.completedOn}`;
+          if (!(key in acc)) {
+            acc[key] = {
+              key,
+              path: task.path,
+              type: task.type,
+              text: task.text,
+              start: task.start,
+              due: task.due,
+              completedOn: task.completedOn,
+              instances: []
+            };
+          }
+
+          acc[key].instances.push({
+            _id: task._id,
+            plantInstanceId: task.plantInstanceId
+          });
+
+          return acc;
+        }, {})
+      ),
+    [tasks]
+  );
+
   const handleOnSelect = useCallback(
-    (task: Task, selected: boolean) => {
+    (task: Task | TaskGroup, selected: boolean) => {
       if (disableSelect || task.type === CUSTOM) {
         return;
       }
@@ -67,7 +114,7 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
       if (selected) {
         setSelectedTasks([...selectedTasks, task]);
       } else {
-        const selectedIndex = selectedTaskIds.indexOf(task._id);
+        const selectedIndex = selectedTaskIds.indexOf(getId(task));
         if (selectedIndex > -1) {
           const newSelectedTasks = [...selectedTasks];
           newSelectedTasks.splice(selectedIndex, 1);
@@ -79,7 +126,7 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
   );
 
   const handleOnClick = useCallback(
-    (task: Task, selected: boolean) => {
+    (task: Task | TaskGroup, selected: boolean) => {
       if (selecting && !disableSelect) {
         handleOnSelect(task, selected);
         return true;
@@ -95,9 +142,9 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
   }, [isSmallScreen]);
 
   const renderTask = useCallback(
-    (task: Task, index: number) => {
+    (task: Task | TaskGroup, index: number) => {
       const { showStart = false, isThisWeek = false, isOverdue = false, style } = options || {};
-      const isSelected = selectedTaskIds.includes(task._id);
+      const isSelected = selectedTaskIds.includes(getId(task));
       return (
         <TaskListItem
           key={`${title}-${index}`}
@@ -119,25 +166,25 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
 
   const plantTasks = useMemo(
     () =>
-      (selectedTasks?.length > 0 ? selectedTasks : tasks)
-        .filter((task) => task.type === PLANT && today >= task.start.getTime())
-        .map((task) => task._id),
+      (selectedTasks?.length > 0 ? selectedTasks : tasks).filter(
+        (task) => task.type === PLANT && today >= task.start.getTime()
+      ),
     [selectedTasks, tasks, today]
   );
 
   const harvestTasks = useMemo(
     () =>
-      (selectedTasks?.length > 0 ? selectedTasks : tasks)
-        .filter((task) => task.type === HARVEST && today >= task.start.getTime())
-        .map((task) => task._id),
+      (selectedTasks?.length > 0 ? selectedTasks : tasks).filter(
+        (task) => task.type === HARVEST && today >= task.start.getTime()
+      ),
     [selectedTasks, tasks, today]
   );
 
   const fertilizeTasks = useMemo(
     () =>
-      (selectedTasks?.length > 0 ? selectedTasks : tasks)
-        .filter((task) => task.type === FERTILIZE && today >= task.start.getTime())
-        .map((task) => task._id),
+      (selectedTasks?.length > 0 ? selectedTasks : tasks).filter(
+        (task) => task.type === FERTILIZE && today >= task.start.getTime()
+      ),
     [selectedTasks, tasks, today]
   );
 
@@ -160,11 +207,11 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
     (date: Date) => {
       bulkCompleteTasks({
         type: PLANT,
-        taskIds: plantTasks,
+        taskIds: plantTasks.flatMap(getIdMapper),
         date: date.toISOString()
       });
       if (selectedTasks?.length > 0) {
-        setSelectedTasks(selectedTasks.filter((task) => !plantTasks.includes(task._id)));
+        setSelectedTasks(selectedTasks.filter((task) => !plantTasks.includes(task)));
       }
     },
     [bulkCompleteTasks, plantTasks, selectedTasks]
@@ -174,11 +221,11 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
     (date: Date) => {
       bulkCompleteTasks({
         type: HARVEST,
-        taskIds: harvestTasks,
+        taskIds: harvestTasks.flatMap(getIdMapper),
         date: date.toISOString()
       });
       if (selectedTasks?.length > 0) {
-        setSelectedTasks(selectedTasks.filter((task) => !harvestTasks.includes(task._id)));
+        setSelectedTasks(selectedTasks.filter((task) => !harvestTasks.includes(task)));
       }
     },
     [bulkCompleteTasks, harvestTasks, selectedTasks]
@@ -188,11 +235,11 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
     (date: Date) => {
       bulkCompleteTasks({
         type: FERTILIZE,
-        taskIds: fertilizeTasks,
+        taskIds: fertilizeTasks.flatMap(getIdMapper),
         date: date.toISOString()
       });
       if (selectedTasks?.length > 0) {
-        setSelectedTasks(selectedTasks.filter((task) => !fertilizeTasks.includes(task._id)));
+        setSelectedTasks(selectedTasks.filter((task) => !fertilizeTasks.includes(task)));
       }
     },
     [bulkCompleteTasks, fertilizeTasks, selectedTasks]
@@ -315,7 +362,8 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
             </Box>
           </Typography>
           <Box component="nav" aria-label={`main tasks-${title}`}>
-            <List>{tasks.map((task, index) => renderTask(task, index))}</List>
+            <List>{customTasks.map((task, index) => renderTask(task, index))}</List>
+            <List>{taskGroups.map((task, index) => renderTask(task, index))}</List>
           </Box>
         </Box>
       ) : null}

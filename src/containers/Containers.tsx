@@ -8,7 +8,6 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -51,7 +50,6 @@ interface Counts {
 }
 
 const Containers = () => {
-  const navigate = useNavigate();
   const containers = useContainers();
   const plantInstancesById = usePlantInstancesById();
 
@@ -142,7 +140,7 @@ const Containers = () => {
   const createListItem = useCallback(
     (container: Container) => (
       <ListItem key={`container-${container._id}`} disablePadding>
-        <ListItemButton onClick={() => navigate(`/container/${container._id}`)}>
+        <ListItemButton component="a" href={`/container/${container._id}`}>
           <ListItemAvatar>
             <TaskBadge tasks={tasksByContainers[container._id]}>
               <Avatar>
@@ -173,7 +171,7 @@ const Containers = () => {
         </ListItemButton>
       </ListItem>
     ),
-    [counts, isSmallScreen, navigate, renderCounts, tasksByContainers]
+    [counts, isSmallScreen, renderCounts, tasksByContainers]
   );
 
   const activeContainers = useMemo(() => {

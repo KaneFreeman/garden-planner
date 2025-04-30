@@ -9,10 +9,10 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { format, formatDistance } from 'date-fns';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useMemo } from 'react';
 import { useContainersById } from '../containers/hooks/useContainers';
 import {
   ContainerSlotIdentifier,
@@ -27,6 +27,26 @@ import { areContainerSlotLocationsEqual, getLocationTitle } from '../utility/con
 import { getMidnight } from '../utility/date.util';
 import './PlantInstanceHistoryView.css';
 
+function getUrl(historyItem: PlantInstanceHistory) {
+  if (historyItem.status === TRANSPLANTED || historyItem.status === PLANTED) {
+    if (historyItem.to) {
+      return `/container/${historyItem.to.containerId}/slot/${historyItem.to.slotId}`;
+    }
+
+    if (historyItem.from) {
+      return `/container/${historyItem.from.containerId}/slot/${historyItem.from.slotId}`;
+    }
+  }
+
+  if (historyItem.status === HARVESTED) {
+    if (historyItem.from) {
+      return `/container/${historyItem.from.containerId}/slot/${historyItem.from.slotId}`;
+    }
+  }
+
+  return undefined;
+}
+
 interface PlantInstanceHistoryViewProps {
   slotLocation?: ContainerSlotIdentifier | null;
   plantInstance: PlantInstance | undefined;
@@ -36,36 +56,10 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
   const history = useMemo(() => plantInstance?.history ?? [], [plantInstance]);
   const today = useMemo(() => getMidnight().getTime(), []);
   const containersById = useContainersById();
-  const navigate = useNavigate();
 
-  const navigateToLocation = useCallback(
-    (location: ContainerSlotIdentifier | undefined) => {
-      if (location) {
-        navigate(`/container/${location.containerId}/slot/${location.slotId}`);
-        return true;
-      }
-
-      return false;
-    },
-    [navigate]
-  );
-
-  const onClick = useCallback(
-    (historyItem: PlantInstanceHistory) => () => {
-      if (historyItem.status === TRANSPLANTED || historyItem.status === PLANTED) {
-        if (navigateToLocation(historyItem.to)) {
-          return;
-        }
-
-        navigateToLocation(historyItem.from);
-        return;
-      }
-
-      if (historyItem.status === HARVESTED) {
-        navigateToLocation(historyItem.from);
-      }
-    },
-    [navigateToLocation]
+  const slotUrl = useMemo(
+    () => (slotLocation ? `/container/${slotLocation.containerId}/slot/${slotLocation.slotId}` : undefined),
+    [slotLocation]
   );
 
   if (history.length === 0) {
@@ -151,13 +145,8 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
             }
           }
 
-          return (
-            <TimelineItem
-              key={`history-item-${historyItemIndex}`}
-              classes={{ root: 'timelineItem-root' }}
-              onClick={onClick(historyItem)}
-              sx={{ cursor: 'pointer' }}
-            >
+          const content = (
+            <TimelineItem key={`history-item-${historyItemIndex}`} classes={{ root: 'timelineItem-root' }}>
               <TimelineSeparator>
                 <TimelineConnector />
                 {historyItem.status === PLANTED ? (
@@ -193,6 +182,27 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
               </TimelineContent>
             </TimelineItem>
           );
+
+          const url = getUrl(historyItem);
+          if (url != null && url !== slotUrl) {
+            return (
+              <Link
+                href={url}
+                sx={{
+                  color: 'unset',
+                  textDecoration: 'none',
+                  '&:hover': {
+                    color: 'unset',
+                    textDecoration: 'none'
+                  }
+                }}
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          return content;
         })}
       </Timeline>
     </Box>

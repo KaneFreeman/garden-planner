@@ -1,29 +1,28 @@
-import React, { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItem from '@mui/material/ListItem';
-import Avatar from '@mui/material/Avatar';
-import { blue, green, purple, red } from '@mui/material/colors';
-import Checkbox from '@mui/material/Checkbox';
-import ErrorIcon from '@mui/icons-material/Error';
-import WarningIcon from '@mui/icons-material/Warning';
-import GrassIcon from '@mui/icons-material/Grass';
-import MoveDownIcon from '@mui/icons-material/MoveDown';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import TaskIcon from '@mui/icons-material/Task';
-import YardIcon from '@mui/icons-material/Yard';
 import CheckIcon from '@mui/icons-material/Check';
-import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TRANSPLANT } from '../interface';
+import ErrorIcon from '@mui/icons-material/Error';
+import GrassIcon from '@mui/icons-material/Grass';
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import TaskIcon from '@mui/icons-material/Task';
+import WarningIcon from '@mui/icons-material/Warning';
+import YardIcon from '@mui/icons-material/Yard';
+import Avatar from '@mui/material/Avatar';
+import Checkbox from '@mui/material/Checkbox';
+import { blue, green, purple, red } from '@mui/material/colors';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import React, { useCallback, useMemo } from 'react';
+import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TaskGroup, TRANSPLANT } from '../interface';
 import useSmallScreen from '../utility/smallScreen.util';
 import useGetTaskText from './hooks/useGetTaskText';
 import './Tasks.css';
 
 interface TaskListItemProps {
   today: number;
-  task: Task;
+  task: Task | TaskGroup;
   showStart?: boolean;
   isThisWeek?: boolean;
   isOverdue?: boolean;
@@ -34,6 +33,7 @@ interface TaskListItemProps {
   };
   isSelected?: boolean;
   disableSelect?: boolean;
+  disabled?: boolean;
   onClick?: () => boolean;
   onSelect?: () => void;
 }
@@ -48,10 +48,10 @@ const TaskListItem = ({
   back,
   isSelected = false,
   disableSelect = false,
+  disabled = false,
   onClick,
   onSelect
 }: TaskListItemProps) => {
-  const navigate = useNavigate();
   const isSmallScreen = useSmallScreen();
 
   const queryString = useMemo(() => {
@@ -78,14 +78,23 @@ const TaskListItem = ({
     [disableSelect, onSelect]
   );
 
+  const href = useMemo(() => {
+    if ('_id' in task) {
+      return `/task/${task._id}${queryString}`;
+    } else if (task.path) {
+      return task.path;
+    }
+
+    return undefined;
+  }, [queryString, task]);
+
   const onClickHandler = useCallback(() => {
     if (onClick) {
       if (onClick()) {
         return;
       }
     }
-    navigate(`/task/${task._id}${queryString}`);
-  }, [onClick, navigate, task._id, queryString]);
+  }, [onClick]);
 
   const { primary, secondary } = useGetTaskText(task, today, showStart);
 
@@ -106,15 +115,21 @@ const TaskListItem = ({
     }
   }, [task.completedOn, task.type]);
 
-  const labelId = useMemo(() => `task-checkbox-list-label-${task._id}`, [task._id]);
+  const labelId = useMemo(() => `task-checkbox-list-label-${'_id' in task ? task._id : task.key}`, [task]);
 
   return (
     <ListItem style={style} className="task" disablePadding>
       <ListItemButton
         onClick={onClickHandler}
+        component={!disabled ? 'a' : 'div'}
+        href={!disabled ? href : undefined}
+        disabled={disabled}
         onContextMenu={isSmallScreen ? onSelectHandler : undefined}
         sx={{
-          width: '100%'
+          width: '100%',
+          '&.Mui-disabled': {
+            opacity: 1
+          }
         }}
         selected={isSelected}
       >

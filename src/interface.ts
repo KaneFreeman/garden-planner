@@ -497,6 +497,20 @@ export const CUSTOM = 'Custom';
 export type TaskType = typeof PLANT | typeof TRANSPLANT | typeof HARVEST | typeof FERTILIZE | typeof CUSTOM;
 export const TASK_TYPES: TaskType[] = [PLANT, TRANSPLANT, HARVEST, FERTILIZE, CUSTOM];
 
+export interface TaskGroup {
+  key: string;
+  text: string;
+  type: TaskType;
+  start: Date;
+  due: Date;
+  path: string | null;
+  completedOn: Date | null;
+  instances: {
+    _id: string;
+    plantInstanceId: string | null;
+  }[];
+}
+
 export interface Task {
   _id: string;
   text: string;

@@ -22,7 +22,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation } from 'react-router';
 import UserMenu from '../account/AccountMenu';
 import EditGardenModal from '../gardens/EditGardenModal';
 import NewGardenModal from '../gardens/NewGardenModal';
@@ -36,7 +36,6 @@ import './Actions.css';
 import './Header.css';
 
 const Header = () => {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const isSmallScreen = useSmallScreen();
@@ -133,9 +132,9 @@ const Header = () => {
             <List disablePadding>
               <ListItemButton
                 key="Tasks"
-                component="div"
+                component="a"
                 selected={pathname === '/' || pathname.startsWith('/task')}
-                onClick={() => navigate('/')}
+                href="/"
               >
                 <ListItemIcon>
                   <Badge badgeContent={taskCount} color={taskColor}>
@@ -146,9 +145,9 @@ const Header = () => {
               </ListItemButton>
               <ListItemButton
                 key="Containers"
-                component="div"
+                component="a"
                 selected={pathname === '/containers' || pathname.startsWith('/container')}
-                onClick={() => navigate('/containers')}
+                href="/containers"
               >
                 <ListItemIcon>
                   <InboxIcon />
@@ -157,9 +156,9 @@ const Header = () => {
               </ListItemButton>
               <ListItemButton
                 key="Plants"
-                component="div"
+                component="a"
                 selected={pathname === '/plants' || pathname.startsWith('/plant')}
-                onClick={() => navigate('/plants')}
+                href="/plants"
               >
                 <ListItemIcon>
                   <GrassIcon />

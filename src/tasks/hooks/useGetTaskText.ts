@@ -1,9 +1,9 @@
 import { format, formatDistance } from 'date-fns';
 import { useMemo } from 'react';
-import { Task } from '../../interface';
+import { Task, TaskGroup } from '../../interface';
 import { setToMidnight } from '../../utility/date.util';
 
-export default function useGetTaskText(task: Task | undefined, today: number, showStart = false) {
+export default function useGetTaskText(task: Task | TaskGroup | undefined, today: number, showStart = false) {
   const secondary = useMemo(() => {
     let text = '';
     if (!task) {

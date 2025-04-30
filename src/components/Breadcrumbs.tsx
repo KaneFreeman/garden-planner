@@ -1,10 +1,10 @@
-import { ReactNode, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ReactNode, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { filterNullish } from '../utility/null.util';
 import useSmallScreen from '../utility/smallScreen.util';
 import './Breadcrumbs.css';
@@ -23,7 +23,6 @@ interface BreadcrumbsProperties {
 }
 
 const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: BreadcrumbsProperties) => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const backPath = searchParams.get('backPath');
   const backLabel = searchParams.get('backLabel');
@@ -44,7 +43,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
           key="breadcrumb-back"
           underline="hover"
           color="inherit"
-          onClick={() => navigate(finalTrail[finalTrail.length - 1].to)}
+          href={finalTrail[finalTrail.length - 1].to}
           sx={{ cursor: 'pointer' }}
         >
           <Typography
@@ -67,7 +66,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
             key={`breadcrumb-${index}`}
             underline="hover"
             color="inherit"
-            onClick={() => navigate(entry.to)}
+            href={entry.to}
             sx={{ cursor: 'pointer' }}
           >
             <Typography
@@ -82,7 +81,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
           </Link>
         ))
       : [null];
-  }, [backLabel, backPath, filteredTrail, isSmallScreen, navigate]);
+  }, [backLabel, backPath, filteredTrail, isSmallScreen]);
 
   const renderedCurrent = useMemo(
     () => (

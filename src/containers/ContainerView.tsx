@@ -401,11 +401,22 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                 : false
               : undefined
           }
+          isLink={!onSlotClick && mode === 'none'}
           onSlotClick={handleSlotClick}
         />
       );
     });
-  }, [container, isPortrait, plantInstancesById, slotWidth, actionableInstanceIds, handleSlotClick, plantsById]);
+  }, [
+    container,
+    isPortrait,
+    plantInstancesById,
+    slotWidth,
+    actionableInstanceIds,
+    onSlotClick,
+    mode,
+    handleSlotClick,
+    plantsById
+  ]);
 
   return (
     <>

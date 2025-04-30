@@ -18,6 +18,7 @@ interface SlotListItemProps {
   style?: React.CSSProperties;
   showAvatar?: boolean;
   showStatus?: boolean;
+  url?: string;
   onClick?: (instance: PlantInstance) => void;
 }
 
@@ -28,6 +29,7 @@ const SlotListItem = ({
   style,
   showAvatar = false,
   showStatus = true,
+  url,
   onClick
 }: SlotListItemProps) => {
   const isSmallScreen = useSmallScreen();
@@ -48,6 +50,8 @@ const SlotListItem = ({
   return (
     <ListItem style={style} className="slot" disablePadding>
       <ListItemButton
+        component={url ? 'a' : 'div'}
+        href={url}
         onClick={onClickHandler}
         sx={{
           width: '100%',

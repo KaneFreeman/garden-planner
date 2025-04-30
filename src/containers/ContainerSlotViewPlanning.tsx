@@ -8,7 +8,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import { Container, Plant, STARTED_FROM_TYPE_SEED, Slot } from '../interface';
@@ -32,8 +31,6 @@ interface ContainerSlotViewPlanningProps {
 }
 
 const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }: ContainerSlotViewPlanningProps) => {
-  const navigate = useNavigate();
-
   const isSmallScreen = useSmallScreen();
 
   const plants = usePlants();
@@ -95,16 +92,6 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
     [updateSlot]
   );
 
-  const onPlantClick = useCallback(
-    (target: Plant) => (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      if (target && path) {
-        event.stopPropagation();
-        navigate(`/plant/${target._id}?backPath=${path}&backLabel=${title}`);
-      }
-    },
-    [navigate, path, title]
-  );
-
   const renderPlant = useCallback(
     (value: Plant | null | undefined, listType: 'value' | 'options') => {
       if (!value) {
@@ -114,7 +101,12 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
       if (listType === 'value') {
         return {
           raw: (
-            <Button variant="text" onClick={onPlantClick(value)} sx={{ ml: -1 }}>
+            <Button
+              component="a"
+              variant="text"
+              href={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
+              sx={{ ml: -1 }}
+            >
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                 {getPlantTitle(value)}
               </Box>
@@ -129,7 +121,7 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
         avatar: <PlantAvatar plant={value} />
       };
     },
-    [onPlantClick]
+    [path, title]
   );
 
   return (

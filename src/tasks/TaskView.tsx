@@ -89,12 +89,6 @@ const TaskView = ({ task }: TaskViewProperties) => {
   }, [backPath, navigate, removeTask, task._id]);
   const handleOnDeleteClose = useCallback(() => setIsDeleting(false), []);
 
-  const handleOnGoTo = useCallback(() => {
-    if (task.path !== null) {
-      navigate(task.path);
-    }
-  }, [navigate, task.path]);
-
   const handleOnMarkAsOpen = useCallback(() => {
     setIsMarkingAsOpen(true);
     handleMoreMenuClose();
@@ -127,17 +121,18 @@ const TaskView = ({ task }: TaskViewProperties) => {
             current: 'Task',
             actions: (
               <Box key="actions" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {shouldLinkTo ? (
-                  <IconButton
-                    key="go-to-button"
-                    aria-label="go to"
-                    color="secondary"
-                    size="small"
-                    onClick={handleOnGoTo}
-                    title="Go to task target"
-                  >
-                    <OpenInNewIcon fontSize="small" />
-                  </IconButton>
+                {shouldLinkTo && task.path ? (
+                  <a href={task.path}>
+                    <IconButton
+                      key="go-to-button"
+                      aria-label="go to"
+                      color="secondary"
+                      size="small"
+                      title="Go to container"
+                    >
+                      <OpenInNewIcon fontSize="small" />
+                    </IconButton>
+                  </a>
                 ) : null}
                 {isCustom ? (
                   <>
@@ -188,11 +183,13 @@ const TaskView = ({ task }: TaskViewProperties) => {
             current: 'Task',
             actions: (
               <Box key="actions-desktop" sx={{ display: 'flex', alignItems: 'center', ml: 2, gap: 1.5 }}>
-                {shouldLinkTo ? (
-                  <Button key="go-to-button-desktop" color="secondary" onClick={handleOnGoTo} title="Go to task target">
-                    <OpenInNewIcon sx={{ mr: 1 }} fontSize="small" />
-                    Go to
-                  </Button>
+                {shouldLinkTo && task.path ? (
+                  <a href={task.path}>
+                    <Button key="go-to-button-desktop" color="secondary" title="Go to container">
+                      <OpenInNewIcon sx={{ mr: 1 }} fontSize="small" />
+                      Go to
+                    </Button>
+                  </a>
                 ) : null}
                 {isCustom ? (
                   <>
@@ -236,7 +233,6 @@ const TaskView = ({ task }: TaskViewProperties) => {
           },
     [
       handleOnDelete,
-      handleOnGoTo,
       handleOnMarkAsComplete,
       handleOnMarkAsOpen,
       isCustom,
@@ -244,7 +240,8 @@ const TaskView = ({ task }: TaskViewProperties) => {
       moreMenuAnchorElement,
       moreMenuOpen,
       shouldLinkTo,
-      task.completedOn
+      task.completedOn,
+      task.path
     ]
   );
 
