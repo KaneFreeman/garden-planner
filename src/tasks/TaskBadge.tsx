@@ -1,13 +1,13 @@
-import { ReactNode, useMemo } from 'react';
 import Badge, { BadgeProps } from '@mui/material/Badge';
-import { SortedTasks } from '../interface';
+import { ReactNode, useMemo } from 'react';
+import { SortedTasks, Task, TaskGroup } from '../interface';
 
-interface TaskBadgeProperties {
-  tasks?: SortedTasks;
+interface TaskBadgeProperties<T extends (Task | TaskGroup) | Task> {
+  tasks?: SortedTasks<T>;
   children: ReactNode;
 }
 
-const TaskBadge = ({ tasks, children }: TaskBadgeProperties) => {
+const TaskBadge = <T extends (Task | TaskGroup) | Task>({ tasks, children }: TaskBadgeProperties<T>) => {
   const { overdue = [], active = [], thisWeek = [] } = tasks || {};
 
   const { taskCount, taskColor }: { taskCount: number; taskColor: BadgeProps['color'] } = useMemo(() => {

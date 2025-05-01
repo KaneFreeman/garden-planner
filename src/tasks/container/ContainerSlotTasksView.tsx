@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import { useCallback, useMemo, useState } from 'react';
-import { CUSTOM, PlantInstance, Task, TaskGroup } from '../../interface';
+import { CUSTOM, PlantInstance, Task } from '../../interface';
 import { getMidnight } from '../../utility/date.util';
 import useSmallScreen from '../../utility/smallScreen.util';
 import { useTasksByPlantInstance } from '../hooks/useTasks';
@@ -46,7 +46,7 @@ const ContainerSlotTasksView = ({ plantInstance, containerId, slotId, slotTitle 
   const renderTask = useCallback(
     (
       key: string,
-      task: Task | TaskGroup,
+      task: Task,
       index: number,
       options?: { showStart?: boolean; isThisWeek?: boolean; isOverdue?: boolean }
     ) => {

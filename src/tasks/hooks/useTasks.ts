@@ -131,14 +131,14 @@ export const useRemoveTask = () => {
   return removeTask;
 };
 
-function sortTasks(
-  tasks: (Task | TaskGroup)[],
+function sortTasks<T extends (Task | TaskGroup) | Task>(
+  tasks: T[],
   today: number,
   oneWeekFromNow: number,
   daysFromNow: number,
   limit: number,
   options?: { reverseSortCompleted: boolean }
-): SortedTasks {
+): SortedTasks<T> {
   const { reverseSortCompleted = true } = options || {};
 
   const completed = tasks.filter((task) => Boolean(task.completedOn));
@@ -190,7 +190,11 @@ function useSortDates(daysLimit = 30) {
   return { today, oneWeekFromNow, daysFromNow, daysLimit };
 }
 
-function useSortTasks(tasks: (Task | TaskGroup)[], limit?: number, options?: { reverseSortCompleted: boolean }) {
+function useSortTasks<T extends (Task | TaskGroup) | Task>(
+  tasks: T[],
+  limit?: number,
+  options?: { reverseSortCompleted: boolean }
+) {
   const { today, oneWeekFromNow, daysFromNow, daysLimit } = useSortDates(limit);
 
   return useMemo(

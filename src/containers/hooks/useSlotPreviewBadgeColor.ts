@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { SortedTasks } from '../../interface';
+import { SortedTasks, Task, TaskGroup } from '../../interface';
 
-export default function useSlotPreviewBadgeColor(tasks: SortedTasks) {
+export default function useSlotPreviewBadgeColor<T extends (Task | TaskGroup) | Task>(tasks: SortedTasks<T>) {
   return useMemo(() => {
     const { thisWeek, active, overdue } = tasks;
 
