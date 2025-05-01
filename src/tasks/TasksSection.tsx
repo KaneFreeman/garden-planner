@@ -28,7 +28,7 @@ interface TasksSettings {
 
 interface TasksSectionProps {
   title: string;
-  tasks: Task[];
+  tasks: (Task | TaskGroup)[];
   options?: TasksSettings;
   disableSelect?: boolean;
 }
@@ -73,39 +73,6 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
   };
 
   const isSmallScreen = useSmallScreen();
-
-  const customTasks = useMemo(() => tasks.filter((task) => task.type === 'Custom'), [tasks]);
-
-  const taskGroups = useMemo(
-    () =>
-      Object.values(
-        tasks
-          .filter((task) => task.type !== 'Custom')
-          .reduce<Record<string, TaskGroup>>((acc, task) => {
-            const key = `taskGroup-${task.path}_${task.type}_${task.text}_${task.start}_${task.due}_${task.completedOn}`;
-            if (!(key in acc)) {
-              acc[key] = {
-                key,
-                path: task.path,
-                type: task.type,
-                text: task.text,
-                start: task.start,
-                due: task.due,
-                completedOn: task.completedOn,
-                instances: []
-              };
-            }
-
-            acc[key].instances.push({
-              _id: task._id,
-              plantInstanceId: task.plantInstanceId
-            });
-
-            return acc;
-          }, {})
-      ),
-    [tasks]
-  );
 
   const handleOnSelect = useCallback(
     (task: Task | TaskGroup, selected: boolean) => {
@@ -364,8 +331,7 @@ const TasksSection = ({ title, tasks, options, disableSelect = false }: TasksSec
             </Box>
           </Typography>
           <Box component="nav" aria-label={`main tasks-${title}`}>
-            <List>{customTasks.map((task, index) => renderTask(task, index))}</List>
-            <List>{taskGroups.map((task, index) => renderTask(task, index))}</List>
+            <List>{tasks.map((task, index) => renderTask(task, index))}</List>
           </Box>
         </Box>
       ) : null}

@@ -596,12 +596,12 @@ export interface PlantDataDTO {
 }
 
 export interface SortedTasks {
-  tasks: Task[];
-  completed: Task[];
-  overdue: Task[];
-  next: Task[];
-  thisWeek: Task[];
-  active: Task[];
+  tasks: (Task | TaskGroup)[];
+  completed: (Task | TaskGroup)[];
+  overdue: (Task | TaskGroup)[];
+  next: (Task | TaskGroup)[];
+  thisWeek: (Task | TaskGroup)[];
+  active: (Task | TaskGroup)[];
 }
 
 export interface PlantInstanceHistory {

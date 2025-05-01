@@ -2,7 +2,7 @@ import { addDays } from 'date-fns';
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
 import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
-import { BulkCompleteTaskDTO, SortedTasks, Task, fromTaskDTO, toTaskDTO } from '../../interface';
+import { BulkCompleteTaskDTO, SortedTasks, Task, TaskGroup, fromTaskDTO, toTaskDTO } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectSelectedGarden } from '../../store/slices/gardens';
 import {
@@ -14,6 +14,7 @@ import {
   updateTasks
 } from '../../store/slices/tasks';
 import { getMidnight } from '../../utility/date.util';
+import { createTaskGroups } from '../../utility/task.util';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
   const dispatch = useAppDispatch();
@@ -131,7 +132,7 @@ export const useRemoveTask = () => {
 };
 
 function sortTasks(
-  tasks: Task[],
+  tasks: (Task | TaskGroup)[],
   today: number,
   oneWeekFromNow: number,
   daysFromNow: number,
@@ -189,7 +190,7 @@ function useSortDates(daysLimit = 30) {
   return { today, oneWeekFromNow, daysFromNow, daysLimit };
 }
 
-function useSortTasks(tasks: Task[], limit?: number, options?: { reverseSortCompleted: boolean }) {
+function useSortTasks(tasks: (Task | TaskGroup)[], limit?: number, options?: { reverseSortCompleted: boolean }) {
   const { today, oneWeekFromNow, daysFromNow, daysLimit } = useSortDates(limit);
 
   return useMemo(
@@ -202,7 +203,7 @@ export function useTasks() {
   const getTasks = useGetTasks();
   const dispatch = useAppDispatch();
   const taskDtos = useAppSelector(selectTasks);
-  const tasks = useMemo(() => taskDtos.map(fromTaskDTO), [taskDtos]);
+  const tasks = useMemo(() => createTaskGroups(taskDtos.map(fromTaskDTO)), [taskDtos]);
 
   useEffect(() => {
     getTasks();
