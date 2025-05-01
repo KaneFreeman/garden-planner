@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
-import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
 import { useGetContainers } from '../../containers/hooks/useContainers';
 import {
   Container,
@@ -26,17 +26,16 @@ import { mapRecord } from '../../utility/record.util';
 import computeSeason from '../../utility/season.util';
 
 export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
   const dispatch = useAppDispatch();
   const garden = useAppSelector(selectSelectedGarden);
 
   const getPlantInstances = useCallback(async () => {
-    const response = await fetch(Api.plantInstance_Get, { params: { gardenId: garden?._id ?? '' } }, options);
+    const response = await fetchEndpoint(Api.plantInstance_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updatePlantInstances(response));
     }
-  }, [dispatch, fetch, garden?._id, options]);
+  }, [dispatch, garden?._id, options]);
 
   return getPlantInstances;
 };
@@ -69,7 +68,6 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
 };
 
 export const useAddPlantInstance = () => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -89,7 +87,7 @@ export const useAddPlantInstance = () => {
       }
 
       const response = await runOperation(() =>
-        fetch(Api.plantInstance_Post, {
+        fetchEndpoint(Api.plantInstance_Post, {
           params: { gardenId: garden?._id ?? '' },
           body: toPlantInstanceDTO(newData),
           query: {
@@ -104,7 +102,7 @@ export const useAddPlantInstance = () => {
 
       return fromPlantInstanceDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return addPlantInstance;
@@ -112,7 +110,6 @@ export const useAddPlantInstance = () => {
 
 export const useUpdatePlantInstance = (options: { skipRefresh?: boolean } = {}) => {
   const { skipRefresh = false } = options;
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ skipRefresh, force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -132,7 +129,7 @@ export const useUpdatePlantInstance = (options: { skipRefresh?: boolean } = {}) 
       }
 
       const response = await runOperation(() =>
-        fetch(Api.plantInstance_IdPut, {
+        fetchEndpoint(Api.plantInstance_IdPut, {
           params: { gardenId: garden?._id ?? '', plantInstanceId: newData._id },
           body: toPlantInstanceDTO(newData)
         })
@@ -144,14 +141,13 @@ export const useUpdatePlantInstance = (options: { skipRefresh?: boolean } = {}) 
 
       return fromPlantInstanceDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return updatePlantInstance;
 };
 
 export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined) => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -161,7 +157,7 @@ export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined)
     }
 
     const response = await runOperation(() =>
-      fetch(Api.plantInstance_IdDelete, {
+      fetchEndpoint(Api.plantInstance_IdDelete, {
         params: { gardenId: garden?._id ?? '', plantInstanceId: plantInstance._id }
       })
     );
@@ -171,7 +167,7 @@ export const useRemovePlantInstance = (plantInstance: PlantInstance | undefined)
     }
 
     return fromPlantInstanceDTO(response);
-  }, [fetch, garden?._id, plantInstance?._id, runOperation]);
+  }, [garden?._id, plantInstance?._id, runOperation]);
 
   return removePlantInstance;
 };
@@ -225,7 +221,6 @@ export function usePlantInstancesFromSlot(slot: Slot | undefined | null) {
 }
 
 export const useFertilizePlantInstance = (plantInstanceId: string | undefined | null) => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -236,20 +231,19 @@ export const useFertilizePlantInstance = (plantInstanceId: string | undefined | 
       }
 
       await runOperation(() =>
-        fetch(Api.plantInstance_FertilizePost, {
+        fetchEndpoint(Api.plantInstance_FertilizePost, {
           params: { gardenId: garden?._id ?? '', plantInstanceId },
           body: { date: date.toISOString() }
         })
       );
     },
-    [plantInstanceId, runOperation, fetch, garden?._id]
+    [plantInstanceId, runOperation, garden?._id]
   );
 
   return fertilizePlantInstance;
 };
 
 export const useHarvestPlantInstance = (plantInstanceId: string | undefined | null) => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation();
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -260,13 +254,13 @@ export const useHarvestPlantInstance = (plantInstanceId: string | undefined | nu
       }
 
       await runOperation(() =>
-        fetch(Api.plantInstance_HarvestPost, {
+        fetchEndpoint(Api.plantInstance_HarvestPost, {
           params: { gardenId: garden?._id ?? '', plantInstanceId },
           body: { date: date.toISOString() }
         })
       );
     },
-    [plantInstanceId, runOperation, fetch, garden?._id]
+    [plantInstanceId, runOperation, garden?._id]
   );
 
   return harvestPlantInstance;
@@ -316,14 +310,13 @@ export const useUpdateCreatePlantInstance = (
 };
 
 export const useBulkReopenClosePlantInstances = () => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const bulkReopenClosePlantInstances = useCallback(
     async (action: 'reopen' | 'close', plantInstanceIds: string[]) => {
       await runOperation(() =>
-        fetch(Api.plantInstance_BulkReopenClose, {
+        fetchEndpoint(Api.plantInstance_BulkReopenClose, {
           params: { gardenId: garden?._id ?? '' },
           body: {
             action,
@@ -332,14 +325,13 @@ export const useBulkReopenClosePlantInstances = () => {
         })
       );
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return bulkReopenClosePlantInstances;
 };
 
 export const useUpdatePlantInstanceTasksInContainer = (containerId: string | undefined, taskType: TaskType) => {
-  const fetch = useFetch();
   const runOperation = usePlantInstanceOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
@@ -350,13 +342,13 @@ export const useUpdatePlantInstanceTasksInContainer = (containerId: string | und
       }
 
       await runOperation(() =>
-        fetch(Api.container_UpdateTasksPost, {
+        fetchEndpoint(Api.container_UpdateTasksPost, {
           params: { gardenId: garden?._id ?? '', containerId, taskType },
           body: { date: date.toISOString(), plantInstanceIds }
         })
       );
     },
-    [containerId, fetch, garden?._id, runOperation, taskType]
+    [containerId, garden?._id, runOperation, taskType]
   );
 
   return updatePlantInstanceTasksInContainer;

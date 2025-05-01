@@ -1,8 +1,6 @@
 import hash from 'object-hash';
-import { useMemo } from 'react';
 import { store } from '../store';
-import { useAppSelector } from '../store/hooks';
-import { selectAccessToken, selectRefreshToken, updateUser } from '../store/slices/auth';
+import { updateUser } from '../store/slices/auth';
 import { isNotNullish, isNullish } from '../utility/null.util';
 import Rest from './index';
 
@@ -110,8 +108,6 @@ let refreshTokenPromise: Promise<string | null> | null = null;
  * Simple fetch wrapper to get JSON REST API
  */
 async function fetchRequest<T>(
-  accessToken: string | undefined,
-  refreshToken: string | undefined,
   url: string,
   options: FetchOptions = {},
   extraOptions?: ExtraFetchOptions,
@@ -124,6 +120,7 @@ async function fetchRequest<T>(
     Accept: 'application/json'
   });
 
+  const accessToken = localStorage.getItem('accessToken') ?? '';
   if (isNotNullish(accessToken)) {
     headers.set('authorization', `Bearer ${accessToken}`);
   }
@@ -137,6 +134,7 @@ async function fetchRequest<T>(
 
     if (response.status === 401) {
       let forceLogout = true;
+      const refreshToken = localStorage.getItem('refreshToken') ?? '';
       if (!hasRetried && isNotNullish(refreshToken)) {
         forceLogout = false;
         let newAccessToken: string | null;
@@ -149,7 +147,7 @@ async function fetchRequest<T>(
         }
 
         if (newAccessToken != null) {
-          return fetchRequest(newAccessToken, refreshToken, url, options, extraOptions, true);
+          return fetchRequest(url, options, extraOptions, true);
         } else {
           forceLogout = true;
         }
@@ -197,8 +195,6 @@ const CACHE_TIME = 5000;
 export interface ExtraFetchOptions {
   skipRefresh?: boolean;
   force?: boolean;
-  accessToken?: string;
-  refreshToken?: string;
   redirectOn401?: boolean;
 }
 
@@ -210,86 +206,70 @@ export interface ExtraFetchOptions {
  * or takes options with an error handler and returns a union of the response type and the
  * error handler return type
  */
-function fetchEndpoint(accessToken: string | undefined, refreshToken: string | undefined) {
-  return async <T extends keyof Rest>(
-    endpoint: T,
-    options: Rest[T]['request'],
-    extraOptions?: ExtraFetchOptions
-  ): Promise<Rest[T]['response'] | string | undefined> => {
-    const { force = false } = extraOptions ?? {};
+export async function fetchEndpoint<T extends keyof Rest>(
+  endpoint: T,
+  options: Rest[T]['request'],
+  extraOptions?: ExtraFetchOptions
+): Promise<Rest[T]['response'] | string | undefined> {
+  const { force = false } = extraOptions ?? {};
 
-    const { body = undefined, params = {}, query = undefined } = options as any;
-    // eslint-disable-next-line prefer-const
-    let [method, url] = (endpoint as string).split(':') as [METHOD, string];
-    url = `${import.meta.env.VITE_API_URL}${url}`;
-    if (params) {
-      Object.keys(params).forEach((param) => {
-        url = url.replace(`{${param}}`, (params as any)[param]);
-      });
-    }
-    if (query) {
-      url += getQueryString(query);
-    }
+  const { body = undefined, params = {}, query = undefined } = options as any;
+  // eslint-disable-next-line prefer-const
+  let [method, url] = (endpoint as string).split(':') as [METHOD, string];
+  url = `${import.meta.env.VITE_API_URL}${url}`;
+  if (params) {
+    Object.keys(params).forEach((param) => {
+      url = url.replace(`{${param}}`, (params as any)[param]);
+    });
+  }
+  if (query) {
+    url += getQueryString(query);
+  }
 
-    if (method.toLowerCase() === 'get') {
-      const dataCacheKey = hash({
-        url,
-        options
-      });
-
-      if (
-        !force &&
-        dataCacheKey in getDataCache &&
-        new Date().getTime() - getDataCache[dataCacheKey].date.getTime() < CACHE_TIME
-      ) {
-        return Promise.resolve(undefined);
-      }
-
-      if (dataCacheKey in getRequestsInProgress) {
-        return Promise.resolve(undefined);
-      }
-
-      const p = new Promise<Rest[T]['response'] | undefined>((resolve) => {
-        getRequestsInProgress[dataCacheKey] = [resolve];
-      });
-
-      fetchRequest<Rest[T]['response'] | undefined>(
-        extraOptions?.accessToken ?? accessToken,
-        extraOptions?.refreshToken ?? refreshToken,
-        url,
-        {
-          body,
-          method
-        },
-        extraOptions
-      ).then((response) => {
-        getDataCache[dataCacheKey] = {
-          date: new Date(),
-          data: response
-        };
-        const resolveFunctions = getRequestsInProgress[dataCacheKey];
-        resolveFunctions.forEach((resolveFunction) => resolveFunction(response));
-        delete getRequestsInProgress[dataCacheKey];
-      });
-
-      return p;
-    }
-
-    return fetchRequest(
-      extraOptions?.accessToken ?? accessToken,
-      extraOptions?.refreshToken ?? refreshToken,
+  if (method.toLowerCase() === 'get') {
+    const dataCacheKey = hash({
       url,
-      { body, method },
+      options
+    });
+
+    if (
+      !force &&
+      dataCacheKey in getDataCache &&
+      new Date().getTime() - getDataCache[dataCacheKey].date.getTime() < CACHE_TIME
+    ) {
+      return Promise.resolve(undefined);
+    }
+
+    if (dataCacheKey in getRequestsInProgress) {
+      return Promise.resolve(undefined);
+    }
+
+    const p = new Promise<Rest[T]['response'] | undefined>((resolve) => {
+      getRequestsInProgress[dataCacheKey] = [resolve];
+    });
+
+    fetchRequest<Rest[T]['response'] | undefined>(
+      url,
+      {
+        body,
+        method
+      },
       extraOptions
-    );
-  };
+    ).then((response) => {
+      getDataCache[dataCacheKey] = {
+        date: new Date(),
+        data: response
+      };
+      const resolveFunctions = getRequestsInProgress[dataCacheKey];
+      resolveFunctions.forEach((resolveFunction) => resolveFunction(response));
+      delete getRequestsInProgress[dataCacheKey];
+    });
+
+    return p;
+  }
+
+  return fetchRequest(url, { body, method }, extraOptions);
 }
 
 export type QueryValues = string | boolean | number | undefined | null;
 export type QueryMap = Record<string, QueryValues | QueryValues[]>;
-
-export default function useFetch() {
-  const accessToken = useAppSelector(selectAccessToken);
-  const refreshToken = useAppSelector(selectRefreshToken);
-  return useMemo(() => fetchEndpoint(accessToken, refreshToken), [accessToken, refreshToken]);
-}

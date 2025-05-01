@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from './store/hooks';
 import { selectUser } from './store/slices/auth';
 import { selectPlantInstancesByIds } from './store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from './store/slices/tasks';
-import { isNotNullish } from './utility/null.util';
 
 const Main = () => {
   const [loading, setLoading] = useState(true);
@@ -24,11 +23,7 @@ const Main = () => {
     let alive = true;
 
     const checkAccessToken = async () => {
-      const accessToken = localStorage.getItem('accessToken');
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (isNotNullish(accessToken) && isNotNullish(refreshToken)) {
-        await checkLogin(accessToken, refreshToken);
-      }
+      await checkLogin();
 
       if (alive) {
         setLoading(false);

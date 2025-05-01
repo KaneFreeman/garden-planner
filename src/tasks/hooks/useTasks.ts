@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns';
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
-import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
 import { BulkCompleteTaskDTO, SortedTasks, Task, fromTaskDTO, toTaskDTO } from '../../interface';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectSelectedGarden } from '../../store/slices/gardens';
@@ -16,19 +16,18 @@ import {
 import { getMidnight } from '../../utility/date.util';
 
 export const useGetTasks = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
   const dispatch = useAppDispatch();
   const garden = useAppSelector(selectSelectedGarden);
 
   const getTasks = useCallback(async () => {
-    const response = await fetch(Api.task_Get, { params: { gardenId: garden?._id ?? '' } }, options);
+    const response = await fetchEndpoint(Api.task_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updateTasks(response));
     }
 
     return response;
-  }, [dispatch, fetch, garden?._id, options]);
+  }, [dispatch, garden?._id, options]);
 
   return getTasks;
 };
@@ -55,14 +54,13 @@ const useTasksOperation = (options?: ExtraFetchOptions) => {
 };
 
 export const useAddTask = () => {
-  const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Omit<Task, '_id'>) => {
       const response = await runOperation(() =>
-        fetch(Api.task_Post, {
+        fetchEndpoint(Api.task_Post, {
           params: { gardenId: garden?._id ?? '' },
           body: toTaskDTO(data)
         })
@@ -74,21 +72,20 @@ export const useAddTask = () => {
 
       return fromTaskDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return addTask;
 };
 
 export const useUpdateTask = () => {
-  const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Task) => {
       const response = await runOperation(() =>
-        fetch(Api.task_IdPut, {
+        fetchEndpoint(Api.task_IdPut, {
           params: {
             gardenId: garden?._id ?? '',
             taskId: data._id
@@ -103,21 +100,20 @@ export const useUpdateTask = () => {
 
       return fromTaskDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return addTask;
 };
 
 export const useRemoveTask = () => {
-  const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const removeTask = useCallback(
     async (taskId: string) => {
       const response = await runOperation(() =>
-        fetch(Api.task_IdDelete, {
+        fetchEndpoint(Api.task_IdDelete, {
           params: { gardenId: garden?._id ?? '', taskId }
         })
       );
@@ -128,7 +124,7 @@ export const useRemoveTask = () => {
 
       return fromTaskDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return removeTask;
@@ -267,20 +263,19 @@ export const useTask = (id: string | undefined) => {
 };
 
 export const useBulkCompleteTasks = () => {
-  const fetch = useFetch();
   const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const bulkCompleteTasks = useCallback(
     async (data: BulkCompleteTaskDTO) => {
       return runOperation(() =>
-        fetch(Api.task_PutBulkComplete, {
+        fetchEndpoint(Api.task_PutBulkComplete, {
           params: { gardenId: garden?._id ?? '' },
           body: data
         })
       );
     },
-    [fetch, garden, runOperation]
+    [garden, runOperation]
   );
 
   return bulkCompleteTasks;

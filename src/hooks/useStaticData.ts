@@ -1,16 +1,14 @@
 import { useCallback, useEffect } from 'react';
 import Api from '../api/api';
-import useFetch from '../api/useFetch';
+import { fetchEndpoint } from '../api/useFetch';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectPlantData, updatePlantData } from '../store/slices/static';
 
 const useGetPlantData = () => {
-  const fetch = useFetch();
-
   const getContainers = useCallback(async () => {
-    const response = await fetch(Api.static_plantData_Get, {});
+    const response = await fetchEndpoint(Api.static_plantData_Get, {});
     return response;
-  }, [fetch]);
+  }, []);
 
   return getContainers;
 };

@@ -18,7 +18,9 @@ export const AuthSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<SessionDTO>) => {
-      localStorage.setItem('accessToken', action.payload.accessToken);
+      if (isNotNullish(action.payload.accessToken)) {
+        localStorage.setItem('accessToken', action.payload.accessToken);
+      }
 
       if (isNotNullish(action.payload.refreshToken)) {
         localStorage.setItem('refreshToken', action.payload.refreshToken);
@@ -49,9 +51,6 @@ export const AuthSlice = createSlice({
 });
 
 export const { updateUser, updateUserDetails, logout } = AuthSlice.actions;
-
-export const selectAccessToken = (state: RootState) => state.auth.user?.accessToken;
-export const selectRefreshToken = (state: RootState) => state.auth.user?.refreshToken;
 
 export const selectUser = (state: RootState) => state.auth.user;
 

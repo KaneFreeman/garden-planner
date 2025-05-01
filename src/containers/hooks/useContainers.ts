@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
-import useFetch, { ExtraFetchOptions } from '../../api/useFetch';
+import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
 import { Container, fromContainerDTO, toContainerDTO } from '../../interface';
 import { useGetPlantInstances } from '../../plant-instances/hooks/usePlantInstances';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -15,17 +15,16 @@ import { useGetTasks } from '../../tasks/hooks/useTasks';
 import { mapRecord } from '../../utility/record.util';
 
 export const useGetContainers = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
   const dispatch = useAppDispatch();
   const garden = useAppSelector(selectSelectedGarden);
 
   const getContainers = useCallback(async () => {
-    const response = await fetch(Api.container_Get, { params: { gardenId: garden?._id ?? '' } }, options);
+    const response = await fetchEndpoint(Api.container_Get, { params: { gardenId: garden?._id ?? '' } }, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updateContainers(response));
     }
-  }, [dispatch, fetch, garden?._id, options]);
+  }, [dispatch, garden?._id, options]);
 
   return getContainers;
 };
@@ -54,14 +53,13 @@ const useContainerOperation = (options?: ExtraFetchOptions) => {
 };
 
 export const useAddContainer = () => {
-  const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const addContainer = useCallback(
     async (data: Omit<Container, '_id'>) => {
       const response = await runOperation(() =>
-        fetch(Api.container_Post, {
+        fetchEndpoint(Api.container_Post, {
           params: { gardenId: garden?._id ?? '' },
           body: toContainerDTO(data)
         })
@@ -73,21 +71,20 @@ export const useAddContainer = () => {
 
       return fromContainerDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return addContainer;
 };
 
 export const useUpdateContainer = () => {
-  const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const updateContainer = useCallback(
     async (data: Container) => {
       const response = await runOperation(() =>
-        fetch(Api.container_IdPut, {
+        fetchEndpoint(Api.container_IdPut, {
           params: { gardenId: garden?._id ?? '', containerId: data._id },
           body: toContainerDTO(data)
         })
@@ -99,21 +96,20 @@ export const useUpdateContainer = () => {
 
       return fromContainerDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return updateContainer;
 };
 
 export const useRemoveContainer = () => {
-  const fetch = useFetch();
   const runOperation = useContainerOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const removeContainer = useCallback(
     async (containerId: string) => {
       const response = await runOperation(() =>
-        fetch(Api.container_IdDelete, {
+        fetchEndpoint(Api.container_IdDelete, {
           params: { gardenId: garden?._id ?? '', containerId }
         })
       );
@@ -124,7 +120,7 @@ export const useRemoveContainer = () => {
 
       return fromContainerDTO(response);
     },
-    [fetch, garden?._id, runOperation]
+    [garden?._id, runOperation]
   );
 
   return removeContainer;
@@ -173,14 +169,13 @@ export function useContainersById() {
 }
 
 export const useFinishPlanningContainer = (containerId: string | undefined) => {
-  const fetch = useFetch();
   const garden = useAppSelector(selectSelectedGarden);
   const getPlantInstances = useGetPlantInstances({ force: true });
   const getContainers = useGetContainers({ force: true });
   const getTasks = useGetTasks({ force: true });
 
   const finishPlanningContainer = useCallback(async () => {
-    const response = await fetch(Api.container_FinishPlanningPost, {
+    const response = await fetchEndpoint(Api.container_FinishPlanningPost, {
       params: { containerId: containerId ?? '', gardenId: garden?._id ?? '' }
     });
 
@@ -193,7 +188,7 @@ export const useFinishPlanningContainer = (containerId: string | undefined) => {
     }
 
     return response;
-  }, [containerId, fetch, garden?._id, getContainers, getPlantInstances, getTasks]);
+  }, [containerId, garden?._id, getContainers, getPlantInstances, getTasks]);
 
   return finishPlanningContainer;
 };

@@ -727,7 +727,7 @@ export interface SessionDTO {
   readonly email: string;
   readonly firstName: string;
   readonly lastName: string;
-  readonly accessToken: string;
+  readonly accessToken?: string;
   readonly refreshToken?: string;
 }
 

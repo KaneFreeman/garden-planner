@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../api/api';
-import useFetch, { ExtraFetchOptions } from '../api/useFetch';
+import { ExtraFetchOptions, fetchEndpoint } from '../api/useFetch';
 import { Garden, fromGardenDTO, toGardenDTO } from '../interface';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectGarden, selectGardens, selectGardensById, updateGardens } from '../store/slices/gardens';
@@ -8,16 +8,15 @@ import { useGetTasks } from '../tasks/hooks/useTasks';
 import { mapRecord } from '../utility/record.util';
 
 export const useGetGardens = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
   const dispatch = useAppDispatch();
 
   const getGardens = useCallback(async () => {
-    const response = await fetch(Api.garden_Get, {}, options);
+    const response = await fetchEndpoint(Api.garden_Get, {}, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updateGardens(response));
     }
-  }, [dispatch, fetch, options]);
+  }, [dispatch, options]);
 
   return getGardens;
 };
@@ -46,13 +45,12 @@ const useGardenOperation = (options?: ExtraFetchOptions) => {
 };
 
 export const useAddGarden = () => {
-  const fetch = useFetch();
   const runOperation = useGardenOperation({ force: true });
 
   const addGarden = useCallback(
     async (data: Omit<Garden, '_id'>) => {
       const response = await runOperation(() =>
-        fetch(Api.garden_Post, {
+        fetchEndpoint(Api.garden_Post, {
           body: toGardenDTO(data)
         })
       );
@@ -63,20 +61,19 @@ export const useAddGarden = () => {
 
       return fromGardenDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return addGarden;
 };
 
 export const useUpdateGarden = () => {
-  const fetch = useFetch();
   const runOperation = useGardenOperation({ force: true });
 
   const addGarden = useCallback(
     async (data: Garden) => {
       const response = await runOperation(() =>
-        fetch(Api.garden_IdPut, {
+        fetchEndpoint(Api.garden_IdPut, {
           params: {
             gardenId: data._id
           },
@@ -90,20 +87,19 @@ export const useUpdateGarden = () => {
 
       return fromGardenDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return addGarden;
 };
 
 export const useRemoveGarden = () => {
-  const fetch = useFetch();
   const runOperation = useGardenOperation({ force: true });
 
   const removeGarden = useCallback(
     async (gardenId: string) => {
       const response = await runOperation(() =>
-        fetch(Api.garden_IdDelete, {
+        fetchEndpoint(Api.garden_IdDelete, {
           params: {
             gardenId
           }
@@ -116,7 +112,7 @@ export const useRemoveGarden = () => {
 
       return fromGardenDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return removeGarden;

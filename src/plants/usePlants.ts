@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../api/api';
-import useFetch, { ExtraFetchOptions } from '../api/useFetch';
+import { type ExtraFetchOptions, fetchEndpoint } from '../api/useFetch';
 import { Container, Plant, fromPlantDTO, toPlantDTO } from '../interface';
 import { useGetPlantInstances } from '../plant-instances/hooks/usePlantInstances';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -11,16 +11,15 @@ import { isNotNullish } from '../utility/null.util';
 import { mapRecord } from '../utility/record.util';
 
 export const useGetPlants = (options?: ExtraFetchOptions) => {
-  const fetch = useFetch();
   const dispatch = useAppDispatch();
 
   const getPlants = useCallback(async () => {
-    const response = await fetch(Api.plant_Get, {}, options);
+    const response = await fetchEndpoint(Api.plant_Get, {}, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updatePlants(response));
     }
-  }, [dispatch, fetch, options]);
+  }, [dispatch, options]);
 
   return getPlants;
 };
@@ -49,13 +48,12 @@ const usePlantOperation = (options?: ExtraFetchOptions) => {
 };
 
 export const useAddPlant = () => {
-  const fetch = useFetch();
   const runOperation = usePlantOperation({ force: true });
 
   const addPlant = useCallback(
     async (data: Omit<Plant, '_id'>) => {
       const response = await runOperation(() =>
-        fetch(Api.plant_Post, {
+        fetchEndpoint(Api.plant_Post, {
           body: toPlantDTO(data)
         })
       );
@@ -66,20 +64,19 @@ export const useAddPlant = () => {
 
       return fromPlantDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return addPlant;
 };
 
 export const useUpdatePlant = () => {
-  const fetch = useFetch();
   const runOperation = usePlantOperation({ force: true });
 
   const addPlant = useCallback(
     async (data: Plant) => {
       const response = await runOperation(() =>
-        fetch(Api.plant_IdPut, {
+        fetchEndpoint(Api.plant_IdPut, {
           params: {
             plantId: data._id
           },
@@ -93,20 +90,19 @@ export const useUpdatePlant = () => {
 
       return fromPlantDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return addPlant;
 };
 
 export const useRemovePlant = () => {
-  const fetch = useFetch();
   const runOperation = usePlantOperation({ force: true });
 
   const removePlant = useCallback(
     async (plantId: string) => {
       const response = await runOperation(() =>
-        fetch(Api.plant_IdDelete, {
+        fetchEndpoint(Api.plant_IdDelete, {
           params: {
             plantId
           }
@@ -119,7 +115,7 @@ export const useRemovePlant = () => {
 
       return fromPlantDTO(response);
     },
-    [fetch, runOperation]
+    [runOperation]
   );
 
   return removePlant;
