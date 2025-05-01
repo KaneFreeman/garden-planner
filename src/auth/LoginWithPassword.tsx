@@ -70,7 +70,7 @@ const LoginWithPassword = ({ email, onNotYouClick, onUseTokenClick }: TokenProps
               }
             }}
           >
-            No you?
+            Not you?
           </Link>
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 2, width: '100%' }}>
