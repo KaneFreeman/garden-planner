@@ -17,8 +17,8 @@
     "@mui/lab": "5.0.0-alpha.176",
     "@mui/material": "5.17.1",
     "@mui/system": "5.17.1",
-    "@mui/x-date-pickers": "7.29.2",
-    "@reduxjs/toolkit": "2.7.0",
+    "@mui/x-date-pickers": "7.29.3",
+    "@reduxjs/toolkit": "2.8.1",
     "@vitejs/plugin-react": "4.4.1",
     "date-fns": "3.6.0",
     "object-hash": "3.0.0",
@@ -48,7 +48,7 @@
     "workbox-window": "7.3.0"
   },
   "devDependencies": {
-    "@types/node": "20.17.43",
+    "@types/node": "20.17.46",
     "@types/object-hash": "3.0.6",
     "@types/react": "18.3.21",
     "@types/react-dom": "18.3.7",
@@ -59,7 +59,7 @@
     "@typescript-eslint/parser": "8.32.0",
     "cross-env": "7.0.3",
     "eslint": "8.57.1",
-    "eslint-config-prettier": "10.1.2",
+    "eslint-config-prettier": "10.1.5",
     "eslint-import-resolver-typescript": "4.3.4",
     "eslint-plugin-compat": "6.0.2",
     "eslint-plugin-import": "2.31.0",
