@@ -40,7 +40,7 @@ export const useGetPlantInstances = (options?: ExtraFetchOptions) => {
   return getPlantInstances;
 };
 
-const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
+const usePlantInstanceOperation = ({ skipRefresh = false, ...options }: ExtraFetchOptions = {}) => {
   const getPlantInstances = useGetPlantInstances(options);
   const getTasks = useGetTasks(options);
   const getContainers = useGetContainers(options);
@@ -49,19 +49,19 @@ const usePlantInstanceOperation = (options?: ExtraFetchOptions) => {
     async <T>(operation: () => Promise<T | undefined>) => {
       const response = await operation();
 
-      if (!response) {
-        return undefined;
-      }
-
-      if (options?.skipRefresh !== true) {
+      if (skipRefresh !== true) {
         await getPlantInstances();
         await getContainers();
         await getTasks();
       }
 
+      if (!response) {
+        return undefined;
+      }
+
       return response;
     },
-    [getContainers, getPlantInstances, getTasks, options?.skipRefresh]
+    [getContainers, getPlantInstances, getTasks, skipRefresh]
   );
 
   return runOperation;

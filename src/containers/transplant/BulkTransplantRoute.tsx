@@ -19,7 +19,11 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import DateDialog from '../../components/DateDialog';
 import Loading from '../../components/Loading';
 import { Slot, TRANSPLANTED } from '../../interface';
-import { usePlantInstancesById, useUpdatePlantInstance } from '../../plant-instances/hooks/usePlantInstances';
+import {
+  useGetPlantInstances,
+  usePlantInstancesById,
+  useUpdatePlantInstance
+} from '../../plant-instances/hooks/usePlantInstances';
 import PlantAvatar from '../../plants/PlantAvatar';
 import { usePlantsById } from '../../plants/usePlants';
 import { getMidnight } from '../../utility/date.util';
@@ -27,9 +31,10 @@ import { getTransplantedDate } from '../../utility/history.util';
 import { getPlantTitle } from '../../utility/plant.util';
 import { getSlotTitle } from '../../utility/slot.util';
 import useSmallScreen from '../../utility/smallScreen.util';
-import { useContainer } from '../hooks/useContainers';
+import { useContainer, useGetContainers } from '../hooks/useContainers';
 import { getContainerSlotLocation } from '../hooks/useContainerSlotLocation';
 
+import { useGetTasks } from '../../tasks/hooks/useTasks';
 import './BulkTransplantRoute.css';
 
 const BulkTransplantRoute = () => {
@@ -41,6 +46,9 @@ const BulkTransplantRoute = () => {
   const container = useContainer(containerId);
   const otherContainer = useContainer(otherContainerId);
   const updatePlantInstance = useUpdatePlantInstance({ skipRefresh: true });
+  const getPlantInstances = useGetPlantInstances();
+  const getTasks = useGetTasks();
+  const getContainers = useGetContainers();
 
   const plantInstanceById = usePlantInstancesById();
   const plantsById = usePlantsById();
@@ -216,6 +224,10 @@ const BulkTransplantRoute = () => {
           }
         ]
       });
+
+      await getPlantInstances();
+      await getContainers();
+      await getTasks();
     }
 
     setProcessing(false);
@@ -223,6 +235,9 @@ const BulkTransplantRoute = () => {
   }, [
     container?.slots,
     containerId,
+    getContainers,
+    getPlantInstances,
+    getTasks,
     navigate,
     otherContainerId,
     plantInstanceById,
