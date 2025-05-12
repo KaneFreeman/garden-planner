@@ -6,6 +6,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import { FormEvent, useCallback, useState } from 'react';
 import Copyright from '../components/Copyright';
+import Logo from './Logo';
 import { useGenerateToken } from './useAuth';
 
 export interface LoginProps {
@@ -60,7 +61,7 @@ const Login = ({ onSignUpClick, onNextClick }: LoginProps) => {
           height: '70dvh'
         }}
       >
-        <img src="/favicon64.png" />
+        <Logo />
         <Box component="form" onSubmit={handleNext} sx={{ mt: 2, width: '100%' }}>
           {error ? (
             <Alert severity="error" sx={{ mt: 1, mb: 3 }}>

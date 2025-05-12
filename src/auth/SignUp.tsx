@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import { FormEvent, useCallback, useState } from 'react';
 import { useAddUser } from '../account/useUser';
 import Copyright from '../components/Copyright';
+import Logo from './Logo';
 
 export interface SignUpProps {
   onLoginClick: () => void;
@@ -59,7 +60,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
           height: '70dvh'
         }}
       >
-        <img src="/favicon64.png" />
+        <Logo />
         <Box component="form" onSubmit={handleSignUp} sx={{ mt: 2, width: '100%' }}>
           {error ? (
             <Alert severity="error" sx={{ mt: 1, mb: 3 }}>

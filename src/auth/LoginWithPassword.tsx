@@ -7,6 +7,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import { FormEvent, useCallback, useState } from 'react';
 import Copyright from '../components/Copyright';
+import Logo from './Logo';
 import { useLogin } from './useAuth';
 
 export interface TokenProps {
@@ -56,7 +57,7 @@ const LoginWithPassword = ({ email, onNotYouClick, onUseTokenClick }: TokenProps
           height: '70dvh'
         }}
       >
-        <img src="/favicon64.png" />
+        <Logo />
         <Typography variant="body1" sx={{ display: 'flex', gap: 0.5, alignItems: 'center', mt: 3 }}>
           Logging in as {email}.
           <Link

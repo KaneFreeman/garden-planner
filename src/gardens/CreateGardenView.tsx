@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import { FormEvent } from 'react';
+import Logo from '../auth/Logo';
 import { useAddGarden } from './useGardens';
 
 const CreateGardenView = () => {
@@ -29,7 +30,7 @@ const CreateGardenView = () => {
           height: '70dvh'
         }}
       >
-        <img src="/favicon64.png" />
+        <Logo />
         <Box component="form" onSubmit={handleAddGarden} sx={{ mt: 2, width: '100%' }}>
           <Box sx={{ width: '100%', mt: 2 }}>
             <TextField required fullWidth id="name" name="name" label="Name" autoFocus />
