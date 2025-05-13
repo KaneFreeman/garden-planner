@@ -22,8 +22,8 @@
     "@vitejs/plugin-react": "4.4.1",
     "date-fns": "3.6.0",
     "object-hash": "3.0.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-redux": "9.2.0",
     "react-router": "6.30.0",
     "react-router-dom": "6.30.0",
@@ -50,8 +50,8 @@
   "devDependencies": {
     "@types/node": "20.17.46",
     "@types/object-hash": "3.0.6",
-    "@types/react": "18.3.21",
-    "@types/react-dom": "18.3.7",
+    "@types/react": "19.1.4",
+    "@types/react-dom": "19.1.5",
     "@types/react-router": "5.1.20",
     "@types/react-router-dom": "5.3.3",
     "@types/react-window": "1.8.8",
@@ -101,7 +101,7 @@
     "endOfLine": "lf"
   },
   "resolutions": {
-    "@types/react": "18.3.21"
+    "@types/react": "19.1.4"
   },
   "engines": {
     "node": ">=20 <21"
