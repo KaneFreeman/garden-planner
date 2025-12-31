@@ -31,7 +31,7 @@
     "vite": "6.4.1",
     "vite-plugin-pwa": "0.21.2",
     "vite-tsconfig-paths": "4.3.2",
-    "web-vitals": "3.5.2",
+    "web-vitals": "5.1.0",
     "workbox-background-sync": "7.4.0",
     "workbox-broadcast-update": "7.4.0",
     "workbox-build": "7.4.0",
