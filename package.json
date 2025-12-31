@@ -20,7 +20,7 @@
     "@mui/x-date-pickers": "7.29.4",
     "@reduxjs/toolkit": "2.11.2",
     "@vitejs/plugin-react": "4.7.0",
-    "date-fns": "3.6.0",
+    "date-fns": "4.1.0",
     "object-hash": "3.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
