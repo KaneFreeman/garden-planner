@@ -35,6 +35,6 @@ export const { updateContainers } = ContainersSlice.actions;
 export const selectContainers = (state: RootState) => state.containers.containers;
 export const selectContainersById = (state: RootState) => state.containers.containersById;
 export const selectContainer = (id?: string) => (state: RootState) =>
-  id ? state.containers.containersById[id] ?? undefined : undefined;
+  id ? (state.containers.containersById[id] ?? undefined) : undefined;
 
 export default ContainersSlice.reducer;

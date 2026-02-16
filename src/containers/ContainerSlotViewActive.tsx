@@ -428,8 +428,10 @@ const ContainerSlotViewActive = ({
                       anchorEl={moreMenuAnchorElement}
                       open={moreMenuOpen}
                       onClose={handleMoreMenuClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button'
+                      slotProps={{
+                        list: {
+                          'aria-labelledby': 'basic-button'
+                        }
                       }}
                     >
                       {plant && plantInstance && !plantedEvent ? (

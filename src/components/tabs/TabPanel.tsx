@@ -1,8 +1,9 @@
 import { SxProps, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { ReactNode } from 'react';
 
 interface TabPanelProps {
-  children: JSX.Element;
+  children: ReactNode;
   value: number;
   index: number;
   sx?: SxProps<Theme> | undefined;

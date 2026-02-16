@@ -504,8 +504,10 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         anchorEl={moreMenuAnchorElement}
                         open={moreMenuOpen}
                         onClose={handleMoreMenuClose}
-                        MenuListProps={{
-                          'aria-labelledby': 'basic-button'
+                        slotProps={{
+                          list: {
+                            'aria-labelledby': 'basic-button'
+                          }
                         }}
                       >
                         {fertilizableInstanceIds.length > 0 ? (
@@ -614,8 +616,10 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
                         anchorEl={moreMenuAnchorElement}
                         open={moreMenuOpen}
                         onClose={handleMoreMenuClose}
-                        MenuListProps={{
-                          'aria-labelledby': 'basic-button'
+                        slotProps={{
+                          list: {
+                            'aria-labelledby': 'basic-button'
+                          }
                         }}
                       >
                         {transplantableInstanceIds ? (

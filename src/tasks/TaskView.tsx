@@ -151,8 +151,10 @@ const TaskView = ({ task }: TaskViewProperties) => {
                       anchorEl={moreMenuAnchorElement}
                       open={moreMenuOpen}
                       onClose={handleMoreMenuClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button'
+                      slotProps={{
+                        list: {
+                          'aria-labelledby': 'basic-button'
+                        }
                       }}
                     >
                       <MenuItem onClick={task.completedOn ? handleOnMarkAsOpen : handleOnMarkAsComplete}>

@@ -17,26 +17,26 @@ Utilizes [Garden Planner API](https://github.com/KaneFreeman/garden-planner-api)
 ## Installation
 
 ```bash
-$ yarn
+$ npm install
 ```
 
 ## Running the app
 
 ```bash
 # development / watch mode
-$ yarn start
+$ npm run start
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ yarn test
+$ npm run test
 ```
 
 ## Build
 
 ```bash
 # production build
-$ yarn build
+$ npm run build
 ```

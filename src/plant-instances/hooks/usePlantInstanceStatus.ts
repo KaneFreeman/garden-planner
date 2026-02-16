@@ -1,7 +1,4 @@
-import { blue } from '@mui/material/colors';
-import green from '@mui/material/colors/green';
-import red from '@mui/material/colors/red';
-import yellow from '@mui/material/colors/yellow';
+import { blue, green, red, yellow } from '@mui/material/colors';
 import { useMemo } from 'react';
 import { DisplayStatusChipProps } from '../../containers/DisplayStatusChip';
 import { ContainerSlotIdentifier, Plant, PlantInstance, TRANSPLANTED } from '../../interface';

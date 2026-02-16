@@ -8,7 +8,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { format } from 'date-fns/format';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactElement, useCallback, useMemo, useState } from 'react';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -139,7 +139,7 @@ const Plants = () => {
 
   const buildPlantList = useCallback(
     (filter: (plant: Plant) => boolean, options: PlantRenderOptions = {}) => {
-      return plants.filter(filter).reduce<Record<string, JSX.Element[]>>((acc, plant) => {
+      return plants.filter(filter).reduce<Record<string, ReactElement[]>>((acc, plant) => {
         const plantType = plant.type ?? 'Other';
         if (!(plantType in acc)) {
           acc[plantType] = [];

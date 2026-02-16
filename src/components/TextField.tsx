@@ -94,8 +94,10 @@ const TextField = (props: TextFieldProps) => {
       fullWidth
       error={error || (otherProps.required && dirty && isEmpty)}
       autoFocus={autoFocus}
-      InputProps={finalInputProps}
       {...otherProps}
+      slotProps={{
+        input: finalInputProps
+      }}
     />
   );
 };

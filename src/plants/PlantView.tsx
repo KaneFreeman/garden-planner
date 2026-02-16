@@ -198,8 +198,10 @@ const PlantView = () => {
                       anchorEl={moreMenuAnchorElement}
                       open={moreMenuOpen}
                       onClose={handleMoreMenuClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button'
+                      slotProps={{
+                        list: {
+                          'aria-labelledby': 'basic-button'
+                        }
                       }}
                     >
                       <MenuItem onClick={onReorderClick}>

@@ -127,22 +127,24 @@ const NumberTextField = ({
         }
       }}
       required={required}
-      InputProps={finalInputProps}
       fullWidth
       error={Boolean(
         error ||
-          (required && dirty && (value === undefined || internalValue === '')) ||
-          Number.isNaN(value) ||
-          (value !== undefined &&
-            ((wholeNumber && value % 1 !== 0) ||
-              (min !== undefined && value < min) ||
-              (max !== undefined && value > max)))
+        (required && dirty && (value === undefined || internalValue === '')) ||
+        Number.isNaN(value) ||
+        (value !== undefined &&
+          ((wholeNumber && value % 1 !== 0) ||
+            (min !== undefined && value < min) ||
+            (max !== undefined && value > max)))
       )}
       disabled={disabled}
       helperText={helperText}
       sx={sx}
       autoFocus={autoFocus}
       onKeyDown={onKeyDown}
+      slotProps={{
+        input: finalInputProps
+      }}
     />
   );
 };

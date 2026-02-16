@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -82,7 +82,7 @@ const ContainerSlotSelectInlineField = ({
           {label}
         </Typography>
         <Typography variant="body1" component="div" sx={{ ml: -2, mr: -2 }}>
-          <ListItem button key="container-slot-select-display" onClick={open ? undefined : handleOpen}>
+          <ListItemButton key="container-slot-select-display" onClick={open ? undefined : handleOpen}>
             {transplantContainer && value ? (
               <Button
                 component="a"
@@ -95,7 +95,7 @@ const ContainerSlotSelectInlineField = ({
             ) : (
               'N/A'
             )}
-          </ListItem>
+          </ListItemButton>
         </Typography>
       </Box>
       <Dialog open={open} onClose={handleClose(false)} maxWidth="xs" fullWidth>

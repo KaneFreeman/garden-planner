@@ -48,7 +48,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
   }, [editData, user, handleOnClose, updateUser]);
 
   const onSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    (event: React.FormEvent<HTMLDivElement>) => {
       event.preventDefault();
       onSave();
     },
@@ -73,9 +73,11 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
       }}
       open={open}
       onClose={handleOnClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit
+      slotProps={{
+        paper: {
+          component: 'form',
+          onSubmit
+        }
       }}
       maxWidth="sm"
       fullWidth
@@ -83,10 +85,10 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
       <DialogTitle>My Account</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField required label="Email" type="email" disabled value={user.email} autoComplete="email" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               autoComplete="given-name"
               required
@@ -96,7 +98,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               onChange={(firstName) => update({ firstName })}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               required
               label="Last Name"
@@ -105,7 +107,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               onChange={(lastName) => update({ lastName })}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               label="New Password"
               type="password"
@@ -118,7 +120,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               onChange={(password) => update({ password })}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               required
               label="Zip Code"
@@ -128,7 +130,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               onChange={(zipCode) => update({ zipCode })}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <FormControlLabel
               control={
                 <Switch

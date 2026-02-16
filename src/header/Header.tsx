@@ -203,8 +203,10 @@ const Header = () => {
           anchorEl={gardenMenuAnchorEl}
           open={gardenMenuOpen}
           onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'garden-button'
+          slotProps={{
+            list: {
+              'aria-labelledby': 'garden-button'
+            }
           }}
         >
           {(gardens ?? []).map((g) => (

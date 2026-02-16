@@ -68,7 +68,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
             </Alert>
           ) : null}
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 autoComplete="given-name"
                 required
@@ -80,7 +80,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 disabled={loading}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 required
                 fullWidth
@@ -91,7 +91,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 disabled={loading}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 required
                 fullWidth
@@ -103,7 +103,7 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 disabled={loading}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 required
                 fullWidth
@@ -111,24 +111,28 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 name="password"
                 label="Password"
                 type="password"
-                inputProps={{
-                  minLength: '8'
-                }}
                 autoComplete="new-password"
                 disabled={loading}
+                slotProps={{
+                  htmlInput: {
+                    minLength: '8'
+                  }
+                }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 required
                 fullWidth
                 id="zipCode"
                 name="zipCode"
                 label="Zip Code"
-                inputProps={{
-                  pattern: '[0-9]{5}'
-                }}
                 disabled={loading}
+                slotProps={{
+                  htmlInput: {
+                    pattern: '[0-9]{5}'
+                  }
+                }}
               />
             </Grid>
           </Grid>
