@@ -60,6 +60,7 @@ const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, e
         position: 'sticky',
         zIndex: 100,
         mt: 1,
+        backgroundColor: '#1f1f1f',
         ...sxRoot
       }}
     >
