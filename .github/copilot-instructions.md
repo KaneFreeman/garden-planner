@@ -2,18 +2,23 @@
 
 ## Project overview
 
-- React 18 + TypeScript UI built with Vite.
+- React 19 + TypeScript UI built with Vite.
 - UI is a PWA with service worker registration and update handling.
 - State uses Redux Toolkit; routing uses React Router.
 - UI talks to the API via `VITE_API_URL`.
 
 ## Tech stack
 
-- React 18, TypeScript (strict), Vite
+- React 19, TypeScript (strict), Vite
 - MUI (material, lab, x-date-pickers)
 - Redux Toolkit + React Redux
 - React Router 6
 - PWA: `vite-plugin-pwa` + Workbox
+
+## Package manager
+
+- Use `npm` commands in this repo.
+- Do not use `yarn`.
 
 ## Source layout
 
@@ -34,10 +39,11 @@
 
 ## Scripts (preferred)
 
-- `yarn start` (dev)
-- `yarn build` (tsc + vite build)
-- `yarn lint`
-- `yarn format`
+- `npm run start` (dev)
+- `npm run build` (tsc + vite build)
+- `npm run lint`
+- `npm run format`
+- `npm run preview`
 
 ## Formatting and linting
 

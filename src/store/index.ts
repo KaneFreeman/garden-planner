@@ -3,6 +3,7 @@ import logger from '../middleware/logger';
 import authReducer from './slices/auth';
 import containersReducer from './slices/containers';
 import gardensReducer from './slices/gardens';
+import globalReducer from './slices/global';
 import picturesReducer from './slices/pictures';
 import plantInstancesReducer from './slices/plant-instances';
 import plantsReducer from './slices/plants';
@@ -14,6 +15,7 @@ export const store = configureStore({
     auth: authReducer,
     static: staticReducer,
     gardens: gardensReducer,
+    global: globalReducer,
     tasks: tasksReducer,
     plants: plantsReducer,
     containers: containersReducer,

@@ -24,7 +24,7 @@ import DateInlineField from '../components/inline-fields/DateInlineField';
 import TextInlineField from '../components/inline-fields/TextInlineField';
 import { CUSTOM, Task } from '../interface';
 import { getMidnight, setToMidnight } from '../utility/date.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { useRemoveTask, useUpdateTask } from './hooks/useTasks';
 
 interface TaskViewProperties {

@@ -46,6 +46,7 @@ const enum Api {
   container_Post = 'POST:/garden/{gardenId}/container',
   container_IdDelete = 'DELETE:/garden/{gardenId}/container/{containerId}',
   container_FinishPlanningPost = 'POST:/garden/{gardenId}/container/{containerId}/finish-planning',
+  container_PlanSlotPost = 'POST:/garden/{gardenId}/container/{containerId}/plan-slot',
   container_UpdateTasksPost = 'POST:/garden/{gardenId}/container/{containerId}/{taskType}',
 
   picture_IdGet = 'GET:/picture/{pictureId}',

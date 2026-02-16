@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { PictureData, ContainerSlotIdentifier, Container, PlantInstance, Plant, Comment } from '../interface';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { useUpdateCreatePlantInstance } from '../plant-instances/hooks/usePlantInstances';
 import { useUpdatePlant } from '../plants/usePlants';
 import PictureUpload from './PictureUpload';

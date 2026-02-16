@@ -373,6 +373,11 @@ export interface ContainerTaskUpdateDTO {
   readonly plantInstanceIds?: string[];
 }
 
+export interface ContainerPlanSlotDTO {
+  readonly slotId: number;
+  readonly plantId: string;
+}
+
 export interface ContainerSlotIdentifier {
   containerId: string;
   slotId: number;

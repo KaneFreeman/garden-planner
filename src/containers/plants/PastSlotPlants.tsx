@@ -9,7 +9,7 @@ import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantI
 import { usePlantsById } from '../../plants/usePlants';
 import { getPlantedEvent, usePlantedEventComparator } from '../../utility/history.util';
 import { getPlantTitle } from '../../utility/plant.util';
-import useSmallScreen from '../../utility/smallScreen.util';
+import { useSmallScreen } from '../../utility/mediaQuery.util';
 import SlotListItem from '../SlotListItem';
 
 interface PastSlotPlantsProps {

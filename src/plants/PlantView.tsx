@@ -33,7 +33,7 @@ import PlantSlotsView from '../containers/plants/PlantSlotsView';
 import { MATURITY_FROM_SEED, MATURITY_FROM_TYPES, MaturityFromType, PLANT_TYPES, Plant, PlantType } from '../interface';
 import PicturesView from '../pictures/PicturesView';
 import { getPlantTitle } from '../utility/plant.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import PlantDataView from './PlantDataView';
 import { usePlant, useRemovePlant, useUpdatePlant } from './usePlants';
 

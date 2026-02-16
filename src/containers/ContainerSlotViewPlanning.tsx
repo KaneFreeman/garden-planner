@@ -17,7 +17,7 @@ import { usePlants } from '../plants/usePlants';
 import { getPlantTitle } from '../utility/plant.util';
 import computeSeason from '../utility/season.util';
 import { getSlotTitle } from '../utility/slot.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import DisplayStatusChip from './DisplayStatusChip';
 import { useContainerSlotLocation } from './hooks/useContainerSlotLocation';
 import PastSlotPlants from './plants/PastSlotPlants';

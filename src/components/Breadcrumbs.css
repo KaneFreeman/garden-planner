@@ -1,3 +1,7 @@
 .breadcrumbs-root .breadcrumbs-li {
   min-width: 0;
+
+  &:last-child {
+    flex-grow: 1;
+  }
 }

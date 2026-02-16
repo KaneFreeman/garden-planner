@@ -16,7 +16,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import React, { useCallback, useMemo } from 'react';
 import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TaskGroup, TRANSPLANT } from '../interface';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import useGetTaskText from './hooks/useGetTaskText';
 import './Tasks.css';
 

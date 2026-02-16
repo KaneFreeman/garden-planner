@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box';
-import React, { useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import React, { useEffect, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ScrollToTop from '../components/ScrollToTop';
 import ContainerSelectViewRoute from '../containers/ContainerSelectViewRoute';
 import ContainerSlotRoute from '../containers/ContainerSlotRoute';
 import ContainerViewRoute from '../containers/ContainerViewRoute';
 import Containers from '../containers/Containers';
+import BulkTransplantRoute from '../containers/transplant/BulkTransplantRoute';
 import Header from '../header/Header';
 import PlantView from '../plants/PlantView';
 import Plants from '../plants/Plants';
@@ -15,13 +17,20 @@ import { selectPlantInstancesByIds } from '../store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from '../store/slices/tasks';
 import TaskViewRoute from '../tasks/TaskViewRoute';
 import Tasks from '../tasks/Tasks';
-import BulkTransplantRoute from '../containers/transplant/BulkTransplantRoute';
+import { selectSidepanelOpen } from '../store/slices/global';
+import { useLargeScreen } from '../utility/mediaQuery.util';
 
 const GardenView = () => {
   const dispatch = useAppDispatch();
   const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
   const tasks = useAppSelector(selectTasks);
   const garden = useAppSelector(selectSelectedGarden);
+
+  const theme = useTheme();
+  const isLargeScreen = useLargeScreen();
+
+  const planningPanelCollapsed = useAppSelector(selectSidepanelOpen);
+  const planningPanelWidth = useMemo(() => (planningPanelCollapsed ? 44 : 300), [planningPanelCollapsed]);
 
   useEffect(() => {
     dispatch(buildTaskLookupByContainer({ tasks, plantInstancesByIds }));
@@ -39,31 +48,42 @@ const GardenView = () => {
           justifyContent: 'center',
           height: 'calc(100dvh - 56px)',
           top: '56px',
-          position: 'relative'
+          position: 'relative',
+          paddingRight: isLargeScreen ? `${planningPanelWidth}px` : undefined
         }}
       >
         <Box
           sx={{
-            display: 'flex',
             width: '100%',
-            boxSizing: 'border-box',
-            justifyContent: 'center'
+            [theme.breakpoints.up('sm')]: {
+              maxWidth: '1000px',
+              margin: '0 auto'
+            }
           }}
         >
-          <Routes>
-            <Route path="/" element={<Tasks />} />
-            <Route path="/containers" element={<Containers />} />
-            <Route path="/container/:id" element={<ContainerViewRoute />} />
-            <Route path="/container/:id/slot/:index" element={<ContainerSlotRoute />} />
-            <Route
-              path="/container/:id/slot/:index/transplant/:otherContainerId"
-              element={<ContainerSelectViewRoute />}
-            />
-            <Route path="/container/:id/bulk-transplant/:otherContainerId" element={<BulkTransplantRoute />} />
-            <Route path="/plants" element={<Plants />} />
-            <Route path="/plant/:id" element={<PlantView />} />
-            <Route path="/task/:id" element={<TaskViewRoute />} />
-          </Routes>
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              boxSizing: 'border-box',
+              justifyContent: 'center'
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<Tasks />} />
+              <Route path="/containers" element={<Containers />} />
+              <Route path="/container/:id" element={<ContainerViewRoute />} />
+              <Route path="/container/:id/slot/:index" element={<ContainerSlotRoute />} />
+              <Route
+                path="/container/:id/slot/:index/transplant/:otherContainerId"
+                element={<ContainerSelectViewRoute />}
+              />
+              <Route path="/container/:id/bulk-transplant/:otherContainerId" element={<BulkTransplantRoute />} />
+              <Route path="/plants" element={<Plants />} />
+              <Route path="/plant/:id" element={<PlantView />} />
+              <Route path="/task/:id" element={<TaskViewRoute />} />
+            </Routes>
+          </Box>
         </Box>
       </Box>
     </React.Fragment>

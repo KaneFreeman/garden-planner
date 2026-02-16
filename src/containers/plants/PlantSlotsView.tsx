@@ -12,7 +12,7 @@ import { usePlantInstancesById } from '../../plant-instances/hooks/usePlantInsta
 import usePlantInstancesByPlant from '../../plant-instances/hooks/usePlantInstancesByPlant';
 import { getPlantedEvent, usePlantedEventComparatorWithSecondary } from '../../utility/history.util';
 import { getSlotTitle } from '../../utility/slot.util';
-import useSmallScreen from '../../utility/smallScreen.util';
+import { useSmallScreen } from '../../utility/mediaQuery.util';
 import SlotListItem from '../SlotListItem';
 import { useContainersById } from '../hooks/useContainers';
 

@@ -6,7 +6,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import AddIcon from '@mui/icons-material/Add';
 import generateThumbnail from '../utility/thumbnail.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { PictureData } from '../interface';
 import { useAddPicture } from './usePictures';
 

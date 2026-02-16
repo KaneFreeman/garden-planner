@@ -1,3 +1,7 @@
+:root {
+  color-scheme: dark;
+}
+
 body {
   font-family: sans-serif;
   width: 100%;
@@ -7,7 +11,7 @@ body {
   min-height: -webkit-fill-available;
   margin: 0;
   color: #fff;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.5;
@@ -16,8 +20,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 #root {

@@ -19,7 +19,7 @@ import { usePlantInstances } from '../plant-instances/hooks/usePlantInstances';
 import { getPlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import { useAppSelector } from '../store/hooks';
 import { selectFilterPlants } from '../store/slices/plants';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import PlantAvatar from './PlantAvatar';
 import './Plants.css';
 import { usePlants } from './usePlants';

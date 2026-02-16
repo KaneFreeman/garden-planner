@@ -4,7 +4,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { PLANTED, PlantInstance } from '../interface';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
 import PlantAvatar from '../plants/PlantAvatar';
 import { usePlant } from '../plants/usePlants';

@@ -3,7 +3,7 @@ import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { format } from 'date-fns';
-import { memo, useCallback, useMemo } from 'react';
+import { DragEvent, memo, useCallback, useMemo } from 'react';
 import { CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -24,10 +24,25 @@ interface ContainerSlotPreviewProps {
   isActionable: boolean | undefined;
   isLink: boolean;
   onSlotClick: (slot: Slot | undefined, index: number) => void;
+  canPlanPlantDrop?: (slot: Slot | undefined, index: number) => boolean;
+  onPlanPlantDrop?: (slot: Slot | undefined, index: number, plantId: string) => void;
+  isPlanningPlantDragActive?: boolean;
 }
 
 const ContainerSlotPreview = memo(
-  ({ index, container, slot, plant, size, isActionable, isLink, onSlotClick }: ContainerSlotPreviewProps) => {
+  ({
+    index,
+    container,
+    slot,
+    plant,
+    size,
+    isActionable,
+    isLink,
+    onSlotClick,
+    canPlanPlantDrop,
+    onPlanPlantDrop,
+    isPlanningPlantDragActive
+  }: ContainerSlotPreviewProps) => {
     const plantInstance = usePlantInstance(slot?.plantInstanceId);
     const tasks = useTasksByPlantInstance(plantInstance?._id);
     const plantLocation = usePlantInstanceLocation(plantInstance);
@@ -87,6 +102,40 @@ const ContainerSlotPreview = memo(
       onSlotClick(slot, index);
     }, [index, onSlotClick, slot]);
 
+    const canAcceptPlanDrop = useMemo(
+      () => (canPlanPlantDrop ? canPlanPlantDrop(slot, index) : false),
+      [canPlanPlantDrop, index, slot]
+    );
+
+    const handleDragOver = useCallback(
+      (event: DragEvent<HTMLElement>) => {
+        if (!canAcceptPlanDrop) {
+          return;
+        }
+
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      },
+      [canAcceptPlanDrop]
+    );
+
+    const handleDrop = useCallback(
+      (event: DragEvent<HTMLElement>) => {
+        if (!canAcceptPlanDrop || !onPlanPlantDrop) {
+          return;
+        }
+
+        event.preventDefault();
+        const plantId =
+          event.dataTransfer.getData('application/x-garden-plant-id') || event.dataTransfer.getData('text/plain');
+
+        if (plantId) {
+          onPlanPlantDrop(slot, index, plantId);
+        }
+      },
+      [canAcceptPlanDrop, index, onPlanPlantDrop, slot]
+    );
+
     return (
       <IconButton
         component={isLink ? 'a' : 'div'}
@@ -96,9 +145,14 @@ const ContainerSlotPreview = memo(
           width: size,
           height: size,
           border: `2px solid ${isActionable === false ? 'rgba(0,0,0,0.7)' : borderColor}`,
-          borderRadius: 0
+          borderRadius: 0,
+          boxShadow:
+            isPlanningPlantDragActive && canAcceptPlanDrop ? 'inset 0 0 0 2px rgba(25, 118, 210, 0.55)' : undefined,
+          opacity: isPlanningPlantDragActive && !canAcceptPlanDrop ? 0.7 : 1
         }}
         onClick={!isLink ? handleClick : undefined}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         title={title}
       >
         {isActionable === false ? (

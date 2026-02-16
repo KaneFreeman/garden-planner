@@ -22,6 +22,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useTheme } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
@@ -40,14 +41,20 @@ import {
 } from '../plant-instances/hooks/usePlantInstances';
 import { usePlantsById } from '../plants/usePlants';
 import { generateTagColor } from '../utility/color.util';
-import { getTransplantedDate } from '../utility/history.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { getPlantedEvent, getTransplantedDate } from '../utility/history.util';
+import { useLargeScreen, useSmallScreen } from '../utility/mediaQuery.util';
 import ContainerEditModal from './ContainerEditModal';
+import ContainerPlanningPanel from './ContainerPlanningPanel';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import useContainerOptions from './hooks/useContainerOptions';
-import { useFinishPlanningContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
+import {
+  useFinishPlanningContainer,
+  usePlanContainerSlot,
+  useRemoveContainer,
+  useUpdateContainer
+} from './hooks/useContainers';
 
-const MAX_SLOT_WIDTH = 80;
+const MAX_SLOT_WIDTH = 120;
 const MIN_SLOT_WIDTH = 50;
 const SLOT_BORDER_WIDTH = 4;
 const APP_PADDING = 32;
@@ -63,6 +70,7 @@ interface ContainerViewProperties {
 
 const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: ContainerViewProperties) => {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const [mode, setMode] = useState<ActionMode>('none');
   const handleModeChange = useCallback((_event: MouseEvent, newMode: ActionMode) => {
@@ -73,6 +81,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
   const isSmallScreen = useSmallScreen();
+  const isLargeScreen = useLargeScreen();
 
   const [searchParams] = useSearchParams();
   const backLabel = searchParams.get('backLabel');
@@ -101,6 +110,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
   const finishPlanningContainer = useFinishPlanningContainer(container._id);
+  const planContainerSlot = usePlanContainerSlot(container._id);
   const fertilizeContainer = useUpdatePlantInstanceTasksInContainer(container._id, FERTILIZE);
   const plantContainer = useUpdatePlantInstanceTasksInContainer(container._id, PLANT);
 
@@ -108,6 +118,58 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const plantInstancesById = usePlantInstancesById();
 
   const isPortrait = useMemo(() => orientation === 'portrait', [orientation]);
+  const [draggingPlanningPlantId, setDraggingPlanningPlantId] = useState<string | null>(null);
+
+  const activePlants = useMemo(() => {
+    const activePlantCounts = Object.values(plantInstancesById).reduce<Record<string, number>>((acc, plantInstance) => {
+      if (plantInstance.closed || !plantInstance.plant) {
+        return acc;
+      }
+
+      acc[plantInstance.plant] = (acc[plantInstance.plant] ?? 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.values(plantsById)
+      .filter((plant) => plant.retired !== true)
+      .map((plant) => ({
+        plant,
+        count: activePlantCounts[plant._id] ?? 0
+      }))
+      .sort((a, b) => a.plant.name.localeCompare(b.plant.name));
+  }, [plantInstancesById, plantsById]);
+
+  const canPlanPlantOnSlot = useCallback(
+    (slot: Slot | undefined, _index: number) => {
+      if (!slot?.plantInstanceId) {
+        return true;
+      }
+
+      const currentPlantInstance = plantInstancesById[slot.plantInstanceId];
+      if (!currentPlantInstance) {
+        return true;
+      }
+
+      if (currentPlantInstance.closed) {
+        return true;
+      }
+
+      return !getPlantedEvent(currentPlantInstance);
+    },
+    [plantInstancesById]
+  );
+
+  const onPlanPlantDrop = useCallback(
+    async (slot: Slot | undefined, index: number, plantId: string) => {
+      if (!canPlanPlantOnSlot(slot, index)) {
+        return;
+      }
+
+      await planContainerSlot(index, plantId);
+      setDraggingPlanningPlantId(null);
+    },
+    [canPlanPlantOnSlot, planContainerSlot]
+  );
 
   const [deleting, setDeleting] = useState(false);
   const handleOnDelete = useCallback(() => {
@@ -403,6 +465,9 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           }
           isLink={!onSlotClick && mode === 'none'}
           onSlotClick={handleSlotClick}
+          canPlanPlantDrop={isSmallScreen ? undefined : canPlanPlantOnSlot}
+          onPlanPlantDrop={isSmallScreen ? undefined : onPlanPlantDrop}
+          isPlanningPlantDragActive={!isSmallScreen && draggingPlanningPlantId !== null}
         />
       );
     });
@@ -415,12 +480,23 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
     onSlotClick,
     mode,
     handleSlotClick,
-    plantsById
+    plantsById,
+    isSmallScreen,
+    canPlanPlantOnSlot,
+    onPlanPlantDrop,
+    draggingPlanningPlantId
   ]);
 
   return (
     <>
-      <Box sx={{ p: 2, flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
+      <Box
+        sx={{
+          p: 2,
+          flexGrow: 1,
+          width: '100%',
+          boxSizing: 'border-box'
+        }}
+      >
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
           <Breadcrumbs
             trail={[
@@ -657,7 +733,14 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
               ) : null
             }}
           </Breadcrumbs>
-          <Box sx={{ mt: 1, mb: 1, height: '47px' }}>
+          <Box
+            sx={{
+              mt: 1,
+              mb: 1,
+              height: '47px',
+              [theme.breakpoints.up('sm')]: { mt: 2, mb: 2, display: 'flex', justifyContent: 'center' }
+            }}
+          >
             <ToggleButtonGroup value={mode} exclusive onChange={handleModeChange} aria-label="action mode">
               <ToggleButton value="none" sx={{ pl: 3, pr: 3 }}>
                 <VisibilityIcon fontSize="small"></VisibilityIcon>
@@ -691,37 +774,63 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           </Box>
           <Box
             sx={{
-              display: 'flex',
               mt: 1,
-              overflowX: 'auto',
-              overflowY: 'auto',
               maxHeight: 'calc(100dvh - 183px)',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              display: 'flex',
+              alignItems: 'flex-start'
             }}
           >
             <Box
               sx={{
+                flexGrow: 1,
+                overflowX: 'auto',
+                overflowY: 'auto',
                 display: 'flex',
-                justifyContent: 'center',
-                width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth + SLOT_BORDER_WIDTH,
-                height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth + SLOT_BORDER_WIDTH
+                justifyContent: { xs: 'flex-start', sm: 'center' }
               }}
             >
               <Box
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(${isPortrait ? container.rows : container.columns}, minmax(0, 1fr))`,
-                  width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth,
-                  height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth,
-                  border: '2px solid #2c2c2c'
+                  display: 'flex',
+                  justifyContent: 'center',
+                  width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth + SLOT_BORDER_WIDTH,
+                  height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth + SLOT_BORDER_WIDTH
                 }}
               >
-                {slots}
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${isPortrait ? container.rows : container.columns}, minmax(0, 1fr))`,
+                    width: ((isPortrait ? container.rows : container.columns) ?? 1) * slotWidth,
+                    height: ((isPortrait ? container.columns : container.rows) ?? 1) * slotWidth,
+                    border: '2px solid #2c2c2c'
+                  }}
+                >
+                  {slots}
+                </Box>
               </Box>
             </Box>
           </Box>
         </Typography>
       </Box>
+      {isLargeScreen ? (
+        <Box
+          sx={{
+            position: 'fixed',
+            right: 8,
+            top: '64px',
+            maxHeight: 'calc(100dvh - 72px)',
+            zIndex: 10
+          }}
+        >
+          <ContainerPlanningPanel
+            activePlants={activePlants}
+            onPlantDragStart={setDraggingPlanningPlantId}
+            onPlantDragEnd={() => setDraggingPlanningPlantId(null)}
+          />
+        </Box>
+      ) : null}
       <Dialog
         open={deleting}
         onClose={handleDeleteOnClose}

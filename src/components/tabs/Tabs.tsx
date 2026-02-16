@@ -58,8 +58,8 @@ const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, e
     <Box
       sx={{
         position: 'sticky',
-        background: 'rgb(38, 38, 38)',
         zIndex: 100,
+        mt: 1,
         ...sxRoot
       }}
     >

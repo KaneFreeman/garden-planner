@@ -18,7 +18,7 @@ import { getPlantInstanceStatusForSlot } from '../plant-instances/hooks/usePlant
 import { useTasksByContainers } from '../tasks/hooks/useTasks';
 import TaskBadge from '../tasks/TaskBadge';
 import { generateTagColor } from '../utility/color.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import './Containers.css';
 import ContainersYearGroup from './ContainersYearGroup';
 import DisplayStatusChip from './DisplayStatusChip';

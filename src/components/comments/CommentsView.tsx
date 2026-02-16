@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import CommentIcon from '@mui/icons-material/Comment';
 import { PictureData, Comment, PlantInstance, ContainerSlotIdentifier, Container, Plant } from '../../interface';
-import useSmallScreen from '../../utility/smallScreen.util';
+import { useSmallScreen } from '../../utility/mediaQuery.util';
 import { useUpdateCreatePlantInstance } from '../../plant-instances/hooks/usePlantInstances';
 import { useUpdatePlant } from '../../plants/usePlants';
 import CommentBox from './CommentBox';

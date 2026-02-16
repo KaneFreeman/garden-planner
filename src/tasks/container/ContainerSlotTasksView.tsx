@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { useCallback, useMemo, useState } from 'react';
 import { CUSTOM, PlantInstance, Task } from '../../interface';
 import { getMidnight } from '../../utility/date.util';
-import useSmallScreen from '../../utility/smallScreen.util';
+import { useSmallScreen } from '../../utility/mediaQuery.util';
 import { useTasksByPlantInstance } from '../hooks/useTasks';
 import TaskListItem from '../TaskListItem';
 import TaskModal from '../TaskModal';

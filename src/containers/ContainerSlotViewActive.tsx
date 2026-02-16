@@ -58,7 +58,7 @@ import { getMidnight, setToMidnight } from '../utility/date.util';
 import { getPlantedEvent } from '../utility/history.util';
 import { getPlantTitle } from '../utility/plant.util';
 import { getSlotTitle } from '../utility/slot.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { toTitleCase } from '../utility/string.util';
 import DisplayStatusChip, { DisplayStatusChipProps } from './DisplayStatusChip';
 import useContainerOptions from './hooks/useContainerOptions';

@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DateDialog from '../components/DateDialog';
 import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TaskGroup } from '../interface';
 import { getMidnight } from '../utility/date.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import { useBulkCompleteTasks } from './hooks/useTasks';
 import TaskListItem from './TaskListItem';
 import './Tasks.css';

@@ -11,8 +11,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import useTheme from '@mui/system/useTheme';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -30,7 +30,7 @@ import { getMidnight } from '../../utility/date.util';
 import { getTransplantedDate } from '../../utility/history.util';
 import { getPlantTitle } from '../../utility/plant.util';
 import { getSlotTitle } from '../../utility/slot.util';
-import useSmallScreen from '../../utility/smallScreen.util';
+import { useSmallScreen } from '../../utility/mediaQuery.util';
 import { useContainer, useGetContainers } from '../hooks/useContainers';
 import { getContainerSlotLocation } from '../hooks/useContainerSlotLocation';
 

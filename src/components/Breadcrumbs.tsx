@@ -2,11 +2,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import MuiBreadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ReactNode, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { filterNullish } from '../utility/null.util';
-import useSmallScreen from '../utility/smallScreen.util';
+import { useSmallScreen } from '../utility/mediaQuery.util';
 import './Breadcrumbs.css';
 
 interface TrailEntry {
@@ -27,6 +28,7 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
   const backPath = searchParams.get('backPath');
   const backLabel = searchParams.get('backLabel');
 
+  const theme = useTheme();
   const isSmallScreen = useSmallScreen();
 
   const filteredTrail = useMemo(() => filterNullish(trail), [trail]);
@@ -105,7 +107,17 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
   ) : (
     <MuiBreadcrumbs aria-label="breadcrumb" separator="›" classes={{ root: 'breadcrumbs-root', li: 'breadcrumbs-li' }}>
       {backTrail}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexGrow: 1,
+          gap: 2,
+          [theme.breakpoints.up('sm')]: {
+            justifyContent: 'space-between'
+          }
+        }}
+      >
         {renderedCurrent}
         {actions}
       </Box>
