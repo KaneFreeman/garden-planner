@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useMemo } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useMatch } from 'react-router-dom';
 import ScrollToTop from '../components/ScrollToTop';
 import ContainerSelectViewRoute from '../containers/ContainerSelectViewRoute';
 import ContainerSlotRoute from '../containers/ContainerSlotRoute';
@@ -13,12 +13,12 @@ import PlantView from '../plants/PlantView';
 import Plants from '../plants/Plants';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { selectSelectedGarden } from '../store/slices/gardens';
+import { selectSidepanelOpen } from '../store/slices/global';
 import { selectPlantInstancesByIds } from '../store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from '../store/slices/tasks';
 import TaskViewRoute from '../tasks/TaskViewRoute';
 import Tasks from '../tasks/Tasks';
-import { selectSidepanelOpen } from '../store/slices/global';
-import { useLargeScreen } from '../utility/mediaQuery.util';
+import { useExtraLargeScreen, useLargeScreen } from '../utility/mediaQuery.util';
 
 const GardenView = () => {
   const dispatch = useAppDispatch();
@@ -28,9 +28,11 @@ const GardenView = () => {
 
   const theme = useTheme();
   const isLargeScreen = useLargeScreen();
+  const isExtraLargeScreen = useExtraLargeScreen();
 
   const planningPanelCollapsed = useAppSelector(selectSidepanelOpen);
   const planningPanelWidth = useMemo(() => (planningPanelCollapsed ? 44 : 300), [planningPanelCollapsed]);
+  const isContainerViewRoute = Boolean(useMatch('/container/:id'));
 
   useEffect(() => {
     dispatch(buildTaskLookupByContainer({ tasks, plantInstancesByIds }));
@@ -49,7 +51,8 @@ const GardenView = () => {
           height: 'calc(100dvh - 56px)',
           top: '56px',
           position: 'relative',
-          paddingRight: isLargeScreen ? `${planningPanelWidth}px` : undefined
+          paddingRight:
+            isLargeScreen && !isExtraLargeScreen && isContainerViewRoute ? `${planningPanelWidth}px` : undefined
         }}
       >
         <Box

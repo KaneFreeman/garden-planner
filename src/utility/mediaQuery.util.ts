@@ -5,5 +5,9 @@ export function useSmallScreen() {
 }
 
 export function useLargeScreen() {
-  return useMediaQuery('(min-width:1200px)');
+  return useMediaQuery('(min-width:900px)');
+}
+
+export function useExtraLargeScreen() {
+  return useMediaQuery('(min-width:1600px)');
 }

@@ -39,7 +39,7 @@ import {
   usePlantInstancesById,
   useUpdatePlantInstanceTasksInContainer
 } from '../plant-instances/hooks/usePlantInstances';
-import { usePlantsById } from '../plants/usePlants';
+import { usePlants, usePlantsById } from '../plants/usePlants';
 import { generateTagColor } from '../utility/color.util';
 import { getPlantedEvent, getTransplantedDate } from '../utility/history.util';
 import { useLargeScreen, useSmallScreen } from '../utility/mediaQuery.util';
@@ -114,6 +114,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const fertilizeContainer = useUpdatePlantInstanceTasksInContainer(container._id, FERTILIZE);
   const plantContainer = useUpdatePlantInstanceTasksInContainer(container._id, PLANT);
 
+  const plants = usePlants();
   const plantsById = usePlantsById();
   const plantInstancesById = usePlantInstancesById();
 
@@ -130,14 +131,13 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
       return acc;
     }, {});
 
-    return Object.values(plantsById)
+    return Object.values(plants)
       .filter((plant) => plant.retired !== true)
       .map((plant) => ({
         plant,
         count: activePlantCounts[plant._id] ?? 0
-      }))
-      .sort((a, b) => a.plant.name.localeCompare(b.plant.name));
-  }, [plantInstancesById, plantsById]);
+      }));
+  }, [plantInstancesById, plants]);
 
   const canPlanPlantOnSlot = useCallback(
     (slot: Slot | undefined, _index: number) => {
@@ -815,21 +815,11 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         </Typography>
       </Box>
       {isLargeScreen ? (
-        <Box
-          sx={{
-            position: 'fixed',
-            right: 8,
-            top: '64px',
-            maxHeight: 'calc(100dvh - 72px)',
-            zIndex: 10
-          }}
-        >
-          <ContainerPlanningPanel
-            activePlants={activePlants}
-            onPlantDragStart={setDraggingPlanningPlantId}
-            onPlantDragEnd={() => setDraggingPlanningPlantId(null)}
-          />
-        </Box>
+        <ContainerPlanningPanel
+          activePlants={activePlants}
+          onPlantDragStart={setDraggingPlanningPlantId}
+          onPlantDragEnd={() => setDraggingPlanningPlantId(null)}
+        />
       ) : null}
       <Dialog
         open={deleting}
