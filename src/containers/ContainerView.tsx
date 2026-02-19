@@ -41,18 +41,13 @@ import {
 } from '../plant-instances/hooks/usePlantInstances';
 import { usePlants, usePlantsById } from '../plants/usePlants';
 import { generateTagColor } from '../utility/color.util';
-import { getPlantedEvent, getTransplantedDate } from '../utility/history.util';
+import { getTransplantedDate } from '../utility/history.util';
 import { useLargeScreen, useSmallScreen } from '../utility/mediaQuery.util';
 import ContainerEditModal from './ContainerEditModal';
 import ContainerPlanningPanel from './ContainerPlanningPanel';
 import ContainerSlotPreview from './ContainerSlotPreview';
 import useContainerOptions from './hooks/useContainerOptions';
-import {
-  useFinishPlanningContainer,
-  usePlanContainerSlot,
-  useRemoveContainer,
-  useUpdateContainer
-} from './hooks/useContainers';
+import { useFinishPlanningContainer, useRemoveContainer, useUpdateContainer } from './hooks/useContainers';
 
 const MAX_SLOT_WIDTH = 120;
 const MIN_SLOT_WIDTH = 50;
@@ -110,7 +105,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const updateContainer = useUpdateContainer();
   const removeContainer = useRemoveContainer();
   const finishPlanningContainer = useFinishPlanningContainer(container._id);
-  const planContainerSlot = usePlanContainerSlot(container._id);
   const fertilizeContainer = useUpdatePlantInstanceTasksInContainer(container._id, FERTILIZE);
   const plantContainer = useUpdatePlantInstanceTasksInContainer(container._id, PLANT);
 
@@ -141,6 +135,8 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const canPlanPlantOnSlot = useCallback(
     (slot: Slot | undefined, _index: number) => {
+      // Only allow planning (drop) when there is no plant instance for the slot
+      // or when the existing plant instance is closed.
       if (!slot?.plantInstanceId) {
         return true;
       }
@@ -150,11 +146,7 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         return true;
       }
 
-      if (currentPlantInstance.closed) {
-        return true;
-      }
-
-      return !getPlantedEvent(currentPlantInstance);
+      return currentPlantInstance.closed === true;
     },
     [plantInstancesById]
   );
@@ -165,10 +157,22 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         return;
       }
 
-      await planContainerSlot(index, plantId);
+      // Instead of creating a plant instance via the plan API, just update
+      // the container slot's `plant` property (this mirrors how planning is
+      // done from the slot view without creating a plant instance).
       setDraggingPlanningPlantId(null);
+
+      if (container && container._id) {
+        const newSlots = { ...(container.slots ?? {}) };
+        newSlots[index] = {
+          ...(newSlots[index] ?? {}),
+          plant: plantId
+        };
+
+        await updateContainer({ ...container, slots: newSlots });
+      }
     },
-    [canPlanPlantOnSlot, planContainerSlot]
+    [canPlanPlantOnSlot, container, updateContainer]
   );
 
   const [deleting, setDeleting] = useState(false);
@@ -489,12 +493,21 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   return (
     <>
+      {isLargeScreen ? (
+        <ContainerPlanningPanel
+          activePlants={activePlants}
+          onPlantDragStart={setDraggingPlanningPlantId}
+          onPlantDragEnd={() => setDraggingPlanningPlantId(null)}
+        />
+      ) : null}
       <Box
         sx={{
           p: 2,
           flexGrow: 1,
           width: '100%',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          position: 'relative',
+          zIndex: 10
         }}
       >
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, width: '100%', boxSizing: 'border-box' }}>
@@ -814,13 +827,6 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
           </Box>
         </Typography>
       </Box>
-      {isLargeScreen ? (
-        <ContainerPlanningPanel
-          activePlants={activePlants}
-          onPlantDragStart={setDraggingPlanningPlantId}
-          onPlantDragEnd={() => setDraggingPlanningPlantId(null)}
-        />
-      ) : null}
       <Dialog
         open={deleting}
         onClose={handleDeleteOnClose}

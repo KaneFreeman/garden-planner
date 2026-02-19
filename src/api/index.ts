@@ -1,6 +1,5 @@
 import {
   BulkCompleteTaskDTO,
-  ContainerPlanSlotDTO,
   BulkReopenClosePlantInstanceDTO,
   ContainerDTO,
   ContainerTaskUpdateDTO,
@@ -286,17 +285,6 @@ interface Rest {
       };
     };
     response: number;
-  };
-  'POST:/garden/{gardenId}/container/{containerId}/plan-slot': {
-    method: 'POST';
-    request: {
-      params: {
-        gardenId: string;
-        containerId: string;
-      };
-      body: ContainerPlanSlotDTO;
-    };
-    response: PlantInstanceDTO;
   };
   'POST:/picture': {
     method: 'POST';

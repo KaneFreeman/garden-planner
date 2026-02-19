@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import Api from '../../api/api';
 import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
-import { Container, fromContainerDTO, fromPlantInstanceDTO, toContainerDTO } from '../../interface';
+import { Container, fromContainerDTO, toContainerDTO } from '../../interface';
 import { useGetPlantInstances } from '../../plant-instances/hooks/usePlantInstances';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -191,33 +191,4 @@ export const useFinishPlanningContainer = (containerId: string | undefined) => {
   }, [containerId, garden?._id, getContainers, getPlantInstances, getTasks]);
 
   return finishPlanningContainer;
-};
-
-export const usePlanContainerSlot = (containerId: string | undefined) => {
-  const garden = useAppSelector(selectSelectedGarden);
-  const getPlantInstances = useGetPlantInstances({ force: true });
-  const getContainers = useGetContainers({ force: true });
-  const getTasks = useGetTasks({ force: true });
-
-  const planContainerSlot = useCallback(
-    async (slotId: number, plantId: string) => {
-      const response = await fetchEndpoint(Api.container_PlanSlotPost, {
-        params: { containerId: containerId ?? '', gardenId: garden?._id ?? '' },
-        body: { slotId, plantId }
-      });
-
-      await getPlantInstances();
-      await getTasks();
-      await getContainers();
-
-      if (response === undefined || typeof response === 'string') {
-        return undefined;
-      }
-
-      return fromPlantInstanceDTO(response);
-    },
-    [containerId, garden?._id, getContainers, getPlantInstances, getTasks]
-  );
-
-  return planContainerSlot;
 };

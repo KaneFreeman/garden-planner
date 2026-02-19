@@ -173,9 +173,6 @@ const PlantView = () => {
                 sx={{
                   minWidth: 0
                 }}
-                editSx={{
-                  width: isSmallScreen ? undefined : 500
-                }}
                 renderer={(value) => getPlantTitle(plant, value)}
               />
             ),
@@ -219,7 +216,7 @@ const PlantView = () => {
                           )}
                         </ListItemIcon>
                         <Typography color={plant.reorder === true ? 'error.main' : 'primary.main'}>
-                          {plant.reorder === true ? 'Remove from shopping list' : 'Add to shopping list'}
+                          Shopping List
                         </Typography>
                       </MenuItem>
                       <MenuItem onClick={onRetireChange}>
@@ -266,7 +263,7 @@ const PlantView = () => {
                       ) : (
                         <ShoppingCartIcon sx={{ mr: 1 }} color="primary" fontSize="small" />
                       )}
-                      {plant.reorder === true ? 'Remove from shopping list' : 'Add to shopping list'}
+                      Shopping list
                     </Button>
                     <Button
                       variant="outlined"
