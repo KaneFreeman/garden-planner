@@ -20,7 +20,6 @@ export interface TabProps {
   disabled: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 const Tab = ({ label, index, disabled, sx = {}, ...otherProps }: TabProps) => {
   return (
     <MuiTab

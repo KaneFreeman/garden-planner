@@ -30,7 +30,6 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
 
       const response = await signUp({
         email: data.get('email')?.toString() ?? '',
-        password: data.get('password')?.toString() ?? '',
         firstName: data.get('firstName')?.toString() ?? '',
         lastName: data.get('lastName')?.toString() ?? '',
         zipCode: data.get('zipCode')?.toString() ?? '',
@@ -101,23 +100,6 @@ const SignUp = ({ onLoginClick }: SignUpProps) => {
                 autoComplete="email"
                 type="email"
                 disabled={loading}
-              />
-            </Grid>
-            <Grid size={12}>
-              <TextField
-                required
-                fullWidth
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                autoComplete="new-password"
-                disabled={loading}
-                slotProps={{
-                  htmlInput: {
-                    minLength: '8'
-                  }
-                }}
               />
             </Grid>
             <Grid size={12}>

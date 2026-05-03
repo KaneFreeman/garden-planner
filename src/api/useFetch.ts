@@ -1,6 +1,12 @@
 import hash from 'object-hash';
 import { store } from '../store';
 import { updateUser } from '../store/slices/auth';
+import {
+  clearSessionTokens,
+  getStoredAccessToken,
+  getStoredRefreshToken,
+  persistSessionTokens
+} from '../utility/authStorage';
 import { isNotNullish, isNullish } from '../utility/null.util';
 import Rest from './index';
 
@@ -66,18 +72,25 @@ export function areValuesEmpty(fields: Record<string, QueryValues>) {
 }
 
 async function getNewAccessToken(refreshToken: string): Promise<string | null> {
-  const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify({ refreshToken })
-  });
+  try {
+    const refreshResponse = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({ refreshToken })
+    });
 
-  if (refreshResponse.ok) {
+    if (!refreshResponse.ok) {
+      return null;
+    }
+
     const refreshBody = await refreshResponse.json();
-    const newAccessToken = refreshBody.accessToken as string;
+    const newAccessToken = refreshBody.accessToken as string | undefined;
+    if (isNullish(newAccessToken)) {
+      return null;
+    }
 
     const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/profile`, {
       method: 'GET',
@@ -88,18 +101,19 @@ async function getNewAccessToken(refreshToken: string): Promise<string | null> {
       }
     });
 
-    if (isNullish(response) || typeof response === 'string') {
+    if (!response.ok) {
       return null;
     }
 
     const profile = await response.json();
 
+    persistSessionTokens({ accessToken: newAccessToken });
     await store.dispatch(updateUser({ ...profile, accessToken: newAccessToken }));
 
     return newAccessToken;
+  } catch (_error: unknown) {
+    return null;
   }
-
-  return null;
 }
 
 let refreshTokenPromise: Promise<string | null> | null = null;
@@ -120,7 +134,7 @@ async function fetchRequest<T>(
     Accept: 'application/json'
   });
 
-  const accessToken = localStorage.getItem('accessToken') ?? '';
+  const accessToken = getStoredAccessToken() ?? '';
   if (isNotNullish(accessToken)) {
     headers.set('authorization', `Bearer ${accessToken}`);
   }
@@ -134,17 +148,20 @@ async function fetchRequest<T>(
 
     if (response.status === 401) {
       let forceLogout = true;
-      const refreshToken = localStorage.getItem('refreshToken') ?? '';
+      const refreshToken = getStoredRefreshToken() ?? '';
       if (!hasRetried && isNotNullish(refreshToken)) {
         forceLogout = false;
-        let newAccessToken: string | null;
-        if (refreshTokenPromise != null) {
-          newAccessToken = await refreshTokenPromise;
-        } else {
-          refreshTokenPromise = getNewAccessToken(refreshToken);
-          newAccessToken = await refreshTokenPromise;
-          refreshTokenPromise = null;
+        if (refreshTokenPromise == null) {
+          refreshTokenPromise = (async () => {
+            try {
+              return await getNewAccessToken(refreshToken);
+            } finally {
+              refreshTokenPromise = null;
+            }
+          })();
         }
+
+        const newAccessToken = await refreshTokenPromise;
 
         if (newAccessToken != null) {
           return fetchRequest(url, options, extraOptions, true);
@@ -157,8 +174,7 @@ async function fetchRequest<T>(
        * In the case of a UNAUTHORIZED status, reload the page to prompt for login.
        */
       if (forceLogout) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        clearSessionTokens();
         if (extraOptions?.redirectOn401 === true) {
           window.location.reload();
         }

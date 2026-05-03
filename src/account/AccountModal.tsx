@@ -19,7 +19,6 @@ interface AccountModalProperties {
 }
 
 const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
-  const [loading, setLoading] = useState(false);
   const [editData, setEditData] = useState<UserDTO>({ ...user });
 
   useEffect(() => {
@@ -33,17 +32,12 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
   }, [onClose]);
 
   const onSave = useCallback(async () => {
-    setLoading(true);
-
     const editedUser = await updateUser(editData);
-    setLoading(true);
     if (typeof editedUser === 'string') {
-      setLoading(false);
       return;
     }
 
     setEditData({ ...(editedUser ?? user) });
-    setLoading(false);
     handleOnClose();
   }, [editData, user, handleOnClose, updateUser]);
 
@@ -105,19 +99,6 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               autoComplete="family-name"
               value={editData.lastName}
               onChange={(lastName) => update({ lastName })}
-            />
-          </Grid>
-          <Grid size={12}>
-            <TextField
-              label="New Password"
-              type="password"
-              inputProps={{
-                minLength: '8'
-              }}
-              autoComplete="new-password"
-              disabled={loading}
-              value={editData.password}
-              onChange={(password) => update({ password })}
             />
           </Grid>
           <Grid size={12}>

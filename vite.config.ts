@@ -7,6 +7,12 @@ import manifest from './public/manifest.json' with { type: 'json' };
 export default defineConfig({
   // depending on your application, base can also be "/"
   base: '/',
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    clearMocks: true,
+    restoreMocks: true
+  },
   plugins: [
     react(),
     viteTsconfigPaths(),

@@ -5,7 +5,6 @@ import {
   ContainerTaskUpdateDTO,
   GardenDTO,
   GenerateTokenDTO,
-  LoginDTO,
   PictureDTO,
   PlantDTO,
   PlantDataDTO,
@@ -19,13 +18,6 @@ import {
 } from '../interface';
 
 interface Rest {
-  'POST:/auth/login': {
-    method: 'POST';
-    request: {
-      body: LoginDTO;
-    };
-    response: SessionDTO;
-  };
   'GET:/auth/profile': {
     method: 'GET';
     request: {

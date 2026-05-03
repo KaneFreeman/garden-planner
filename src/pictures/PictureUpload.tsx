@@ -46,7 +46,6 @@ const PictureUpload = ({ id, onChange }: PictureUploadProps) => {
               }
             });
           }
-          // eslint-disable-next-line no-param-reassign
           event.target.value = '';
         },
         false

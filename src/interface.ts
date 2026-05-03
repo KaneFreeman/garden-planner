@@ -731,10 +731,6 @@ export interface SessionDTO {
   readonly refreshToken?: string;
 }
 
-export interface LoginDTO {
-  readonly email: string;
-  readonly password: string;
-}
 export interface ValidateTokenDTO {
   readonly email: string;
   readonly token: string;
@@ -746,7 +742,6 @@ export interface GenerateTokenDTO {
 
 export interface UserDTO {
   readonly email: string;
-  readonly password?: string;
   readonly firstName: string;
   readonly lastName: string;
   readonly summaryEmail: boolean;

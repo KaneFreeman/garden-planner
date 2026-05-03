@@ -13,10 +13,9 @@ import { useGenerateToken, useLoginWithToken } from './useAuth';
 export interface TokenProps {
   email: string;
   onNotYouClick: () => void;
-  onUsePasswordClick: (email: string) => void;
 }
 
-const LoginWithToken = ({ email, onNotYouClick, onUsePasswordClick }: TokenProps) => {
+const LoginWithToken = ({ email, onNotYouClick }: TokenProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | false>(false);
   const [message, setMessage] = useState<string | false>(false);
@@ -50,10 +49,6 @@ const LoginWithToken = ({ email, onNotYouClick, onUsePasswordClick }: TokenProps
     },
     [email, loading, login]
   );
-
-  const handleUsePasswordClick = useCallback(() => {
-    onUsePasswordClick(email);
-  }, [email, onUsePasswordClick]);
 
   const handleResendCode = useCallback(async () => {
     if (loading) {
@@ -121,22 +116,7 @@ const LoginWithToken = ({ email, onNotYouClick, onUsePasswordClick }: TokenProps
             Next
           </Button>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          <Link
-            component="button"
-            variant="body2"
-            onClick={handleUsePasswordClick}
-            sx={{
-              mt: 2,
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline'
-              }
-            }}
-            disabled={loading}
-          >
-            Login with password
-          </Link>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
           <Link
             component="button"
             variant="body2"

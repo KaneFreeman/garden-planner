@@ -1,30 +1,11 @@
 import { useCallback } from 'react';
 import Api from '../api/api';
 import { ExtraFetchOptions, fetchEndpoint } from '../api/useFetch';
-import { GenerateTokenDTO, LoginDTO, ValidateTokenDTO } from '../interface';
+import { GenerateTokenDTO, ValidateTokenDTO } from '../interface';
 import { useAppDispatch } from '../store/hooks';
 import { logout, updateUser } from '../store/slices/auth';
+import { clearSessionTokens, persistSessionTokens } from '../utility/authStorage';
 import { isNullish } from '../utility/null.util';
-
-export const useLogin = (options?: ExtraFetchOptions) => {
-  const dispatch = useAppDispatch();
-
-  const login = useCallback(
-    async (data: LoginDTO) => {
-      const response = await fetchEndpoint(Api.auth_PostLogin, { body: data }, { ...options, redirectOn401: false });
-
-      if (isNullish(response) || typeof response === 'string') {
-        return response ?? 'An error occurred while logging in';
-      }
-
-      dispatch(updateUser(response));
-      return true;
-    },
-    [dispatch, options]
-  );
-
-  return login;
-};
 
 export const useCheckLogin = (options?: ExtraFetchOptions) => {
   const dispatch = useAppDispatch();
@@ -79,6 +60,7 @@ export const useLoginWithToken = (options?: ExtraFetchOptions) => {
         return response ?? 'An error occurred while validating token';
       }
 
+      persistSessionTokens(response);
       dispatch(updateUser(response));
       return true;
     },
@@ -92,6 +74,7 @@ export const useLogout = () => {
   const dispatch = useAppDispatch();
 
   const logoutCallback = useCallback(() => {
+    clearSessionTokens();
     dispatch(logout());
   }, [dispatch]);
 

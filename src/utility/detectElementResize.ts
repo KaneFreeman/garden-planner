@@ -14,10 +14,7 @@
 let windowObject: any;
 if (typeof window !== 'undefined') {
   windowObject = window;
-
-  // eslint-disable-next-line no-restricted-globals
 } else if (typeof self !== 'undefined') {
-  // eslint-disable-next-line no-restricted-globals
   windowObject = self;
 } else {
   // @ts-expect-error Global is not defined

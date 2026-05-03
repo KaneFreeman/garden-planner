@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import Login from './Login';
-import LoginWithPassword from './LoginWithPassword';
 import LoginWithToken from './LoginWithToken';
 import SignUp from './SignUp';
 
 interface LoginPageState {
   email?: string;
-  view: 'login' | 'signup' | 'token' | 'password';
+  view: 'login' | 'signup' | 'token';
 }
 
 const LoginPage = () => {
@@ -24,24 +23,8 @@ const LoginPage = () => {
     setState({ view: 'token', email });
   }, []);
 
-  const handleUsePasswordClick = useCallback((email: string) => {
-    setState({ view: 'password', email });
-  }, []);
-
   if (state.view === 'token' && state.email) {
-    return (
-      <LoginWithToken
-        email={state.email}
-        onUsePasswordClick={handleUsePasswordClick}
-        onNotYouClick={handleLoginClick}
-      />
-    );
-  }
-
-  if (state.view === 'password' && state.email) {
-    return (
-      <LoginWithPassword email={state.email} onNotYouClick={handleLoginClick} onUseTokenClick={handleUseTokenClick} />
-    );
+    return <LoginWithToken email={state.email} onNotYouClick={handleLoginClick} />;
   }
 
   if (state.view === 'signup') {

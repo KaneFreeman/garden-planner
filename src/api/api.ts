@@ -2,7 +2,6 @@
  * Api operation to path mappings
  */
 const enum Api {
-  auth_PostLogin = 'POST:/auth/login',
   auth_GetProfile = 'GET:/auth/profile',
 
   auth_token_PostGenerateToken = 'POST:/auth/token/generate',

@@ -87,7 +87,7 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
 
   const updatePlant = useCallback(
     (value: Plant | null) => {
-      updateSlot({ plant: value?._id ?? null });
+      updateSlot({ plant: value?._id ?? null, plantInstanceId: null });
     },
     [updateSlot]
   );

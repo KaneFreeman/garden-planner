@@ -20,7 +20,6 @@ export interface TabsProps {
   onChange?: (tab: number) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-constraint
 const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, endAdornment, onChange }: TabsProps) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

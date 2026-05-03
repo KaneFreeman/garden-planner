@@ -166,8 +166,11 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
         const newSlots = { ...(container.slots ?? {}) };
         newSlots[index] = {
           ...(newSlots[index] ?? {}),
-          plant: plantId
+          plant: plantId,
+          plantInstanceId: null
         };
+
+        console.log('Updating container with new planned plant', { index, plantId, slot: newSlots[index] });
 
         await updateContainer({ ...container, slots: newSlots });
       }

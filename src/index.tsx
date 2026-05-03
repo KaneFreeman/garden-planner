@@ -21,8 +21,7 @@ serviceWorkerRegistration.register({
 
       window.addEventListener('pwaupdateconfirm', () => {
         waitingServiceWorker.addEventListener('statechange', (event) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if (event.target && (event.target as any).state === 'activated') {
+          if (event.target instanceof ServiceWorker && event.target.state === 'activated') {
             window.location.reload();
           }
         });

@@ -76,7 +76,6 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
         open={open}
         value={value}
         onChange={(date: Date | null) => setInternalValue(date ? setToMidnight(date) : undefined)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onClose={handleClose}
         slotProps={{ textField: { sx: { display: 'none' } } }}
       />
