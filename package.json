@@ -14,11 +14,11 @@
   "dependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
-    "@mui/icons-material": "7.3.10",
-    "@mui/lab": "7.0.1-beta.24",
-    "@mui/material": "7.3.10",
-    "@mui/system": "7.3.10",
-    "@mui/x-date-pickers": "8.28.3",
+    "@mui/icons-material": "9.0.0",
+    "@mui/lab": "9.0.0-beta.2",
+    "@mui/material": "9.0.0",
+    "@mui/system": "9.0.0",
+    "@mui/x-date-pickers": "9.0.4",
     "@reduxjs/toolkit": "2.11.2",
     "@vitejs/plugin-react": "5.2.0",
     "date-fns": "4.1.0",
@@ -29,7 +29,7 @@
     "react-router": "6.30.3",
     "react-router-dom": "6.30.3",
     "react-window": "1.8.11",
-    "socket.io-client": "^4.8.3",
+    "socket.io-client": "4.8.3",
     "vite": "7.3.2",
     "vite-plugin-pwa": "1.2.0",
     "vite-tsconfig-paths": "6.1.1",
@@ -51,10 +51,10 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.5",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^24.12.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "24.12.2",
     "@types/object-hash": "3.0.6",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
@@ -72,10 +72,10 @@
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "29.1.1",
     "prettier": "3.8.3",
     "typescript": "5.9.3",
-    "vitest": "^4.1.5"
+    "vitest": "4.1.5"
   },
   "browserslist": {
     "production": [

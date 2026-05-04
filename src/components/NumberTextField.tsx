@@ -1,4 +1,3 @@
-import { InputProps } from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import type { InputBaseComponentProps } from '@mui/material/InputBase';
 import { SxProps, Theme } from '@mui/material/styles';
@@ -72,8 +71,24 @@ const NumberTextField = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  const finalInputProps: Partial<InputProps> = useMemo(() => {
-    const allInputProps: Partial<InputProps> = {};
+  const finalInputSlotProps = useMemo(() => {
+    const allInputProps: {
+      startAdornment?: React.ReactNode;
+      endAdornment?: React.ReactNode;
+    } = {};
+
+    if (startAdornment !== undefined) {
+      allInputProps.startAdornment = <InputAdornment position="start">{startAdornment}</InputAdornment>;
+    }
+
+    if (endAdornment !== undefined) {
+      allInputProps.endAdornment = <InputAdornment position="end">{endAdornment}</InputAdornment>;
+    }
+
+    return allInputProps;
+  }, [endAdornment, startAdornment]);
+
+  const finalHtmlInputProps = useMemo<InputBaseComponentProps>(() => {
     const baseInputProps: InputBaseComponentProps = { ...inputProps };
 
     if (min !== undefined) {
@@ -88,17 +103,8 @@ const NumberTextField = ({
       baseInputProps.step = step;
     }
 
-    if (startAdornment !== undefined) {
-      allInputProps.startAdornment = <InputAdornment position="start">{startAdornment}</InputAdornment>;
-    }
-
-    if (endAdornment !== undefined) {
-      allInputProps.endAdornment = <InputAdornment position="end">{endAdornment}</InputAdornment>;
-    }
-
-    allInputProps.inputProps = baseInputProps;
-    return allInputProps;
-  }, [endAdornment, inputProps, max, min, startAdornment, step]);
+    return baseInputProps;
+  }, [inputProps, max, min, step]);
 
   return (
     <MuiTextField
@@ -143,7 +149,8 @@ const NumberTextField = ({
       autoFocus={autoFocus}
       onKeyDown={onKeyDown}
       slotProps={{
-        input: finalInputProps
+        input: finalInputSlotProps,
+        htmlInput: finalHtmlInputProps
       }}
     />
   );

@@ -140,7 +140,7 @@ const TaskListItem = ({
             checked={isSelected}
             tabIndex={-1}
             disableRipple
-            inputProps={{ 'aria-labelledby': labelId }}
+            slotProps={{ input: { 'aria-labelledby': labelId } }}
             onClick={onSelectHandler}
           />
         ) : null}

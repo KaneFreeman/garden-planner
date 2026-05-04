@@ -1,4 +1,3 @@
-import { InputProps } from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import type { InputBaseComponentProps } from '@mui/material/InputBase';
 import MuiTextField from '@mui/material/TextField';
@@ -55,9 +54,11 @@ const TextField = (props: TextFieldProps) => {
     otherProps.value = otherProps.value ?? '';
   }
 
-  const finalInputProps: Partial<InputProps> = useMemo(() => {
-    const allInputProps: Partial<InputProps> = {};
-    const baseInputProps: InputBaseComponentProps = inputProps ?? {};
+  const finalInputSlotProps = useMemo(() => {
+    const allInputProps: {
+      startAdornment?: React.ReactNode;
+      endAdornment?: React.ReactNode;
+    } = {};
 
     if (startAdornment !== undefined) {
       allInputProps.startAdornment = <InputAdornment position="start">{startAdornment}</InputAdornment>;
@@ -67,7 +68,6 @@ const TextField = (props: TextFieldProps) => {
       allInputProps.endAdornment = <InputAdornment position="end">{endAdornment}</InputAdornment>;
     }
 
-    allInputProps.inputProps = baseInputProps;
     return allInputProps;
   }, [endAdornment, inputProps, startAdornment]);
 
@@ -96,7 +96,8 @@ const TextField = (props: TextFieldProps) => {
       autoFocus={autoFocus}
       {...otherProps}
       slotProps={{
-        input: finalInputProps
+        input: finalInputSlotProps,
+        htmlInput: (inputProps ?? {}) as InputBaseComponentProps
       }}
     />
   );
