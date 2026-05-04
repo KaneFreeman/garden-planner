@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import LoginPage from './auth/LoginPage';
 import { useCheckLogin } from './auth/useAuth';
 import Loading from './components/Loading';
@@ -8,9 +8,11 @@ import { selectUser } from './store/slices/auth';
 import { selectRealtimeBootstrapComplete } from './store/slices/global';
 import { selectPlantInstancesByIds } from './store/slices/plant-instances';
 import { buildTaskLookupByContainer, selectTasks } from './store/slices/tasks';
+import { getStoredAccessToken, getStoredRefreshToken } from './utility/authStorage';
 
 const Main = () => {
-  const [loading, setLoading] = useState(true);
+  const hasStoredSession = Boolean(getStoredAccessToken() || getStoredRefreshToken());
+  const [loading, completeLoading] = useReducer(() => false, hasStoredSession);
 
   const dispatch = useAppDispatch();
   const plantInstancesByIds = useAppSelector(selectPlantInstancesByIds);
@@ -34,7 +36,10 @@ const Main = () => {
   }, [debugEnabled, loading, realtimeBootstrapComplete, user]);
 
   useEffect(() => {
-    setLoading(true);
+    if (!hasStoredSession) {
+      return;
+    }
+
     let alive = true;
 
     const checkAccessToken = async () => {
@@ -49,7 +54,7 @@ const Main = () => {
       }
 
       if (alive) {
-        setLoading(false);
+        completeLoading();
       }
     };
 
@@ -58,12 +63,11 @@ const Main = () => {
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debugEnabled]);
+  }, [checkLogin, debugEnabled, hasStoredSession]);
 
   useEffect(() => {
     if (user) {
-      setLoading(false);
+      completeLoading();
     }
   }, [user]);
 

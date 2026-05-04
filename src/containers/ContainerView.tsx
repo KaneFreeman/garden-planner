@@ -26,7 +26,7 @@ import { useTheme } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import React, { MouseEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { MouseEvent, ReactNode, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Chip from '../components/Chip';
@@ -74,7 +74,10 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
 
   const [selectedPlantInstances, setSelectedPlantInstances] = useState<string[]>([]);
 
-  const [orientation, setOrientation] = useState<'landscape' | 'portrait'>('portrait');
+  const [orientation, setOrientation] = useReducer(
+    (_state: 'landscape' | 'portrait', nextValue: 'landscape' | 'portrait') => nextValue,
+    'portrait'
+  );
   const isSmallScreen = useSmallScreen();
   const isLargeScreen = useLargeScreen();
 
@@ -82,7 +85,10 @@ const ContainerView = ({ container, readonly, titleRenderer, onSlotClick }: Cont
   const backLabel = searchParams.get('backLabel');
   const backPath = searchParams.get('backPath');
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useReducer(
+    (_state: HTMLElement | null, nextValue: HTMLElement | null) => nextValue,
+    null
+  );
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

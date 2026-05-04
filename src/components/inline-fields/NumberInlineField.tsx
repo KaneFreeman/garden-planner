@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -20,16 +20,10 @@ const NumberInlineField = ({ label, value, onChange, wholeNumber, min, max }: Nu
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<number | undefined>(value);
 
-  useEffect(() => {
-    if (value !== internalValue) {
-      setInternalValue(value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleOpen = useCallback(() => {
+    setInternalValue(value);
     setOpen(true);
-  }, []);
+  }, [value]);
 
   const handleClose = useCallback(
     (save: boolean) => () => {

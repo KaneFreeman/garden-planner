@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import TextField from '../components/TextField';
 import { Garden } from '../interface';
@@ -25,26 +25,24 @@ function isValidGarden(garden: Partial<Garden> | null): garden is Omit<Garden, '
 const EditGardenModal = ({ garden, open, onClose }: GardenModalProperties) => {
   const navigate = useNavigate();
 
-  const [editData, setEditData] = useState<Garden>({ ...garden });
-
-  useEffect(() => {
-    setEditData({ ...garden });
-  }, [garden]);
+  const [editData, setEditData] = useState<Garden | null>(null);
+  const currentEditData = editData ?? garden;
 
   const updateGarden = useUpdateGarden();
   const removeGarden = useRemoveGarden();
 
   const handleOnClose = useCallback(() => {
+    setEditData(null);
     onClose();
   }, [onClose]);
 
   const onSave = useCallback(async () => {
-    if (isValidGarden(editData)) {
-      const editedGarden = await updateGarden(editData);
-      setEditData({ ...(editedGarden ?? garden) });
+    if (isValidGarden(currentEditData)) {
+      await updateGarden(currentEditData);
+      setEditData(null);
       handleOnClose();
     }
-  }, [editData, garden, handleOnClose, updateGarden]);
+  }, [currentEditData, handleOnClose, updateGarden]);
 
   const onSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
@@ -56,12 +54,12 @@ const EditGardenModal = ({ garden, open, onClose }: GardenModalProperties) => {
 
   const update = useCallback(
     (data: Partial<Garden>) => {
-      setEditData({
-        ...editData,
+      setEditData((value) => ({
+        ...(value ?? garden),
         ...data
-      });
+      }));
     },
-    [editData]
+    [garden]
   );
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -93,7 +91,7 @@ const EditGardenModal = ({ garden, open, onClose }: GardenModalProperties) => {
             <TextField
               autoFocus
               label="Name"
-              value={editData?.name}
+              value={currentEditData.name}
               onChange={(name) => update({ name })}
               required
               variant="outlined"

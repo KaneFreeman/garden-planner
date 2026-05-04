@@ -7,7 +7,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
@@ -40,7 +40,10 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
 
   const slotLocation = useContainerSlotLocation(id, index);
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useReducer(
+    (_state: HTMLElement | null, nextValue: HTMLElement | null) => nextValue,
+    null
+  );
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

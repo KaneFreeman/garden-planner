@@ -12,6 +12,8 @@ import { useUpdatePlant } from '../../plants/usePlants';
 import CommentBox from './CommentBox';
 import CommentView from './CommentView';
 
+const getCommentKey = (comment: Comment) => `${comment.date.toISOString()}-${comment.text}`;
+
 interface CommentsViewProps {
   id: string;
   data?: PlantInstance | Plant;
@@ -24,7 +26,7 @@ function isPlantInstance(data?: PlantInstance | Plant): data is PlantInstance {
   return !!data && 'plant' in data;
 }
 
-const CommentsView = ({ id, data, location, container, alt }: CommentsViewProps) => {
+const CommentsView = ({ id: _id, data, location, container, alt }: CommentsViewProps) => {
   const isSmallScreen = useSmallScreen();
 
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -111,10 +113,9 @@ const CommentsView = ({ id, data, location, container, alt }: CommentsViewProps)
       </Typography>
       {data?.comments?.map((comment, commentIndex) => (
         <CommentView
-          id={id}
           pictures={data?.pictures}
           alt={alt}
-          key={`commentView-${id}-${commentIndex}`}
+          key={getCommentKey(comment)}
           comment={comment}
           index={commentIndex}
           onDelete={removeComment}

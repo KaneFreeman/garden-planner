@@ -227,7 +227,9 @@ const Containers = () => {
           <List>
             {'None' in archivedContainers ? archivedContainers['None'] : null}
             {years.map((year) => (
-              <ContainersYearGroup year={year}>{archivedContainers[year]}</ContainersYearGroup>
+              <ContainersYearGroup key={year} year={year}>
+                {archivedContainers[year]}
+              </ContainersYearGroup>
             ))}
           </List>
         </nav>

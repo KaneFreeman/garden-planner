@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
 import { useContainer } from '../../containers/hooks/useContainers';
@@ -35,21 +35,15 @@ const ContainerSlotSelectInlineField = ({
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | null | undefined>(value?.containerId ?? null);
 
-  useEffect(() => {
-    if (value?.containerId !== internalValue) {
-      setInternalValue(value?.containerId ?? null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleOpen = useCallback(() => {
+    setInternalValue(value?.containerId ?? null);
     setOpen(true);
-  }, []);
+  }, [value?.containerId]);
 
   const handleClose = useCallback(
     (save: boolean) => () => {
       setOpen(false);
-      if (internalValue !== value) {
+      if (internalValue !== (value?.containerId ?? null)) {
         if (save) {
           if (isNullish(internalValue)) {
             onChange(null);
@@ -61,7 +55,7 @@ const ContainerSlotSelectInlineField = ({
         }
       }
     },
-    [containerId, internalValue, navigate, onChange, slotId, value]
+    [containerId, internalValue, navigate, onChange, slotId, value?.containerId]
   );
 
   const transplantContainer = useContainer(value?.containerId);

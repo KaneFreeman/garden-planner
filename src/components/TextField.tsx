@@ -42,13 +42,14 @@ const TextField = (props: TextFieldProps) => {
   const id = useMemo(() => otherProps.label?.toLowerCase().replace(' ', '_'), [otherProps.label]);
 
   const [isEmpty, setIsEmpty] = useState(
-    !otherProps.value &&
+    () =>
+      !otherProps.value &&
       !isNotEmpty(otherProps.value) &&
       !otherProps.defaultValue &&
       !isNotEmpty(otherProps.defaultValue)
   );
 
-  const [dirty, setDirty] = useState(false);
+  const [dirty, setDirty] = useState(() => false);
 
   if ('value' in otherProps || !('defaultValue' in otherProps)) {
     otherProps.value = otherProps.value ?? '';
@@ -69,7 +70,7 @@ const TextField = (props: TextFieldProps) => {
     }
 
     return allInputProps;
-  }, [endAdornment, inputProps, startAdornment]);
+  }, [endAdornment, startAdornment]);
 
   const handleOnChange: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback(
     (event) => {

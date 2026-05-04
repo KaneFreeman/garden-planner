@@ -23,10 +23,10 @@ function isValidTask(task: Partial<Task> | null): task is Omit<Task, 'id' | 'typ
 }
 
 const TaskModal = ({ open, path = null, plantInstanceId, onClose }: TaskModalProperties) => {
-  const [editData, setEditData] = useState<Partial<Task> | null>({
+  const [editData, setEditData] = useState<Partial<Task> | null>(() => ({
     start: getMidnight(),
     due: getMidnight()
-  });
+  }));
 
   const addTask = useAddTask();
 

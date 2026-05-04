@@ -4,7 +4,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format } from 'date-fns';
-import { memo, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, ReactNode, useCallback, useMemo, useState } from 'react';
 import { setToMidnight } from '../../utility/date.util';
 import './DateInlineField.css';
 
@@ -20,16 +20,10 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<Date | undefined>(value);
 
-  useEffect(() => {
-    if (value !== internalValue) {
-      setInternalValue(value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleOpen = useCallback(() => {
+    setInternalValue(value);
     setOpen(true);
-  }, []);
+  }, [value]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -74,7 +68,7 @@ const DateInlineField = memo(({ label, value, onChange, renderer, readOnly = fal
       <DatePicker
         key="date-picker"
         open={open}
-        value={value}
+        value={internalValue}
         onChange={(date: Date | null) => setInternalValue(date ? setToMidnight(date) : undefined)}
         onClose={handleClose}
         slotProps={{ textField: { sx: { display: 'none' } } }}

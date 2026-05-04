@@ -6,7 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Switch from '@mui/material/Switch';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import TextField from '../components/TextField';
 import { UserDTO } from '../interface';
 import './AccountModal.css';
@@ -19,27 +19,25 @@ interface AccountModalProperties {
 }
 
 const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
-  const [editData, setEditData] = useState<UserDTO>({ ...user });
-
-  useEffect(() => {
-    setEditData({ ...user });
-  }, [user]);
+  const [editData, setEditData] = useState<UserDTO | null>(null);
+  const currentEditData = editData ?? user;
 
   const updateUser = useUpdateUser();
 
   const handleOnClose = useCallback(() => {
+    setEditData(null);
     onClose();
   }, [onClose]);
 
   const onSave = useCallback(async () => {
-    const editedUser = await updateUser(editData);
+    const editedUser = await updateUser(currentEditData);
     if (typeof editedUser === 'string') {
       return;
     }
 
-    setEditData({ ...(editedUser ?? user) });
+    setEditData(null);
     handleOnClose();
-  }, [editData, user, handleOnClose, updateUser]);
+  }, [currentEditData, handleOnClose, updateUser]);
 
   const onSubmit = useCallback(
     (event: React.FormEvent<HTMLDivElement>) => {
@@ -51,12 +49,12 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
 
   const update = useCallback(
     (data: Partial<UserDTO>) => {
-      setEditData({
-        ...editData,
+      setEditData((value) => ({
+        ...(value ?? user),
         ...data
-      });
+      }));
     },
-    [editData]
+    [user]
   );
 
   return (
@@ -88,7 +86,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               required
               label="First Name"
               autoFocus
-              value={editData.firstName}
+              value={currentEditData.firstName}
               onChange={(firstName) => update({ firstName })}
             />
           </Grid>
@@ -97,7 +95,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               required
               label="Last Name"
               autoComplete="family-name"
-              value={editData.lastName}
+              value={currentEditData.lastName}
               onChange={(lastName) => update({ lastName })}
             />
           </Grid>
@@ -106,7 +104,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
               required
               label="Zip Code"
               autoComplete="family-name"
-              value={editData.zipCode}
+              value={currentEditData.zipCode}
               inputProps={{ pattern: '[0-9]{5}' }}
               onChange={(zipCode) => update({ zipCode })}
             />
@@ -115,7 +113,7 @@ const AccountModal = ({ user, open, onClose }: AccountModalProperties) => {
             <FormControlLabel
               control={
                 <Switch
-                  checked={editData.summaryEmail}
+                  checked={currentEditData.summaryEmail}
                   onChange={(event) => update({ summaryEmail: event.target.checked })}
                 />
               }

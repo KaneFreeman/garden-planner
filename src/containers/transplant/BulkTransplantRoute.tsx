@@ -13,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import DateDialog from '../../components/DateDialog';
@@ -117,11 +117,9 @@ const BulkTransplantRoute = () => {
     [otherContainer?.rows, otherContainer?.slots, plantsById]
   );
 
-  const [transplantTargets, setTransplantTargets] = useState<Record<number, number | null>>({});
-
-  useEffect(() => {
-    if (Object.keys(transplantTargets).length !== 0 || !container || !otherContainer) {
-      return;
+  const suggestedTransplantTargets = useMemo(() => {
+    if (!container || !otherContainer) {
+      return {};
     }
 
     const otherSlots = otherContainer.slots ?? {};
@@ -141,7 +139,7 @@ const BulkTransplantRoute = () => {
     }, {});
 
     const slots = container.slots ?? {};
-    const slotTransplantSuggestions = Object.keys(slots).reduce<Record<number, number | null>>((acc, index) => {
+    return Object.keys(slots).reduce<Record<number, number | null>>((acc, index) => {
       const slot = slots[+index];
       if (!slot.plantInstanceId) {
         return acc;
@@ -161,14 +159,20 @@ const BulkTransplantRoute = () => {
 
       return acc;
     }, {});
-
-    setTransplantTargets(slotTransplantSuggestions);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [container, otherContainer, plantInstanceById]);
+
+  const [transplantTargetOverrides, setTransplantTargetOverrides] = useState<Record<number, number | null>>({});
+  const transplantTargets = useMemo(
+    () => ({
+      ...suggestedTransplantTargets,
+      ...transplantTargetOverrides
+    }),
+    [suggestedTransplantTargets, transplantTargetOverrides]
+  );
 
   const handleTransplantChange = useCallback((slotIndex: number, event: SelectChangeEvent) => {
     const targetSlot = event.target.value;
-    setTransplantTargets((value) => {
+    setTransplantTargetOverrides((value) => {
       const newValue = { ...value };
       newValue[slotIndex] = targetSlot === 'NONE' ? null : +targetSlot;
       return newValue;
@@ -177,7 +181,7 @@ const BulkTransplantRoute = () => {
 
   const [processing, setProcessing] = useState(false);
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
-  const [transplantedDate, setTransplantedDate] = useState<Date>(getMidnight());
+  const [transplantedDate, setTransplantedDate] = useState<Date>(() => getMidnight());
   const onTransplantClick = useCallback(() => {
     setTransplantedDate(getMidnight());
     setShowTransplantedModal(true);

@@ -64,9 +64,9 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
     }
 
     return finalTrail
-      ? finalTrail.map((entry, index) => (
+      ? finalTrail.map((entry) => (
           <Link
-            key={`breadcrumb-${index}`}
+            key={entry.to}
             underline="hover"
             color="inherit"
             component={RouterLink}

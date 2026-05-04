@@ -27,7 +27,7 @@ const DateDialog = ({
   onClose,
   onConfirm
 }: DateDialogProps) => {
-  const [date, setDate] = useState<Date>(getMidnight());
+  const [date, setDate] = useState<Date>(() => getMidnight());
 
   const handleSubmit = useCallback(() => {
     onConfirm(date);

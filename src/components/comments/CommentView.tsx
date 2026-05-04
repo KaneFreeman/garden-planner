@@ -15,7 +15,6 @@ import { PictureData, Comment } from '../../interface';
 import PictureView from '../../pictures/PictureView';
 
 interface CommentProps {
-  id: string;
   pictures?: PictureData[];
   alt: string;
   comment: Comment;
@@ -23,7 +22,7 @@ interface CommentProps {
   onDelete: (index: number) => void;
 }
 
-const CommentView = ({ id, pictures, alt, comment, index, onDelete }: CommentProps) => {
+const CommentView = ({ pictures, alt, comment, index, onDelete }: CommentProps) => {
   const [deleting, setDeleting] = useState(false);
 
   const handleOnDelete = useCallback(() => setDeleting(true), []);
@@ -36,26 +35,26 @@ const CommentView = ({ id, pictures, alt, comment, index, onDelete }: CommentPro
   const text = useMemo(() => {
     let formattedText: React.ReactNode[] = [comment.text];
 
-    pictures?.forEach((picture, pictureIndex) => {
+    pictures?.forEach((picture) => {
       formattedText = ReplaceAll(
         formattedText,
         new RegExp(`\\[[iI][mM][gG][ ]*${picture.id}\\]`),
-        <PictureView key={`comment-picture-${pictureIndex}`} picture={picture.thumbnail} alt={alt} />
+        <PictureView key={`comment-picture-${picture.id}`} picture={picture.thumbnail} alt={alt} />
       );
     });
 
-    return formattedText.map((node, nodeIndex) => {
+    return formattedText.map((node) => {
       if (typeof node !== 'string') {
         return node;
       }
 
-      return <Box key={`comment-text-${nodeIndex}`}>{node}</Box>;
+      return <Box key={`comment-text-${comment.date.toISOString()}-${node}`}>{node}</Box>;
     });
-  }, [comment.text, pictures, alt]);
+  }, [comment.date, comment.text, pictures, alt]);
 
   return (
     <>
-      <Box key={`comment-${id}-${index}`} sx={{ pl: 1, pr: 1, boxSizing: 'border-box' }}>
+      <Box sx={{ pl: 1, pr: 1, boxSizing: 'border-box' }}>
         {index !== 0 ? <Divider sx={{ mb: 1.5 }} /> : null}
         <Box sx={{ display: 'flex', mb: 0.5, width: '100%', boxSizing: 'border-box' }}>
           <Typography

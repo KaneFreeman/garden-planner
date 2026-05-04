@@ -20,7 +20,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DateDialog from '../components/DateDialog';
@@ -87,7 +87,7 @@ const ContainerSlotViewActive = ({
   const isSmallScreen = useSmallScreen();
 
   const [showTransplantedModal, setShowTransplantedModal] = useState(false);
-  const [transplantedDate, setTransplantedDate] = useState<Date>(getMidnight());
+  const [transplantedDate, setTransplantedDate] = useState<Date>(() => getMidnight());
 
   const plants = usePlants();
 
@@ -98,7 +98,10 @@ const ContainerSlotViewActive = ({
 
   const slotLocation = useContainerSlotLocation(id, index);
 
-  const [transplantedToContainerId, setTransplantedToContainerId] = useState<string | null>(null);
+  const [transplantedToContainerId, setTransplantedToContainerId] = useReducer(
+    (_state: string | null, nextValue: string | null) => nextValue,
+    null
+  );
 
   useEffect(() => {
     setTransplantedToContainerId(null);
@@ -111,7 +114,10 @@ const ContainerSlotViewActive = ({
 
   const plantedEvent = useMemo(() => getPlantedEvent(plantInstance), [plantInstance]);
 
-  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useState<null | HTMLElement>(null);
+  const [moreMenuAnchorElement, setMoreMenuAnchorElement] = useReducer(
+    (_state: HTMLElement | null, nextValue: HTMLElement | null) => nextValue,
+    null
+  );
   const moreMenuOpen = useMemo(() => Boolean(moreMenuAnchorElement), [moreMenuAnchorElement]);
   const handleMoreMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setMoreMenuAnchorElement(event.currentTarget);

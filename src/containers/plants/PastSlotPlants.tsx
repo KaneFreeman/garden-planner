@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ContainerSlotIdentifier, PlantInstance, Slot } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
 import { usePlantInstancesFromSlot } from '../../plant-instances/hooks/usePlantInstances';
@@ -20,7 +20,7 @@ interface PastSlotPlantsProps {
 const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
   const isSmallScreen = useSmallScreen();
 
-  const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
+  const [plantInstanceToViewId, setPlantInstanceToViewId] = useState<string | null>(null);
 
   const firstEventStaticLocationComparator = usePlantedEventComparator();
 
@@ -43,22 +43,16 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
     [plantInstances]
   );
   const plantsById = usePlantsById();
+  const plantInstanceToView = plantInstanceToViewId ? (plantInstancesById[plantInstanceToViewId] ?? null) : null;
 
   const plantInstanceClick = useCallback((instance: PlantInstance) => {
-    setPlantInstanceToView(instance);
+    setPlantInstanceToViewId(instance._id);
   }, []);
 
-  useEffect(() => {
-    if (plantInstanceToView) {
-      setPlantInstanceToView(plantInstancesById[plantInstanceToView._id]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plantInstancesById]);
-
-  const plantInstanceViewClose = useCallback(() => setPlantInstanceToView(null), []);
+  const plantInstanceViewClose = useCallback(() => setPlantInstanceToViewId(null), []);
 
   const renderPlantSlot = useCallback(
-    (key: string, instance: PlantInstance, index: number) => {
+    (instance: PlantInstance) => {
       if (!instance.plant) {
         return null;
       }
@@ -76,7 +70,7 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
 
       return (
         <SlotListItem
-          key={`${key}-${index}`}
+          key={instance._id}
           instance={instance}
           onClick={plantInstanceClick}
           primary={getPlantTitle(plant)}
@@ -111,11 +105,7 @@ const PastSlotPlants = ({ slot }: PastSlotPlantsProps) => {
           </Typography>
           <Box sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <List>
-                {sortedPlantInstances.map((plantInstance, index) =>
-                  renderPlantSlot('active-instances', plantInstance, index)
-                )}
-              </List>
+              <List>{sortedPlantInstances.map((plantInstance) => renderPlantSlot(plantInstance))}</List>
             </Box>
           </Box>
         </Box>

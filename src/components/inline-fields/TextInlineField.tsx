@@ -6,7 +6,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import TextField from '../TextField';
 
 interface TextInlineFieldProps {
@@ -69,16 +69,10 @@ const TextInlineField = ({
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string>(value);
 
-  useEffect(() => {
-    if (value !== internalValue) {
-      setInternalValue(value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleOpen = useCallback(() => {
+    setInternalValue(value);
     setOpen(true);
-  }, []);
+  }, [value]);
 
   const handleClose = useCallback(
     (save: boolean) => async () => {

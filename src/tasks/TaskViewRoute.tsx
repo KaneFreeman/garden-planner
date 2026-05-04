@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../components/Loading';
 import { useAppSelector } from '../store/hooks';
@@ -19,7 +19,9 @@ const TaskViewRoute = () => {
   const task = useTask(id);
   const getTasks = useGetTasks({ force: true });
   const [isRecoveringTask, setIsRecoveringTask] = useState(false);
-  const [taskLookupComplete, setTaskLookupComplete] = useState(false);
+  const taskLookupAttemptRef = useRef<string | null>(null);
+  const taskLookupKey = id && selectedGarden?._id ? `${selectedGarden._id}:${id}` : null;
+  const taskLookupComplete = taskLookupKey !== null && taskLookupAttemptRef.current === taskLookupKey;
 
   useEffect(() => {
     if (!debugEnabled) {
@@ -35,10 +37,6 @@ const TaskViewRoute = () => {
       taskLookupComplete
     });
   }, [debugEnabled, id, isRecoveringTask, realtimeBootstrapComplete, selectedGarden?._id, task, taskLookupComplete]);
-
-  useEffect(() => {
-    setTaskLookupComplete(false);
-  }, [id, selectedGarden?._id]);
 
   useEffect(() => {
     if (!id || !selectedGarden?._id || !realtimeBootstrapComplete || task || isRecoveringTask || taskLookupComplete) {
@@ -68,8 +66,8 @@ const TaskViewRoute = () => {
         }
 
         if (alive) {
+          taskLookupAttemptRef.current = taskLookupKey;
           setIsRecoveringTask(false);
-          setTaskLookupComplete(true);
         }
       }
     };
@@ -87,7 +85,8 @@ const TaskViewRoute = () => {
     realtimeBootstrapComplete,
     selectedGarden?._id,
     task,
-    taskLookupComplete
+    taskLookupComplete,
+    taskLookupKey
   ]);
 
   if (!realtimeBootstrapComplete || isRecoveringTask) {

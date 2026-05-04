@@ -77,7 +77,7 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
         Timeline
       </Typography>
       <Timeline classes={{ root: 'timeline-root' }}>
-        {history.map((historyItem, historyItemIndex) => {
+        {history.map((historyItem) => {
           let date = format(historyItem.date, 'MMMM d');
           if (historyItem.date.getTime() > today) {
             date += ` (in ${formatDistance(historyItem.date, today)})`;
@@ -145,27 +145,29 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
             }
           }
 
+          const key = `history-item-${historyItem.status}-${historyItem.date.toISOString()}`;
+
           const content = (
-            <TimelineItem key={`history-item-${historyItemIndex}`} classes={{ root: 'timelineItem-root' }}>
+            <TimelineItem key={key} classes={{ root: 'timelineItem-root' }}>
               <TimelineSeparator>
                 <TimelineConnector />
                 {historyItem.status === PLANTED ? (
-                  <TimelineDot key={`history-item-${historyItemIndex}-planted`} color="success">
+                  <TimelineDot color="success">
                     <GrassIcon />
                   </TimelineDot>
                 ) : null}
                 {historyItem.status === TRANSPLANTED ? (
-                  <TimelineDot key={`history-item-${historyItemIndex}-transplanted`} color="error">
+                  <TimelineDot color="error">
                     <MoveDownIcon />
                   </TimelineDot>
                 ) : null}
                 {historyItem.status === HARVESTED ? (
-                  <TimelineDot key={`history-item-${historyItemIndex}-harvested`} color="info">
+                  <TimelineDot color="info">
                     <AgricultureIcon />
                   </TimelineDot>
                 ) : null}
                 {historyItem.status === FERTILIZED ? (
-                  <TimelineDot key={`history-item-${historyItemIndex}-fertilized`} color="info">
+                  <TimelineDot color="info">
                     <YardIcon />
                   </TimelineDot>
                 ) : null}
@@ -187,6 +189,7 @@ const PlantInstanceHistoryView = ({ plantInstance, slotLocation }: PlantInstance
           if (url != null && url !== slotUrl) {
             return (
               <Link
+                key={key}
                 href={url}
                 sx={{
                   color: 'unset',

@@ -1,10 +1,17 @@
-const { FlatCompat } = require('@eslint/eslintrc');
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import eslintReact from '@eslint-react/eslint-plugin';
+import { FlatCompat } from '@eslint/eslintrc';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname
 });
 
-module.exports = [
+export default [
   {
     ignores: [
       'logs/**',
@@ -31,7 +38,7 @@ module.exports = [
       'vite-env.d.ts',
       'vite.config.ts',
       'jest.config.js',
-      'eslint.config.cjs',
+      'eslint.config.mjs',
       'dist/**'
     ]
   },
@@ -44,8 +51,8 @@ module.exports = [
     extends: [
       'plugin:@typescript-eslint/recommended',
       'prettier',
-      'plugin:prettier/recommended',
-      'plugin:import/recommended'
+      'plugin:import-x/recommended',
+      'plugin:import-x/typescript'
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -56,23 +63,17 @@ module.exports = [
       ecmaVersion: 2020,
       sourceType: 'module'
     },
-    plugins: ['@typescript-eslint', 'import', 'jsx-a11y', 'react-hooks'],
+    plugins: ['@typescript-eslint', 'import-x', 'react-hooks'],
     settings: {
-      'import/parsers': {
-        '@typescript-eslint/parser': ['.ts', '.tsx']
-      },
-      'import/resolver': {
-        typescript: {}
+      'import-x/resolver': {
+        typescript: true
       }
     },
     rules: {
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': ['error', {}],
       '@typescript-eslint/explicit-function-return-type': 'off',
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-      'import/prefer-default-export': 'off',
-      'react/prop-types': 'off',
+      'import-x/prefer-default-export': 'off',
       'default-case': 'off',
       'no-dupe-class-members': 'off',
       'no-undef': 'off',
@@ -109,17 +110,13 @@ module.exports = [
       ],
       '@typescript-eslint/no-explicit-any': 'off',
       'comma-dangle': 'off',
-      'import/extensions': 'off',
+      'import-x/extensions': 'off',
       '@typescript-eslint/comma-dangle': 'off',
       'linebreak-style': ['error', 'unix'],
-      'prettier/prettier': 'off',
       'func-names': 'off',
-      'react/function-component-definition': 'off',
       'no-underscore-dangle': 'off',
-      'react/require-default-props': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'compat/compat': 'off',
-      'import/no-duplicates': 'off'
+      'import-x/no-duplicates': 'off'
     }
-  })
+  }),
+  eslintReact.configs['recommended-typescript']
 ];

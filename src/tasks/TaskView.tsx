@@ -36,7 +36,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
 
   const [isMarkingAsCompleted, setIsMarkingAsCompleted] = useState(false);
   const [isMarkingAsOpen, setIsMarkingAsOpen] = useState(false);
-  const [completedOn, setCompletedOn] = useState<Date>(getMidnight());
+  const [completedOn, setCompletedOn] = useState<Date>(() => getMidnight());
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [searchParams] = useSearchParams();

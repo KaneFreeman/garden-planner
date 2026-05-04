@@ -4,7 +4,7 @@ import Chip from '@mui/material/Chip';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import CollapsableSimpleInlineField from '../../components/inline-fields/CollapsableSimpleInlineField';
 import { PlantInstance } from '../../interface';
 import PlantInstanceDialog from '../../plant-instances/PlantInstanceDialog';
@@ -32,20 +32,14 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
   const plantInstancesById = usePlantInstancesById();
   const containersById = useContainersById();
 
-  const [plantInstanceToView, setPlantInstanceToView] = useState<PlantInstance | null>(null);
+  const [plantInstanceToViewId, setPlantInstanceToViewId] = useState<string | null>(null);
+  const plantInstanceToView = plantInstanceToViewId ? (plantInstancesById[plantInstanceToViewId] ?? null) : null;
 
   const openPlantInstanceDialog = useCallback((instance: PlantInstance) => {
-    setPlantInstanceToView(instance);
+    setPlantInstanceToViewId(instance._id);
   }, []);
 
-  useEffect(() => {
-    if (plantInstanceToView) {
-      setPlantInstanceToView(plantInstancesById[plantInstanceToView._id]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plantInstancesById]);
-
-  const plantInstanceViewClose = useCallback(() => setPlantInstanceToView(null), []);
+  const plantInstanceViewClose = useCallback(() => setPlantInstanceToViewId(null), []);
 
   const secondaryCompare = useCallback(
     (a: PlantInstance | undefined | null, b: PlantInstance | undefined | null) => {
@@ -111,7 +105,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
   }, [containersById, firstEventComparatorWithSecondary, plantInstances]);
 
   const renderPlantSlot = useCallback(
-    (key: string, instance: PlantInstance, index: number, options?: RenderPlantSlotOptions) => {
+    (instance: PlantInstance, options?: RenderPlantSlotOptions) => {
       const { showStatus = true, openDialog = false } = options || {};
       const container = containersById[instance.containerId];
 
@@ -127,7 +121,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
 
       return (
         <SlotListItem
-          key={`${key}-${index}`}
+          key={instance._id}
           instance={instance}
           url={!openDialog ? `/container/${instance.containerId}/slot/${instance.slotId}` : undefined}
           onClick={openDialog ? openPlantInstanceDialog : undefined}
@@ -166,11 +160,7 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
             </Alert>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <List>
-                {activePlantInstances.map((plantInstance, index) =>
-                  renderPlantSlot('active-instances', plantInstance, index)
-                )}
-              </List>
+              <List>{activePlantInstances.map((plantInstance) => renderPlantSlot(plantInstance))}</List>
             </Box>
           )}
         </Box>
@@ -187,8 +177,8 @@ const PlantSlotsView = ({ plantId }: PlantSlotsViewProps) => {
               <Box sx={{ width: '100%' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <List>
-                    {inactivePlantInstances.map((plantInstance, index) =>
-                      renderPlantSlot('inactive-instances', plantInstance, index, {
+                    {inactivePlantInstances.map((plantInstance) =>
+                      renderPlantSlot(plantInstance, {
                         showStatus: false,
                         openDialog: true
                       })

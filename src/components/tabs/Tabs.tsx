@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { SxProps, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -26,15 +26,7 @@ const Tabs = ({ children, ariaLabel, sxRoot = {}, sxWrapper = {}, sxTabs = {}, e
   const { pathname } = useLocation();
 
   const queryTab = Number(searchParams.get('tab') ?? 0);
-  const [tab, setTab] = useState(0);
-  useEffect(() => {
-    if (!Number.isNaN(queryTab) && queryTab !== tab) {
-      setTab(queryTab);
-      if (onChange) {
-        onChange(queryTab);
-      }
-    }
-  }, [onChange, queryTab, tab]);
+  const tab = Number.isNaN(queryTab) ? 0 : queryTab;
 
   const handleTabChange = useCallback(
     (_: React.SyntheticEvent<Element, Event>, newTab: number) => {

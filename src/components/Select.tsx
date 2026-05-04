@@ -92,8 +92,11 @@ const Select = <T extends string | number>({
 
   const renderedOptions = useMemo(
     () =>
-      options?.map((option, index) => (
-        <MenuItem key={`menu-item-${index}`} value={option.value}>
+      options?.map((option) => (
+        <MenuItem
+          key={String(option.value ?? (typeof option.label === 'string' ? option.label : option.label.primary))}
+          value={option.value}
+        >
           {option.emphasize === true ? <em>{renderLabel(option.label)}</em> : renderLabel(option.label)}
         </MenuItem>
       )),

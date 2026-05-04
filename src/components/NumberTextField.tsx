@@ -2,7 +2,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import type { InputBaseComponentProps } from '@mui/material/InputBase';
 import { SxProps, Theme } from '@mui/material/styles';
 import MuiTextField from '@mui/material/TextField';
-import React, { KeyboardEventHandler, useEffect, useMemo, useState } from 'react';
+import React, { KeyboardEventHandler, useMemo, useState } from 'react';
 
 interface NumberTextFieldProps {
   id?: string;
@@ -59,17 +59,15 @@ const NumberTextField = ({
     return undefined;
   }, [id, label]);
 
-  const [internalValue, setInternalValue] = useState<string>('');
+  const [draftValue, setDraftValue] = useState<{ text: string; value: number | undefined } | null>(null);
   const [dirty, setDirty] = useState(false);
-
-  useEffect(() => {
-    const internalNumberValue = Number(internalValue);
-    if (internalNumberValue === value) {
-      return;
+  const internalValue = useMemo(() => {
+    if (draftValue && draftValue.value === value) {
+      return draftValue.text;
     }
-    setInternalValue(value !== undefined ? `${value}` : '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+
+    return value !== undefined ? `${value}` : '';
+  }, [draftValue, value]);
 
   const finalInputSlotProps = useMemo(() => {
     const allInputProps: {
@@ -116,20 +114,23 @@ const NumberTextField = ({
       value={internalValue}
       onChange={(event) => {
         const stringValue = event.target.value;
-        setInternalValue(stringValue);
         setDirty(true);
 
         const newValue = Number(stringValue);
         if (!Number.isNaN(newValue) && (!required || Boolean(stringValue))) {
+          setDraftValue({ text: stringValue, value: newValue });
           onChange?.(newValue);
+          return;
         }
+
+        setDraftValue({ text: stringValue, value });
       }}
       onBlur={(event) => {
         const stringValue = event.target.value;
 
         const newValue = Number(stringValue);
         if (!Number.isNaN(newValue) && Boolean(stringValue)) {
-          setInternalValue(`${newValue}`);
+          setDraftValue({ text: `${newValue}`, value: newValue });
         }
       }}
       required={required}

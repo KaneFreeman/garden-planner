@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { PlantType } from '../interface';
@@ -14,6 +14,87 @@ const TextBox = styled(Box)({
   display: 'flex',
   minHeight: 40
 });
+
+function renderHtmlNode(node: ChildNode, key: string): ReactNode | null {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return node.textContent;
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return null;
+  }
+
+  const element = node as HTMLElement;
+  const children = Array.from(element.childNodes)
+    .map((childNode, index) => renderHtmlNode(childNode, `${key}-${index}`))
+    .filter((childNode): childNode is ReactNode => childNode !== null);
+
+  switch (element.tagName.toLowerCase()) {
+    case 'p':
+      return (
+        <Box key={key} component="p" sx={{ m: 0, mb: 1.5 }}>
+          {children}
+        </Box>
+      );
+    case 'ul':
+      return (
+        <Box key={key} component="ul" sx={{ m: 0, pl: 3 }}>
+          {children}
+        </Box>
+      );
+    case 'ol':
+      return (
+        <Box key={key} component="ol" sx={{ m: 0, pl: 3 }}>
+          {children}
+        </Box>
+      );
+    case 'li':
+      return (
+        <Box key={key} component="li" sx={{ mb: 0.5 }}>
+          {children}
+        </Box>
+      );
+    case 'strong':
+      return <strong key={key}>{children}</strong>;
+    case 'em':
+      return <em key={key}>{children}</em>;
+    case 'br':
+      return <br key={key} />;
+    case 'a': {
+      const href = element.getAttribute('href');
+      const safeHref = href && /^(https?:|mailto:|\/)/i.test(href) ? href : undefined;
+
+      return (
+        <Box
+          key={key}
+          component="a"
+          href={safeHref}
+          target={safeHref?.startsWith('/') ? undefined : '_blank'}
+          rel={safeHref?.startsWith('/') ? undefined : 'noreferrer'}
+        >
+          {children}
+        </Box>
+      );
+    }
+    default:
+      return (
+        <Box key={key} component="span">
+          {children}
+        </Box>
+      );
+  }
+}
+
+function HtmlContent({ html }: { html: string }) {
+  const content = useMemo(() => {
+    const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+    return Array.from(parsedDocument.body.childNodes)
+      .map((node, index) => renderHtmlNode(node, `plant-data-${index}`))
+      .filter((node): node is ReactNode => node !== null);
+  }, [html]);
+
+  return <Box sx={{ display: 'block' }}>{content}</Box>;
+}
 
 const PlantDataView = ({ type }: PlantDataViewProps) => {
   const plantData = usePlantData();
@@ -109,7 +190,7 @@ const PlantDataView = ({ type }: PlantDataViewProps) => {
         <CollapsableSimpleInlineField
           key={`section-${section[0]}`}
           label={section[0]}
-          value={<div dangerouslySetInnerHTML={{ __html: section[1] }} />}
+          value={<HtmlContent html={section[1]} />}
           startCollapsed
         />
       ))}

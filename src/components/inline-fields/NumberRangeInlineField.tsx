@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import NumberTextField from '../NumberTextField';
 
 interface NumberRangeInlineFieldProps {
@@ -20,16 +20,10 @@ const NumberRangeInlineField = ({ label, value, onChange, wholeNumber, min, max 
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<[number | undefined, number | undefined] | undefined>(value);
 
-  useEffect(() => {
-    if (value !== internalValue) {
-      setInternalValue(value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const handleOpen = useCallback(() => {
+    setInternalValue(value);
     setOpen(true);
-  }, []);
+  }, [value]);
 
   const handleClose = useCallback(
     (save: boolean) => () => {
