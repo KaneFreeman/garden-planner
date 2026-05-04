@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import Api from '../../api/api';
 import { ExtraFetchOptions, fetchEndpoint } from '../../api/useFetch';
 import { BulkCompleteTaskDTO, SortedTasks, Task, TaskGroup, fromTaskDTO, toTaskDTO } from '../../interface';
@@ -21,7 +21,11 @@ export const useGetTasks = (options?: ExtraFetchOptions) => {
   const garden = useAppSelector(selectSelectedGarden);
 
   const getTasks = useCallback(async () => {
-    const response = await fetchEndpoint(Api.task_Get, { params: { gardenId: garden?._id ?? '' } }, options);
+    if (!garden?._id) {
+      return undefined;
+    }
+
+    const response = await fetchEndpoint(Api.task_Get, { params: { gardenId: garden._id } }, options);
 
     if (response && typeof response !== 'string') {
       dispatch(updateTasks(response));
@@ -33,39 +37,15 @@ export const useGetTasks = (options?: ExtraFetchOptions) => {
   return getTasks;
 };
 
-const useTasksOperation = (options?: ExtraFetchOptions) => {
-  const getTasks = useGetTasks(options);
-
-  const runOperation = useCallback(
-    async <T>(operation: () => Promise<T | undefined>) => {
-      const response = await operation();
-
-      await getTasks();
-
-      if (!response) {
-        return undefined;
-      }
-
-      return response;
-    },
-    [getTasks]
-  );
-
-  return runOperation;
-};
-
 export const useAddTask = () => {
-  const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Omit<Task, '_id'>) => {
-      const response = await runOperation(() =>
-        fetchEndpoint(Api.task_Post, {
-          params: { gardenId: garden?._id ?? '' },
-          body: toTaskDTO(data)
-        })
-      );
+      const response = await fetchEndpoint(Api.task_Post, {
+        params: { gardenId: garden?._id ?? '' },
+        body: toTaskDTO(data)
+      });
 
       if (!response || typeof response === 'string') {
         return undefined;
@@ -73,27 +53,24 @@ export const useAddTask = () => {
 
       return fromTaskDTO(response);
     },
-    [garden?._id, runOperation]
+    [garden?._id]
   );
 
   return addTask;
 };
 
 export const useUpdateTask = () => {
-  const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const addTask = useCallback(
     async (data: Task) => {
-      const response = await runOperation(() =>
-        fetchEndpoint(Api.task_IdPut, {
-          params: {
-            gardenId: garden?._id ?? '',
-            taskId: data._id
-          },
-          body: toTaskDTO(data)
-        })
-      );
+      const response = await fetchEndpoint(Api.task_IdPut, {
+        params: {
+          gardenId: garden?._id ?? '',
+          taskId: data._id
+        },
+        body: toTaskDTO(data)
+      });
 
       if (!response || typeof response === 'string') {
         return undefined;
@@ -101,23 +78,20 @@ export const useUpdateTask = () => {
 
       return fromTaskDTO(response);
     },
-    [garden?._id, runOperation]
+    [garden?._id]
   );
 
   return addTask;
 };
 
 export const useRemoveTask = () => {
-  const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const removeTask = useCallback(
     async (taskId: string) => {
-      const response = await runOperation(() =>
-        fetchEndpoint(Api.task_IdDelete, {
-          params: { gardenId: garden?._id ?? '', taskId }
-        })
-      );
+      const response = await fetchEndpoint(Api.task_IdDelete, {
+        params: { gardenId: garden?._id ?? '', taskId }
+      });
 
       if (!response || typeof response === 'string') {
         return undefined;
@@ -125,7 +99,7 @@ export const useRemoveTask = () => {
 
       return fromTaskDTO(response);
     },
-    [garden?._id, runOperation]
+    [garden?._id]
   );
 
   return removeTask;
@@ -204,14 +178,8 @@ function useSortTasks<T extends (Task | TaskGroup) | Task>(
 }
 
 export function useTasks() {
-  const getTasks = useGetTasks();
-  const dispatch = useAppDispatch();
   const taskDtos = useAppSelector(selectTasks);
   const tasks = useMemo(() => createTaskGroups(taskDtos.map(fromTaskDTO)), [taskDtos]);
-
-  useEffect(() => {
-    getTasks();
-  }, [dispatch, getTasks]);
 
   return useSortTasks(tasks);
 }
@@ -268,19 +236,16 @@ export const useTask = (id: string | undefined) => {
 };
 
 export const useBulkCompleteTasks = () => {
-  const runOperation = useTasksOperation({ force: true });
   const garden = useAppSelector(selectSelectedGarden);
 
   const bulkCompleteTasks = useCallback(
     async (data: BulkCompleteTaskDTO) => {
-      return runOperation(() =>
-        fetchEndpoint(Api.task_PutBulkComplete, {
-          params: { gardenId: garden?._id ?? '' },
-          body: data
-        })
-      );
+      return fetchEndpoint(Api.task_PutBulkComplete, {
+        params: { gardenId: garden?._id ?? '' },
+        body: data
+      });
     },
-    [garden, runOperation]
+    [garden?._id]
   );
 
   return bulkCompleteTasks;

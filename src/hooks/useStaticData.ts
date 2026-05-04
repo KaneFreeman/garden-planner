@@ -1,44 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import Api from '../api/api';
-import { fetchEndpoint } from '../api/useFetch';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { selectPlantData, updatePlantData } from '../store/slices/static';
+import { ExtraFetchOptions, fetchEndpoint } from '../api/useFetch';
+import { useAppSelector } from '../store/hooks';
+import { selectPlantData } from '../store/slices/static';
 
-const useGetPlantData = () => {
+export const useGetPlantData = (options?: ExtraFetchOptions) => {
   const getContainers = useCallback(async () => {
-    const response = await fetchEndpoint(Api.static_plantData_Get, {});
+    const response = await fetchEndpoint(Api.static_plantData_Get, {}, options);
     return response;
-  }, []);
+  }, [options]);
 
   return getContainers;
 };
 
 export function usePlantData() {
-  const getPlantData = useGetPlantData();
-  const dispatch = useAppDispatch();
-  const plantData = useAppSelector(selectPlantData);
-
-  useEffect(() => {
-    if (plantData) {
-      return () => {};
-    }
-
-    let alive = true;
-
-    const getContainersCall = async () => {
-      const data = await getPlantData();
-
-      if (alive && data && typeof data !== 'string') {
-        dispatch(updatePlantData(data));
-      }
-    };
-
-    getContainersCall();
-
-    return () => {
-      alive = false;
-    };
-  }, [dispatch, getPlantData, plantData]);
-
-  return plantData;
+  return useAppSelector(selectPlantData);
 }

@@ -8,6 +8,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DrawerInlineSelect from '../components/inline-fields/DrawerInlineSelect';
 import { Container, Plant, STARTED_FROM_TYPE_SEED, Slot } from '../interface';
@@ -102,9 +103,9 @@ const ContainerSlotViewPlanning = ({ id, index, container, slot, onSlotChange }:
         return {
           raw: (
             <Button
-              component="a"
+              component={RouterLink}
               variant="text"
-              href={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
+              to={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
               sx={{ ml: -1 }}
             >
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>

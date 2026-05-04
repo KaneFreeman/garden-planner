@@ -5,7 +5,7 @@ import Link from '@mui/material/Link';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ReactNode, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { filterNullish } from '../utility/null.util';
 import { useSmallScreen } from '../utility/mediaQuery.util';
 import './Breadcrumbs.css';
@@ -45,7 +45,8 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
           key="breadcrumb-back"
           underline="hover"
           color="inherit"
-          href={finalTrail[finalTrail.length - 1].to}
+          component={RouterLink}
+          to={finalTrail[finalTrail.length - 1].to}
           sx={{ cursor: 'pointer' }}
         >
           <Typography
@@ -68,7 +69,8 @@ const Breadcrumbs = ({ trail, children: { current = null, actions = null } }: Br
             key={`breadcrumb-${index}`}
             underline="hover"
             color="inherit"
-            href={entry.to}
+            component={RouterLink}
+            to={entry.to}
             sx={{ cursor: 'pointer' }}
           >
             <Typography

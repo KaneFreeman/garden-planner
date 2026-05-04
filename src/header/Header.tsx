@@ -22,6 +22,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import React, { MouseEvent, useCallback, useMemo, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import UserMenu from '../account/AccountMenu';
 import EditGardenModal from '../gardens/EditGardenModal';
@@ -132,9 +133,9 @@ const Header = () => {
             <List disablePadding>
               <ListItemButton
                 key="Tasks"
-                component="a"
+                component={RouterLink}
                 selected={pathname === '/' || pathname.startsWith('/task')}
-                href="/"
+                to="/"
               >
                 <ListItemIcon>
                   <Badge badgeContent={taskCount} color={taskColor}>
@@ -145,9 +146,9 @@ const Header = () => {
               </ListItemButton>
               <ListItemButton
                 key="Containers"
-                component="a"
+                component={RouterLink}
                 selected={pathname === '/containers' || pathname.startsWith('/container')}
-                href="/containers"
+                to="/containers"
               >
                 <ListItemIcon>
                   <InboxIcon />
@@ -156,9 +157,9 @@ const Header = () => {
               </ListItemButton>
               <ListItemButton
                 key="Plants"
-                component="a"
+                component={RouterLink}
                 selected={pathname === '/plants' || pathname.startsWith('/plant')}
-                href="/plants"
+                to="/plants"
               >
                 <ListItemIcon>
                   <GrassIcon />

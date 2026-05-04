@@ -8,6 +8,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -140,7 +141,7 @@ const Containers = () => {
   const createListItem = useCallback(
     (container: Container) => (
       <ListItem key={`container-${container._id}`} disablePadding>
-        <ListItemButton component="a" href={`/container/${container._id}`}>
+        <ListItemButton component={RouterLink} to={`/container/${container._id}`}>
           <ListItemAvatar>
             <TaskBadge tasks={tasksByContainers[container._id]}>
               <Avatar>

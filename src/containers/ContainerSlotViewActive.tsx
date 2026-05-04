@@ -21,7 +21,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DateDialog from '../components/DateDialog';
 import Select from '../components/Select';
@@ -202,9 +202,9 @@ const ContainerSlotViewActive = ({
         return {
           raw: (
             <Button
-              component="a"
+              component={RouterLink}
               variant="text"
-              href={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
+              to={`/plant/${value._id}?backPath=${path}&backLabel=${title}`}
               sx={{ ml: -1 }}
             >
               <Box sx={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>

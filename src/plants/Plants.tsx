@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import { format } from 'date-fns/format';
 import { ReactElement, useCallback, useMemo, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Chip from '../components/Chip';
 import TabPanel from '../components/tabs/TabPanel';
 import Tabs from '../components/tabs/Tabs';
@@ -100,7 +101,7 @@ const Plants = () => {
       { showPlantedCount = false, showLinkToPage = false }: PlantRenderOptions
     ) => (
       <ListItem key={`plant-${plant._id}`} disablePadding>
-        <ListItemButton component="a" href={`/plant/${plant._id}`}>
+        <ListItemButton component={RouterLink} to={`/plant/${plant._id}`}>
           <ListItemAvatar>
             <PlantAvatar plant={plant} />
           </ListItemAvatar>

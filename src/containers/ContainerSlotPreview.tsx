@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { format } from 'date-fns';
 import { DragEvent, memo, useCallback, useMemo } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { CLOSED, Container, PLANTED, Plant, Slot, TRANSPLANTED } from '../interface';
 import { usePlantInstanceLocation } from '../plant-instances/hooks/usePlantInstanceLocation';
 import { usePlantInstanceStatus, usePlantInstanceStatusColor } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -138,8 +139,9 @@ const ContainerSlotPreview = memo(
 
     return (
       <IconButton
-        component={isLink ? 'a' : 'div'}
-        href={isLink ? url : undefined}
+        component={isLink && url?.startsWith('/') ? RouterLink : isLink ? 'a' : 'div'}
+        to={isLink && url?.startsWith('/') ? url : undefined}
+        href={isLink && !url?.startsWith('/') ? url : undefined}
         sx={{
           p: 2,
           width: size,

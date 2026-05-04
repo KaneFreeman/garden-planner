@@ -17,11 +17,14 @@ export const PicturesSlice = createSlice({
   reducers: {
     updatePicture: (state, action: PayloadAction<PictureDTO>) => {
       return { ...state, picture: action.payload };
+    },
+    clearPicture: (state) => {
+      return { ...state, picture: undefined };
     }
   }
 });
 
-export const { updatePicture } = PicturesSlice.actions;
+export const { updatePicture, clearPicture } = PicturesSlice.actions;
 
 export const selectPicture = (state: RootState) => state.pictures.picture;
 

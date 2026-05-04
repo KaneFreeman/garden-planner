@@ -91,4 +91,31 @@ describe('fetchEndpoint auth refresh flow', () => {
     expect(result).toBe('Unauthorized');
     expect(clearSpy).toHaveBeenCalled();
   });
+
+  it('does not attempt refresh with an empty stored refresh token', async () => {
+    localStorage.setItem('accessToken', '');
+    localStorage.setItem('refreshToken', '');
+    const clearSpy = vi.spyOn(authStorage, 'clearSessionTokens');
+
+    globalThis.fetch = vi.fn().mockResolvedValueOnce(
+      new Response(JSON.stringify({ message: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    ) as typeof fetch;
+
+    const result = await fetchEndpoint('GET:/auth/profile', {}, { redirectOn401: false });
+
+    expect(result).toBe('Unauthorized');
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.not.objectContaining({
+          authorization: 'Bearer '
+        })
+      })
+    );
+    expect(clearSpy).toHaveBeenCalled();
+  });
 });

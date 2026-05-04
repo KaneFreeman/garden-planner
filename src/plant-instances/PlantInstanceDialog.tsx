@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
+import { Link as RouterLink } from 'react-router-dom';
 import CommentsView from '../components/comments/CommentsView';
 import SimpleInlineField from '../components/inline-fields/SimpleInlineField';
 import { PlantInstance } from '../interface';
@@ -43,7 +44,7 @@ const PlantInstanceDialog = ({ open, plantInstance, onClose }: PlantInstanceDial
         <SimpleInlineField
           label="Plant"
           value={
-            <ListItemButton component="a" href={`/plant/${plant._id}`} sx={{ gap: 0 }}>
+            <ListItemButton component={RouterLink} to={`/plant/${plant._id}`} sx={{ gap: 0 }}>
               <ListItemAvatar sx={{ display: 'flex' }}>
                 <PlantAvatar plant={plant} />
               </ListItemAvatar>

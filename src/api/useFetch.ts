@@ -134,9 +134,24 @@ async function fetchRequest<T>(
     Accept: 'application/json'
   });
 
-  const accessToken = getStoredAccessToken() ?? '';
-  if (isNotNullish(accessToken)) {
+  const accessToken = getStoredAccessToken();
+  if (accessToken) {
     headers.set('authorization', `Bearer ${accessToken}`);
+  }
+
+  const normalizedMethod = method.toUpperCase();
+  const isAuthRequest = url.includes('/auth/');
+  const isMutatingAuthenticatedRequest = normalizedMethod !== 'GET' && Boolean(accessToken) && !isAuthRequest;
+  if (isMutatingAuthenticatedRequest) {
+    const { isOnline, realtimeConnected } = store.getState().global;
+
+    if (!isOnline) {
+      return 'App is offline. Changes are disabled until connectivity returns.';
+    }
+
+    if (!realtimeConnected) {
+      return 'Realtime sync is reconnecting. Changes are disabled until it returns.';
+    }
   }
 
   try {
@@ -148,8 +163,8 @@ async function fetchRequest<T>(
 
     if (response.status === 401) {
       let forceLogout = true;
-      const refreshToken = getStoredRefreshToken() ?? '';
-      if (!hasRetried && isNotNullish(refreshToken)) {
+      const refreshToken = getStoredRefreshToken();
+      if (!hasRetried && refreshToken) {
         forceLogout = false;
         if (refreshTokenPromise == null) {
           refreshTokenPromise = (async () => {

@@ -4,7 +4,12 @@ import { ExtraFetchOptions, fetchEndpoint } from '../api/useFetch';
 import { GenerateTokenDTO, ValidateTokenDTO } from '../interface';
 import { useAppDispatch } from '../store/hooks';
 import { logout, updateUser } from '../store/slices/auth';
-import { clearSessionTokens, persistSessionTokens } from '../utility/authStorage';
+import {
+  clearSessionTokens,
+  getStoredAccessToken,
+  getStoredRefreshToken,
+  persistSessionTokens
+} from '../utility/authStorage';
 import { isNullish } from '../utility/null.util';
 
 export const useCheckLogin = (options?: ExtraFetchOptions) => {
@@ -17,7 +22,13 @@ export const useCheckLogin = (options?: ExtraFetchOptions) => {
       return false;
     }
 
-    await dispatch(updateUser({ ...response }));
+    await dispatch(
+      updateUser({
+        ...response,
+        accessToken: getStoredAccessToken() ?? undefined,
+        refreshToken: getStoredRefreshToken() ?? undefined
+      })
+    );
     return true;
   }, [dispatch, options]);
 

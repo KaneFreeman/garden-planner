@@ -3,6 +3,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
+import { Link as RouterLink } from 'react-router-dom';
 import { PLANTED, PlantInstance } from '../interface';
 import { useSmallScreen } from '../utility/mediaQuery.util';
 import { usePlantInstanceStatus } from '../plant-instances/hooks/usePlantInstanceStatus';
@@ -50,8 +51,9 @@ const SlotListItem = ({
   return (
     <ListItem style={style} className="slot" disablePadding>
       <ListItemButton
-        component={url ? 'a' : 'div'}
-        href={url}
+        component={url?.startsWith('/') ? RouterLink : url ? 'a' : 'div'}
+        to={url?.startsWith('/') ? url : undefined}
+        href={!url?.startsWith('/') ? url : undefined}
         onClick={onClickHandler}
         sx={{
           width: '100%',

@@ -6,22 +6,15 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLogout } from '../auth/useAuth';
 import { useAppSelector } from '../store/hooks';
 import { selectUserDetails } from '../store/slices/auth';
 import { nameToAvatarColor } from '../utility/account.util';
-import { useGetUser } from './useUser';
 import AccountModal from './AccountModal';
 
 const AccountMenu = () => {
   const userDetails = useAppSelector(selectUserDetails);
-  const getUser = useGetUser();
-
-  useEffect(() => {
-    getUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const logout = useLogout();
 

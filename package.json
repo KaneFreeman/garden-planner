@@ -1,6 +1,6 @@
 {
   "name": "garden-planner",
-  "version": "1.0.0-alpha1",
+  "version": "1.0.0-beta1",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -29,6 +29,7 @@
     "react-router": "6.30.3",
     "react-router-dom": "6.30.3",
     "react-window": "1.8.11",
+    "socket.io-client": "^4.8.3",
     "vite": "7.3.2",
     "vite-plugin-pwa": "1.2.0",
     "vite-tsconfig-paths": "6.1.1",
@@ -50,10 +51,10 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.5",
-    "@types/node": "20.19.39",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.12.2",
     "@types/object-hash": "3.0.6",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
@@ -105,6 +106,6 @@
     "endOfLine": "lf"
   },
   "engines": {
-    "node": ">=20 <21"
+    "node": ">=24 <25"
   }
 }

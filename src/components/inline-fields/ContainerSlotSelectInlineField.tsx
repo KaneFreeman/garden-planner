@@ -7,7 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import useContainerOptions from '../../containers/hooks/useContainerOptions';
 import { useContainer } from '../../containers/hooks/useContainers';
 import { ContainerSlotIdentifier } from '../../interface';
@@ -85,9 +85,9 @@ const ContainerSlotSelectInlineField = ({
           <ListItemButton key="container-slot-select-display" onClick={open ? undefined : handleOpen}>
             {transplantContainer && value ? (
               <Button
-                component="a"
+                component={RouterLink}
                 variant="text"
-                href={`/container/${value.containerId}/slot/${value.slotId}`}
+                to={`/container/${value.containerId}/slot/${value.slotId}`}
                 sx={{ ml: -1 }}
               >
                 <Box component="span">{title}</Box>

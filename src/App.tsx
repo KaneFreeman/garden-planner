@@ -10,10 +10,47 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import Main from './Main';
+import { RealtimeController } from './realtime/useRealtimeSync';
+import { useAppSelector } from './store/hooks';
 import { store } from './store';
+import { selectIsOnline, selectIsReadOnly, selectRealtimeLastError } from './store/slices/global';
+import { selectUser } from './store/slices/auth';
 import PWAUpdateConfirmEvent from './utility/events/pawUpdateConfirmEvent';
 import { useCheckForUpdates } from './utility/pwa.util';
 import { useWindowEvent } from './utility/window.util';
+
+const RealtimeStatusSnackbar = () => {
+  const user = useAppSelector(selectUser);
+  const isOnline = useAppSelector(selectIsOnline);
+  const isReadOnly = useAppSelector(selectIsReadOnly);
+  const realtimeLastError = useAppSelector(selectRealtimeLastError);
+
+  const statusAlert = useMemo(() => {
+    if (!user || !isReadOnly) {
+      return null;
+    }
+
+    const message = !isOnline
+      ? 'Offline. The app is read-only until your connection returns.'
+      : 'Realtime sync is reconnecting. Changes are disabled until it returns.';
+
+    return (
+      <Alert severity="warning" classes={{ root: 'alert-root', message: 'alert-message' }}>
+        <Box>{realtimeLastError ? `${message} ${realtimeLastError}` : message}</Box>
+      </Alert>
+    );
+  }, [isOnline, isReadOnly, realtimeLastError, user]);
+
+  if (!statusAlert) {
+    return null;
+  }
+
+  return (
+    <Snackbar anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }} open>
+      {statusAlert}
+    </Snackbar>
+  );
+};
 
 const App = () => {
   const theme = useMemo(
@@ -59,9 +96,11 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <Provider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <RealtimeController />
           <BrowserRouter>
             <Main />
           </BrowserRouter>
+          <RealtimeStatusSnackbar />
           <Snackbar open={hasNewVersion}>{updateAlert}</Snackbar>
         </LocalizationProvider>
       </Provider>

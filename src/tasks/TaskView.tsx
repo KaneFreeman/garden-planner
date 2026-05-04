@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, formatDistance } from 'date-fns';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import DateInlineField from '../components/inline-fields/DateInlineField';
 import TextInlineField from '../components/inline-fields/TextInlineField';
@@ -60,6 +60,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
   const today = useMemo(() => getMidnight().getTime(), []);
 
   const shouldLinkTo = useMemo(() => task.path && !backPath?.endsWith(task.path), [backPath, task.path]);
+  const isInternalTaskPath = useMemo(() => Boolean(task.path?.startsWith('/')), [task.path]);
   const isCustom = useMemo(() => task.type === CUSTOM, [task.type]);
 
   const markTaskAsCompleted = useCallback(() => {
@@ -122,17 +123,18 @@ const TaskView = ({ task }: TaskViewProperties) => {
             actions: (
               <Box key="actions" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {shouldLinkTo && task.path ? (
-                  <a href={task.path}>
-                    <IconButton
-                      key="go-to-button"
-                      aria-label="go to"
-                      color="secondary"
-                      size="small"
-                      title="Go to container"
-                    >
-                      <OpenInNewIcon fontSize="small" />
-                    </IconButton>
-                  </a>
+                  <IconButton
+                    key="go-to-button"
+                    aria-label="go to"
+                    color="secondary"
+                    size="small"
+                    title="Go to container"
+                    component={isInternalTaskPath ? RouterLink : 'a'}
+                    to={isInternalTaskPath ? task.path : undefined}
+                    href={!isInternalTaskPath ? task.path : undefined}
+                  >
+                    <OpenInNewIcon fontSize="small" />
+                  </IconButton>
                 ) : null}
                 {isCustom ? (
                   <>
@@ -186,12 +188,17 @@ const TaskView = ({ task }: TaskViewProperties) => {
             actions: (
               <Box key="actions-desktop" sx={{ display: 'flex', alignItems: 'center', ml: 2, gap: 1.5 }}>
                 {shouldLinkTo && task.path ? (
-                  <a href={task.path}>
-                    <Button key="go-to-button-desktop" color="secondary" title="Go to container">
-                      <OpenInNewIcon sx={{ mr: 1 }} fontSize="small" />
-                      Go to
-                    </Button>
-                  </a>
+                  <Button
+                    key="go-to-button-desktop"
+                    color="secondary"
+                    title="Go to container"
+                    component={isInternalTaskPath ? RouterLink : 'a'}
+                    to={isInternalTaskPath ? task.path : undefined}
+                    href={!isInternalTaskPath ? task.path : undefined}
+                  >
+                    <OpenInNewIcon sx={{ mr: 1 }} fontSize="small" />
+                    Go to
+                  </Button>
                 ) : null}
                 {isCustom ? (
                   <>
@@ -237,6 +244,7 @@ const TaskView = ({ task }: TaskViewProperties) => {
       handleOnDelete,
       handleOnMarkAsComplete,
       handleOnMarkAsOpen,
+      isInternalTaskPath,
       isCustom,
       isSmallScreen,
       moreMenuAnchorElement,

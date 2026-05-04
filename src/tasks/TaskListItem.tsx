@@ -15,6 +15,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import React, { useCallback, useMemo } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { CUSTOM, FERTILIZE, HARVEST, PLANT, Task, TaskGroup, TRANSPLANT } from '../interface';
 import { useSmallScreen } from '../utility/mediaQuery.util';
 import useGetTaskText from './hooks/useGetTaskText';
@@ -121,8 +122,8 @@ const TaskListItem = ({
     <ListItem style={style} className="task" disablePadding>
       <ListItemButton
         onClick={onClickHandler}
-        component={!disabled ? 'a' : 'div'}
-        href={!disabled ? href : undefined}
+        component={!disabled ? RouterLink : 'div'}
+        to={!disabled ? href : undefined}
         disabled={disabled}
         onContextMenu={isSmallScreen ? onSelectHandler : undefined}
         sx={{
